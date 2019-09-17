@@ -52,3 +52,31 @@
 #endif
 
 
+// Standard Headers
+#include <string>
+#include <list>
+#include <vector>
+#include <map>
+#include <algorithm>
+#include <functional>
+
+using namespace std;
+
+// DirectX
+#include <d3d9.h>
+#pragma comment(lib, "d3d9.lib")
+
+#include <d3dx9.h>
+#pragma comment(lib, "d3dx9.lib")
+
+// User Headers
+#include "Extern.h"
+#include "Define.h"
+#include "Enum.h"
+#include "Struct.h"
+#include "Function.h"
+#include "Functor.h"
+
+// Managers
+#include "DeviceMgr.h"
+#include "TextureMgr.h"

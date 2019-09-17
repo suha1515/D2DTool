@@ -4,8 +4,8 @@
 
 #pragma once
 
-
-class CMyToolView : public CView
+class CMyToolDoc;
+class CMyToolView : public CScrollView
 {
 protected: // serialization에서만 만들어집니다.
 	CMyToolView();
@@ -17,6 +17,8 @@ public:
 
 // 작업입니다.
 public:
+	CDeviceMgr *	m_pDeviceMgr;
+	CTextureMgr*	m_pTextureMgr;
 
 // 재정의입니다.
 public:
@@ -26,6 +28,7 @@ protected:
 	virtual BOOL OnPreparePrinting(CPrintInfo* pInfo);
 	virtual void OnBeginPrinting(CDC* pDC, CPrintInfo* pInfo);
 	virtual void OnEndPrinting(CDC* pDC, CPrintInfo* pInfo);
+
 
 // 구현입니다.
 public:
@@ -40,6 +43,10 @@ protected:
 // 생성된 메시지 맵 함수
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	virtual void OnInitialUpdate();
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 };
 
 #ifndef _DEBUG  // MyToolView.cpp의 디버그 버전
