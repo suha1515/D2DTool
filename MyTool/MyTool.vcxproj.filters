@@ -52,17 +52,14 @@
     <Filter Include="98.Managers\01.TextureMgr\00.Texture">
       <UniqueIdentifier>{4bcae557-4497-454d-b9c9-4feccbcf37ef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="98.Managers\01.TextureMgr\00.Texture\00.SingleTexture">
-      <UniqueIdentifier>{fa4f9ff5-46d3-4d2d-b148-e0cef335ee3f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="98.Managers\01.TextureMgr\00.Texture\01.MultiTexture">
-      <UniqueIdentifier>{ba811b1b-2eeb-4258-815b-40c70e8d0173}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04.Dialog\00.UnitTool">
       <UniqueIdentifier>{d4c36144-d5e1-4766-acf9-ff544103d532}</UniqueIdentifier>
     </Filter>
     <Filter Include="99.Headers">
       <UniqueIdentifier>{089b8d45-133a-4815-b92a-1c465aff7328}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.Camera">
+      <UniqueIdentifier>{6a37906f-f4b0-485a-99b3-f6c36541c498}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -111,17 +108,14 @@
     <ClInclude Include="Texture.h">
       <Filter>98.Managers\01.TextureMgr\00.Texture</Filter>
     </ClInclude>
-    <ClInclude Include="SingleTexture.h">
-      <Filter>98.Managers\01.TextureMgr\00.Texture\00.SingleTexture</Filter>
-    </ClInclude>
-    <ClInclude Include="MultiTexture.h">
-      <Filter>98.Managers\01.TextureMgr\00.Texture\01.MultiTexture</Filter>
-    </ClInclude>
     <ClInclude Include="UnitTool.h">
       <Filter>04.Dialog\00.UnitTool</Filter>
     </ClInclude>
     <ClInclude Include="Vertex.h">
       <Filter>99.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>97.Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -161,14 +155,11 @@
     <ClCompile Include="Texture.cpp">
       <Filter>98.Managers\01.TextureMgr\00.Texture</Filter>
     </ClCompile>
-    <ClCompile Include="SingleTexture.cpp">
-      <Filter>98.Managers\01.TextureMgr\00.Texture\00.SingleTexture</Filter>
-    </ClCompile>
-    <ClCompile Include="MultiTexture.cpp">
-      <Filter>98.Managers\01.TextureMgr\00.Texture\01.MultiTexture</Filter>
-    </ClCompile>
     <ClCompile Include="UnitTool.cpp">
       <Filter>04.Dialog\00.UnitTool</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>97.Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

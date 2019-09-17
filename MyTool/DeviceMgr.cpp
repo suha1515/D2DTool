@@ -114,13 +114,11 @@ void CDeviceMgr::Render_Begin()
 
 	// 2. 후면버퍼에 그리기를 시작한다. (begin)
 	m_pDevice->BeginScene();
-	m_pSprite->Begin(D3DXSPRITE_ALPHABLEND);
 }
 
 void CDeviceMgr::Render_End(HWND hWnd/* = nullptr*/)
 {
 	// 3. 후면버퍼에 그리기를 끝낸다. (end)
-	m_pSprite->End();
 	m_pDevice->EndScene();
 
 	// 4. 후면버퍼를 전면버퍼로 교체하여 화면에 출력한다. (present)

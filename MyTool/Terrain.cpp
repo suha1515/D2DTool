@@ -58,9 +58,6 @@ void CTerrain::Render()
 
 		matWorld = matScale * matTrans;
 
-		pTexInfo = m_pTextureMgr->GetTexInfo(L"Terrain", L"Tile", m_vecTile[i]->byDrawID);
-		NULL_CHECK(pTexInfo);
-
 		float fCenterX = pTexInfo->tImgInfo.Width * 0.5f;
 		float fCenterY = pTexInfo->tImgInfo.Height * 0.5f;
 
@@ -146,9 +143,6 @@ void CTerrain::MiniRender()
 			0.f);
 
 		matWorld = matScale * matTrans;
-
-		pTexInfo = m_pTextureMgr->GetTexInfo(L"Terrain", L"Tile", m_vecTile[i]->byDrawID);
-		NULL_CHECK(pTexInfo);
 
 		float fCenterX = pTexInfo->tImgInfo.Width * 0.5f;
 		float fCenterY = pTexInfo->tImgInfo.Height * 0.5f;

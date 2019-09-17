@@ -15,16 +15,13 @@ private:
 public:
 	const TEX_INFO* GetTexInfo(
 		const wstring& wstrObjectKey,
-		const wstring& wstrStateKey = L"",
-		int iIndex = 0);
+		const wstring& wstrStateKey = L"");
 
 public:
 	HRESULT LoadTexture(
-		TEXTURE_TYPE eTexType,
 		const wstring& wstrFilePath,
 		const wstring& wstrObjectKey,
-		const wstring& wstrStateKey = L"",
-		int iImgCount = 0);
+		const wstring& wstrStateKey = L"");
 
 private:
 	void Release();

@@ -25,3 +25,9 @@ HRESULT CGameObject::LateInit()
 
 	return S_OK;
 }
+
+const D3DXVECTOR3 & CGameObject::GetPosition() const
+{
+	// TODO: 여기에 반환 구문을 삽입합니다.
+	return m_Pos;
+}

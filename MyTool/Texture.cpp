@@ -10,17 +10,21 @@ CTexture::CTexture()
 
 CTexture::~CTexture()
 {
+	Release();
 }
 
 TEX_INFO * CTexture::GetTexInfo(const wstring & wstrStateKey)
-{
-	
-	
-	return nullptr;
+{	
+	return m_mapTexInfo[wstrStateKey];
 }
 
 HRESULT CTexture::LoadTexture(const wstring & wstrFilePath, const wstring & wstrStateKey)
 {
+	//중복되는 값이 있을시 FAIL 반환
+	auto iter_find = m_mapTexInfo.find(wstrStateKey);
+	if (m_mapTexInfo.end() != iter_find)
+		return E_FAIL;
+
 	HRESULT hr = 0;
 	LPDIRECT3DDEVICE9 pDevice = m_pDeviceMgr->GetDevice();
 	NULL_CHECK_RETURN(pDevice, E_FAIL);
@@ -39,9 +43,34 @@ HRESULT CTexture::LoadTexture(const wstring & wstrFilePath, const wstring & wstr
 	hr = D3DXCreateTextureFromFile(pDevice, wstrFilePath.c_str(), &pTexture);
 	FAILED_CHECK_RETURN(hr, E_FAIL);
 
-	m_pTexInfo = new TEX_INFO;
-	m_pTexInfo->pTexture = pTexture;
-	m_pTexInfo->tImgInfo = tImgInfo;
+	TEX_INFO* m_pInfo = new TEX_INFO;
+	m_pInfo->pTexture = pTexture;
+	m_pInfo->tImgInfo = tImgInfo;
+
+	m_mapTexInfo[wstrStateKey] = m_pInfo;
 
 	return S_OK;
+}
+
+CTexture * CTexture::Create(const wstring & wstrFilePath, const wstring & wstrStateKey)
+{
+
+	CTexture* pInstance = new CTexture;
+
+	if (FAILED(pInstance->LoadTexture(wstrFilePath, wstrStateKey)))
+	{
+		SafeDelete(pInstance);
+		return nullptr;
+	}
+
+	return pInstance;
+}
+
+void CTexture::Release()
+{
+	for (auto &i : m_mapTexInfo)
+	{
+		i.second->pTexture->Release();
+	}
+	m_mapTexInfo.clear();
 }

@@ -69,6 +69,9 @@ using namespace std;
 #include <d3dx9.h>
 #pragma comment(lib, "d3dx9.lib")
 
+#include <DirectXMath.h>
+using namespace DirectX;
+
 // User Headers
 #include "Extern.h"
 #include "Define.h"
@@ -76,6 +79,8 @@ using namespace std;
 #include "Struct.h"
 #include "Function.h"
 #include "Functor.h"
+#include "Vertex.h"
+
 
 // Managers
 #include "DeviceMgr.h"

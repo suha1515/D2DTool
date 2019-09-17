@@ -2,8 +2,8 @@
 
 
 // CMiniView ∫‰¿‘¥œ¥Ÿ.
-
-class CMiniView : public CView
+class CCamera;
+class CMiniView : public CScrollView
 {
 	DECLARE_DYNCREATE(CMiniView)
 
@@ -24,7 +24,23 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	CDeviceMgr*	m_pDeviceMgr;
+	void		Initialize();
+public:
+	CDeviceMgr*	 m_pDeviceMgr;
+	CTextureMgr* m_pTextrueMgr;
+
+	IDirect3DVertexBuffer9* m_pVB;
+	IDirect3DIndexBuffer9*	m_pIB;
+	Vertex				    m_Vertex[4];
+
+	CCamera*				m_Cam;
+	const TEX_INFO*				m_texInfo;
+
+	ID3DXLine*				m_pLine;
+
+	virtual void OnInitialUpdate();
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 };
 
 
