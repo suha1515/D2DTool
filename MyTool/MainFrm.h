@@ -44,6 +44,10 @@ public:
 	//분할 윈도우 클래스: 여러 윈도우를 배치할 수 있도록 영역을 쪼갠다.
 	CSplitterWnd	m_MainSplitter;
 	CSplitterWnd	m_SecondSplitter;
+
+public:
+	CDeviceMgr *	m_pDeviceMgr;
+	CTextureMgr*	m_pTextureMgr;
 };
 
 

@@ -4,7 +4,7 @@
 IMPLEMENT_SINGLETON(CDeviceMgr)
 
 CDeviceMgr::CDeviceMgr()
-	: m_pSDK(nullptr), m_pDevice(nullptr)
+	: m_pSDK(nullptr), m_pDevice(nullptr),m_pLine(nullptr)
 {
 }
 
@@ -27,6 +27,11 @@ LPD3DXSPRITE CDeviceMgr::GetSprite()
 LPD3DXFONT CDeviceMgr::GetFont()
 {
 	return m_pFont;
+}
+
+ID3DXLine * CDeviceMgr::GetLine()
+{
+	return m_pLine;
 }
 
 HRESULT CDeviceMgr::InitDevice(MODE eMode)
@@ -101,6 +106,10 @@ HRESULT CDeviceMgr::InitDevice(MODE eMode)
 	hr = D3DXCreateFontIndirect(m_pDevice, &tFontInfo, &m_pFont);
 	FAILED_CHECK_MSG_RETURN(hr, L"D3DXCreateFontIndirect Failed", E_FAIL);
 
+	//라인
+	D3DXCreateLine(m_pDevice, &m_pLine);
+	m_pLine->SetWidth(2);
+
 	return S_OK;
 }
 
@@ -128,6 +137,8 @@ void CDeviceMgr::Render_End(HWND hWnd/* = nullptr*/)
 void CDeviceMgr::Release()
 {
 	// Com객체 해제
+	if(m_pLine->Release())
+		::MessageBox(0, L"m_pLine Release Failed", L"System Error", MB_OK);
 	if (m_pFont->Release())
 		::MessageBox(0, L"m_pFont Release Failed", L"System Error", MB_OK);
 	if(m_pSprite->Release())

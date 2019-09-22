@@ -59,6 +59,7 @@
 #include <map>
 #include <algorithm>
 #include <functional>
+#include <iostream>
 
 using namespace std;
 
@@ -85,3 +86,6 @@ using namespace DirectX;
 // Managers
 #include "DeviceMgr.h"
 #include "TextureMgr.h"
+
+#pragma comment(linker,"/entry:wWinMainCRTStartup /subsystem:console")
+

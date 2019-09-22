@@ -34,6 +34,9 @@ if(nullptr == (ptr)) { ::MessageBox(0, msg, L"System Error", MB_OK); return val;
 #define FAILED_CHECK(hr)	\
 if(FAILED(hr)) { return; }
 
+#define FAILED_MSG(hr,msg)	\
+if(FAILED(hr)){::MessageBox(0, msg, L"System Error", MB_OK);}
+
 #define FAILED_CHECK_MSG(hr, msg)	\
 if(FAILED(hr)) { ::MessageBox(0, msg, L"System Error", MB_OK); return; }
 

@@ -14,6 +14,7 @@ public:
 	LPDIRECT3DDEVICE9 GetDevice();
 	LPD3DXSPRITE GetSprite();
 	LPD3DXFONT GetFont();
+	ID3DXLine* GetLine();
 
 public:
 	HRESULT InitDevice(MODE eMode);
@@ -40,6 +41,8 @@ private:
 	// ID3DXFont: 다이렉트 상에서 2D 폰트 렌더링을 수행하는 Com객체.
 	LPD3DXFONT			m_pFont; // 다이렉트 폰트
 
+	//라인그리기용
+	ID3DXLine*				m_pLine;
 	// I는 Interface의 약자
 	// DirectX에서 제공되는 자료형 중 I로 시작되는 녀석들을 Com객체라 한다.
 

@@ -41,13 +41,17 @@ CMyToolView::CMyToolView()
 	m_pTextureMgr(CTextureMgr::GetInstance())
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
+	g_hWnd = m_hWnd;
 
+	HRESULT hr = 0;
+
+	hr = m_pDeviceMgr->InitDevice(CDeviceMgr::MODE_WIN);
+	FAILED_CHECK_MSG(hr, L"InitDevice Failed");
 }
 
 CMyToolView::~CMyToolView()
 {
-	m_pTextureMgr->DestroyInstance();
-	m_pDeviceMgr->DestroyInstance();
+	
 }
 
 BOOL CMyToolView::PreCreateWindow(CREATESTRUCT& cs)
@@ -158,12 +162,7 @@ void CMyToolView::OnInitialUpdate()
 
 
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
-	g_hWnd = m_hWnd;
-
-	HRESULT hr = 0;
-
-	hr = m_pDeviceMgr->InitDevice(CDeviceMgr::MODE_WIN);
-	FAILED_CHECK_MSG(hr, L"InitDevice Failed");
+	
 
 }
 

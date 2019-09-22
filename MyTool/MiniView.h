@@ -27,7 +27,7 @@ public:
 	void		Initialize();
 public:
 	CDeviceMgr*	 m_pDeviceMgr;
-	CTextureMgr* m_pTextrueMgr;
+	CTextureMgr* m_pTextureMgr;
 
 	IDirect3DVertexBuffer9* m_pVB;
 	IDirect3DIndexBuffer9*	m_pIB;
@@ -36,11 +36,16 @@ public:
 	CCamera*				m_Cam;
 	const TEX_INFO*				m_texInfo;
 
-	ID3DXLine*				m_pLine;
-
+private:
+	
 	virtual void OnInitialUpdate();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+public:
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };
 
 
