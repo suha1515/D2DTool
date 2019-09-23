@@ -2,10 +2,11 @@
 
 //À¯´ÖÅø ´ÙÀÌ¾ó·Î±×
 #include "UnitTool.h"
+#include "afxwin.h"
 
 
 // CMyForm Æû ºäÀÔ´Ï´Ù.
-
+class CCamera;
 class CMyForm : public CFormView
 {
 	DECLARE_DYNCREATE(CMyForm)
@@ -35,6 +36,25 @@ public:
 
 public:
 	CUnitTool	m_UnitTool;
+	virtual void OnDraw(CDC* /*pDC*/);
+
+public:
+	void Renew(XMFLOAT2 * tex);
+private:
+	CDeviceMgr*	 m_pDeviceMgr;
+	CTextureMgr* m_pTextureMgr;
+	
+	CString		m_str;
+
+	XMFLOAT2    m_Tex[4];
+	Vertex		m_Vertex[4];
+	CCamera*	m_Cam;
+
+	IDirect3DVertexBuffer9* m_pVB;
+	IDirect3DIndexBuffer9*	m_pIB;
+	const TEX_INFO*			m_texInfo;
+public:
+	CStatic m_TexValue;
 };
 
 

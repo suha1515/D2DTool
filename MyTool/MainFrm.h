@@ -45,9 +45,6 @@ public:
 	CSplitterWnd	m_MainSplitter;
 	CSplitterWnd	m_SecondSplitter;
 
-public:
-	CDeviceMgr *	m_pDeviceMgr;
-	CTextureMgr*	m_pTextureMgr;
 };
 
 

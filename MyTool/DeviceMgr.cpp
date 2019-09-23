@@ -97,9 +97,9 @@ HRESULT CDeviceMgr::InitDevice(MODE eMode)
 	D3DXFONT_DESC	tFontInfo;	// 폰트정보
 	ZeroMemory(&tFontInfo, sizeof(D3DXFONT_DESC));
 
-	tFontInfo.Width = 10;	// 폰트 가로
-	tFontInfo.Height = 20;	// 폰트 세로
-	tFontInfo.Weight = FW_HEAVY;	// 폰트 굵기
+	tFontInfo.Width = 3;	// 폰트 가로
+	tFontInfo.Height = 6;	// 폰트 세로
+	tFontInfo.Weight = FW_LIGHT;	// 폰트 굵기
 	tFontInfo.CharSet = HANGEUL_CHARSET;	// 지원 언어
 	lstrcpy(tFontInfo.FaceName, L"궁서");	// 서체
 
@@ -108,7 +108,7 @@ HRESULT CDeviceMgr::InitDevice(MODE eMode)
 
 	//라인
 	D3DXCreateLine(m_pDevice, &m_pLine);
-	m_pLine->SetWidth(2);
+	m_pLine->SetWidth(1);
 
 	return S_OK;
 }

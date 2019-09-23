@@ -71,6 +71,17 @@ void CCamera::SetPosisiton(const D3DXVECTOR3 & pos)
 	m_CamPos = pos;
 }
 
+void CCamera::SetScale(const float & _x, const float & _y)
+{
+	m_ScaleFactors.x = _x;
+	m_ScaleFactors.y = _y;
+}
+
+void CCamera::SetScale(const XMFLOAT3 & _scale)
+{
+	m_ScaleFactors = _scale;
+}
+
 const D3DXVECTOR3 & CCamera::GetPosition() const
 {
 	return m_CamPos;
@@ -90,6 +101,12 @@ D3DXMATRIX * CCamera::GetViewProjMatrix()
 {
 	m_ViewProjMat = m_ViewMat*m_OrthographicMat;
 	return  &m_ViewProjMat;
+}
+
+void CCamera::Scaling(const float & _x, const float & _y)
+{
+	m_ScaleFactors.x += _x;
+	m_ScaleFactors.y += _y;
 }
 
 void CCamera::MoveCamera(const D3DXVECTOR3 & pos)

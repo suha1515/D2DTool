@@ -25,6 +25,7 @@ protected:
 
 public:
 	void		Initialize();
+	void		VerTexUpdate();
 public:
 	CDeviceMgr*	 m_pDeviceMgr;
 	CTextureMgr* m_pTextureMgr;
@@ -34,10 +35,22 @@ public:
 	Vertex				    m_Vertex[4];
 
 	CCamera*				m_Cam;
-	const TEX_INFO*				m_texInfo;
+	const TEX_INFO*			m_texInfo;
 
 private:
+	int imgWidth, imgHeight;
+	int itileSizeX;
+	int itileSizeY;
+	int itileCountWidth;
+	int itileCountHeight;
+
+	float fGapX;
+	float fGapY;
+
+	float fTexX;
+	float fTexY;
 	
+	XMFLOAT2 tex[4];
 	virtual void OnInitialUpdate();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

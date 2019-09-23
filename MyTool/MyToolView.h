@@ -4,6 +4,7 @@
 
 #pragma once
 
+class CCamera;
 class CMyToolDoc;
 class CMyToolView : public CScrollView
 {
@@ -19,6 +20,10 @@ public:
 public:
 	CDeviceMgr *	m_pDeviceMgr;
 	CTextureMgr*	m_pTextureMgr;
+
+	D3DXVECTOR3		m_Line[2];
+
+	CCamera*		m_Cam;
 
 // 재정의입니다.
 public:
@@ -47,6 +52,9 @@ public:
 	virtual void OnInitialUpdate();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 };
 
 #ifndef _DEBUG  // MyToolView.cpp의 디버그 버전

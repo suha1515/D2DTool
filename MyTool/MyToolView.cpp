@@ -15,6 +15,8 @@
 #include "MiniView.h"
 #include "Terrain.h"
 
+#include "Camera.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -31,6 +33,10 @@ BEGIN_MESSAGE_MAP(CMyToolView, CScrollView)
 	ON_COMMAND(ID_FILE_PRINT_PREVIEW, &CScrollView::OnFilePrintPreview)
 	ON_WM_LBUTTONDOWN()
 	ON_WM_MOUSEMOVE()
+	ON_WM_SIZE()
+	ON_WM_KEYDOWN()
+	ON_WM_CHAR()
+	ON_WM_MOUSEWHEEL()
 END_MESSAGE_MAP()
 
 // CMyToolView 생성/소멸
@@ -38,7 +44,8 @@ HWND g_hWnd;
 
 CMyToolView::CMyToolView()
 	:m_pDeviceMgr(CDeviceMgr::GetInstance()),
-	m_pTextureMgr(CTextureMgr::GetInstance())
+	m_pTextureMgr(CTextureMgr::GetInstance()),
+	m_Cam(nullptr)
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 	g_hWnd = m_hWnd;
@@ -67,12 +74,73 @@ BOOL CMyToolView::PreCreateWindow(CREATESTRUCT& cs)
 void CMyToolView::OnDraw(CDC* /*pDC*/)
 {
 	CMyToolDoc* pDoc = GetDocument();
+
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
-	m_pDeviceMgr->Render_Begin();
 
-	m_pDeviceMgr->Render_End();
+	m_Cam->Update();
+	m_Cam->SetTransform();
+
+	m_pDeviceMgr->Render_Begin();
+	D3DXMATRIX* mat = m_Cam->GetViewProjMatrix();
+
+	
+	m_pDeviceMgr->GetLine()->SetWidth(1);
+	//m_pDeviceMgr->GetLine()->Begin();
+	{
+		//Horizontal
+		//1024*1024
+		for (int i = 0; i < 64; ++i)
+		{
+			m_Line[0] = { (-512.f),  (512.f) - (i*16.f),0.0f };
+			m_Line[1] = { (512.f),  (512.f) - (i*16.f),0.0f };
+			m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(23, 234, 0));
+		}
+		for (int i = 0; i < 64; ++i)
+		{
+			m_Line[0] = { (-512.f) + (i*16.f),  (512.f) ,0.0f };
+			m_Line[1] = { (-512.f) + (i*16.f), -(512.f) ,0.0f };
+			m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(23, 234, 0));
+		}
+	}
+	//m_pDeviceMgr->GetLine()->End();
+
+
+	D3DXMATRIX matTrans;
+	
+	D3DXMATRIX matScale;
+	D3DXMatrixScaling(&matScale, 1.0f, -1.0f, 1.0f);
+	D3DXMATRIX matWorld;
+	
+	TCHAR szIndex[MIN_STR] = L"";
+	
+
+	m_pDeviceMgr->GetSprite()->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE);
+	{
+		D3DXMatrixTranslation(&matTrans,0.0f,0.0f, 0.0f);
+		matWorld = matScale * matTrans;
+		swprintf_s(szIndex, L"%d", 4000);
+		m_pDeviceMgr->GetSprite()->SetTransform(&matWorld);
+		m_pDeviceMgr->GetFont()->DrawText(m_pDeviceMgr->GetSprite(),
+			szIndex, lstrlen(szIndex), nullptr, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
+	
+	/*for (int i = 0; i < 64; ++i)
+	{
+		for (int j = 0; j < 64; ++j)
+		{
+			D3DXMatrixTranslation(&matTrans, -512.f+(j+1)*8.f, 512.f - (i +1)*8.f , 0.0f);
+			matWorld = matScale * matTrans;
+			swprintf_s(szIndex, L"%d", (i*64+j));
+			m_pDeviceMgr->GetSprite()->SetTransform(&matWorld);
+			m_pDeviceMgr->GetFont()->DrawText(m_pDeviceMgr->GetSprite(),
+				szIndex, lstrlen(szIndex), nullptr, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+	}*/	
+	}
+	m_pDeviceMgr->GetSprite()->End();
+	
+	m_pDeviceMgr->Render_End(m_hWnd);
 	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
 }
 
@@ -159,10 +227,39 @@ void CMyToolView::OnInitialUpdate()
 	// MainFrame의 윈도우 위치와 크기를 다시 조정.
 	pMainFrm->SetWindowPos(
 		nullptr, 0, 0, WINCX + iGapX, WINCY + iGapY, SWP_NOZORDER);
-
+	
 
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
+
+	RECT rc = {};
+	GetClientRect(&rc);
+	float winX = rc.right - rc.left;
+	float winY = rc.bottom - rc.top;
+
+	if (m_Cam == nullptr)
+		m_Cam = new CCamera;
+	m_Cam = new CCamera;
+	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(2.0f, 2.0f, 1.0f));
 	
+	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_BORDERCOLOR, 0x000000ff);
+
+	//// use alpha channel in texture for alpha 이미지에서 알파값 가져옴
+	m_pDeviceMgr->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	m_pDeviceMgr->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
+
+	//// set blending factors so that alpha component determines transparency
+	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	//빛끔
+	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_LIGHTING, false);
 
 }
 
@@ -180,4 +277,75 @@ void CMyToolView::OnMouseMove(UINT nFlags, CPoint point)
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 
 	CView::OnMouseMove(nFlags, point);
+}
+
+
+void CMyToolView::OnSize(UINT nType, int cx, int cy)
+{
+	CScrollView::OnSize(nType, cx, cy);
+
+	RECT rcView = {};
+	GetClientRect(&rcView);
+
+	float winX = rcView.right - rcView.left;
+	float winY = rcView.bottom - rcView.top;
+
+	if (m_Cam == nullptr)
+		m_Cam = new CCamera;
+	m_Cam = new CCamera;
+	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(2.0f, 2.0f, 1.0f));
+}
+
+
+void CMyToolView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	
+	CScrollView::OnKeyDown(nChar, nRepCnt, nFlags);
+	cout << "키누름" << endl;
+	
+	if (nChar == VK_LEFT)
+	{
+		m_Cam->MoveCamera(-5.0f, 0.0f);
+		cout << "툴뷰 왼쪽!" << endl;
+	}
+	else if (nChar == VK_UP)
+	{
+		m_Cam->MoveCamera(0.0f, 5.0f);
+		cout << "툴뷰 위!" << endl;
+	}
+	else if (nChar == VK_DOWN)
+	{
+		m_Cam->MoveCamera(0.0f, -5.0f);
+	}
+	else if (nChar == VK_RIGHT)
+	{
+		m_Cam->MoveCamera(5.0f, 0.0f);
+	}
+	Invalidate(FALSE);
+}
+
+
+
+
+BOOL CMyToolView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	
+	
+	float scale = 0.0f;
+	if (zDelta <= 0)
+	{
+		scale = -0.1f;
+		cout << "마우스 휠 다운" << endl;
+	}
+	else
+	{
+		scale = 0.1f;
+		cout << "마우스 휠 업" << endl;
+	}
+	m_Cam->Scaling(scale, scale);
+	Invalidate(FALSE);
+	return CScrollView::OnMouseWheel(nFlags, zDelta, pt);
+	
 }

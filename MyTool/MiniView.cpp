@@ -5,6 +5,7 @@
 #include "MainFrm.h"
 #include "MyTool.h"
 #include "MiniView.h"
+#include "MyForm.h"
 #include "Camera.h"
 
 
@@ -19,7 +20,8 @@ CMiniView::CMiniView()
 	 m_pTextureMgr(CTextureMgr::GetInstance()),
 	m_pVB(nullptr),m_pIB(nullptr),m_Cam(nullptr)
 {
-	cout << "뷰 생성자" << endl;
+	itileSizeX = 16;
+	itileSizeY = 16;
 }
 
 CMiniView::~CMiniView()
@@ -45,6 +47,7 @@ BEGIN_MESSAGE_MAP(CMiniView, CScrollView)
 	ON_WM_VSCROLL()
 	ON_WM_SIZE()
 	ON_WM_CREATE()
+	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
 
 
@@ -53,12 +56,13 @@ END_MESSAGE_MAP()
 void CMiniView::OnDraw(CDC* pDC)
 {
 	CDocument* pDoc = GetDocument();
-
 	
+	m_Cam->Update();
+	m_Cam->SetTransform();
+	//cout << "카메라 위치 : "<<m_Cam->GetPosition().x << " , " << m_Cam->GetPosition().y << endl;
 	// TODO: 여기에 그리기 코드를 추가합니다.
 	m_pDeviceMgr->Render_Begin();
-
-	m_Cam->SetTransform();
+	
 	m_pDeviceMgr->GetDevice()->SetStreamSource(0, m_pVB, 0, sizeof(Vertex));
 	m_pDeviceMgr->GetDevice()->SetIndices(m_pIB);
 	m_pDeviceMgr->GetDevice()->SetFVF(FVF_VERTEX);
@@ -75,27 +79,7 @@ void CMiniView::OnDraw(CDC* pDC)
 	);
 	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
 
-	/*D3DXMATRIX* mat = m_Cam->GetViewProjMatrix();
-	m_pDeviceMgr->GetLine()->Begin();
 
-	D3DXVECTOR3 vLine[2];
-
-	vLine[0] = { -winX*0.5f,winY*0.5f,0.0f };
-	vLine[1] = { 0.f,0.f,0.0f };
-
-	D3DXVECTOR2 vLine2[2];
-	vLine2[0] = { 10.f,0.0f };
-	vLine2[1] = { 50.f,0.0f };
-
-	m_pDeviceMgr->GetLine()->DrawTransform(vLine, 2, mat, D3DCOLOR_XRGB(255, 0, 0));
-	m_pDeviceMgr->GetLine()->SetWidth(3);
-	vLine[0] = { 10.0f,0.0f,0.0f };
-	vLine[1] = { 50.f,0.f,0.0f };
-	m_pDeviceMgr->GetLine()->DrawTransform(vLine, 2, mat, D3DCOLOR_XRGB(0, 0, 0));
-
-
-	m_pDeviceMgr->GetLine()->End();
-*/
 	m_pDeviceMgr->Render_End(m_hWnd);
 
 
@@ -119,117 +103,8 @@ void CMiniView::Initialize()
 {
 
 }
-#endif
-#endif //_DEBUG
-
-
-// CMiniView 메시지 처리기입니다.
-
-
-void CMiniView::OnInitialUpdate()
+void CMiniView::VerTexUpdate()
 {
-	CView::OnInitialUpdate();
-	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
-
-	HRESULT hr = 0;
-	hr = m_pTextureMgr->LoadTexture(L"../Texture/Map/autumn-outside.png", L"MAP_TILE", L"AUTUMN_OUTSIDE");
-	FAILED_CHECK_MSG(hr, L"MAP_AUTUMN LOAD FAILED");
-
-	m_texInfo = m_pTextureMgr->GetTexInfo(L"MAP_TILE", L"AUTUMN_OUTSIDE");
-	//스크롤 범위를 지정하는곳
-	int cx = m_texInfo->tImgInfo.Width;
-	int cy = m_texInfo->tImgInfo.Height;
-
-	CScrollView::SetScrollSizes(MM_TEXT, CSize(cx, cy));
-
-	
-
-	RECT rect;
-	this->GetClientRect(&rect);
-	float winX = rect.right - rect.left;
-	float winY = rect.bottom - rect.top;
-
-	if (m_Cam == nullptr)
-		m_Cam = new CCamera;
-	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(1.0f, 1.0f, 1.0f));
-
-
-	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-
-	//// use alpha channel in texture for alpha 이미지에서 알파값 가져옴
-	m_pDeviceMgr->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-	m_pDeviceMgr->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
-
-	//// set blending factors so that alpha component determines transparency
-	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-
-	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_LIGHTING, false);
-
-}
-
-
-void CMiniView::OnMouseMove(UINT nFlags, CPoint point)
-{
-	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	CScrollView::OnMouseMove(nFlags, point);
-
-
-}
-
-
-void CMiniView::OnLButtonDown(UINT nFlags, CPoint point)
-{
-	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-
-	CScrollView::OnLButtonDown(nFlags, point);
-
-	if (::GetAsyncKeyState(VK_LBUTTON) & 0x8000)
-	{
-		D3DXVECTOR3 vMouse = { float(point.x)+GetScrollPos(0),float(point.y) + GetScrollPos(1),0.f };
-		cout << int(vMouse.x)/16 << " , " << int(vMouse.y)/16 << endl;
-	}
-
-
-}
-
-
-void CMiniView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
-{
-	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-
-	CScrollView::OnHScroll(nSBCode, nPos, pScrollBar);
-
-	cout << "수평 스크롤바!" << endl;
-	cout << nPos << endl;
-	RECT rc;
-	GetClientRect(&rc);
-
-	SendMessage(WM_SIZE, (WPARAM)SIZE_RESTORED, MAKELPARAM(rc.right - rc.left, rc.bottom - rc.top));
-}
-
-
-void CMiniView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
-{
-	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-
-	CScrollView::OnVScroll(nSBCode, nPos, pScrollBar);
-	cout << "수직 스크롤바!" << endl;
-	RECT rc;
-	GetClientRect(&rc);
-
-	SendMessage(WM_SIZE, (WPARAM)SIZE_RESTORED, MAKELPARAM(rc.right - rc.left, rc.bottom - rc.top));
-}
-
-
-void CMiniView::OnSize(UINT nType, int cx, int cy)
-{
-
-	CScrollView::OnSize(nType, cx, cy);
-
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
 	if (m_pVB != nullptr)
 		m_pVB->Release();
@@ -241,11 +116,11 @@ void CMiniView::OnSize(UINT nType, int cx, int cy)
 	RECT rect;
 	this->GetClientRect(&rect);
 
-	float winX = rect.right - rect.left;
-	float winY = rect.bottom - rect.top;
+	float winX = (rect.right - rect.left);
+	float winY = (rect.bottom - rect.top);
 
-	cout << "가로 창 : " << winX << endl;
-	cout << "세로 창 : " << winY << endl;
+	//cout << "가로 창 : " << winX << endl;
+	//cout << "세로 창 : " << winY << endl;
 
 	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	m_Cam->Update();
@@ -253,17 +128,18 @@ void CMiniView::OnSize(UINT nType, int cx, int cy)
 	int scrollX = GetScrollPos(0);
 	int scrollY = GetScrollPos(1);
 
+	//cout << scrollX << " , " << scrollY << endl;
+	
 
-
-	m_Vertex[0] = Vertex(-winX*0.5f, winY*0.5f, 0.0f, 0.0f, 0.0f, 0.0f,	 (scrollX/512.f)/2.f,	 (scrollY / 1024.f) / 2.f);
-	m_Vertex[1] = Vertex(-winX*0.5f, -winY*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, (scrollX/512.f) / 2.f, ((winY + scrollY)/1024.f) / 2.f);
-	m_Vertex[2] = Vertex( winX*0.5f, winY*0.5f, 0.0f, 0.0f, 0.0f, 0.0f,  ((winX + scrollX) / 512.f) / 2.f, (scrollY/1024.f) / 2.f);
-	m_Vertex[3] = Vertex( winX*0.5f, -winY*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, ((winX + scrollX) / 512.f) / 2.f, ((winY + scrollY) / 1024.f) / 2.f);
+	m_Vertex[0] = Vertex(-winX*0.5f, winY*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, (scrollX / 512.f), (scrollY / 1024.f));
+	m_Vertex[1] = Vertex(-winX*0.5f, -winY*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, (scrollX / 512.f), ((winY + scrollY) / 1024.f));
+	m_Vertex[2] = Vertex(winX*0.5f, winY*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, ((winX + scrollX) / 512.f), (scrollY / 1024.f));
+	m_Vertex[3] = Vertex(winX*0.5f, -winY*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, ((winX + scrollX) / 512.f), ((winY + scrollY) / 1024.f));
 
 	/*m_Vertex[0] = Vertex(-winX*0.5f, winY*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	m_Vertex[1] = Vertex(-winX*0.5f, -winY*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-	m_Vertex[2] = Vertex(winX*0.5f, winY*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-	m_Vertex[3] = Vertex(winX*0.5f, -winY*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,1.0f);*/
+	m_Vertex[1] = Vertex(-winX*0.5f, -imgHeight, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	m_Vertex[2] = Vertex(imgWidth  , winY*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	m_Vertex[3] = Vertex(imgWidth, -imgHeight, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,1.0f);*/
 
 	m_pDeviceMgr->GetDevice()->CreateVertexBuffer(4 * sizeof(Vertex), D3DUSAGE_WRITEONLY, FVF_VERTEX, D3DPOOL_MANAGED, &m_pVB, 0);
 	Vertex* v;
@@ -286,6 +162,155 @@ void CMiniView::OnSize(UINT nType, int cx, int cy)
 
 	m_pIB->Unlock();
 }
+#endif
+#endif //_DEBUG
+
+
+// CMiniView 메시지 처리기입니다.
+
+
+void CMiniView::OnInitialUpdate()
+{
+	CView::OnInitialUpdate();
+	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
+
+	HRESULT hr = 0;
+	hr = m_pTextureMgr->LoadTexture(L"../Texture/Map/autumn-outside.png", L"MAP_TILE", L"AUTUMN_OUTSIDE");
+	FAILED_CHECK_MSG(hr, L"MAP_AUTUMN LOAD FAILED");
+
+	m_texInfo = m_pTextureMgr->GetTexInfo(L"MAP_TILE", L"AUTUMN_OUTSIDE");
+	//스크롤 범위를 지정하는곳
+	int cx = m_texInfo->tImgInfo.Width;
+	int cy = m_texInfo->tImgInfo.Height;
+	imgWidth = cx;
+	imgHeight = cy;
+
+	itileCountWidth = imgWidth / itileSizeX;
+	itileCountHeight = imgHeight / itileSizeY;
+
+	fGapX = (float)itileSizeX/ imgWidth;
+	fGapY = (float)itileSizeY/ imgHeight;
+	CScrollView::SetScrollSizes(MM_TEXT, CSize(cx, cy));
+
+
+
+	RECT rect;
+	this->GetClientRect(&rect);
+	float winX = rect.right - rect.left;
+	float winY = rect.bottom - rect.top;
+
+	if (m_Cam == nullptr)
+		m_Cam = new CCamera;
+	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(1.0f, 1.0f, 1.0f));
+
+
+	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_BORDERCOLOR, 0x000000ff);
+
+	//// use alpha channel in texture for alpha 이미지에서 알파값 가져옴
+	m_pDeviceMgr->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	m_pDeviceMgr->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
+
+	//// set blending factors so that alpha component determines transparency
+	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	//빛끔
+	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_LIGHTING, false);
+
+}
+
+
+void CMiniView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	CScrollView::OnMouseMove(nFlags, point);
+
+
+}
+
+
+void CMiniView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+
+	CScrollView::OnLButtonDown(nFlags, point);
+
+	if (::GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+	{
+		
+		D3DXVECTOR3 vMouse = { float(point.x)+GetScrollPos(0),float(point.y) + GetScrollPos(1),0.f };
+		cout << int(vMouse.x)/16 << " , " << int(vMouse.y)/16 << endl;
+		int indexX = int(vMouse.x) / 16;
+		int indexY = int(vMouse.y) / 16;
+
+		tex[0].x = indexX*fGapX, tex[0].y = indexY*fGapY;
+		tex[1].x = indexX*fGapX, tex[1].y = (indexY + 1)*fGapY;
+		tex[2].x = (indexX + 1)*fGapX, tex[2].y = indexY*fGapY;
+		tex[3].x = (indexX + 1)*fGapX, tex[3].y = (indexY+1)*fGapY;
+
+		cout << "텍셀 1 : " << indexX*(fGapX) << " , "   << indexY*(fGapY) << endl;
+		cout << "텍셀 2 : " << indexX*(fGapX) << " , "   << fGapY *(indexY + 1) << endl;
+		cout << "텍셀 3 : " << fGapX *(indexX + 1) << " , "<< indexY*(fGapY) << endl;
+		cout << "텍셀 4 : " << fGapX *(indexX + 1) << " ,"<< fGapY *(indexY + 1) << endl;
+
+		CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+		NULL_CHECK(pFrameWnd);
+
+		CMyForm* pMyForm = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
+		NULL_CHECK(pMyForm);
+		CString str;
+		TCHAR szIndex[MIN_STR] = L"";
+
+		swprintf_s(szIndex, L"%f , %f", tex[0].x,tex[0].y);
+		
+		wcout << szIndex << endl;
+		str = (LPCTSTR)szIndex;
+		cout << str << endl;
+		pMyForm->Renew(tex);
+
+	}
+	
+
+}
+
+
+void CMiniView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+
+	CScrollView::OnHScroll(nSBCode, nPos, pScrollBar);
+	//m_Cam->SetPosisiton(D3DXVECTOR3(GetScrollPos(0), -GetScrollPos(1),0.0f));
+	cout << "수평 값 : " << GetScrollPos(0) << endl;
+	VerTexUpdate();
+	Invalidate(false);
+}
+
+
+void CMiniView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	CScrollView::OnVScroll(nSBCode, nPos, pScrollBar);
+	//m_Cam->SetPosisiton(D3DXVECTOR3(GetScrollPos(0), -GetScrollPos(1), 0.0f));
+	cout << "수직 값 : " << GetScrollPos(1) << endl;
+	VerTexUpdate();
+	Invalidate(false);
+}
+
+
+void CMiniView::OnSize(UINT nType, int cx, int cy)
+{
+
+	CScrollView::OnSize(nType, cx, cy);
+
+	VerTexUpdate();
+}
 
 
 int CMiniView::OnCreate(LPCREATESTRUCT lpCreateStruct)
@@ -298,3 +323,5 @@ int CMiniView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	cout << "On Create" << endl;
 	return 0;
 }
+
+
