@@ -86,8 +86,8 @@ void CMyToolView::OnDraw(CDC* /*pDC*/)
 	D3DXMATRIX* mat = m_Cam->GetViewProjMatrix();
 
 	
-	m_pDeviceMgr->GetLine()->SetWidth(1);
-	//m_pDeviceMgr->GetLine()->Begin();
+	m_pDeviceMgr->GetLine()->SetWidth(1.f);
+	m_pDeviceMgr->GetLine()->Begin();
 	{
 		//Horizontal
 		//1024*1024
@@ -104,7 +104,7 @@ void CMyToolView::OnDraw(CDC* /*pDC*/)
 			m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(23, 234, 0));
 		}
 	}
-	//m_pDeviceMgr->GetLine()->End();
+	m_pDeviceMgr->GetLine()->End();
 
 
 	D3DXMATRIX matTrans;
@@ -116,7 +116,7 @@ void CMyToolView::OnDraw(CDC* /*pDC*/)
 	TCHAR szIndex[MIN_STR] = L"";
 	
 
-	m_pDeviceMgr->GetSprite()->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE);
+	m_pDeviceMgr->GetSprite()->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE| D3DXSPRITE_SORT_TEXTURE);
 	{
 		D3DXMatrixTranslation(&matTrans,0.0f,0.0f, 0.0f);
 		matWorld = matScale * matTrans;
@@ -242,9 +242,9 @@ void CMyToolView::OnInitialUpdate()
 	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(2.0f, 2.0f, 1.0f));
 	
 	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
 
 	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
 	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
@@ -259,7 +259,7 @@ void CMyToolView::OnInitialUpdate()
 	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	//ºû²û
-	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_LIGHTING, false);
+	//m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_LIGHTING, false);
 
 }
 

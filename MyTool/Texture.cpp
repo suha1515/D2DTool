@@ -52,6 +52,21 @@ HRESULT CTexture::LoadTexture(const wstring & wstrFilePath, const wstring & wstr
 	return S_OK;
 }
 
+HRESULT CTexture::RemoveTexture(const wstring & wstrStateKey)
+{
+	auto iter_find = m_mapTexInfo.find(wstrStateKey);
+
+	if (m_mapTexInfo.end() != iter_find)
+	{
+		SafeDelete(iter_find->second);
+		m_mapTexInfo.erase(iter_find);
+	}
+	else
+		return E_FAIL;
+
+	return S_OK;
+}
+
 CTexture * CTexture::Create(const wstring & wstrFilePath, const wstring & wstrStateKey)
 {
 

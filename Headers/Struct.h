@@ -35,5 +35,15 @@ typedef struct tagInfo
 	D3DXMATRIX matWorld; // 월드행렬 = 크기행렬 * 자전행렬 * 이동행렬 * 공전행렬 * 부모행렬
 }INFO;
 
+#ifdef TOOL
+typedef struct tagMapInfo
+{
+	int		i_Index = 0;
+	CString s_fileName = L"";
+	CString s_filePath = L"";
+}MAP_INFO;
+
+#endif
+
 #define __STRUCT_H__
 #endif

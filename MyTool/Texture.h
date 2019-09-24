@@ -14,6 +14,8 @@ public:
 	HRESULT LoadTexture(const wstring& wstrFilePath,
 						const wstring& wstrStateKey = L"");
 public:
+	HRESULT RemoveTexture(const wstring& wstrStateKey);
+public:
 	static CTexture* Create(
 		const wstring& wstrFilePath,
 		const wstring& wstrStateKey);

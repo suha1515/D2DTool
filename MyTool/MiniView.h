@@ -24,8 +24,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	void		Initialize();
+	void		Initialize(CString tileName);
 	void		VerTexUpdate();
+	void		Clear();
 public:
 	CDeviceMgr*	 m_pDeviceMgr;
 	CTextureMgr* m_pTextureMgr;

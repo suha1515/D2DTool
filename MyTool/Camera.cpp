@@ -41,7 +41,6 @@ void CCamera::Update()
 		-m_ScaleFactors.y * sinf(m_fAngle), m_ScaleFactors.y * cosf(m_fAngle), 0, 0,
 		0, 0, m_ScaleFactors.z, 0,
 		-m_CamPos.x*m_ScaleFactors.x*cosf(m_fAngle) + m_CamPos.y * m_ScaleFactors.y * sinf(m_fAngle), -m_CamPos.x * m_ScaleFactors.y * sinf(m_fAngle) - m_CamPos.y * m_ScaleFactors.y * cosf(m_fAngle), 0, 1);
-
 }
 
 void CCamera::Follow(CGameObject * object)

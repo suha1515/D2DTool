@@ -54,6 +54,33 @@ HRESULT CTextureMgr::LoadTexture(
 	return S_OK;
 }
 
+HRESULT CTextureMgr::RemoveTexture(const wstring & wstrObjectKey, const wstring & wstrStateKey)
+{
+	auto iter_find = m_mapTexture.find(wstrObjectKey);
+	HRESULT hr = 0;
+	if (m_mapTexture.end() != iter_find)
+	{
+		hr = iter_find->second->RemoveTexture(wstrStateKey);
+		FAILED_CHECK_MSG_RETURN(hr, L"Remove State Texture Failed",E_FAIL);
+	}
+	else
+		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CTextureMgr::RemoveTexture(const wstring & wstrObjectKey)
+{
+	auto iter_find = m_mapTexture.find(wstrObjectKey);
+	if (m_mapTexture.end() != iter_find)
+	{
+		SafeDelete(iter_find->second);
+		m_mapTexture.erase(iter_find);
+	}
+	else
+		return E_FAIL;
+	return S_OK;
+}
+
 void CTextureMgr::Release()
 {
 	for (auto& MyPair : m_mapTexture)

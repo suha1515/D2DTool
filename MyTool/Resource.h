@@ -11,6 +11,12 @@
 #define IDC_BUTTON1                     1000
 #define IDC_TILE_VIEW                   1003
 #define IDC_TEX_VALUE                   1005
+#define IDC_TILESET_1                   1006
+#define IDC_FILE_OPEN                   1009
+#define IDC_TILE_NAME                   1010
+#define IDC_FILE_OPEN2                  1011
+#define IDC_FILE_OPEN3                  1012
+#define IDC_FILE_OPEN4                  1013
 
 // Next default values for new objects
 // 
@@ -18,7 +24,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        311
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1006
+#define _APS_NEXT_CONTROL_VALUE         1013
 #define _APS_NEXT_SYMED_VALUE           312
 #endif
 #endif

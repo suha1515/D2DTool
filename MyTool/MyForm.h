@@ -40,12 +40,14 @@ public:
 
 public:
 	void Renew(XMFLOAT2 * tex);
+	void VertexUpdate();
 private:
 	CDeviceMgr*	 m_pDeviceMgr;
 	CTextureMgr* m_pTextureMgr;
 	
 	CString		m_str;
 
+	//타일이미지를 출력하기위한 변수들 ----------
 	XMFLOAT2    m_Tex[4];
 	Vertex		m_Vertex[4];
 	CCamera*	m_Cam;
@@ -53,8 +55,24 @@ private:
 	IDirect3DVertexBuffer9* m_pVB;
 	IDirect3DIndexBuffer9*	m_pIB;
 	const TEX_INFO*			m_texInfo;
+	//-------------------------------------------
+
+	map<CString, MAP_INFO*> m_mapTileSetData;
 public:
 	CStatic m_TexValue;
+	//타일셋 리스트
+	CListBox m_TileSetList;
+	//타일맵 이름
+	CEdit m_TileNameEdit;
+	afx_msg void OnBnClickedFileOpen();
+	
+	afx_msg void OnStnClickedTexValue();
+	afx_msg void OnEnChangeEdit1();
+	
+
+
+	afx_msg void OnBnClickedDeleteMap();
+	afx_msg void OnLbnSelchangeTileClick();
 };
 
 

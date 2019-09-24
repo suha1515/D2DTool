@@ -23,6 +23,11 @@ public:
 		const wstring& wstrObjectKey,
 		const wstring& wstrStateKey = L"");
 
+public:
+	HRESULT RemoveTexture(const wstring& wstrObjectKey, const wstring& wstrStateKey);
+	HRESULT RemoveTexture(const wstring& wstrObjectKey);
+
+
 private:
 	void Release();
 
