@@ -27,12 +27,12 @@ CMiniView::CMiniView()
 CMiniView::~CMiniView()
 {
 	if(m_Cam!=nullptr)
-	delete m_Cam;
-	if (m_pIB!=nullptr&&m_pIB->Release())
-		MessageBox(0, L"m_pIB Release Failed", MB_OK);
-	if (m_pVB != nullptr&&m_pVB->Release())
-		MessageBox(0, L"m_pVB Release Failed", MB_OK);
-
+  		delete m_Cam;
+	if (m_pIB != nullptr)
+		m_pIB->Release();
+	if (m_pVB != nullptr)
+		m_pVB->Release();
+	cout << "미니뷰 소멸자" << endl;
 	
 }
 
@@ -65,7 +65,6 @@ void CMiniView::OnDraw(CDC* pDC)
 	{
 		m_Cam->Update();
 		m_Cam->SetTransform();
-
 		m_pDeviceMgr->GetDevice()->SetStreamSource(0, m_pVB, 0, sizeof(Vertex));
 		m_pDeviceMgr->GetDevice()->SetIndices(m_pIB);
 		m_pDeviceMgr->GetDevice()->SetFVF(FVF_VERTEX);
@@ -102,10 +101,20 @@ void CMiniView::Dump(CDumpContext& dc) const
 }
 void CMiniView::Initialize(CString tileName)
 {
+
+	RECT rect;
+	this->GetClientRect(&rect);
+	float winX = rect.right - rect.left;
+	float winY = rect.bottom - rect.top;
+
+	if (m_Cam == nullptr)
+		m_Cam = new CCamera;
+	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(1.0f, 1.0f, 1.0f));
+
 	wstring temp = tileName.operator LPCWSTR();
-	m_texInfo = m_pTextureMgr->GetTexInfo(L"MAP_TILE",tileName.operator LPCWSTR());
-	NULL_CHECK_MSG_RETURN(m_texInfo, L"Get TileMap Fail");
-	
+	m_texInfo = m_pTextureMgr->GetTexInfo(L"TILE_MAP",tileName.operator LPCWSTR());
+	NULL_CHECK_RETURN(m_texInfo);
+
 	//스크롤 범위를 지정하는곳
 	int cx = m_texInfo->tImgInfo.Width;
 	int cy = m_texInfo->tImgInfo.Height;
@@ -118,50 +127,24 @@ void CMiniView::Initialize(CString tileName)
 	fGapX = (float)itileSizeX / imgWidth;
 	fGapY = (float)itileSizeY / imgHeight;
 	CScrollView::SetScrollSizes(MM_TEXT, CSize(cx, cy));
-
-
-
-	RECT rect;
-	this->GetClientRect(&rect);
-	float winX = rect.right - rect.left;
-	float winY = rect.bottom - rect.top;
-
-	if (m_Cam == nullptr)
-		m_Cam = new CCamera;
-	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(1.0f, 1.0f, 1.0f));
-
-
-	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
-
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_BORDERCOLOR, 0x000000ff);
-
-	//// use alpha channel in texture for alpha 이미지에서 알파값 가져옴
-	m_pDeviceMgr->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-	m_pDeviceMgr->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
-
-	//// set blending factors so that alpha component determines transparency
-	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-
-	//빛끔
-	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_LIGHTING, false);
-
+	
 	VerTexUpdate();
 	Invalidate(FALSE);
 
 }
 void CMiniView::VerTexUpdate()
 {
-	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+	 //TODO: 여기에 메시지 처리기 코드를 추가합니다.
 	if (m_pVB != nullptr)
+	{
 		m_pVB->Release();
+		m_pVB = nullptr;
+	}
 	if (m_pIB != nullptr)
+	{
 		m_pIB->Release();
+		m_pIB = nullptr;
+	}
 	if (m_Cam == nullptr)
 		m_Cam = new CCamera;
 
@@ -217,6 +200,18 @@ void CMiniView::VerTexUpdate()
 void CMiniView::Clear()
 {
 	m_texInfo = nullptr;
+	CScrollView::SetScrollSizes(MM_TEXT, CSize(0, 0));
+
+	if (m_pVB != nullptr)
+	{
+		m_pVB->Release();
+		m_pVB = nullptr;
+	}
+	if (m_pIB != nullptr)
+	{
+		m_pIB->Release();
+		m_pIB = nullptr;
+	}
 	Invalidate(FALSE);
 }
 #endif
@@ -231,7 +226,25 @@ void CMiniView::OnInitialUpdate()
 	CView::OnInitialUpdate();
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 	CScrollView::SetScrollSizes(MM_TEXT, CSize(0, 0));
-	VerTexUpdate();
+
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
+
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_BORDERCOLOR, 0x000000ff);
+
+	//// use alpha channel in texture for alpha 이미지에서 알파값 가져옴
+	m_pDeviceMgr->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	m_pDeviceMgr->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
+
+	//// set blending factors so that alpha component determines transparency
+	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+	//빛끔
+	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_LIGHTING, false);
 }
 
 
@@ -253,7 +266,7 @@ void CMiniView::OnLButtonDown(UINT nFlags, CPoint point)
 	if (::GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 	{
 		if (m_texInfo != nullptr)
-		{
+		 {
 			D3DXVECTOR3 vMouse = { float(point.x) + GetScrollPos(0),float(point.y) + GetScrollPos(1),0.f };
 			cout << int(vMouse.x) / 16 << " , " << int(vMouse.y) / 16 << endl;
 			int indexX = int(vMouse.x) / 16;

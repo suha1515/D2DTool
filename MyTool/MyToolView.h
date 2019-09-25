@@ -6,6 +6,7 @@
 
 class CCamera;
 class CMyToolDoc;
+class CGameObject;
 class CMyToolView : public CScrollView
 {
 protected: // serialization에서만 만들어집니다.
@@ -20,10 +21,14 @@ public:
 public:
 	CDeviceMgr *	m_pDeviceMgr;
 	CTextureMgr*	m_pTextureMgr;
+	CCameraMgr*		m_pCameraMgr;
 
 	D3DXVECTOR3		m_Line[2];
 
 	CCamera*		m_Cam;
+
+	//임시 오브젝트 표현 변수.
+	vector<CGameObject*> m_Tile;
 
 // 재정의입니다.
 public:

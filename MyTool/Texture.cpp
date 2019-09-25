@@ -58,7 +58,7 @@ HRESULT CTexture::RemoveTexture(const wstring & wstrStateKey)
 
 	if (m_mapTexInfo.end() != iter_find)
 	{
-		SafeDelete(iter_find->second);
+		iter_find->second->pTexture->Release();
 		m_mapTexInfo.erase(iter_find);
 	}
 	else

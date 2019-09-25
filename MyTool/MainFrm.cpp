@@ -44,6 +44,11 @@ CMainFrame::CMainFrame()
 
 CMainFrame::~CMainFrame()
 {
+	cout << "프레임 소멸자" << endl;
+	//CTextureMgr::GetInstance()->DestroyInstance();
+	//CDeviceMgr::GetInstance()->DestroyInstance();
+	//m_pTextureMgr->DestroyInstance();
+	//m_pDeviceMgr->DestroyInstance();
 }
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)

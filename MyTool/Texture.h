@@ -26,5 +26,6 @@ private:
 	//TEX_INFO*	m_pTexInfo;
 	CDeviceMgr*	m_pDeviceMgr;
 	map<wstring, TEX_INFO*> m_mapTexInfo;
+
 };
 

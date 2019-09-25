@@ -43,6 +43,15 @@ typedef struct tagMapInfo
 	CString s_filePath = L"";
 }MAP_INFO;
 
+typedef struct tagMapDB
+{
+	TCHAR   objectkey[256] = L"";
+	TCHAR	fileName[256]  = L"";
+	TCHAR	filePath[256]  = L"";
+	int     Index;
+	//MAP_INFO info;
+}MAP_SAVE;
+
 #endif
 
 #define __STRUCT_H__

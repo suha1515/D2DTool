@@ -188,6 +188,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraMgr.h" />
     <ClInclude Include="DeviceMgr.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="MainFrm.h" />
@@ -207,6 +208,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraMgr.cpp" />
     <ClCompile Include="DeviceMgr.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="MainFrm.cpp" />

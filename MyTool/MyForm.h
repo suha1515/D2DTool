@@ -41,6 +41,8 @@ public:
 public:
 	void Renew(XMFLOAT2 * tex);
 	void VertexUpdate();
+	const XMFLOAT2* GetTexPos();
+	const CString&  GetTileName();
 private:
 	CDeviceMgr*	 m_pDeviceMgr;
 	CTextureMgr* m_pTextureMgr;
@@ -55,6 +57,7 @@ private:
 	IDirect3DVertexBuffer9* m_pVB;
 	IDirect3DIndexBuffer9*	m_pIB;
 	const TEX_INFO*			m_texInfo;
+	CString					m_TileName;
 	//-------------------------------------------
 
 	map<CString, MAP_INFO*> m_mapTileSetData;
@@ -64,15 +67,17 @@ public:
 	CListBox m_TileSetList;
 	//≈∏¿œ∏  ¿Ã∏ß
 	CEdit m_TileNameEdit;
+
 	afx_msg void OnBnClickedFileOpen();
-	
 	afx_msg void OnStnClickedTexValue();
 	afx_msg void OnEnChangeEdit1();
-	
-
-
 	afx_msg void OnBnClickedDeleteMap();
 	afx_msg void OnLbnSelchangeTileClick();
+	afx_msg void OnLbnDblclkTileList();
+	afx_msg void OnBnClickedLoadMapDB();
+	afx_msg void OnBnClickedSaveMapDB();
+	afx_msg void OnDropFiles(HDROP hDropInfo);
+
 };
 
 

@@ -27,6 +27,8 @@ void CCamera::Initialize(int width, int height, float angle, XMFLOAT3 scaleFacto
 
 	m_pDevice = CDeviceMgr::GetInstance();
 	m_Following = nullptr;
+
+
 }
 
 void CCamera::Update()

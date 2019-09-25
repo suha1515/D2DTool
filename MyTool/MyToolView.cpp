@@ -3,6 +3,8 @@
 //
 
 #include "stdafx.h"
+#include "MyToolView.h"
+
 // SHARED_HANDLERS는 미리 보기, 축소판 그림 및 검색 필터 처리기를 구현하는 ATL 프로젝트에서 정의할 수 있으며
 // 해당 프로젝트와 문서 코드를 공유하도록 해 줍니다.
 #ifndef SHARED_HANDLERS
@@ -10,11 +12,12 @@
 #endif
 
 #include "MyToolDoc.h"
-#include "MyToolView.h"
 #include "MainFrm.h"
 #include "MiniView.h"
+#include "MyForm.h"
 #include "Terrain.h"
 
+#include "GameObject.h"
 #include "Camera.h"
 
 #ifdef _DEBUG
@@ -45,6 +48,7 @@ HWND g_hWnd;
 CMyToolView::CMyToolView()
 	:m_pDeviceMgr(CDeviceMgr::GetInstance()),
 	m_pTextureMgr(CTextureMgr::GetInstance()),
+	m_pCameraMgr(CCameraMgr::GetInstance()),
 	m_Cam(nullptr)
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
@@ -58,7 +62,7 @@ CMyToolView::CMyToolView()
 
 CMyToolView::~CMyToolView()
 {
-	
+	cout << "툴뷰소멸자" << endl;
 }
 
 BOOL CMyToolView::PreCreateWindow(CREATESTRUCT& cs)
@@ -125,21 +129,12 @@ void CMyToolView::OnDraw(CDC* /*pDC*/)
 		m_pDeviceMgr->GetFont()->DrawText(m_pDeviceMgr->GetSprite(),
 			szIndex, lstrlen(szIndex), nullptr, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
 	
-	/*for (int i = 0; i < 64; ++i)
-	{
-		for (int j = 0; j < 64; ++j)
-		{
-			D3DXMatrixTranslation(&matTrans, -512.f+(j+1)*8.f, 512.f - (i +1)*8.f , 0.0f);
-			matWorld = matScale * matTrans;
-			swprintf_s(szIndex, L"%d", (i*64+j));
-			m_pDeviceMgr->GetSprite()->SetTransform(&matWorld);
-			m_pDeviceMgr->GetFont()->DrawText(m_pDeviceMgr->GetSprite(),
-				szIndex, lstrlen(szIndex), nullptr, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
-		}
-	}*/	
 	}
 	m_pDeviceMgr->GetSprite()->End();
 	
+	for (auto& i : m_Tile)
+		i->Render();
+
 	m_pDeviceMgr->Render_End(m_hWnd);
 	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
 }
@@ -238,8 +233,8 @@ void CMyToolView::OnInitialUpdate()
 
 	if (m_Cam == nullptr)
 		m_Cam = new CCamera;
-	m_Cam = new CCamera;
-	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(2.0f, 2.0f, 1.0f));
+	m_pCameraMgr->SetMainCamera(m_Cam);
+	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	
 	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
@@ -269,6 +264,35 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 
 	CView::OnLButtonDown(nFlags, point);
+	RECT rc = {};
+	GetClientRect(&rc);
+	float winX = rc.right - rc.left;
+	float winY = rc.bottom - rc.top;
+
+	D3DXVECTOR3 vMouse = { float(point.x)- winX*0.5f,(winY*0.5f- float(point.y)),1.0f };
+	cout << vMouse.x << " , " << vMouse.y << endl;
+	D3DXVECTOR4 vMouse2;
+	D3DXMATRIX viewMat = *m_Cam->GetViewMatrix();
+	D3DXMATRIX InvViewMat;
+	D3DXMatrixInverse(&InvViewMat, NULL, &viewMat);
+	D3DXVec3Transform(&vMouse2,&vMouse,&InvViewMat);
+
+	cout <<"변환후 :"<< vMouse2.x << " , " << vMouse2.y << endl;
+
+	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	NULL_CHECK(pFrameWnd);
+
+	CMyForm* pMyForm = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
+	NULL_CHECK(pMyForm);
+
+	
+	pMyForm->GetTileName();
+
+	CGameObject* pGameObject = new CGameObject;
+	pGameObject->Initialize();
+	pGameObject->SetPosition(D3DXVECTOR3(vMouse.x, vMouse2.y, vMouse2.z));
+	pGameObject->SetVertex(16, pMyForm->GetTexPos());
+
 }
 
 
@@ -292,7 +316,6 @@ void CMyToolView::OnSize(UINT nType, int cx, int cy)
 
 	if (m_Cam == nullptr)
 		m_Cam = new CCamera;
-	m_Cam = new CCamera;
 	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(2.0f, 2.0f, 1.0f));
 }
 

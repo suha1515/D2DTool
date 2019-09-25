@@ -61,6 +61,9 @@
     <Filter Include="97.Camera">
       <UniqueIdentifier>{6a37906f-f4b0-485a-99b3-f6c36541c498}</UniqueIdentifier>
     </Filter>
+    <Filter Include="98.Managers\02.CameraMgr">
+      <UniqueIdentifier>{8dc19847-c938-48a5-a9f6-72393dde8125}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -93,9 +96,6 @@
     <ClInclude Include="TextureMgr.h">
       <Filter>98.Managers\01.TextureMgr</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>05.GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="Terrain.h">
       <Filter>05.GameObject\00.Terrain</Filter>
     </ClInclude>
@@ -116,6 +116,12 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>97.Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraMgr.h">
+      <Filter>98.Managers\02.CameraMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>05.GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -140,9 +146,6 @@
     <ClCompile Include="TextureMgr.cpp">
       <Filter>98.Managers\01.TextureMgr</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>05.GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="Terrain.cpp">
       <Filter>05.GameObject\00.Terrain</Filter>
     </ClCompile>
@@ -160,6 +163,12 @@
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>97.Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraMgr.cpp">
+      <Filter>98.Managers\02.CameraMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>05.GameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

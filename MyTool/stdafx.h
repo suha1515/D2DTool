@@ -86,6 +86,7 @@ using namespace DirectX;
 // Managers
 #include "DeviceMgr.h"
 #include "TextureMgr.h"
+#include "CameraMgr.h"
 
 #pragma comment(linker,"/entry:wWinMainCRTStartup /subsystem:console")
 
