@@ -64,6 +64,12 @@
     <Filter Include="98.Managers\02.CameraMgr">
       <UniqueIdentifier>{8dc19847-c938-48a5-a9f6-72393dde8125}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.View\00.FormView\00.MapDlg">
+      <UniqueIdentifier>{9c2c6faf-9c08-47a2-b3b3-bd142dc82e1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.View\02.InspectorView">
+      <UniqueIdentifier>{63b68625-c538-43e9-873e-6d8599a99dce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -108,9 +114,6 @@
     <ClInclude Include="Texture.h">
       <Filter>98.Managers\01.TextureMgr\00.Texture</Filter>
     </ClInclude>
-    <ClInclude Include="UnitTool.h">
-      <Filter>04.Dialog\00.UnitTool</Filter>
-    </ClInclude>
     <ClInclude Include="Vertex.h">
       <Filter>99.Headers</Filter>
     </ClInclude>
@@ -122,6 +125,18 @@
     </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>05.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="MapSaveTool.h">
+      <Filter>03.View\00.FormView\00.MapDlg</Filter>
+    </ClInclude>
+    <ClInclude Include="InspectView.h">
+      <Filter>03.View\02.InspectorView</Filter>
+    </ClInclude>
+    <ClInclude Include="MapTool.h">
+      <Filter>03.View\00.FormView</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitTool.h">
+      <Filter>04.Dialog\00.UnitTool</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -158,9 +173,6 @@
     <ClCompile Include="Texture.cpp">
       <Filter>98.Managers\01.TextureMgr\00.Texture</Filter>
     </ClCompile>
-    <ClCompile Include="UnitTool.cpp">
-      <Filter>04.Dialog\00.UnitTool</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>97.Camera</Filter>
     </ClCompile>
@@ -169,6 +181,18 @@
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>05.GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="MapSaveTool.cpp">
+      <Filter>03.View\00.FormView\00.MapDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="InspectView.cpp">
+      <Filter>03.View\02.InspectorView</Filter>
+    </ClCompile>
+    <ClCompile Include="MapTool.cpp">
+      <Filter>03.View\00.FormView</Filter>
+    </ClCompile>
+    <ClCompile Include="UnitTool.cpp">
+      <Filter>04.Dialog\00.UnitTool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

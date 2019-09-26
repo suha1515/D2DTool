@@ -46,6 +46,7 @@ HRESULT CTexture::LoadTexture(const wstring & wstrFilePath, const wstring & wstr
 	TEX_INFO* m_pInfo = new TEX_INFO;
 	m_pInfo->pTexture = pTexture;
 	m_pInfo->tImgInfo = tImgInfo;
+	m_pInfo->textureName = wstrStateKey.c_str();
 
 	m_mapTexInfo[wstrStateKey] = m_pInfo;
 

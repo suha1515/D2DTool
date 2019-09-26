@@ -191,7 +191,10 @@
     <ClInclude Include="CameraMgr.h" />
     <ClInclude Include="DeviceMgr.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="InspectView.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="MapSaveTool.h" />
+    <ClInclude Include="MapTool.h" />
     <ClInclude Include="MiniView.h" />
     <ClInclude Include="MyForm.h" />
     <ClInclude Include="MyTool.h" />
@@ -211,7 +214,10 @@
     <ClCompile Include="CameraMgr.cpp" />
     <ClCompile Include="DeviceMgr.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="InspectView.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="MapSaveTool.cpp" />
+    <ClCompile Include="MapTool.cpp" />
     <ClCompile Include="MiniView.cpp" />
     <ClCompile Include="MyForm.cpp" />
     <ClCompile Include="MyTool.cpp" />

@@ -9,10 +9,10 @@
 
 // CUnitTool 대화 상자입니다.
 
-IMPLEMENT_DYNAMIC(CUnitTool, CDialog)
+IMPLEMENT_DYNAMIC(CUnitTool, CDialogEx)
 
 CUnitTool::CUnitTool(CWnd* pParent /*=NULL*/)
-	: CDialog(IDD_UNITTOOL, pParent)
+	: CDialogEx(IDD_UNITTOOL, pParent)
 {
 
 }
@@ -23,11 +23,11 @@ CUnitTool::~CUnitTool()
 
 void CUnitTool::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+	CDialogEx::DoDataExchange(pDX);
 }
 
 
-BEGIN_MESSAGE_MAP(CUnitTool, CDialog)
+BEGIN_MESSAGE_MAP(CUnitTool, CDialogEx)
 END_MESSAGE_MAP()
 
 

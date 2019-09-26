@@ -296,8 +296,7 @@ void CMiniView::OnLButtonDown(UINT nFlags, CPoint point)
 			str = (LPCTSTR)szIndex;
 			cout << str << endl;
 			//텍스쳐 좌표 전달.
-			pMyForm->Renew(tex);
-
+			pMyForm->GetMapTool()->Renew(tex);
 		}
 	
 	}

@@ -8,7 +8,11 @@
 #define IDR_MyToolTYPE                  130
 #define IDD_MYFORM                      310
 #define IDD_UNITTOOL                    311
+#define IDD_SAVETOOL                    314
+#define IDD_INSPECTOR                   316
+#define IDD_MAPTOOL                     318
 #define IDC_BUTTON1                     1000
+#define IDC_BUTTON2                     1001
 #define IDC_TILE_VIEW                   1003
 #define IDC_TEX_VALUE                   1005
 #define IDC_TILESET_1                   1006
@@ -17,14 +21,31 @@
 #define IDC_FILE_OPEN2                  1011
 #define IDC_FILE_OPEN3                  1012
 #define IDC_FILE_OPEN4                  1013
+#define IDC_MAP_LOAD                    1014
+#define IDC_MAPLIST                     1015
+#define IDC_BUTTON3                     1018
+#define IDC_ToolList                    1019
+#define IDC_OBJNAME                     1020
+#define IDC_TAG                         1022
+#define IDC_LAYER                       1023
+#define IDC_POSX                        1024
+#define IDC_POSY                        1025
+#define IDC_POSZ                        1026
+#define IDC_ROTX                        1030
+#define IDC_ROTY                        1031
+#define IDC_ROTZ                        1032
+#define IDC_SCALEX                      1033
+#define IDC_SCALEY                      1034
+#define IDC_POSZ3                       1035
+#define IDC_SACLEZ                      1035
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        311
+#define _APS_NEXT_RESOURCE_VALUE        321
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1013
+#define _APS_NEXT_CONTROL_VALUE         1025
 #define _APS_NEXT_SYMED_VALUE           312
 #endif
 #endif

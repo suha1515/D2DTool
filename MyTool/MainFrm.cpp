@@ -10,6 +10,8 @@
 #include "MyToolView.h"
 #include "MiniView.h"
 #include "MyForm.h"
+#include "InspectView.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -113,16 +115,19 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 
 	//창3개 분할.
-	m_MainSplitter.CreateStatic(this, 1, 2);
+	m_MainSplitter.CreateStatic(this, 1, 3);
 	//툴뷰는 두번째 열에 지정. 아마.. Create할때는 1행2열을 명시하고 접근시에는 배열처럼 접근하는 형식인듯..
 	//또한 3번째 매개변수는 View를 상속받는 클래스의 주소를 받는것일까? 끝까지 추적해봤는데 내부구현은 안나온다..
 	//CMiniView::GetThisClass(); <- 이게 원본 이것을 Define으로 한것이 RUNTIME_CLASS
 	//4번째 매개변수는 해당 뷰의 크기를 나타낸다.
 	//5번째는 뷰를 만드는 데 생성 컨텍스트에 대 한 포인터 이다.
 	m_MainSplitter.CreateView(0, 1, RUNTIME_CLASS(CMyToolView), CSize(WINCX, WINCY), pContext);
+	m_MainSplitter.CreateView(0, 2, RUNTIME_CLASS(CInspectView), CSize(300, 300), pContext);
+	
 
 	//열의 너비를 지정. 첫번재 인자는 CSplitterWnd 에서 나눠진 영역 이며 두번째는 이상적인 너비의 픽셀크기,3번째는 최소픽셀크기이다.
 	m_MainSplitter.SetColumnInfo(0, 300, 0);
+	m_MainSplitter.SetColumnInfo(2, 300, 0);
 
 	//위에서 1행 2열중 2열에 ToolView창을 만들었다면 나머지 영역을 두개로 나누는데
 	//이때도 CSplitterWnd를 사용한다. 다만 CreateStatic시 첫번째인자로 부모프레임 창의 포인터를 받는데
@@ -135,11 +140,14 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	// 5번째 매개변수는 창을분할할 다른 윈도분할기의 자식 창의 ID로써 현재
 	// IdFromRowCol 함수로 0,0 즉 1행1열의 오른쪽 창의 ID를 반환하여 해당 창을 분할하는것이다.
 	m_SecondSplitter.CreateStatic(&m_MainSplitter, 2, 1,WS_CHILD|WS_VISIBLE,m_MainSplitter.IdFromRowCol(0,0));
-
-
+	//m_ThirdSplitter.CreateStatic(&m_MainSplitter, 2, 1, WS_CHILD | WS_VISIBLE, m_MainSplitter.IdFromRowCol(0, 2));
 
 	m_SecondSplitter.CreateView(0, 0, RUNTIME_CLASS(CMiniView), CSize(300, 300), pContext);
 	m_SecondSplitter.CreateView(1, 0, RUNTIME_CLASS(CMyForm), CSize(300, 300), pContext);
+
+	
+	//m_ThirdSplitter.CreateView(0, 0, RUNTIME_CLASS(CInspectView), CSize(300, 300), pContext);
+	//m_ThirdSplitter.CreateView(1, 0, RUNTIME_CLASS(CInspectView), CSize(300, 300), pContext);
 
 	return TRUE;
 }

@@ -40,6 +40,7 @@ BEGIN_MESSAGE_MAP(CMyToolView, CScrollView)
 	ON_WM_KEYDOWN()
 	ON_WM_CHAR()
 	ON_WM_MOUSEWHEEL()
+	ON_WM_RBUTTONDOWN()
 END_MESSAGE_MAP()
 
 // CMyToolView 생성/소멸
@@ -63,6 +64,11 @@ CMyToolView::CMyToolView()
 CMyToolView::~CMyToolView()
 {
 	cout << "툴뷰소멸자" << endl;
+
+	for (auto &i : m_Tile)
+		SafeDelete(i);
+	m_Tile.clear();
+	m_Tile.shrink_to_fit();
 }
 
 BOOL CMyToolView::PreCreateWindow(CREATESTRUCT& cs)
@@ -74,6 +80,8 @@ BOOL CMyToolView::PreCreateWindow(CREATESTRUCT& cs)
 }
 
 // CMyToolView 그리기
+
+
 
 void CMyToolView::OnDraw(CDC* /*pDC*/)
 {
@@ -258,52 +266,6 @@ void CMyToolView::OnInitialUpdate()
 
 }
 
-
-void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
-{
-	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-
-	CView::OnLButtonDown(nFlags, point);
-	RECT rc = {};
-	GetClientRect(&rc);
-	float winX = rc.right - rc.left;
-	float winY = rc.bottom - rc.top;
-
-	D3DXVECTOR3 vMouse = { float(point.x)- winX*0.5f,(winY*0.5f- float(point.y)),1.0f };
-	cout << vMouse.x << " , " << vMouse.y << endl;
-	D3DXVECTOR4 vMouse2;
-	D3DXMATRIX viewMat = *m_Cam->GetViewMatrix();
-	D3DXMATRIX InvViewMat;
-	D3DXMatrixInverse(&InvViewMat, NULL, &viewMat);
-	D3DXVec3Transform(&vMouse2,&vMouse,&InvViewMat);
-
-	cout <<"변환후 :"<< vMouse2.x << " , " << vMouse2.y << endl;
-
-	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
-	NULL_CHECK(pFrameWnd);
-
-	CMyForm* pMyForm = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
-	NULL_CHECK(pMyForm);
-
-	
-	pMyForm->GetTileName();
-
-	CGameObject* pGameObject = new CGameObject;
-	pGameObject->Initialize();
-	pGameObject->SetPosition(D3DXVECTOR3(vMouse.x, vMouse2.y, vMouse2.z));
-	pGameObject->SetVertex(16, pMyForm->GetTexPos());
-
-}
-
-
-void CMyToolView::OnMouseMove(UINT nFlags, CPoint point)
-{
-	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-
-	CView::OnMouseMove(nFlags, point);
-}
-
-
 void CMyToolView::OnSize(UINT nType, int cx, int cy)
 {
 	CScrollView::OnSize(nType, cx, cy);
@@ -318,6 +280,91 @@ void CMyToolView::OnSize(UINT nType, int cx, int cy)
 		m_Cam = new CCamera;
 	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(2.0f, 2.0f, 1.0f));
 }
+
+//타일 입력
+void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	CView::OnLButtonDown(nFlags, point);
+
+	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	NULL_CHECK(pFrameWnd);
+
+	CMyForm* pMyForm = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
+	NULL_CHECK(pMyForm);
+
+
+	CString tileName = pMyForm->GetMapTool()->GetTileName();
+	const XMFLOAT2* tex = pMyForm->GetMapTool()->GetTexPos();
+
+	const CPoint mousePos = MousePicking(point);
+	if (tex != nullptr)
+	{
+		//타일 중복 검사 - 중복시 텍스처 정보만 바꾼다.
+		auto iter_find = find_if(m_Tile.begin(),m_Tile.end(),
+		[&mousePos](CGameObject* pGameObject)
+		{
+			if (pGameObject->GetPosition() == D3DXVECTOR3(mousePos.x, mousePos.y, 1.0f))
+			{
+				return true;
+			}
+			return false;
+		});
+
+		if (m_Tile.end() != iter_find)
+		{
+			(*iter_find)->SetTexture(tileName);
+			(*iter_find)->SetVertex(16, tex);
+		}
+		else
+		{
+			CGameObject* pGameObject = new CGameObject;
+			pGameObject->Initialize();
+			pGameObject->SetTexture(tileName);
+			pGameObject->SetPosition(D3DXVECTOR3(mousePos.x, mousePos.y, 1.0f));
+			pGameObject->SetVertex(16, tex);
+			m_Tile.push_back(pGameObject);
+		}
+		Invalidate(FALSE);
+	}
+}
+
+//타일 지우기
+void CMyToolView::OnRButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+
+	CScrollView::OnRButtonDown(nFlags, point);
+
+	const CPoint mousePos = MousePicking(point);
+
+	//해당 좌표의 오브젝트를 찾는다. 타일중에서.
+	auto iter_find = find_if(m_Tile.begin(),m_Tile.end(),
+	[&mousePos](CGameObject* pObject)
+	{
+		if (pObject->GetPosition() == D3DXVECTOR3(mousePos.x, mousePos.y, 1.0f))
+		{
+			return true;
+		}
+		else return false;
+	});
+
+	if (m_Tile.end() != iter_find)
+	{
+		SafeDelete((*iter_find));
+		m_Tile.erase(iter_find);
+		Invalidate(FALSE);
+	}
+}
+
+void CMyToolView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+
+	CView::OnMouseMove(nFlags, point);
+}
+
+
 
 
 void CMyToolView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
@@ -371,4 +418,37 @@ BOOL CMyToolView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	Invalidate(FALSE);
 	return CScrollView::OnMouseWheel(nFlags, zDelta, pt);
 	
+}
+
+
+
+const CPoint& CMyToolView::MousePicking(const CPoint& point)
+{
+	RECT rc = {};
+	GetClientRect(&rc);
+	float winX = rc.right - rc.left;
+	float winY = rc.bottom - rc.top;
+
+	D3DXVECTOR3 vMouse = { float(point.x) - winX*0.5f,(winY*0.5f - float(point.y)),1.0f };
+	D3DXVECTOR4 vMouse2;
+	D3DXMATRIX viewMat = *m_Cam->GetViewMatrix();
+	D3DXMATRIX InvViewMat;
+	D3DXMatrixInverse(&InvViewMat, NULL, &viewMat);
+	D3DXVec3Transform(&vMouse2, &vMouse, &InvViewMat);
+
+	cout << vMouse.x << " , " << vMouse.y << endl;
+	float newX, newY;
+	if (vMouse2.x>0)
+		newX = ((int)vMouse2.x / 16)*16.f + 8.0f;
+	else
+		newX = ((int)vMouse2.x / 16)*16.f - 8.0f;
+
+	if (vMouse2.y>0)
+		newY = ((int)vMouse2.y / 16)*16.f + 8.0f;
+	else
+		newY = ((int)vMouse2.y / 16)*16.f - 8.0f;
+
+	cout << newX << " , " << newY << endl;
+
+	return CPoint(newX, newY);
 }

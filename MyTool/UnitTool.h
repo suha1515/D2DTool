@@ -3,7 +3,7 @@
 
 // CUnitTool 대화 상자입니다.
 
-class CUnitTool : public CDialog
+class CUnitTool : public CDialogEx
 {
 	DECLARE_DYNAMIC(CUnitTool)
 

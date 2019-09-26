@@ -2,7 +2,15 @@
 
 //유닛툴 다이얼로그
 #include "UnitTool.h"
+//맵 로드다이얼로그
+#include "MapSaveTool.h"
+
+#include "MapTool.h"
+#include "UnitTool.h"
+
+
 #include "afxwin.h"
+#include "afxcmn.h"
 
 
 // CMyForm 폼 뷰입니다.
@@ -31,53 +39,26 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedUnitTool();
 	virtual void OnInitialUpdate();
 
 public:
+	//다이얼로그
 	CUnitTool	m_UnitTool;
+	//탭에들어갈 다이얼로그
+	CMapTool  m_MapTool;
+
 	virtual void OnDraw(CDC* /*pDC*/);
 
 public:
-	void Renew(XMFLOAT2 * tex);
-	void VertexUpdate();
-	const XMFLOAT2* GetTexPos();
-	const CString&  GetTileName();
+	CMapTool* GetMapTool();
 private:
-	CDeviceMgr*	 m_pDeviceMgr;
-	CTextureMgr* m_pTextureMgr;
-	
-	CString		m_str;
-
-	//타일이미지를 출력하기위한 변수들 ----------
-	XMFLOAT2    m_Tex[4];
-	Vertex		m_Vertex[4];
-	CCamera*	m_Cam;
-
-	IDirect3DVertexBuffer9* m_pVB;
-	IDirect3DIndexBuffer9*	m_pIB;
-	const TEX_INFO*			m_texInfo;
-	CString					m_TileName;
-	//-------------------------------------------
 
 	map<CString, MAP_INFO*> m_mapTileSetData;
 public:
-	CStatic m_TexValue;
-	//타일셋 리스트
-	CListBox m_TileSetList;
-	//타일맵 이름
-	CEdit m_TileNameEdit;
 
-	afx_msg void OnBnClickedFileOpen();
-	afx_msg void OnStnClickedTexValue();
-	afx_msg void OnEnChangeEdit1();
-	afx_msg void OnBnClickedDeleteMap();
-	afx_msg void OnLbnSelchangeTileClick();
-	afx_msg void OnLbnDblclkTileList();
-	afx_msg void OnBnClickedLoadMapDB();
-	afx_msg void OnBnClickedSaveMapDB();
-	afx_msg void OnDropFiles(HDROP hDropInfo);
-
+	// //툴탭
+	CTabCtrl m_ToolList;
+	afx_msg void OnTcnSelchangeToollist(NMHDR *pNMHDR, LRESULT *pResult);
 };
 
 

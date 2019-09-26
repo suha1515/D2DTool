@@ -23,7 +23,8 @@ typedef struct tagTexture
 	LPDIRECT3DTEXTURE9	pTexture;
 
 	// 사용할 텍스처의 정보를 갖고있는 구조체.
-	D3DXIMAGE_INFO tImgInfo;
+	D3DXIMAGE_INFO     tImgInfo;
+	CString			textureName;
 }TEX_INFO;
 
 typedef struct tagInfo
@@ -51,6 +52,13 @@ typedef struct tagMapDB
 	int     Index;
 	//MAP_INFO info;
 }MAP_SAVE;
+
+typedef struct tagMapTile
+{
+	D3DXVECTOR3 pos;
+	XMFLOAT2 tex[4];
+	TCHAR  texture[256] = L"";
+}MAP_TILE;
 
 #endif
 
