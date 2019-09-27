@@ -22,3 +22,8 @@ CCamera * CCameraMgr::GetMainCamera()
 {
 	return m_MainCam;
 }
+
+D3DXMATRIX* CCameraMgr::GetViewProjMatrix()
+{
+	return m_MainCam->GetViewProjMatrix();
+}

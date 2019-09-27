@@ -30,7 +30,7 @@ public:
 	CString			m_MapName;
 
 	//임시 오브젝트 표현 변수.
-	vector<CGameObject*> m_Tile;
+	vector<CGameObject*> m_GameObject;
 public:
 	const CPoint& MousePicking(const CPoint& point);
 

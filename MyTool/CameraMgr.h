@@ -8,10 +8,10 @@ public:
 	~CCameraMgr();
 public:
 	void SetMainCamera(CCamera* cam);
-
+	
 public:
 	CCamera*	GetMainCamera();
-
+	D3DXMATRIX*	GetViewProjMatrix();
 private:
 	CCamera*	m_MainCam;
 

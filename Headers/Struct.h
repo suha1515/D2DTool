@@ -24,7 +24,7 @@ typedef struct tagTexture
 
 	// 사용할 텍스처의 정보를 갖고있는 구조체.
 	D3DXIMAGE_INFO     tImgInfo;
-	CString			textureName;
+	wstring			textureName;
 }TEX_INFO;
 
 typedef struct tagInfo
@@ -40,8 +40,8 @@ typedef struct tagInfo
 typedef struct tagMapInfo
 {
 	int		i_Index = 0;
-	CString s_fileName = L"";
-	CString s_filePath = L"";
+	wstring s_fileName = L"";
+	wstring s_filePath = L"";
 }MAP_INFO;
 
 typedef struct tagMapDB
@@ -61,6 +61,8 @@ typedef struct tagMapTile
 }MAP_TILE;
 
 #endif
+
+
 
 #define __STRUCT_H__
 #endif

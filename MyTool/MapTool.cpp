@@ -280,8 +280,8 @@ void CMapTool::OnBnClickedTileListSave()
 		for (auto& i : m_mapTileSetData)
 		{
 			_tcscpy(info.objectkey, i.first);
-			_tcscpy(info.fileName, i.second->s_fileName);
-			_tcscpy(info.filePath, i.second->s_filePath);
+			_tcscpy(info.fileName, i.second->s_fileName.c_str());
+			_tcscpy(info.filePath, i.second->s_filePath.c_str());
 			info.Index = i.second->i_Index;
 			file.Write(&info, sizeof(MAP_SAVE));
 		}
@@ -326,7 +326,7 @@ void CMapTool::OnBnClickedTileListLoad()
 
 			HRESULT hr = 0;
 			//텍스쳐 매니저에 입력
-			hr = m_pTextureMgr->LoadTexture((LPWSTR)(LPCTSTR)tile->s_filePath, L"TILE_MAP", (LPWSTR)(LPCTSTR)tile->s_fileName);
+			hr = m_pTextureMgr->LoadTexture(tile->s_filePath, L"TILE_MAP", tile->s_fileName);
 			FAILED_CHECK_MSG(hr, L"Adding TileMap Failed");
 		}
 		file.Close();
@@ -417,28 +417,6 @@ void CMapTool::OnPaint()
 		m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
 	}
 	m_pDeviceMgr->Render_End(hwnd);
-
-	//if (IsIconic())
-	//{
-	//	CPaintDC dc(this); //페인팅을 위한 디바이스
-	//	SendMessage(WM_ICONERASEBKGND, (WPARAM)dc.GetSafeHdc(), 0);
-	//	//아이콘을 클라이언트 사각형에서 가운데로.
-	//	int cxIcon = GetSystemMetrics(SM_CXICON);
-	//	int cyIcon = GetSystemMetrics(SM_CYICON);
-
-	//	CRect rect;
-	//	GetClientRect(&rect);
-	//	int x = (rect.Width() - cxIcon + 1) / 2;
-	//	int y = (rect.Height() - cyIcon + 1) / 2;
-
-	//	//아이콘을 그린다
-	//	dc.DrawIcon(x,y,)
-
-	//}
-	//else
-	//{
-
-	//}
 }
 void CMapTool::OnLbnDblclkTileList()
 {

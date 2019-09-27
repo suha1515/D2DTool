@@ -1,0 +1,36 @@
+#pragma once
+#include "afxcmn.h"
+
+
+// CHierarchyView 대화 상자입니다.
+class CGameObject;
+class CHierarchyView : public CDialogEx
+{
+	DECLARE_DYNAMIC(CHierarchyView)
+
+public:
+	CHierarchyView(CWnd* pParent = NULL);   // 표준 생성자입니다.
+	virtual ~CHierarchyView();
+
+// 대화 상자 데이터입니다.
+#ifdef AFX_DESIGN_TIME
+	enum { IDD = IDD_HIERARCHY };
+#endif
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
+
+	DECLARE_MESSAGE_MAP()
+public:
+	void AddObject(CGameObject* object);
+
+public:
+	CTreeCtrl m_Hierarchy;
+	virtual BOOL OnInitDialog();
+
+	list<std::pair<CGameObject*, HTREEITEM>> m_objectlist;
+
+	afx_msg void OnNMClickHierarchytree(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnTvnSelchangedHierarchytree(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNMDblclkHierarchytree(NMHDR *pNMHDR, LRESULT *pResult);
+};

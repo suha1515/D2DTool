@@ -2,24 +2,38 @@
 #include "GameObject.h"
 
 
-CGameObject::CGameObject()
-	: m_pDeviceMgr(CDeviceMgr::GetInstance()),
-	m_pTextureMgr(CTextureMgr::GetInstance()),
-	m_bIsInit(false), m_pVB(nullptr), m_pIB(nullptr), m_texInfo(nullptr)
+//렌더 컴포넌트
+#include "TextureRenderer.h"
+
+CGameObject::CGameObject(): m_bIsInit(false),m_pDeviceMgr(CDeviceMgr::GetInstance())
 {
 }
 
 
 CGameObject::~CGameObject()
 {
-	if (m_pVB != nullptr)
-		m_pVB->Release();
-	if(m_pIB != nullptr)
-		m_pIB->Release();
+	for (auto& i : m_Components)
+		SafeDelete(i);
+
+	m_Components.clear();
 }
 
 int CGameObject::Update()
 {
+	//초기 위치 계산
+	Translate(m_Pos);
+	Rotate(m_Rotaion);
+	Scale(m_Scale);
+
+	//월드 행렬 구성
+	SetWorld();
+
+	//컴포넌트 기능 수행
+	for (auto& i : m_Components)
+		i->Action(this);
+
+	DrawBox();
+
 	return 0;
 }
 
@@ -27,32 +41,35 @@ void CGameObject::LateUpdate()
 {
 }
 
-void CGameObject::Render()
+HRESULT CGameObject::Initialize(CGameObject* pParent)
 {
-	if (m_texInfo != nullptr)
-	{
-		m_pDeviceMgr->GetDevice()->SetTransform(D3DTS_WORLD, &m_TransMat);
+	//행렬 초기화
+	D3DXMatrixIdentity(&m_TransMat);
+	D3DXMatrixIdentity(&m_RotMat);
+	D3DXMatrixIdentity(&m_ScaleMat);
+	D3DXMatrixIdentity(&m_WorldMat);
 
-		m_pDeviceMgr->GetDevice()->SetStreamSource(0, m_pVB, 0, sizeof(Vertex));
-		m_pDeviceMgr->GetDevice()->SetIndices(m_pIB);
-		m_pDeviceMgr->GetDevice()->SetFVF(FVF_VERTEX);
-		m_pDeviceMgr->GetDevice()->SetTexture(0, m_texInfo->pTexture);
-		
-		m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
-		m_pDeviceMgr->GetDevice()->DrawIndexedPrimitive(
-			D3DPT_TRIANGLELIST,
-			0,
-			0,
-			6,
-			0,
-			2
-		);
-		m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
-	}
-}
+	//위치,크기,회전값 초기화
+	m_Pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_Rotaion = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_Scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 
-HRESULT CGameObject::Initialize()
-{
+	//초기 위치 계산
+	Translate(m_Pos);
+	Rotate(m_Rotaion);
+	Scale(m_Scale);
+
+	//월드 행렬 구성
+	SetWorld();
+
+	m_bIsClicked = false;
+
+	//임시 렌더 컴포넌트 넣기.
+	CTextureRenderer* pRender = new CTextureRenderer;
+	pRender->Initialize();
+	m_Components.push_back(pRender);
+
+	m_ParentObj = pParent;
 
 	return S_OK;
 }
@@ -65,7 +82,6 @@ HRESULT CGameObject::LateInit()
 		this->LateInit();
 		m_bIsInit = true;
 	}
-
 	return S_OK;
 }
 
@@ -76,19 +92,16 @@ void CGameObject::Release()
 void CGameObject::SetPosition(const D3DXVECTOR3& pos)
 {
 	m_Pos = pos;
-	Translate(m_Pos);
 }
 
 void CGameObject::SetRotation(const XMFLOAT3 & rot)
 {
 	m_Rotaion = rot;
-	Rotate(m_Rotaion);
 }
 
 void CGameObject::SetScaling(const D3DXVECTOR3 & size)
 {
 	m_Scale = size;
-	Scale(m_Scale);
 }
 
 void CGameObject::Translate(const D3DXVECTOR3 & vec)
@@ -99,78 +112,73 @@ void CGameObject::Translate(const D3DXVECTOR3 & vec)
 void CGameObject::Rotate(const XMFLOAT3 & rot)
 {
 	D3DXMatrixRotationX(&m_RotMat, D3DXToRadian(rot.x));
+	D3DXMatrixRotationY(&m_RotMat, D3DXToRadian(rot.y));
+	D3DXMatrixRotationZ(&m_RotMat, D3DXToRadian(rot.z));
 }
 
 void CGameObject::Scale(const D3DXVECTOR3 & vec)
 {
+	D3DXMatrixScaling(&m_ScaleMat, vec.x, vec.y, vec.z);
 }
 
-
-void CGameObject::SetVertex(const int& size, const XMFLOAT2* tex)
+void CGameObject::SetWorld()
 {
-	if (m_pVB != nullptr)
-		m_pVB->Release();
-	if (m_pIB != nullptr)
-		m_pIB->Release();
-
-	m_Vertex[0] = Vertex(-size*0.5f, size*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, tex[0].x, tex[0].y);
-	m_Vertex[1] = Vertex(-size*0.5f,-size*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, tex[1].x, tex[1].y);
-	m_Vertex[2] = Vertex( size*0.5f, size*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, tex[2].x, tex[2].y);
-	m_Vertex[3] = Vertex( size*0.5f,-size*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, tex[3].x, tex[3].y);
-
-	m_pDeviceMgr->GetDevice()->CreateVertexBuffer(4 * sizeof(Vertex), D3DUSAGE_WRITEONLY, FVF_VERTEX, D3DPOOL_MANAGED, &m_pVB, 0);
-	Vertex* v;
-	m_pVB->Lock(0, 0, (void**)&v, 0);
-
-	v[0] = m_Vertex[0];
-	v[1] = m_Vertex[1];
-	v[2] = m_Vertex[2];
-	v[3] = m_Vertex[3];
-
-	m_pVB->Unlock();
-
-	m_pDeviceMgr->GetDevice()->CreateIndexBuffer(6 * sizeof(WORD), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_pIB, 0);
-
-	WORD* i = 0;
-	m_pIB->Lock(0, 0, (void**)&i, 0);
-	i[0] = 0, i[1] = 2, i[2] = 1;
-	i[3] = 1, i[4] = 2, i[5] = 3;
-
-
-	m_pIB->Unlock();
+	m_WorldMat = m_ScaleMat* m_RotMat * m_TransMat;
 }
 
-void CGameObject::SetTexture(const CString & tileName)
+void CGameObject::DrawBox()
 {
-	m_texInfo = m_pTextureMgr->GetTexInfo(L"TILE_MAP", tileName.operator LPCWSTR());
-	NULL_CHECK_RETURN(m_texInfo);
-}
+	//기본 오브젝트 박스 렌더링.
+	D3DXMATRIX* mat = CCameraMgr::GetInstance()->GetViewProjMatrix();
+	m_pDeviceMgr->GetLine()->SetWidth(3.f);
+	m_pDeviceMgr->GetLine()->Begin();
+	{
+		D3DXVECTOR3 m_Line[2];
+		m_Line[0] = { m_Pos.x - 8.0f,m_Pos.y + 8.0f,0.0f };
+		m_Line[1] = { m_Pos.x + 8.0f,m_Pos.y + 8.0f,0.0f };
+		m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 0));
 
+		m_Line[0] = { m_Pos.x + 8.0f,m_Pos.y + 8.0f,0.0f };
+		m_Line[1] = { m_Pos.x + 8.0f,m_Pos.y - 8.0f,0.0f };
+		m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 0));
+
+		m_Line[0] = { m_Pos.x + 8.0f,m_Pos.y - 8.0f,0.0f };
+		m_Line[1] = { m_Pos.x - 8.0f,m_Pos.y - 8.0f,0.0f };
+		m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 0));
+
+		m_Line[0] = { m_Pos.x - 8.0f,m_Pos.y - 8.0f,0.0f };
+		m_Line[1] = { m_Pos.x - 8.0f,m_Pos.y + 8.0f,0.0f };
+		m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 0));
+	}
+	m_pDeviceMgr->GetLine()->End();
+}
 
 const D3DXVECTOR3 & CGameObject::GetPosition() const
 {
-	// TODO: 여기에 반환 구문을 삽입합니다.
 	return m_Pos;
 }
-
-const XMFLOAT2 & CGameObject::GetTexPos(const int & index)
+const D3DXMATRIX & CGameObject::GetWorldMat() const
 {
-	if (index > 4 || index < 0)
-	{
-		MessageBox(0, L"GetTexPos out of Range!", L"ERROR", ERROR);
-		return XMFLOAT2(0.0f,0.0f);
-	}
-	// TODO: 여기에 반환 구문을 삽입합니다.
-	return XMFLOAT2(m_Vertex[index]._u, m_Vertex[index]._v);
+	return m_WorldMat;
 }
 
-const CString & CGameObject::GetTexName()
+const wstring & CGameObject::GetObjectName() const
 {
-	// TODO: 여기에 반환 구문을 삽입합니다.
-	if (m_texInfo == nullptr)
-	{
-		MessageBox(0, L"GetTexName m_texInfo nullptr!", L"ERROR", ERROR);
-		return nullptr;
-	}
-	return m_texInfo->textureName;
+	return m_ObjectName;
 }
+
+const wstring & CGameObject::GetObjectTag() const
+{
+	return m_ObjectTag;
+}
+
+const wstring & CGameObject::GetObjectLayer() const
+{
+	return m_ObjectLayer;
+}
+void CGameObject::AddComponent(CComponent * component)
+{
+	m_Components.push_back(component);
+}
+
+

@@ -35,12 +35,6 @@
 
 
 
-
-
-
-
-
-
 #ifdef _UNICODE
 #if defined _M_IX86
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
@@ -60,6 +54,8 @@
 #include <algorithm>
 #include <functional>
 #include <iostream>
+#include <utility>
+
 
 using namespace std;
 
@@ -84,9 +80,13 @@ using namespace DirectX;
 
 
 // Managers
-#include "DeviceMgr.h"
-#include "TextureMgr.h"
-#include "CameraMgr.h"
+#include "DeviceMgr.h"			//디바이스 매니저
+#include "TextureMgr.h"			//텍스처   매니저
+#include "CameraMgr.h"			//카메라   매니저
+#include "ObjectMgr.h"			//오브젝트 매니저
+
+//유니코드 String을위한 것
+typedef std::basic_string<TCHAR> tstring;
 
 #pragma comment(linker,"/entry:wWinMainCRTStartup /subsystem:console")
 

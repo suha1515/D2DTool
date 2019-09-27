@@ -77,5 +77,6 @@ void ClassName::DestroyInstance()				\
 }
 
 
+
 #define __DEFINE_H__
 #endif

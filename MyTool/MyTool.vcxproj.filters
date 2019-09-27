@@ -70,6 +70,18 @@
     <Filter Include="03.View\02.InspectorView">
       <UniqueIdentifier>{63b68625-c538-43e9-873e-6d8599a99dce}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96.Component">
+      <UniqueIdentifier>{fdc3e1b1-37e7-49de-8468-92f3dcfacf6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.Component\00.TextureRenderer">
+      <UniqueIdentifier>{7bccb6e5-6534-402e-bb40-78ecdc65982f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.View\02.InspectorView\00.HierarchyView">
+      <UniqueIdentifier>{da9840a0-b851-451f-9e0a-a5e5d564baac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\03.ObjectMgr">
+      <UniqueIdentifier>{9f1d2174-cf9c-4265-ac5d-b87d2c812e02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -101,9 +113,6 @@
     </ClInclude>
     <ClInclude Include="TextureMgr.h">
       <Filter>98.Managers\01.TextureMgr</Filter>
-    </ClInclude>
-    <ClInclude Include="Terrain.h">
-      <Filter>05.GameObject\00.Terrain</Filter>
     </ClInclude>
     <ClInclude Include="MyForm.h">
       <Filter>03.View\00.FormView</Filter>
@@ -138,6 +147,18 @@
     <ClInclude Include="UnitTool.h">
       <Filter>04.Dialog\00.UnitTool</Filter>
     </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>96.Component</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureRenderer.h">
+      <Filter>96.Component\00.TextureRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="HierarchyView.h">
+      <Filter>03.View\02.InspectorView\00.HierarchyView</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectMgr.h">
+      <Filter>98.Managers\03.ObjectMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -160,9 +181,6 @@
     </ClCompile>
     <ClCompile Include="TextureMgr.cpp">
       <Filter>98.Managers\01.TextureMgr</Filter>
-    </ClCompile>
-    <ClCompile Include="Terrain.cpp">
-      <Filter>05.GameObject\00.Terrain</Filter>
     </ClCompile>
     <ClCompile Include="MyForm.cpp">
       <Filter>03.View\00.FormView</Filter>
@@ -193,6 +211,18 @@
     </ClCompile>
     <ClCompile Include="UnitTool.cpp">
       <Filter>04.Dialog\00.UnitTool</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>96.Component</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureRenderer.cpp">
+      <Filter>96.Component\00.TextureRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="HierarchyView.cpp">
+      <Filter>03.View\02.InspectorView\00.HierarchyView</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectMgr.cpp">
+      <Filter>98.Managers\03.ObjectMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

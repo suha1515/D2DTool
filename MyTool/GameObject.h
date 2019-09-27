@@ -1,4 +1,5 @@
 #pragma once
+class CComponent;
 class CGameObject
 {
 public:
@@ -10,9 +11,9 @@ public:
 public:
 	virtual int Update();
 	virtual void LateUpdate();
-	virtual void Render();
 
-	virtual HRESULT Initialize();
+	//매개변수 있을시 부모 가된다.
+	virtual HRESULT Initialize(CGameObject*	pParent=nullptr);
 	virtual HRESULT LateInit();
 	virtual void Release();
 
@@ -27,50 +28,78 @@ public:
 	void Translate(const D3DXVECTOR3& vec);
 	void Rotate(const XMFLOAT3& rot);
 	void Scale(const D3DXVECTOR3& vec);
+	void SetWorld();
 
-	//오브젝트 버텍스, 텍스쳐 지정 함수. (임시 컴포넌트로 바꿀것.)
-	void SetVertex(const int& size, const XMFLOAT2* tex);
-	void SetTexture(const CString& tileName);
+public:
+	// 오브젝트 크기 그리기.
+	void DrawBox();
 
-
-	
 public:
 	//위치값 리턴하는 함수.
-	const D3DXVECTOR3& GetPosition() const;
-	const XMFLOAT2& GetTexPos(const int& index);
-	const CString&  GetTexName();
+	const D3DXVECTOR3&  GetPosition()	 const;
 
+	//월드행렬을 리턴하는 함수.
+	const D3DXMATRIX&	GetWorldMat()	 const;
+
+	//오브젝트 이름 반환 함수
+	const wstring&		GetObjectName()  const;
+	//오브젝트 태그 반환 함수
+	const wstring&		GetObjectTag()   const;
+	//오브젝트 레이어 반환함수
+	const wstring&		GetObjectLayer() const;
+	
+
+	//컴포넌트 추가
+public:
+	void  AddComponent(CComponent* component);
+	//컴포넌트 접근
+public:
+	template<typename T>
+	T* GetComponent();
+	
 protected:
-	CDeviceMgr*		m_pDeviceMgr;
-	CTextureMgr*	m_pTextureMgr;
+	// 디바이스 매니저
+	CDeviceMgr*				m_pDeviceMgr;
 
-	CString			m_ObjectName;
-	CString			m_ObjectTag;
-	CString			m_ObjectLayer;
+	// 오브젝트 이름,태그,레이어
+	wstring					m_ObjectName;
+	wstring					m_ObjectTag;
+	wstring					m_ObjectLayer;
 	
 	//오브젝트 크기,회전,이동,월드
-	D3DXMATRIX	m_ScaleMat;
-	D3DXMATRIX	m_RotMat;
-	D3DXMATRIX	m_TransMat;
+	D3DXMATRIX				m_ScaleMat;
+	D3DXMATRIX				m_RotMat;
+	D3DXMATRIX				m_TransMat;
 
-	D3DXMATRIX	m_WorldMat;
+	D3DXMATRIX				m_WorldMat;
 
 	//오브젝트 위치,회전,크기
-	D3DXVECTOR3		  m_Pos;
-	XMFLOAT3		  m_Rotaion;
-	D3DXVECTOR3		  m_Scale;
+	D3DXVECTOR3				m_Pos;
+	XMFLOAT3				m_Rotaion;
+	D3DXVECTOR3				m_Scale;
 
-	//오브젝트 정점
-	Vertex			  m_Vertex[4];
+	//컴포넌트
+	vector<CComponent*>		m_Components;
 
-	//오브젝트 정점,인덱스 버퍼
-	IDirect3DVertexBuffer9*	m_pVB;
-	IDirect3DIndexBuffer9*	m_pIB;
+	bool					m_bIsInit;
+	bool					m_bIsClicked;
 
-	//오브젝트 텍스쳐
-	const TEX_INFO*				m_texInfo;
-
-
-	bool			m_bIsInit;
+private:
+	CGameObject*			m_ParentObj;
+	list<CGameObject*>		m_ChildrenObj;
 };
 
+//컴포넌트 접근
+template<typename T>
+inline T * CGameObject::GetComponent()
+{
+	for (auto& i : m_Components)
+	{
+		if (typeid(*i).name() == typeid(T).name())
+		{
+			return dynamic_cast<T*>(i);
+		}
+			
+	}
+	return nullptr;
+}

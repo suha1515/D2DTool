@@ -11,6 +11,7 @@
 #define IDD_SAVETOOL                    314
 #define IDD_INSPECTOR                   316
 #define IDD_MAPTOOL                     318
+#define IDD_HIERARCHY                   321
 #define IDC_BUTTON1                     1000
 #define IDC_BUTTON2                     1001
 #define IDC_TILE_VIEW                   1003
@@ -30,22 +31,23 @@
 #define IDC_LAYER                       1023
 #define IDC_POSX                        1024
 #define IDC_POSY                        1025
+#define IDC_TREE1                       1025
+#define IDC_HierarchyTree               1025
 #define IDC_POSZ                        1026
 #define IDC_ROTX                        1030
 #define IDC_ROTY                        1031
 #define IDC_ROTZ                        1032
 #define IDC_SCALEX                      1033
 #define IDC_SCALEY                      1034
-#define IDC_POSZ3                       1035
 #define IDC_SACLEZ                      1035
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        321
+#define _APS_NEXT_RESOURCE_VALUE        323
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1025
+#define _APS_NEXT_CONTROL_VALUE         1026
 #define _APS_NEXT_SYMED_VALUE           312
 #endif
 #endif

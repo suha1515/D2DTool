@@ -13,6 +13,9 @@
 
 // CMapSaveTool 대화 상자입니다.
 
+//컴포넌트
+#include "TextureRenderer.h"
+
 IMPLEMENT_DYNAMIC(CMapSaveTool, CDialogEx)
 
 CMapSaveTool::CMapSaveTool(CWnd* pParent /*=NULL*/)
@@ -53,7 +56,7 @@ void CMapSaveTool::OnBnClickedMapSave()
 	CMyToolView* pToolView = dynamic_cast<CMyToolView*>(pFrameWnd->m_MainSplitter.GetPane(0, 1));
 	NULL_CHECK(pToolView);
 
-	const vector<CGameObject*>& temp = pToolView->m_Tile;
+	const vector<CGameObject*>& temp = pToolView->m_GameObject;
 
 	vector<MAP_TILE> temp2;
 	CString m_strPath;
@@ -87,12 +90,13 @@ void CMapSaveTool::OnBnClickedMapSave()
 			{
 				info.pos = i->GetPosition();
 
-				info.tex[0] = i->GetTexPos(0);
-				info.tex[1] = i->GetTexPos(1);
-				info.tex[2] = i->GetTexPos(2);
-				info.tex[3] = i->GetTexPos(3);
+				CTextureRenderer *pRender = i->GetComponent<CTextureRenderer>();
+				info.tex[0] = pRender->GetTexPos(0);
+				info.tex[1] = pRender->GetTexPos(1);
+			    info.tex[2] = pRender->GetTexPos(2);
+				info.tex[3] = pRender->GetTexPos(3);
 
-				_tcscpy(info.texture, i->GetTexName());
+				_tcscpy(info.texture, pRender->GetTexName().c_str());
 				file.Write(&info, sizeof(MAP_TILE));
 				temp2.push_back(info);
 			}
@@ -125,13 +129,13 @@ void CMapSaveTool::OnBnClickedMapSave()
 			for (auto& i : temp)
 			{
 				info.pos = i->GetPosition();
+				CTextureRenderer *pRender = i->GetComponent<CTextureRenderer>();
+				info.tex[0] = pRender->GetTexPos(0);
+				info.tex[1] = pRender->GetTexPos(1);
+				info.tex[2] = pRender->GetTexPos(2);
+				info.tex[3] = pRender->GetTexPos(3);
 
-				info.tex[0] = i->GetTexPos(0);
-				info.tex[1] = i->GetTexPos(1);
-				info.tex[2] = i->GetTexPos(2);
-				info.tex[3] = i->GetTexPos(3);
-
-				_tcscpy(info.texture, i->GetTexName());
+				_tcscpy(info.texture, pRender->GetTexName().c_str());
 				file.Write(&info, sizeof(MAP_TILE));
 				m_map[tileName].push_back(info);
 			}
@@ -217,23 +221,23 @@ void CMapSaveTool::OnLbnDblclkMaplist()
 		NULL_CHECK(pToolView);
 
 		//타일안에 무엇인가 있을경우..
-		if (!pToolView->m_Tile.empty())
+		if (!pToolView->m_GameObject.empty())
 		{
-			for (auto& i : pToolView->m_Tile)
+			for (auto& i : pToolView->m_GameObject)
 			{
 				SafeDelete(i);
 			}
-			pToolView->m_Tile.clear();
+			pToolView->m_GameObject.clear();
 		}
 		for (auto& i : m_map[mapName])
 		{
 			CGameObject* pGameObject = new CGameObject;
 			pGameObject->Initialize();
 			pGameObject->SetPosition(i.pos);
-			pGameObject->SetTexture(i.texture);
-			pGameObject->SetVertex(16, i.tex);
+			pGameObject->GetComponent<CTextureRenderer>()->SetTexture(i.texture);
+			pGameObject->GetComponent<CTextureRenderer>()->SetVertex(16, i.tex);
 
-			pToolView->m_Tile.push_back(pGameObject);
+			pToolView->m_GameObject.push_back(pGameObject);
 		}
 		pToolView->Invalidate(FALSE);
 	}

@@ -15,10 +15,12 @@
 #include "MainFrm.h"
 #include "MiniView.h"
 #include "MyForm.h"
-#include "Terrain.h"
 
 #include "GameObject.h"
 #include "Camera.h"
+
+//컴포넌트
+#include "TextureRenderer.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -65,10 +67,10 @@ CMyToolView::~CMyToolView()
 {
 	cout << "툴뷰소멸자" << endl;
 
-	for (auto &i : m_Tile)
+	for (auto &i : m_GameObject)
 		SafeDelete(i);
-	m_Tile.clear();
-	m_Tile.shrink_to_fit();
+	m_GameObject.clear();
+	m_GameObject.shrink_to_fit();
 }
 
 BOOL CMyToolView::PreCreateWindow(CREATESTRUCT& cs)
@@ -95,6 +97,7 @@ void CMyToolView::OnDraw(CDC* /*pDC*/)
 	m_Cam->SetTransform();
 
 	m_pDeviceMgr->Render_Begin();
+
 	D3DXMATRIX* mat = m_Cam->GetViewProjMatrix();
 
 	
@@ -120,7 +123,6 @@ void CMyToolView::OnDraw(CDC* /*pDC*/)
 
 
 	D3DXMATRIX matTrans;
-	
 	D3DXMATRIX matScale;
 	D3DXMatrixScaling(&matScale, 1.0f, -1.0f, 1.0f);
 	D3DXMATRIX matWorld;
@@ -139,15 +141,15 @@ void CMyToolView::OnDraw(CDC* /*pDC*/)
 	
 	}
 	m_pDeviceMgr->GetSprite()->End();
-	
-	for (auto& i : m_Tile)
-		i->Render();
+
+	for (auto& i : m_GameObject)
+	{
+		i->Update();
+	}
 
 	m_pDeviceMgr->Render_End(m_hWnd);
 	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
 }
-
-
 // CMyToolView 인쇄
 
 BOOL CMyToolView::OnPreparePrinting(CPrintInfo* pInfo)
@@ -279,6 +281,7 @@ void CMyToolView::OnSize(UINT nType, int cx, int cy)
 	if (m_Cam == nullptr)
 		m_Cam = new CCamera;
 	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(2.0f, 2.0f, 1.0f));
+
 }
 
 //타일 입력
@@ -301,7 +304,7 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 	if (tex != nullptr)
 	{
 		//타일 중복 검사 - 중복시 텍스처 정보만 바꾼다.
-		auto iter_find = find_if(m_Tile.begin(),m_Tile.end(),
+		auto iter_find = find_if(m_GameObject.begin(), m_GameObject.end(),
 		[&mousePos](CGameObject* pGameObject)
 		{
 			if (pGameObject->GetPosition() == D3DXVECTOR3(mousePos.x, mousePos.y, 1.0f))
@@ -311,19 +314,20 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 			return false;
 		});
 
-		if (m_Tile.end() != iter_find)
+		if (m_GameObject.end() != iter_find)
 		{
-			(*iter_find)->SetTexture(tileName);
-			(*iter_find)->SetVertex(16, tex);
+			(*iter_find)->GetComponent<CTextureRenderer>()->SetTexture((LPCTSTR)tileName);
+			(*iter_find)->GetComponent<CTextureRenderer>()->SetVertex(16, tex);
 		}
 		else
 		{
 			CGameObject* pGameObject = new CGameObject;
 			pGameObject->Initialize();
-			pGameObject->SetTexture(tileName);
-			pGameObject->SetPosition(D3DXVECTOR3(mousePos.x, mousePos.y, 1.0f));
-			pGameObject->SetVertex(16, tex);
-			m_Tile.push_back(pGameObject);
+			pGameObject->SetPosition(D3DXVECTOR3(mousePos.x, mousePos.y, 0.0f));
+			pGameObject->GetComponent<CTextureRenderer>()->SetTexture((LPCTSTR)tileName);
+			pGameObject->GetComponent<CTextureRenderer>()->SetVertex(16, tex);
+			
+			m_GameObject.push_back(pGameObject);
 		}
 		Invalidate(FALSE);
 	}
@@ -339,20 +343,20 @@ void CMyToolView::OnRButtonDown(UINT nFlags, CPoint point)
 	const CPoint mousePos = MousePicking(point);
 
 	//해당 좌표의 오브젝트를 찾는다. 타일중에서.
-	auto iter_find = find_if(m_Tile.begin(),m_Tile.end(),
+	auto iter_find = find_if(m_GameObject.begin(), m_GameObject.end(),
 	[&mousePos](CGameObject* pObject)
 	{
-		if (pObject->GetPosition() == D3DXVECTOR3(mousePos.x, mousePos.y, 1.0f))
+		if (pObject->GetPosition() == D3DXVECTOR3(mousePos.x, mousePos.y, 0.0f))
 		{
 			return true;
 		}
 		else return false;
 	});
 
-	if (m_Tile.end() != iter_find)
+	if (m_GameObject.end() != iter_find)
 	{
 		SafeDelete((*iter_find));
-		m_Tile.erase(iter_find);
+		m_GameObject.erase(iter_find);
 		Invalidate(FALSE);
 	}
 }
