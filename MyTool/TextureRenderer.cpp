@@ -1,12 +1,13 @@
 #include "stdafx.h"
 #include "TextureRenderer.h"
 #include "GameObject.h"
+#include "Shader.h"
 
 
 CTextureRenderer::CTextureRenderer()
 	:m_pDeviceMgr(CDeviceMgr::GetInstance()),
 	m_pTextureMgr(CTextureMgr::GetInstance()),
-	m_texInfo(nullptr),m_pVB(nullptr),m_pIB(nullptr)
+	m_texInfo(nullptr),m_pVB(nullptr),m_pIB(nullptr),m_pShader(nullptr)
 {
 }
 
@@ -28,21 +29,43 @@ void CTextureRenderer::Initialize()
 	tex[2].x = 0.0f, tex[2].y = 0.0f;
 	tex[3].x = 0.0f, tex[3].y = 0.0f;
 	SetVertex(16, tex);
+
+	m_pShader = CShaderMgr::GetInstance()->GetEffect(L"firstShader");
+
 }
 
 void CTextureRenderer::Render(const D3DXMATRIX& world)
 {
 	if (m_texInfo != nullptr)
 	{
-		m_pDeviceMgr->GetDevice()->SetTransform(D3DTS_WORLD, &world);
+	
+		LPD3DXEFFECT pEffect = m_pShader->GetEffect();
+		D3DXMATRIX   viewMat;
+		D3DXMATRIX   projMat;
+
+		m_pDeviceMgr->GetDevice()->GetTransform(D3DTS_VIEW, &viewMat);
+		m_pDeviceMgr->GetDevice()->GetTransform(D3DTS_PROJECTION, &projMat);
+
+		//글로벌 변수 전해줘야함.
+		pEffect->SetMatrix("worldMat", &world);
+		pEffect->SetMatrix("viewMat",  &viewMat);
+		pEffect->SetMatrix("projMat", &projMat);
+
+		pEffect->SetTexture("tex0", m_texInfo->pTexture);
+		//이 밑에 두함수 조사.
+		pEffect->Begin(nullptr, 0);	//쉐이더에서 테크닉을 정해준다. 2번째인자가 쉐이더 파일에서 테크닉이 정의된 순서 0이 첫번쨰
+		pEffect->BeginPass(0);		//pass는 말그대로 pass 위와 똑같다.
+
+		//m_pDeviceMgr->GetDevice()->SetTransform(D3DTS_WORLD, &world);
 
 		
 		m_pDeviceMgr->GetDevice()->SetStreamSource(0, m_pVB, 0, sizeof(Vertex));
 		m_pDeviceMgr->GetDevice()->SetIndices(m_pIB);
 		m_pDeviceMgr->GetDevice()->SetFVF(FVF_VERTEX);
-		m_pDeviceMgr->GetDevice()->SetTexture(0, m_texInfo->pTexture);
+		//m_pDeviceMgr->GetDevice()->SetTexture(0, m_texInfo->pTexture);
 
-		m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
+		//m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
+		//m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
 		m_pDeviceMgr->GetDevice()->DrawIndexedPrimitive(
 			D3DPT_TRIANGLELIST,
 			0,
@@ -51,7 +74,10 @@ void CTextureRenderer::Render(const D3DXMATRIX& world)
 			0,
 			2
 		);
-		m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
+		
+
+		pEffect->EndPass();
+		pEffect->End();
 	}	
 }
 
@@ -104,7 +130,7 @@ const XMFLOAT2 & CTextureRenderer::GetTexPos(const int & index)
 		return XMFLOAT2(0.0f, 0.0f);
 	}
 	// TODO: 여기에 반환 구문을 삽입합니다.
-	return XMFLOAT2(m_Vertex[index]._u, m_Vertex[index]._v);
+	return XMFLOAT2(m_Vertex[index].tex.x, m_Vertex[index].tex.y);
 }
 
 const tstring & CTextureRenderer::GetTexName()

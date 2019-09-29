@@ -45,6 +45,7 @@ CMapTool::~CMapTool()
 
 	m_mapTileSetData.clear();
 
+	cout << "¸ÊÅø ¼Ò¸êÀÚ" << endl;
 	m_pTextureMgr->DestroyInstance();
 	m_pDeviceMgr->DestroyInstance();
 

@@ -15,6 +15,7 @@
 #include "MainFrm.h"
 #include "MiniView.h"
 #include "MyForm.h"
+#include "InspectView.h"
 
 #include "GameObject.h"
 #include "Camera.h"
@@ -52,6 +53,8 @@ CMyToolView::CMyToolView()
 	:m_pDeviceMgr(CDeviceMgr::GetInstance()),
 	m_pTextureMgr(CTextureMgr::GetInstance()),
 	m_pCameraMgr(CCameraMgr::GetInstance()),
+	m_pObjectMgr(CObjectMgr::GetInstance()),
+	m_pShaderMgr(CShaderMgr::GetInstance()),
 	m_Cam(nullptr)
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
@@ -60,6 +63,7 @@ CMyToolView::CMyToolView()
 	HRESULT hr = 0;
 
 	hr = m_pDeviceMgr->InitDevice(CDeviceMgr::MODE_WIN);
+	m_pShaderMgr->Initialize();
 	FAILED_CHECK_MSG(hr, L"InitDevice Failed");
 }
 
@@ -71,6 +75,9 @@ CMyToolView::~CMyToolView()
 		SafeDelete(i);
 	m_GameObject.clear();
 	m_GameObject.shrink_to_fit();
+
+	m_pObjectMgr->DestroyInstance();
+	m_pShaderMgr->DestroyInstance();
 }
 
 BOOL CMyToolView::PreCreateWindow(CREATESTRUCT& cs)
@@ -142,10 +149,12 @@ void CMyToolView::OnDraw(CDC* /*pDC*/)
 	}
 	m_pDeviceMgr->GetSprite()->End();
 
-	for (auto& i : m_GameObject)
+	m_pObjectMgr->Update();
+
+	/*for (auto& i : m_GameObject)
 	{
 		i->Update();
-	}
+	}*/
 
 	m_pDeviceMgr->Render_End(m_hWnd);
 	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
@@ -246,22 +255,22 @@ void CMyToolView::OnInitialUpdate()
 	m_pCameraMgr->SetMainCamera(m_Cam);
 	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	
-	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
+	//m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	//m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+	//m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+	//m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
 
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_BORDERCOLOR, 0x000000ff);
+	//m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
+	//m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
+	//m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_BORDERCOLOR, 0x000000ff);
 
 	//// use alpha channel in texture for alpha 이미지에서 알파값 가져옴
-	m_pDeviceMgr->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-	m_pDeviceMgr->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
+	//m_pDeviceMgr->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+	//m_pDeviceMgr->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
 
 	//// set blending factors so that alpha component determines transparency
-	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	//m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	//m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	//빛끔
 	//m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_LIGHTING, false);
@@ -293,8 +302,12 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 	NULL_CHECK(pFrameWnd);
 
+	//폼 가져오기
 	CMyForm* pMyForm = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
 	NULL_CHECK(pMyForm);
+
+	CInspectView* m_pInspect = dynamic_cast<CInspectView*>(pFrameWnd->m_MainSplitter.GetPane(0, 2));
+	NULL_CHECK_MSG(m_pInspect, L"inspectorview nullptr");
 
 
 	CString tileName = pMyForm->GetMapTool()->GetTileName();
@@ -324,10 +337,15 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 			CGameObject* pGameObject = new CGameObject;
 			pGameObject->Initialize();
 			pGameObject->SetPosition(D3DXVECTOR3(mousePos.x, mousePos.y, 0.0f));
+
+			wstring name = L"GameObject" + to_wstring(m_pObjectMgr->GetRootObjectCount());
+			pGameObject->SetObjectName(name);
 			pGameObject->GetComponent<CTextureRenderer>()->SetTexture((LPCTSTR)tileName);
 			pGameObject->GetComponent<CTextureRenderer>()->SetVertex(16, tex);
 			
-			m_GameObject.push_back(pGameObject);
+			m_pObjectMgr->AddObject(pGameObject);
+			m_pInspect->m_HierarchyView.AddObject(pGameObject);
+			//m_GameObject.push_back(pGameObject);
 		}
 		Invalidate(FALSE);
 	}

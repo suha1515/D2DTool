@@ -28,7 +28,9 @@ public:
 	CTreeCtrl m_Hierarchy;
 	virtual BOOL OnInitDialog();
 
-	list<std::pair<CGameObject*, HTREEITEM>> m_objectlist;
+	//list<std::pair<CGameObject*, HTREEITEM>> m_objectlist;
+
+	map<HTREEITEM, CGameObject*>	m_objectlist;
 
 	afx_msg void OnNMClickHierarchytree(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnTvnSelchangedHierarchytree(NMHDR *pNMHDR, LRESULT *pResult);

@@ -5,15 +5,12 @@ class CComponent
 public:
 	explicit CComponent();
 	virtual ~CComponent();
-
 public:
 			void		SetOn(bool on);
 	virtual void		Action(CGameObject* pObject) = 0;
 public:
 	template<typename T>
 	T* GetComponent();
-
-
 private:
 	bool		m_ComponentOn;
 };

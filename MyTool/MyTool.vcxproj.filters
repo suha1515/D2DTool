@@ -82,6 +82,12 @@
     <Filter Include="98.Managers\03.ObjectMgr">
       <UniqueIdentifier>{9f1d2174-cf9c-4265-ac5d-b87d2c812e02}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96.Shaders">
+      <UniqueIdentifier>{0fd4adf0-09e0-4d41-8958-17c0d3fac582}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.Shaders\fxfile">
+      <UniqueIdentifier>{c0cfc675-b487-4ed4-ad17-e7809b8d6e10}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -159,6 +165,12 @@
     <ClInclude Include="ObjectMgr.h">
       <Filter>98.Managers\03.ObjectMgr</Filter>
     </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>96.Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderMgr.h">
+      <Filter>96.Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -224,6 +236,12 @@
     <ClCompile Include="ObjectMgr.cpp">
       <Filter>98.Managers\03.ObjectMgr</Filter>
     </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>96.Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderMgr.cpp">
+      <Filter>96.Shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MyTool.rc">
@@ -245,5 +263,10 @@
     <Image Include="res\Toolbar.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Shaders\myShader1.fx">
+      <Filter>96.Shaders\fxfile</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

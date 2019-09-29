@@ -12,10 +12,15 @@ CGameObject::CGameObject(): m_bIsInit(false),m_pDeviceMgr(CDeviceMgr::GetInstanc
 
 CGameObject::~CGameObject()
 {
+	//컴포넌트 제거
 	for (auto& i : m_Components)
 		SafeDelete(i);
-
 	m_Components.clear();
+
+	//자식 오브젝트 존재시 모두 제거
+	for (auto& i : m_ChildrenObj)
+		SafeDelete(i);
+	m_ChildrenObj.clear();
 }
 
 int CGameObject::Update()
@@ -63,6 +68,13 @@ HRESULT CGameObject::Initialize(CGameObject* pParent)
 	SetWorld();
 
 	m_bIsClicked = false;
+
+	//이름,태그,레이어 지정
+	SetObjectName(L"GameObject");
+	SetObjectTag(L"none");
+	SetObjectLayer(L"Layer0");
+
+	
 
 	//임시 렌더 컴포넌트 넣기.
 	CTextureRenderer* pRender = new CTextureRenderer;
@@ -126,6 +138,21 @@ void CGameObject::SetWorld()
 	m_WorldMat = m_ScaleMat* m_RotMat * m_TransMat;
 }
 
+void CGameObject::SetObjectName(const wstring & name)
+{
+	m_ObjectName = name;
+}
+
+void CGameObject::SetObjectTag(const wstring & tag)
+{
+	m_ObjectTag = tag;
+}
+
+void CGameObject::SetObjectLayer(const wstring & layer)
+{
+	m_ObjectLayer = layer;
+}
+
 void CGameObject::DrawBox()
 {
 	//기본 오브젝트 박스 렌더링.
@@ -179,6 +206,22 @@ const wstring & CGameObject::GetObjectLayer() const
 void CGameObject::AddComponent(CComponent * component)
 {
 	m_Components.push_back(component);
+}
+
+CGameObject * CGameObject::GetParentObject()
+{
+	return m_ParentObj;
+}
+
+CGameObject * CGameObject::GetChildrenObject(int index)
+{
+	return m_ChildrenObj[index];
+}
+
+vector<CGameObject*>& CGameObject::GetChildernVector()
+{
+	// TODO: 여기에 반환 구문을 삽입합니다.
+	return m_ChildrenObj;
 }
 
 

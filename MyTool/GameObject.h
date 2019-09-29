@@ -30,6 +30,11 @@ public:
 	void Scale(const D3DXVECTOR3& vec);
 	void SetWorld();
 
+	//오브젝트 태그,이름,레이어 지정
+	void SetObjectName(const wstring& name);
+	void SetObjectTag(const wstring& tag);
+	void SetObjectLayer(const wstring& layer);
+
 public:
 	// 오브젝트 크기 그리기.
 	void DrawBox();
@@ -56,6 +61,16 @@ public:
 public:
 	template<typename T>
 	T* GetComponent();
+
+public:
+	// *부모,자식 오브젝트에 대한 함수들*
+	//부모 오브젝트 반환 함수
+	CGameObject*		GetParentObject();
+	//자식 오브젝트 반환 함수
+	CGameObject*		GetChildrenObject(int index);
+	//자식 오브젝트 벡터 반환
+	vector<CGameObject*>& GetChildernVector();
+
 	
 protected:
 	// 디바이스 매니저
@@ -81,12 +96,13 @@ protected:
 	//컴포넌트
 	vector<CComponent*>		m_Components;
 
+
 	bool					m_bIsInit;
 	bool					m_bIsClicked;
 
 private:
 	CGameObject*			m_ParentObj;
-	list<CGameObject*>		m_ChildrenObj;
+	vector<CGameObject*>	m_ChildrenObj;
 };
 
 //컴포넌트 접근

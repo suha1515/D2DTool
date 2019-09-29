@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 
+class CShader;
 class CTextureRenderer : public CComponent
 {
 public:
@@ -40,5 +41,9 @@ private:
 	//오브젝트 텍스쳐
 	const TEX_INFO*				m_texInfo;
 
+	
+	//렌더러 쉐이더
+	shared_ptr<CShader>			m_pShader;
+	
 };
 

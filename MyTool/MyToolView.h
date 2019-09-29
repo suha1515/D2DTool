@@ -19,9 +19,12 @@ public:
 
 // 작업입니다.
 public:
-	CDeviceMgr *	m_pDeviceMgr;
-	CTextureMgr*	m_pTextureMgr;
-	CCameraMgr*		m_pCameraMgr;
+	CDeviceMgr *	m_pDeviceMgr;		//디바이스 매니저
+	CTextureMgr*	m_pTextureMgr;		//텍스처   매니저
+	CCameraMgr*		m_pCameraMgr;		//카메라   매니저
+	CObjectMgr*		m_pObjectMgr;		//오브젝트 매니저
+	CShaderMgr*		m_pShaderMgr;		//쉐이더   매니저
+
 
 	D3DXVECTOR3		m_Line[2];
 

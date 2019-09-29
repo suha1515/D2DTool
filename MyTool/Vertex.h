@@ -10,13 +10,16 @@ struct Vertex
 		float nx, float ny, float nz,
 		float u, float v)
 	{
-		_x = x;  _y = y;  _z = z;
-		_nx = nx; _ny = ny; _nz = nz;
-		_u = u;  _v = v;
+		pos.x = x;  pos.y = y;  pos.z = z;
+		normal.x = nx; normal.y= ny; normal.z= nz;
+		tex.x = u;  tex.y = v;
 	}
-	float _x, _y, _z;
-	float _nx, _ny, _nz;
-	float _u, _v; // texture coordinates
+	D3DXVECTOR3 pos;
+	D3DXVECTOR3 normal;
+	D3DXVECTOR2 tex;
+	//float _x, _y, _z;
+	//float _nx, _ny, _nz;
+	//float _u, _v; // texture coordinates
 };
 #define FVF_VERTEX (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1)
 

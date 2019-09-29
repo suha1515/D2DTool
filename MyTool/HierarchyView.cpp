@@ -31,10 +31,30 @@ void CHierarchyView::DoDataExchange(CDataExchange* pDX)
 
 void CHierarchyView::AddObject(CGameObject * object)
 {
-	CString objectName = object->GetObjectName().c_str();
+	HTREEITEM selItem = m_Hierarchy.GetSelectedItem();
 
-	HTREEITEM item = m_Hierarchy.InsertItem(objectName, 0, 0, TVI_ROOT, TVI_LAST);
-	m_objectlist.push_back(make_pair(object,item));
+	//선택된 아이템이 있을경우. 자식으로 생성
+	if (selItem != NULL)
+	{
+		CGameObject* parentObj= m_objectlist[selItem];
+		int index =  parentObj->GetChildernVector().size() + 1;
+		wstring objectName = parentObj->GetObjectName() +L"_child_"+to_wstring(index);
+		HTREEITEM item = m_Hierarchy.InsertItem(objectName.c_str(), 0, 0, selItem, TVI_LAST);
+		m_objectlist.insert({ item,object});
+		parentObj->GetChildernVector().push_back(object);
+	}
+	//없을시 새로운 항목 생성.
+	else
+	{
+		CString objectName = object->GetObjectName().c_str();
+
+		HTREEITEM item = m_Hierarchy.InsertItem(objectName, 0, 0, TVI_ROOT, TVI_LAST);
+		m_objectlist.insert({ item,object, });
+	}
+	
+	//m_objectlist.push_back(make_pair(object,item));
+
+	
 }
 
 
@@ -54,13 +74,13 @@ BOOL CHierarchyView::OnInitDialog()
 
 	// TODO:  여기에 추가 초기화 작업을 추가합니다.
 
-	HTREEITEM root, hChild1, hChild2,root2;
+	/*HTREEITEM root, hChild1, hChild2,root2;
 
 	root    = m_Hierarchy.InsertItem(L"root", 0, 0, TVI_ROOT, TVI_LAST);
 	root2   = m_Hierarchy.InsertItem(L"Third", 0, 0, TVI_ROOT, TVI_LAST);
 	hChild1 = m_Hierarchy.InsertItem(L"First", 0, 0, root, TVI_LAST);
 	hChild2 = m_Hierarchy.InsertItem(L"Second", 0, 0, root, TVI_LAST);
-	m_Hierarchy.InsertItem(L"Forth", 0, 0, root2, TVI_LAST);
+	m_Hierarchy.InsertItem(L"Forth", 0, 0, root2, TVI_LAST);*/
 	
 
 	return TRUE;  // return TRUE unless you set the focus to a control
