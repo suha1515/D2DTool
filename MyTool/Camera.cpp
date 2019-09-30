@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "GameObject.h"
 
+#include "Transform.h"
 
 CCamera::CCamera()
 {
@@ -36,7 +37,10 @@ void CCamera::Update()
 	//m_CamPos.x = this->width / 2.0f, m_CamPos.y = this->height / 2.0f;
 	if (m_Following != nullptr)
 	{
-		m_CamPos = m_Following->GetPosition();
+		CTransform* pTransform = m_Following->GetComponent<CTransform>();
+		NULL_CHECK_MSG_RETURN(pTransform, L"Inspect View GameObject Transform is null");
+
+		m_CamPos = pTransform->GetPosition();
 	}
 	m_ViewMat = D3DXMATRIX(
 		m_ScaleFactors.x * cosf(m_fAngle), m_ScaleFactors.x * sinf(m_fAngle), 0, 0,

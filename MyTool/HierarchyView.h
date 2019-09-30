@@ -22,7 +22,8 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	void AddObject(CGameObject* object);
+	int AddObject(CGameObject* object);
+	void Update();
 
 public:
 	CTreeCtrl m_Hierarchy;
@@ -32,7 +33,13 @@ public:
 
 	map<HTREEITEM, CGameObject*>	m_objectlist;
 
+	CGameObject*					m_CurClicked;
+	CGameObject*					m_PreClicked;
+
 	afx_msg void OnNMClickHierarchytree(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnTvnSelchangedHierarchytree(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnNMDblclkHierarchytree(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnBnClickedDeselectAll();
+	afx_msg void OnBnClickedAddObject();
+	afx_msg void OnBnClickedDeleteObject();
 };

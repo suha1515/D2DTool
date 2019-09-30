@@ -20,8 +20,10 @@
 #include "GameObject.h"
 #include "Camera.h"
 
-//컴포넌트
+//텍스쳐 컴포넌트
 #include "TextureRenderer.h"
+//트랜스폼 컴포넌트
+#include "Transform.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -44,6 +46,8 @@ BEGIN_MESSAGE_MAP(CMyToolView, CScrollView)
 	ON_WM_CHAR()
 	ON_WM_MOUSEWHEEL()
 	ON_WM_RBUTTONDOWN()
+	ON_WM_CONTEXTMENU()
+	ON_COMMAND(ID_32771, &CMyToolView::OnObjectPopUp)
 END_MESSAGE_MAP()
 
 // CMyToolView 생성/소멸
@@ -65,6 +69,8 @@ CMyToolView::CMyToolView()
 	hr = m_pDeviceMgr->InitDevice(CDeviceMgr::MODE_WIN);
 	m_pShaderMgr->Initialize();
 	FAILED_CHECK_MSG(hr, L"InitDevice Failed");
+
+	
 }
 
 CMyToolView::~CMyToolView()
@@ -151,15 +157,9 @@ void CMyToolView::OnDraw(CDC* /*pDC*/)
 
 	m_pObjectMgr->Update();
 
-	/*for (auto& i : m_GameObject)
-	{
-		i->Update();
-	}*/
-
 	m_pDeviceMgr->Render_End(m_hWnd);
-	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
 }
-// CMyToolView 인쇄
+
 
 BOOL CMyToolView::OnPreparePrinting(CPrintInfo* pInfo)
 {
@@ -169,12 +169,12 @@ BOOL CMyToolView::OnPreparePrinting(CPrintInfo* pInfo)
 
 void CMyToolView::OnBeginPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
-	// TODO: 인쇄하기 전에 추가 초기화 작업을 추가합니다.
+	
 }
 
 void CMyToolView::OnEndPrinting(CDC* /*pDC*/, CPrintInfo* /*pInfo*/)
 {
-	// TODO: 인쇄 후 정리 작업을 추가합니다.
+	
 }
 
 
@@ -214,17 +214,21 @@ void CMyToolView::OnInitialUpdate()
 
 	CScrollView::SetScrollSizes(MM_TEXT, CSize(cx, cy));
 
-	// 프레임 윈도우를 얻어온다.
-	// AfxGetApp: CWinApp의 포인터를 얻어오는 MFC 전역 함수.
-	// GetMainWnd: MainFrame의 포인터를 얻어오는 CWinApp의 멤버함수.
-	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
-	NULL_CHECK(pMainFrm);
+	m_pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	NULL_CHECK(m_pFrameWnd);
+
+	//폼 가져오기
+	m_pMyForm = dynamic_cast<CMyForm*>(m_pFrameWnd->m_SecondSplitter.GetPane(1, 0));
+	NULL_CHECK(m_pMyForm);
+
+	m_pInspect = dynamic_cast<CInspectView*>(m_pFrameWnd->m_MainSplitter.GetPane(0, 2));
+	NULL_CHECK_MSG(m_pInspect, L"inspectorview nullptr");
 
 	// MainFrame의 크기를 얻어온다.
 	// GetWindowRect: 윈도우의 전체 테두리를 포함한 사각형 크기를 얻어오는 함수.
 	// 이 때 left, top, right, bottom은 스크린좌표 기준이다.
 	RECT rcMain = {};
-	pMainFrm->GetWindowRect(&rcMain);
+	m_pFrameWnd->GetWindowRect(&rcMain);
 	::SetRect(&rcMain, 0, 0, rcMain.right - rcMain.left, rcMain.bottom - rcMain.top);
 
 	// View의 크기를 얻어온다.
@@ -239,7 +243,7 @@ void CMyToolView::OnInitialUpdate()
 	int iGapY = rcMain.bottom - rcView.bottom;
 
 	// MainFrame의 윈도우 위치와 크기를 다시 조정.
-	pMainFrm->SetWindowPos(
+	m_pFrameWnd->SetWindowPos(
 		nullptr, 0, 0, WINCX + iGapX, WINCY + iGapY, SWP_NOZORDER);
 	
 
@@ -254,26 +258,6 @@ void CMyToolView::OnInitialUpdate()
 		m_Cam = new CCamera;
 	m_pCameraMgr->SetMainCamera(m_Cam);
 	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(1.0f, 1.0f, 1.0f));
-	
-	//m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-	//m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-	//m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-	//m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
-
-	//m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
-	//m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);
-	//m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_BORDERCOLOR, 0x000000ff);
-
-	//// use alpha channel in texture for alpha 이미지에서 알파값 가져옴
-	//m_pDeviceMgr->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-	//m_pDeviceMgr->GetDevice()->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
-
-	//// set blending factors so that alpha component determines transparency
-	//m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	//m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-
-	//빛끔
-	//m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_LIGHTING, false);
 
 }
 
@@ -299,19 +283,8 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	CView::OnLButtonDown(nFlags, point);
 
-	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
-	NULL_CHECK(pFrameWnd);
-
-	//폼 가져오기
-	CMyForm* pMyForm = dynamic_cast<CMyForm*>(pFrameWnd->m_SecondSplitter.GetPane(1, 0));
-	NULL_CHECK(pMyForm);
-
-	CInspectView* m_pInspect = dynamic_cast<CInspectView*>(pFrameWnd->m_MainSplitter.GetPane(0, 2));
-	NULL_CHECK_MSG(m_pInspect, L"inspectorview nullptr");
-
-
-	CString tileName = pMyForm->GetMapTool()->GetTileName();
-	const XMFLOAT2* tex = pMyForm->GetMapTool()->GetTexPos();
+	CString tileName = m_pMyForm->GetMapTool()->GetTileName();
+	const XMFLOAT2* tex = m_pMyForm->GetMapTool()->GetTexPos();
 
 	const CPoint mousePos = MousePicking(point);
 	if (tex != nullptr)
@@ -320,7 +293,8 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 		auto iter_find = find_if(m_GameObject.begin(), m_GameObject.end(),
 		[&mousePos](CGameObject* pGameObject)
 		{
-			if (pGameObject->GetPosition() == D3DXVECTOR3(mousePos.x, mousePos.y, 1.0f))
+			CTransform* pTransform = pGameObject->GetComponent<CTransform>();
+			if (pTransform->GetPosition() == D3DXVECTOR3(mousePos.x, mousePos.y, 1.0f))
 			{
 				return true;
 			}
@@ -334,18 +308,33 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 		}
 		else
 		{
+			wstring name = L"GameObject" + to_wstring(m_pObjectMgr->GetRootObjectCount());
+
 			CGameObject* pGameObject = new CGameObject;
 			pGameObject->Initialize();
-			pGameObject->SetPosition(D3DXVECTOR3(mousePos.x, mousePos.y, 0.0f));
-
-			wstring name = L"GameObject" + to_wstring(m_pObjectMgr->GetRootObjectCount());
 			pGameObject->SetObjectName(name);
-			pGameObject->GetComponent<CTextureRenderer>()->SetTexture((LPCTSTR)tileName);
-			pGameObject->GetComponent<CTextureRenderer>()->SetVertex(16, tex);
+
+			//트랜스폼 컴포넌트
+			CTransform* pTransform = new CTransform;
+			pTransform->Initialize();
+			pTransform->SetPosition(D3DXVECTOR3(mousePos.x, mousePos.y, 0.0f));
+
+			pGameObject->AddComponent(pTransform);
+
+			// 렌더 컴포넌트 넣기.
+			CTextureRenderer* pRender = new CTextureRenderer;
+			pRender->Initialize();
+			pRender->SetTexture((LPCTSTR)tileName);
+			pRender->SetVertex(16, tex);
+
+			pGameObject->AddComponent(pRender);
+
 			
-			m_pObjectMgr->AddObject(pGameObject);
-			m_pInspect->m_HierarchyView.AddObject(pGameObject);
-			//m_GameObject.push_back(pGameObject);
+			//0을 반환한 경우는 부모로생성하는것
+			if (m_pInspect->m_HierarchyView.AddObject(pGameObject) == 0)
+			{
+				m_pObjectMgr->AddObject(pGameObject);
+			}
 		}
 		Invalidate(FALSE);
 	}
@@ -364,7 +353,8 @@ void CMyToolView::OnRButtonDown(UINT nFlags, CPoint point)
 	auto iter_find = find_if(m_GameObject.begin(), m_GameObject.end(),
 	[&mousePos](CGameObject* pObject)
 	{
-		if (pObject->GetPosition() == D3DXVECTOR3(mousePos.x, mousePos.y, 0.0f))
+		CTransform* pTransform = pObject->GetComponent<CTransform>();
+		if (pTransform->GetPosition() == D3DXVECTOR3(mousePos.x, mousePos.y, 0.0f))
 		{
 			return true;
 		}
@@ -384,6 +374,8 @@ void CMyToolView::OnMouseMove(UINT nFlags, CPoint point)
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 
 	CView::OnMouseMove(nFlags, point);
+
+	m_MousePoint = point;
 }
 
 
@@ -473,4 +465,47 @@ const CPoint& CMyToolView::MousePicking(const CPoint& point)
 	cout << newX << " , " << newY << endl;
 
 	return CPoint(newX, newY);
+}
+
+//오른쪽 클릭시 나오는것
+void CMyToolView::OnContextMenu(CWnd* pWnd, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+
+	CMenu popup;
+	CMenu* pMenu;
+	popup.LoadMenuW(IDR_MENU3);
+	
+	pMenu = popup.GetSubMenu(0);
+	pMenu->TrackPopupMenu(TPM_LEFTALIGN || TPM_RIGHTBUTTON, point.x, point.y,this);
+}
+
+
+//오브젝트 추가
+void CMyToolView::OnObjectPopUp()
+{
+	
+
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	CPoint mousePos = MousePicking(m_MousePoint);
+
+	wstring name = L"GameObject" + to_wstring(m_pObjectMgr->GetRootObjectCount());
+
+	CGameObject* pGameObject = new CGameObject;
+	pGameObject->Initialize();
+	pGameObject->SetObjectName(name);
+
+	//트랜스폼 컴포넌트
+	CTransform* pTransform = new CTransform;
+	pTransform->Initialize();
+	pTransform->SetPosition(D3DXVECTOR3(mousePos.x, mousePos.y, 0.0f));
+
+	pGameObject->AddComponent(pTransform);
+
+	//0을 반환한 경우는 부모로생성하는것
+	if (m_pInspect->m_HierarchyView.AddObject(pGameObject) == 0)
+	{
+		m_pObjectMgr->AddObject(pGameObject);
+	}
+
 }

@@ -18,34 +18,20 @@ public:
 	virtual void Release();
 
 public:
-
-	//오브젝트 이동,회전,크기 지정 함수
-	void SetPosition(const D3DXVECTOR3& pos);
-	void SetRotation(const XMFLOAT3& rot);
-	void SetScaling(const D3DXVECTOR3& size);
-
-	//오브젝트 이동,회전,크기 조절함수
-	void Translate(const D3DXVECTOR3& vec);
-	void Rotate(const XMFLOAT3& rot);
-	void Scale(const D3DXVECTOR3& vec);
-	void SetWorld();
-
 	//오브젝트 태그,이름,레이어 지정
 	void SetObjectName(const wstring& name);
 	void SetObjectTag(const wstring& tag);
 	void SetObjectLayer(const wstring& layer);
 
+	//오브젝트 클릭 여부
+	void SetObjectCliked(const bool & clicked, const D3DXCOLOR& color = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f));
+
+	//오브젝트 삭제
+	void SetObjectDestroy(const bool& dead);
+
 public:
 	// 오브젝트 크기 그리기.
 	void DrawBox();
-
-public:
-	//위치값 리턴하는 함수.
-	const D3DXVECTOR3&  GetPosition()	 const;
-
-	//월드행렬을 리턴하는 함수.
-	const D3DXMATRIX&	GetWorldMat()	 const;
-
 	//오브젝트 이름 반환 함수
 	const wstring&		GetObjectName()  const;
 	//오브젝트 태그 반환 함수
@@ -64,10 +50,13 @@ public:
 
 public:
 	// *부모,자식 오브젝트에 대한 함수들*
+	//부모 오브젝트 설정
+	void SetParentObject(CGameObject* parent);
+
 	//부모 오브젝트 반환 함수
-	CGameObject*		GetParentObject();
+	const CGameObject*		GetParentObject();
 	//자식 오브젝트 반환 함수
-	CGameObject*		GetChildrenObject(int index);
+	const CGameObject*		GetChildrenObject(int index);
 	//자식 오브젝트 벡터 반환
 	vector<CGameObject*>& GetChildernVector();
 
@@ -80,18 +69,8 @@ protected:
 	wstring					m_ObjectName;
 	wstring					m_ObjectTag;
 	wstring					m_ObjectLayer;
-	
-	//오브젝트 크기,회전,이동,월드
-	D3DXMATRIX				m_ScaleMat;
-	D3DXMATRIX				m_RotMat;
-	D3DXMATRIX				m_TransMat;
-
-	D3DXMATRIX				m_WorldMat;
-
-	//오브젝트 위치,회전,크기
-	D3DXVECTOR3				m_Pos;
-	XMFLOAT3				m_Rotaion;
-	D3DXVECTOR3				m_Scale;
+	//오브젝트 박스 컬러.
+	D3DXCOLOR				m_ColorBox;
 
 	//컴포넌트
 	vector<CComponent*>		m_Components;
@@ -99,6 +78,7 @@ protected:
 
 	bool					m_bIsInit;
 	bool					m_bIsClicked;
+	bool					m_bIsDead;
 
 private:
 	CGameObject*			m_ParentObj;

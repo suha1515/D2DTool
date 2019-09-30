@@ -3,6 +3,12 @@
 //
 
 #pragma once
+//프레임
+class CMainFrame;
+//뷰
+class CMyForm;
+class CInspectView;
+
 
 class CCamera;
 class CMyToolDoc;
@@ -31,6 +37,12 @@ public:
 	CCamera*		m_Cam;
 
 	CString			m_MapName;
+
+	CPoint			m_MousePoint;		//마우스 위치
+
+	CMainFrame*		m_pFrameWnd;
+	CMyForm*		m_pMyForm;
+	CInspectView*	m_pInspect;
 
 	//임시 오브젝트 표현 변수.
 	vector<CGameObject*> m_GameObject;
@@ -69,6 +81,8 @@ public:
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	
+	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
+	afx_msg void OnObjectPopUp();
 };
 
 #ifndef _DEBUG  // MyToolView.cpp의 디버그 버전

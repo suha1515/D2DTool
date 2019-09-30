@@ -35,3 +35,7 @@ void CShader::Action(CGameObject * pObject)
 
 }
 
+void CShader::Initialize()
+{
+}
+

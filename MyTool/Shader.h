@@ -21,5 +21,8 @@ private:
 
 	// CComponent을(를) 통해 상속됨
 	virtual void Action(CGameObject * pObject) override;
+
+	// CComponent을(를) 통해 상속됨
+	virtual void Initialize() override;
 };
 

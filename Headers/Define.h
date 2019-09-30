@@ -23,7 +23,7 @@
 if(nullptr == (ptr)) { return; }
 
 #define NULL_CHECK_MSG(ptr, msg)	\
-if(nullptr == (ptr)) { ::MessageBox(0, msg, L"System Error", MB_OK); return; }
+if(nullptr == (ptr)) { ::MessageBox(0, msg, L"System Error", MB_OK); }
 
 #define NULL_CHECK_RETURN(ptr, val)	\
 if(nullptr == (ptr)) { return val; }

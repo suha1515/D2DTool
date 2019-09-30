@@ -79,7 +79,6 @@ using namespace DirectX;
 #include "Functor.h"
 #include "Vertex.h"
 
-
 // Managers
 #include "DeviceMgr.h"			//디바이스 매니저
 #include "TextureMgr.h"			//텍스처   매니저

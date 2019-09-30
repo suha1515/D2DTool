@@ -15,6 +15,8 @@
 
 //ÄÄÆ÷³ÍÆ®
 #include "TextureRenderer.h"
+//ÄÄÆ÷³ÍÆ®
+#include "Transform.h"
 
 IMPLEMENT_DYNAMIC(CMapSaveTool, CDialogEx)
 
@@ -88,7 +90,7 @@ void CMapSaveTool::OnBnClickedMapSave()
 			MAP_TILE info;
 			for (auto& i : temp)
 			{
-				info.pos = i->GetPosition();
+				info.pos = i->GetComponent<CTransform>()->GetPosition();
 
 				CTextureRenderer *pRender = i->GetComponent<CTextureRenderer>();
 				info.tex[0] = pRender->GetTexPos(0);
@@ -128,7 +130,7 @@ void CMapSaveTool::OnBnClickedMapSave()
 			MAP_TILE info;
 			for (auto& i : temp)
 			{
-				info.pos = i->GetPosition();
+				info.pos = i->GetComponent<CTransform>()->GetPosition();
 				CTextureRenderer *pRender = i->GetComponent<CTextureRenderer>();
 				info.tex[0] = pRender->GetTexPos(0);
 				info.tex[1] = pRender->GetTexPos(1);
@@ -231,13 +233,13 @@ void CMapSaveTool::OnLbnDblclkMaplist()
 		}
 		for (auto& i : m_map[mapName])
 		{
-			CGameObject* pGameObject = new CGameObject;
+			/*CGameObject* pGameObject = new CGameObject;
 			pGameObject->Initialize();
 			pGameObject->SetPosition(i.pos);
 			pGameObject->GetComponent<CTextureRenderer>()->SetTexture(i.texture);
 			pGameObject->GetComponent<CTextureRenderer>()->SetVertex(16, i.tex);
 
-			pToolView->m_GameObject.push_back(pGameObject);
+			pToolView->m_GameObject.push_back(pGameObject);*/
 		}
 		pToolView->Invalidate(FALSE);
 	}

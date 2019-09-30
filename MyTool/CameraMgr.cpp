@@ -18,6 +18,11 @@ void CCameraMgr::SetMainCamera(CCamera * cam)
 	m_MainCam = cam;
 }
 
+void CCameraMgr::SetCameraPosition(const D3DXVECTOR3 & pos)
+{
+	m_MainCam->SetPosisiton(pos);
+}
+
 CCamera * CCameraMgr::GetMainCamera()
 {
 	return m_MainCam;

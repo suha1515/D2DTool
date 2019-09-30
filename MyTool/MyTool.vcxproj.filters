@@ -88,6 +88,9 @@
     <Filter Include="96.Shaders\fxfile">
       <UniqueIdentifier>{c0cfc675-b487-4ed4-ad17-e7809b8d6e10}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96.Component\01.Transform">
+      <UniqueIdentifier>{2e0efdcc-dc8b-4b6d-b16e-8232ed139d97}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -171,6 +174,9 @@
     <ClInclude Include="ShaderMgr.h">
       <Filter>96.Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>96.Component\01.Transform</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -241,6 +247,9 @@
     </ClCompile>
     <ClCompile Include="ShaderMgr.cpp">
       <Filter>96.Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>96.Component\01.Transform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

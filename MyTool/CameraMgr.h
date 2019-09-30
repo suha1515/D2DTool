@@ -8,6 +8,8 @@ public:
 	~CCameraMgr();
 public:
 	void SetMainCamera(CCamera* cam);
+public:
+	void SetCameraPosition(const D3DXVECTOR3& pos);
 	
 public:
 	CCamera*	GetMainCamera();

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "TextureRenderer.h"
 #include "GameObject.h"
+#include "Transform.h"
 #include "Shader.h"
 
 
@@ -10,8 +11,6 @@ CTextureRenderer::CTextureRenderer()
 	m_texInfo(nullptr),m_pVB(nullptr),m_pIB(nullptr),m_pShader(nullptr)
 {
 }
-
-
 CTextureRenderer::~CTextureRenderer()
 {
 	//정점,인덱스버퍼 해제
@@ -38,7 +37,6 @@ void CTextureRenderer::Render(const D3DXMATRIX& world)
 {
 	if (m_texInfo != nullptr)
 	{
-	
 		LPD3DXEFFECT pEffect = m_pShader->GetEffect();
 		D3DXMATRIX   viewMat;
 		D3DXMATRIX   projMat;
@@ -56,16 +54,9 @@ void CTextureRenderer::Render(const D3DXMATRIX& world)
 		pEffect->Begin(nullptr, 0);	//쉐이더에서 테크닉을 정해준다. 2번째인자가 쉐이더 파일에서 테크닉이 정의된 순서 0이 첫번쨰
 		pEffect->BeginPass(0);		//pass는 말그대로 pass 위와 똑같다.
 
-		//m_pDeviceMgr->GetDevice()->SetTransform(D3DTS_WORLD, &world);
-
-		
 		m_pDeviceMgr->GetDevice()->SetStreamSource(0, m_pVB, 0, sizeof(Vertex));
 		m_pDeviceMgr->GetDevice()->SetIndices(m_pIB);
 		m_pDeviceMgr->GetDevice()->SetFVF(FVF_VERTEX);
-		//m_pDeviceMgr->GetDevice()->SetTexture(0, m_texInfo->pTexture);
-
-		//m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, true);
-		//m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
 		m_pDeviceMgr->GetDevice()->DrawIndexedPrimitive(
 			D3DPT_TRIANGLELIST,
 			0,
@@ -74,8 +65,6 @@ void CTextureRenderer::Render(const D3DXMATRIX& world)
 			0,
 			2
 		);
-		
-
 		pEffect->EndPass();
 		pEffect->End();
 	}	
@@ -147,8 +136,12 @@ const tstring & CTextureRenderer::GetTexName()
 
 void CTextureRenderer::Action(CGameObject * pObject)
 {
-	Render(pObject->GetWorldMat());
+	CTransform* pTransform = pObject->GetComponent<CTransform>();
 
-	D3DXVECTOR3 objectPos = pObject->GetPosition();
-	cout<<"현재 오브젝트 위치"<<objectPos.x<<" , "<<objectPos.y<<endl;
+	NULL_CHECK_MSG_RETURN(pTransform, L"GameObject Transform component is null");
+	D3DXMATRIX worldMat = pTransform->GetWorldMat();
+	Render(worldMat);
+	
+	D3DXVECTOR3 objectPos = pObject->GetComponent<CTransform>()->GetPosition();
+	cout << "현재 오브젝트 위치" << objectPos.x << " , " << objectPos.y << endl;
 }

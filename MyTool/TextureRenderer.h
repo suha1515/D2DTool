@@ -9,8 +9,6 @@ public:
 	~CTextureRenderer();
 
 public:
-	// 컴포넌트 초기화
-	void Initialize();
 	// 오브젝트 렌더 함수
 	void Render(const D3DXMATRIX& world);
 public:
@@ -24,6 +22,8 @@ public:
 	const tstring& GetTexName();
 public:
 	// CComponent을(를) 통해 상속됨
+	// 컴포넌트 초기화
+	virtual void Initialize();
 	virtual void Action(CGameObject * pObject) override;
 private:
 	//텍스처 매니저
