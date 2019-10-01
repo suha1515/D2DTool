@@ -14,13 +14,17 @@ public:
 public:
 	//오브젝트 업데이트
 	void Update();
-	void UpdateChildren(vector<CGameObject*>::iterator& object);
+	//오브젝트 렌더. (렌더 컴포넌트가 있을경우만.)
+	void Render();
 
 public:
 	//오브젝트 갯수 반환.
-	int GetRootObjectCount();
+	int GetObjectCount();
 
 private:
-	vector<CGameObject*> m_Objects;
+	//vector<CGameObject*> m_Objects;
+
+	map<int, vector<CGameObject*>>	m_Objects;
+	list<CGameObject*>				m_RenderObjects[LAYER_END];
 };
 

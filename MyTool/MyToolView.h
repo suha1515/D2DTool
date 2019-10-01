@@ -46,6 +46,9 @@ public:
 
 	//임시 오브젝트 표현 변수.
 	vector<CGameObject*> m_GameObject;
+
+	//타일피킹
+	XMFLOAT2			 m_TileSize;
 public:
 	const CPoint& MousePicking(const CPoint& point);
 

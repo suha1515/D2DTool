@@ -27,7 +27,7 @@ void CTextureRenderer::Initialize()
 	tex[1].x = 0.0f, tex[1].y = 0.0f;
 	tex[2].x = 0.0f, tex[2].y = 0.0f;
 	tex[3].x = 0.0f, tex[3].y = 0.0f;
-	SetVertex(16, tex);
+	SetVertex(16,16, tex);
 
 	m_pShader = CShaderMgr::GetInstance()->GetEffect(L"firstShader");
 
@@ -76,17 +76,20 @@ void CTextureRenderer::SetTexture(const tstring & tileName)
 	NULL_CHECK_RETURN(m_texInfo);
 }
 
-void CTextureRenderer::SetVertex(const int & size, const XMFLOAT2 * tex)
+void CTextureRenderer::SetVertex(const int & sizeX,const int&sizeY, const XMFLOAT2 * tex)
 {
 	if (m_pVB != nullptr)
 		m_pVB->Release();
 	if (m_pIB != nullptr)
 		m_pIB->Release();
 
-	m_Vertex[0] = Vertex(-size*0.5f,  size*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, tex[0].x, tex[0].y);
-	m_Vertex[1] = Vertex(-size*0.5f, -size*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, tex[1].x, tex[1].y);
-	m_Vertex[2] = Vertex( size*0.5f,  size*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, tex[2].x, tex[2].y);
-	m_Vertex[3] = Vertex( size*0.5f, -size*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, tex[3].x, tex[3].y);
+	m_Size.x = sizeX;
+	m_Size.y = sizeY;
+
+	m_Vertex[0] = Vertex(-m_Size.x*0.5f,  m_Size.y*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, tex[0].x, tex[0].y);
+	m_Vertex[1] = Vertex(-m_Size.x*0.5f, -m_Size.y*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, tex[1].x, tex[1].y);
+	m_Vertex[2] = Vertex( m_Size.x*0.5f,  m_Size.y*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, tex[2].x, tex[2].y);
+	m_Vertex[3] = Vertex( m_Size.x*0.5f, -m_Size.y*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, tex[3].x, tex[3].y);
 
 	m_pDeviceMgr->GetDevice()->CreateVertexBuffer(4 * sizeof(Vertex), D3DUSAGE_WRITEONLY, FVF_VERTEX, D3DPOOL_MANAGED, &m_pVB, 0);
 	Vertex* v;
@@ -134,14 +137,27 @@ const tstring & CTextureRenderer::GetTexName()
 	return m_texInfo->textureName;
 }
 
+const TEX_INFO ** CTextureRenderer::GetTexInfo()
+{
+	return &m_texInfo;
+}
+
+const XMFLOAT2 & CTextureRenderer::GetTexSize()
+{
+	return m_Size;
+}
+
 void CTextureRenderer::Action(CGameObject * pObject)
 {
-	CTransform* pTransform = pObject->GetComponent<CTransform>();
+	if (m_ComponentOn)
+	{
+		CTransform* pTransform = pObject->GetComponent<CTransform>();
 
-	NULL_CHECK_MSG_RETURN(pTransform, L"GameObject Transform component is null");
-	D3DXMATRIX worldMat = pTransform->GetWorldMat();
-	Render(worldMat);
-	
-	D3DXVECTOR3 objectPos = pObject->GetComponent<CTransform>()->GetPosition();
-	cout << "현재 오브젝트 위치" << objectPos.x << " , " << objectPos.y << endl;
+		NULL_CHECK_MSG_RETURN(pTransform, L"GameObject Transform component is null");
+		D3DXMATRIX worldMat = pTransform->GetWorldMat();
+		Render(worldMat);
+
+		D3DXVECTOR3 objectPos = pObject->GetComponent<CTransform>()->GetPosition();
+		cout << "현재 오브젝트 위치" << objectPos.x << " , " << objectPos.y << endl;
+	}
 }

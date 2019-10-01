@@ -7,6 +7,7 @@
 
 #include "MapTool.h"
 #include "UnitTool.h"
+#include "AnimTool.h"
 
 
 #include "afxwin.h"
@@ -45,7 +46,9 @@ public:
 	//다이얼로그
 	CUnitTool	m_UnitTool;
 	//탭에들어갈 다이얼로그
-	CMapTool  m_MapTool;
+	CMapTool	m_MapTool;
+	//애니메이션 툴
+	CAnimTool	m_AnimTool;
 
 	virtual void OnDraw(CDC* /*pDC*/);
 

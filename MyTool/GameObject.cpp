@@ -19,9 +19,7 @@ CGameObject::~CGameObject()
 		SafeDelete(i);
 	m_Components.clear();
 
-	//자식 오브젝트 존재시 모두 제거
-	for (auto& i : m_ChildrenObj)
-		SafeDelete(i);
+	//자식 오브젝트 벡터 모두 제거 (해제는 오브젝트 매니저에서)
 	m_ChildrenObj.clear();
 }
 
@@ -32,14 +30,29 @@ int CGameObject::Update()
 
 	//컴포넌트 기능 수행
 	for (auto& i : m_Components)
+	{
+		//텍스처 렌더 컴포넌트만 Render에서 진행한다.
+		if (typeid(i).name() == typeid(CTextureRenderer).name())
+			continue;
 		i->Action(this);
+	}	
 	
-
 	//클릭시 박스렌더.
 	if(m_bIsClicked)
 	 DrawBox();
 
 	return NO_EVENT;
+}
+
+void CGameObject::Render()
+{
+	//컴포넌트 기능 수행
+	for (auto& i : m_Components)
+	{
+		//텍스처 렌더 컴포넌트만 Render에서 진행한다.
+		if (typeid(i).name() == typeid(CTextureRenderer).name())
+			i->Action(this);
+	}
 }
 
 void CGameObject::LateUpdate()
@@ -54,7 +67,7 @@ HRESULT CGameObject::Initialize(CGameObject* pParent)
 	//이름,태그,레이어 지정
 	SetObjectName(L"GameObject");
 	SetObjectTag(L"none");
-	SetObjectLayer(L"Layer0");
+	SetObjectLayer(LAYER_0);
 
 	//오브젝트 박스 컬러
 	m_ColorBox = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
@@ -87,9 +100,14 @@ void CGameObject::SetObjectTag(const wstring & tag)
 	m_ObjectTag = tag;
 }
 
-void CGameObject::SetObjectLayer(const wstring & layer)
+void CGameObject::SetObjectLayer(const Layer & layer)
 {
 	m_ObjectLayer = layer;
+}
+
+void CGameObject::SetObjectLevel(const int & level)
+{
+	m_Level=level;
 }
 
 void CGameObject::SetObjectCliked(const bool & clicked,const D3DXCOLOR& color)
@@ -100,6 +118,7 @@ void CGameObject::SetObjectCliked(const bool & clicked,const D3DXCOLOR& color)
 
 void CGameObject::SetObjectDestroy(const bool & dead)
 {
+	m_bIsDead = dead;
 }
 
 void CGameObject::DrawBox()
@@ -148,7 +167,7 @@ const wstring & CGameObject::GetObjectTag() const
 	return m_ObjectTag;
 }
 
-const wstring & CGameObject::GetObjectLayer() const
+const Layer & CGameObject::GetObjectLayer() const
 {
 	return m_ObjectLayer;
 }
@@ -162,12 +181,13 @@ void CGameObject::SetParentObject(CGameObject * parent)
 	m_ParentObj = parent;
 }
 
-const CGameObject * CGameObject::GetParentObject()
+
+CGameObject * CGameObject::GetParentObject()
 {
 	return m_ParentObj;
 }
 
-const CGameObject * CGameObject::GetChildrenObject(int index)
+CGameObject * CGameObject::GetChildrenObject(int index)
 {
 	return m_ChildrenObj[index];
 }
@@ -175,6 +195,11 @@ const CGameObject * CGameObject::GetChildrenObject(int index)
 vector<CGameObject*>& CGameObject::GetChildernVector()
 {
 	return m_ChildrenObj;
+}
+
+int CGameObject::GetLevel()
+{
+	return m_Level;
 }
 
 

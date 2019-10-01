@@ -69,12 +69,15 @@ void CMyForm::OnInitialUpdate()
 	//다이얼로그 생성
 	m_ToolList.InsertItem(0, _T("MapTool"));
 	m_ToolList.InsertItem(1, _T("UnitTool"));
+	m_ToolList.InsertItem(2, _T("AnimTool"));
 
 	m_ToolList.SetCurSel(0);
 
 	//탭에 들어갈 다이얼로그들 초기화
 	CRect rect;
 	m_ToolList.GetWindowRect(&rect);
+
+	//맵툴 초기화
 	if (nullptr == m_MapTool.GetSafeHwnd())
 	{
 		m_MapTool.Create(IDD_MAPTOOL, &m_ToolList);
@@ -82,11 +85,20 @@ void CMyForm::OnInitialUpdate()
 		m_MapTool.ShowWindow(SW_HIDE);
 	}
 
+	//유닛툴 초기화
 	if (nullptr == m_UnitTool.GetSafeHwnd())
 	{
 		m_UnitTool.Create(IDD_UNITTOOL, &m_ToolList);
 		m_UnitTool.MoveWindow(0, 25, rect.Width(), rect.Height());
 		m_UnitTool.ShowWindow(SW_HIDE);
+	}
+
+	//애니메이션 툴 초기화
+	if (nullptr == m_AnimTool.GetSafeHwnd())
+	{
+		m_AnimTool.Create(IDD_ANIMTOOL, &m_ToolList);
+		m_AnimTool.MoveWindow(0, 25, rect.Width(), rect.Height());
+		m_AnimTool.ShowWindow(SW_HIDE);
 	}
 }
 
@@ -109,10 +121,17 @@ void CMyForm::OnTcnSelchangeToollist(NMHDR *pNMHDR, LRESULT *pResult)
 	case 0:
 		m_MapTool.ShowWindow(SW_SHOW);
 		m_UnitTool.ShowWindow(SW_HIDE);
+		m_AnimTool.ShowWindow(SW_HIDE);
 		break;
 	case 1:
 		m_MapTool.ShowWindow(SW_HIDE);
 		m_UnitTool.ShowWindow(SW_SHOW);
+		m_AnimTool.ShowWindow(SW_HIDE);
+		break;
+	case 2:
+		m_UnitTool.ShowWindow(SW_HIDE);
+		m_MapTool.ShowWindow(SW_HIDE);
+		m_AnimTool.ShowWindow(SW_SHOW);
 		break;
 	default:
 		break;

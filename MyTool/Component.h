@@ -8,11 +8,12 @@ public:
 public:
 	virtual	void		Initialize()=0;
 			void		SetOn(bool on);
+			bool		GetOn();
 	virtual void		Action(CGameObject* pObject) = 0;
 public:
 	template<typename T>
 	T* GetComponent();
-private:
+protected:
 	bool		m_ComponentOn;
 };
 

@@ -4,6 +4,7 @@
 
 CComponent::CComponent()
 {
+	m_ComponentOn = true;
 }
 CComponent::~CComponent()
 {
@@ -11,4 +12,9 @@ CComponent::~CComponent()
 void CComponent::SetOn(bool on)
 {
 	m_ComponentOn = on;
+}
+
+bool CComponent::GetOn()
+{
+	return m_ComponentOn;
 }

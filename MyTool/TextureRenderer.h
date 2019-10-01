@@ -13,13 +13,18 @@ public:
 	void Render(const D3DXMATRIX& world);
 public:
 	// 오브젝트 버텍스, 텍스처 지정 함수 
-
 	void SetTexture(const tstring& tileName);
-	void SetVertex(const int& size, const XMFLOAT2* tex);
+	void SetVertex(const int& sizeX, const int& sizeY, const XMFLOAT2* tex);
 
 public:
-	const XMFLOAT2& GetTexPos(const int& index);
-	const tstring& GetTexName();
+	//텍스처 위치 가져오기
+	const XMFLOAT2&		GetTexPos(const int& index);
+	//텍스쳐 이름 가져오기
+	const tstring&		GetTexName();
+	//텍스쳐 포인터 반환
+	const TEX_INFO**	GetTexInfo();
+	//텍스쳐 크기 반환
+	const XMFLOAT2&		GetTexSize();
 public:
 	// CComponent을(를) 통해 상속됨
 	// 컴포넌트 초기화
@@ -44,6 +49,10 @@ private:
 	
 	//렌더러 쉐이더
 	shared_ptr<CShader>			m_pShader;
+
+	//크기
+	XMFLOAT2					m_Size;
+
 	
 };
 

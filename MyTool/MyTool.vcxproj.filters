@@ -91,6 +91,15 @@
     <Filter Include="96.Component\01.Transform">
       <UniqueIdentifier>{2e0efdcc-dc8b-4b6d-b16e-8232ed139d97}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06.PropertySheet">
+      <UniqueIdentifier>{8f1df6da-bb4f-4d3b-8ef9-c300f79338a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.PropertySheet\01.TextureComponent">
+      <UniqueIdentifier>{86bd9484-015a-4457-a565-e0b8c6d9d3c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.PropertySheet\02.BoxCollider">
+      <UniqueIdentifier>{e538ad2f-ec23-40e1-a421-2eabcf3263f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -177,6 +186,18 @@
     <ClInclude Include="Transform.h">
       <Filter>96.Component\01.Transform</Filter>
     </ClInclude>
+    <ClInclude Include="ComponentSheet.h">
+      <Filter>06.PropertySheet</Filter>
+    </ClInclude>
+    <ClInclude Include="TexCompPage.h">
+      <Filter>06.PropertySheet\01.TextureComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxColliderPage.h">
+      <Filter>06.PropertySheet\02.BoxCollider</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimTool.h">
+      <Filter>03.View\00.FormView</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -250,6 +271,18 @@
     </ClCompile>
     <ClCompile Include="Transform.cpp">
       <Filter>96.Component\01.Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="ComponentSheet.cpp">
+      <Filter>06.PropertySheet</Filter>
+    </ClCompile>
+    <ClCompile Include="TexCompPage.cpp">
+      <Filter>06.PropertySheet\01.TextureComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxColliderPage.cpp">
+      <Filter>06.PropertySheet\02.BoxCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimTool.cpp">
+      <Filter>03.View\00.FormView</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -214,6 +214,13 @@ void CMiniView::Clear()
 	}
 	Invalidate(FALSE);
 }
+void CMiniView::SetTileSize(int sizeX,int sizeY)
+{
+	itileSizeX = sizeX;
+	itileSizeY = sizeY;
+	fGapX = (float)itileSizeX / imgWidth;
+	fGapY = (float)itileSizeY / imgHeight;
+}
 #endif
 #endif //_DEBUG
 
@@ -268,9 +275,9 @@ void CMiniView::OnLButtonDown(UINT nFlags, CPoint point)
 		if (m_texInfo != nullptr)
 		 {
 			D3DXVECTOR3 vMouse = { float(point.x) + GetScrollPos(0),float(point.y) + GetScrollPos(1),0.f };
-			cout << int(vMouse.x) / 16 << " , " << int(vMouse.y) / 16 << endl;
-			int indexX = int(vMouse.x) / 16;
-			int indexY = int(vMouse.y) / 16;
+			cout << int(vMouse.x) / itileSizeX << " , " << int(vMouse.y) / itileSizeY << endl;
+			int indexX = int(vMouse.x) / itileSizeX;
+			int indexY = int(vMouse.y) / itileSizeY;
 
 			tex[0].x = indexX*fGapX, tex[0].y = indexY*fGapY;
 			tex[1].x = indexX*fGapX, tex[1].y = (indexY + 1)*fGapY;

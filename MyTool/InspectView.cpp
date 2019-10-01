@@ -84,6 +84,39 @@ void CInspectView::OnInitialUpdate()
 	if (nullptr == m_HierarchyView.GetSafeHwnd())
 		m_HierarchyView.Create(IDD_HIERARCHY);
 
+	//프로퍼티 시트 작업을 위한 코드.. 뭘까?
+	GetParentFrame()->RecalcLayout();
+	ResizeParentToFit();
+
+	//픽쳐 컨트롤를 가져온다
+	CWnd* pPlaceHolder = GetDlgItem(IDC_PLACEHOLDER);
+	m_pComponentSheet = new CComponentSheet(pPlaceHolder);
+
+	//프로퍼티 시트를 픽쳐 컨트롤에 생성한다.
+	if (!m_pComponentSheet->Create(pPlaceHolder, WS_CHILD | WS_VISIBLE))
+	{
+		delete m_pComponentSheet;
+		m_pComponentSheet = nullptr;
+		return;
+	}
+
+	CRect rcSheet;
+
+	pPlaceHolder->GetWindowRect(&rcSheet);
+	ScreenToClient(&rcSheet);
+
+	//탭 컨트롤을 표시하기위한 작업 아마?
+	CTabCtrl * tabCtrl = m_pComponentSheet->GetTabControl();
+	tabCtrl->MoveWindow(0, 0, rcSheet.Width(), rcSheet.Height());
+
+	m_pComponentSheet->SetWindowPos(NULL, 0, 0, rcSheet.Width(), rcSheet.Height(),
+		SWP_NOZORDER | SWP_NOACTIVATE);
+
+	//스타일 적용후 페이지 활성화.
+	m_pComponentSheet->ModifyStyle(0, WS_EX_CONTROLPARENT);
+	m_pComponentSheet->ModifyStyle(0, WS_TABSTOP);
+	m_pComponentSheet->SetActivePage(0);
+
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 }
 
@@ -125,6 +158,10 @@ void CInspectView::UpdateInfo()
 		m_ScaleX = pTransform->GetScale().x;
 		m_ScaleY = pTransform->GetScale().y;
 		m_ScaleZ = pTransform->GetScale().z;
+
+		m_pComponentSheet->UpdateInfo(m_ClickedObject);
+
+		
 	}
 	else
 	{

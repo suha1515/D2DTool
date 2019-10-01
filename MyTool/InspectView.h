@@ -3,6 +3,8 @@
 #include"HierarchyView.h"
 #include "afxwin.h"
 
+#include "ComponentSheet.h"
+
 // CInspectView 폼 뷰입니다.
 
 class CGameObject;
@@ -55,8 +57,13 @@ public:
 
 private:
 	CGameObject*		m_ClickedObject;
+
+	//컴포넌트 프로퍼티 시트
+	CComponentSheet*	m_pComponentSheet;
+
 public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+
 };
 
 

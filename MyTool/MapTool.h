@@ -29,6 +29,7 @@ public:
 	void VertexUpdate();
 	const XMFLOAT2* GetTexPos();
 	const CString&  GetTileName();
+	const XMFLOAT2&	GetTileSize();
 
 	//다이얼로그 기반 Ondraw
 	void OnDraw(CDC* pDC);
@@ -60,13 +61,20 @@ public:
 	afx_msg void OnBnClickedTileListSave();
 	afx_msg void OnBnClickedTileListLoad();
 	afx_msg void OnBnClickedMapLoad();
+	afx_msg void OnPaint();
+	afx_msg void OnLbnDblclkTileList();
+	afx_msg void OnDropFiles(HDROP hDropInfo);
+	afx_msg void OnStnClickedTilesetsize();
 
 	// //타일셋 이름
 	CEdit m_TileSetName;
 	// //타일셋 리스트
 	CListBox m_TileSetList;
 	virtual BOOL OnInitDialog();
-	afx_msg void OnPaint();
-	afx_msg void OnLbnDblclkTileList();
-	afx_msg void OnDropFiles(HDROP hDropInfo);
+	// 타일셋 사이즈이다. 
+	CString m_TileSetSize;
+	int m_iTileSizeX;
+	int m_iTileSizeY;
+	XMFLOAT2	m_fTileSize;
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };

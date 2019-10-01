@@ -47,11 +47,16 @@ int CHierarchyView::AddObject(CGameObject * object)
 		int index =  parentObj->GetChildernVector().size() + 1;
 		wstring objectName = parentObj->GetObjectName() +L"_child_"+to_wstring(index);
 		object->SetObjectName(objectName);
-		//부모설정.
-		object->SetParentObject(parentObj);
+		
 		HTREEITEM item = m_Hierarchy.InsertItem(objectName.c_str(), 0, 0, selItem, TVI_LAST);
 		m_objectlist.insert({ item,object});
+
+		//부모설정.
+		object->SetParentObject(parentObj);
+		//부모객체에 등록.
 		parentObj->GetChildernVector().push_back(object);
+		//부모객체보다 높은 계층에 존재
+		object->SetObjectLevel(parentObj->GetLevel() + 1);
 
 		//자식으로 생성시 1 반환.
 		return 1;
@@ -60,6 +65,9 @@ int CHierarchyView::AddObject(CGameObject * object)
 	else
 	{
 		CString objectName = object->GetObjectName().c_str();
+		
+		//계층은 0이다.
+		object->SetObjectLevel(0);
 
 		HTREEITEM item = m_Hierarchy.InsertItem(objectName, 0, 0, TVI_ROOT, TVI_LAST);
 		m_objectlist.insert({ item,object, });
@@ -238,7 +246,7 @@ void CHierarchyView::OnBnClickedDeselectAll()
 void CHierarchyView::OnBnClickedAddObject()
 {
 	cout << "오브젝트 추가" << endl;
-	wstring name = L"GameObject" + to_wstring(CObjectMgr::GetInstance()->GetRootObjectCount());
+	wstring name = L"GameObject" + to_wstring(CObjectMgr::GetInstance()->GetObjectCount());
 
 	CGameObject* pGameObject = new CGameObject;
 	pGameObject->Initialize();
@@ -251,12 +259,9 @@ void CHierarchyView::OnBnClickedAddObject()
 
 	pGameObject->AddComponent(pTransform);
 
-	//0을 반환한 경우는 부모로생성하는것
-	if (AddObject(pGameObject) == 0)
-	{
-		CObjectMgr::GetInstance()->AddObject(pGameObject);
-	}
-
+	AddObject(pGameObject);
+	CObjectMgr::GetInstance()->AddObject(pGameObject);
+	
 }
 
 //오브젝트 삭제.
@@ -278,32 +283,17 @@ void CHierarchyView::OnBnClickedDeleteObject()
 				hChildItem = hNextItem;
 			}
 		}
-		// 부모가있을경우.
-		HTREEITEM hParent;
-		hParent = m_Hierarchy.GetNextItem(selItem, TVGN_PARENT);
-		if (NULL!=hParent)
-		{
-			CGameObject* pParentObject = m_objectlist.find(hParent)->second;
-			CGameObject* pChildObject = m_objectlist.find(selItem)->second;
-			vector<CGameObject*> vecChild = pParentObject->GetChildernVector();
-			vector<CGameObject*>::iterator iter_begin = vecChild.begin();
-			vector<CGameObject*>::iterator iter_end = vecChild.end();
-
-			for (; iter_begin != iter_end;)
-			{
-				if ((*iter_begin) == pChildObject)
-				{
-					pChildObject->SetObjectDestroy(true);
-					vecChild.erase(iter_begin);
-					break;
-				}
-			}
-		}
-		else
-		{
-			SafeDelete(m_objectlist[selItem]);
-			m_objectlist.erase(selItem);
-		}
+		//해당 객체는 제거 메시지를 보낸다. 부모와 자식이 있을경우 오브젝트 매니저에서처리.
+		m_objectlist[selItem]->SetObjectDestroy(true);
+		m_objectlist.erase(selItem);
 		m_Hierarchy.DeleteItem(selItem);
+
+		CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+		NULL_CHECK(pFrameWnd);
+
+		//툴뷰 가져오기
+		CMyToolView* pMyToolView = dynamic_cast<CMyToolView*>(pFrameWnd->m_MainSplitter.GetPane(0, 1));
+		NULL_CHECK_MSG(pMyToolView, L"Hierarchy tool view nullptr");
+		pMyToolView->Invalidate(FALSE);
 	}
 }

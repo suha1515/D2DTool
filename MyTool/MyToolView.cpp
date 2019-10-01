@@ -156,6 +156,7 @@ void CMyToolView::OnDraw(CDC* /*pDC*/)
 	m_pDeviceMgr->GetSprite()->End();
 
 	m_pObjectMgr->Update();
+	m_pObjectMgr->Render();
 
 	m_pDeviceMgr->Render_End(m_hWnd);
 }
@@ -285,7 +286,8 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 
 	CString tileName = m_pMyForm->GetMapTool()->GetTileName();
 	const XMFLOAT2* tex = m_pMyForm->GetMapTool()->GetTexPos();
-
+	const XMFLOAT2& size = m_pMyForm->GetMapTool()->GetTileSize();
+	m_TileSize = size;
 	const CPoint mousePos = MousePicking(point);
 	if (tex != nullptr)
 	{
@@ -304,11 +306,11 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 		if (m_GameObject.end() != iter_find)
 		{
 			(*iter_find)->GetComponent<CTextureRenderer>()->SetTexture((LPCTSTR)tileName);
-			(*iter_find)->GetComponent<CTextureRenderer>()->SetVertex(16, tex);
+			(*iter_find)->GetComponent<CTextureRenderer>()->SetVertex(size.x, size.y, tex);
 		}
 		else
 		{
-			wstring name = L"GameObject" + to_wstring(m_pObjectMgr->GetRootObjectCount());
+			wstring name = L"GameObject" + to_wstring(m_pObjectMgr->GetObjectCount());
 
 			CGameObject* pGameObject = new CGameObject;
 			pGameObject->Initialize();
@@ -325,16 +327,15 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 			CTextureRenderer* pRender = new CTextureRenderer;
 			pRender->Initialize();
 			pRender->SetTexture((LPCTSTR)tileName);
-			pRender->SetVertex(16, tex);
+			pRender->SetVertex(size.x, size.y, tex);
 
 			pGameObject->AddComponent(pRender);
 
 			
 			//0을 반환한 경우는 부모로생성하는것
-			if (m_pInspect->m_HierarchyView.AddObject(pGameObject) == 0)
-			{
-				m_pObjectMgr->AddObject(pGameObject);
-			}
+			m_pInspect->m_HierarchyView.AddObject(pGameObject);
+			m_pObjectMgr->AddObject(pGameObject);
+			
 		}
 		Invalidate(FALSE);
 	}
@@ -345,28 +346,28 @@ void CMyToolView::OnRButtonDown(UINT nFlags, CPoint point)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 
-	CScrollView::OnRButtonDown(nFlags, point);
+	//CScrollView::OnRButtonDown(nFlags, point);
 
-	const CPoint mousePos = MousePicking(point);
+	//const CPoint mousePos = MousePicking(point);
 
-	//해당 좌표의 오브젝트를 찾는다. 타일중에서.
-	auto iter_find = find_if(m_GameObject.begin(), m_GameObject.end(),
-	[&mousePos](CGameObject* pObject)
-	{
-		CTransform* pTransform = pObject->GetComponent<CTransform>();
-		if (pTransform->GetPosition() == D3DXVECTOR3(mousePos.x, mousePos.y, 0.0f))
-		{
-			return true;
-		}
-		else return false;
-	});
+	////해당 좌표의 오브젝트를 찾는다. 타일중에서.
+	//auto iter_find = find_if(m_GameObject.begin(), m_GameObject.end(),
+	//[&mousePos](CGameObject* pObject)
+	//{
+	//	CTransform* pTransform = pObject->GetComponent<CTransform>();
+	//	if (pTransform->GetPosition() == D3DXVECTOR3(mousePos.x, mousePos.y, 0.0f))
+	//	{
+	//		return true;
+	//	}
+	//	else return false;
+	//});
 
-	if (m_GameObject.end() != iter_find)
-	{
-		SafeDelete((*iter_find));
-		m_GameObject.erase(iter_find);
-		Invalidate(FALSE);
-	}
+	//if (m_GameObject.end() != iter_find)
+	//{
+	//	SafeDelete((*iter_find));
+	//	m_GameObject.erase(iter_find);
+	//	Invalidate(FALSE);
+	//}
 }
 
 void CMyToolView::OnMouseMove(UINT nFlags, CPoint point)
@@ -453,14 +454,14 @@ const CPoint& CMyToolView::MousePicking(const CPoint& point)
 	cout << vMouse.x << " , " << vMouse.y << endl;
 	float newX, newY;
 	if (vMouse2.x>0)
-		newX = ((int)vMouse2.x / 16)*16.f + 8.0f;
+		newX = ((int)vMouse2.x / (int)m_TileSize.x)*m_TileSize.x + m_TileSize.x*0.5f;
 	else
-		newX = ((int)vMouse2.x / 16)*16.f - 8.0f;
+		newX = ((int)vMouse2.x / (int)m_TileSize.x)*m_TileSize.x - m_TileSize.x*0.5f;
 
 	if (vMouse2.y>0)
-		newY = ((int)vMouse2.y / 16)*16.f + 8.0f;
+		newY = ((int)vMouse2.y / (int)m_TileSize.y)*m_TileSize.y + m_TileSize.y*0.5f;
 	else
-		newY = ((int)vMouse2.y / 16)*16.f - 8.0f;
+		newY = ((int)vMouse2.y / (int)m_TileSize.y)*m_TileSize.y - m_TileSize.y*0.5f;
 
 	cout << newX << " , " << newY << endl;
 
@@ -484,12 +485,10 @@ void CMyToolView::OnContextMenu(CWnd* pWnd, CPoint point)
 //오브젝트 추가
 void CMyToolView::OnObjectPopUp()
 {
-	
-
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 	CPoint mousePos = MousePicking(m_MousePoint);
 
-	wstring name = L"GameObject" + to_wstring(m_pObjectMgr->GetRootObjectCount());
+	wstring name = L"GameObject" + to_wstring(m_pObjectMgr->GetObjectCount());
 
 	CGameObject* pGameObject = new CGameObject;
 	pGameObject->Initialize();
@@ -502,10 +501,8 @@ void CMyToolView::OnObjectPopUp()
 
 	pGameObject->AddComponent(pTransform);
 
-	//0을 반환한 경우는 부모로생성하는것
-	if (m_pInspect->m_HierarchyView.AddObject(pGameObject) == 0)
-	{
-		m_pObjectMgr->AddObject(pGameObject);
-	}
+	m_pInspect->m_HierarchyView.AddObject(pGameObject);
+	m_pObjectMgr->AddObject(pGameObject);
+
 
 }

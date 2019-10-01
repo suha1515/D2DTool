@@ -27,6 +27,8 @@ public:
 	void		Initialize(CString tileName);
 	void		VerTexUpdate();
 	void		Clear();
+
+	void		SetTileSize(int sizeX,int sizeY);
 public:
 	CDeviceMgr*	 m_pDeviceMgr;
 	CTextureMgr* m_pTextureMgr;

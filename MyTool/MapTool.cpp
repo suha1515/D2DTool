@@ -24,6 +24,9 @@ CMapTool::CMapTool(CWnd* pParent /*=NULL*/)
 	m_pDeviceMgr(CDeviceMgr::GetInstance()),
 	m_pTextureMgr(CTextureMgr::GetInstance()),
 	m_pVB(nullptr), m_pIB(nullptr), m_Cam(nullptr), m_texInfo(nullptr)
+	, m_TileSetSize(_T(""))
+	, m_iTileSizeX(0)
+	, m_iTileSizeY(0)
 {
 
 }
@@ -56,6 +59,9 @@ void CMapTool::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_TILE_NAME, m_TileSetName);
 	DDX_Control(pDX, IDC_TILESET_1, m_TileSetList);
+	DDX_Text(pDX, IDC_TILESETSIZE, m_TileSetSize);
+	DDX_Text(pDX, IDC_EDIT1, m_iTileSizeX);
+	DDX_Text(pDX, IDC_EDIT2, m_iTileSizeY);
 }
 
 void CMapTool::Renew(XMFLOAT2 * tex)
@@ -135,6 +141,13 @@ const CString & CMapTool::GetTileName()
 	return m_TileName;
 }
 
+const XMFLOAT2 & CMapTool::GetTileSize()
+{
+	// TODO: 여기에 반환 구문을 삽입합니다.
+	m_fTileSize = XMFLOAT2(m_iTileSizeX, m_iTileSizeY);
+	return m_fTileSize;
+}
+
 void CMapTool::OnDraw(CDC * pDC)
 {
 }
@@ -149,6 +162,7 @@ BEGIN_MESSAGE_MAP(CMapTool, CDialogEx)
 	ON_WM_PAINT()
 	ON_LBN_DBLCLK(IDC_TILESET_1, &CMapTool::OnLbnDblclkTileList)
 	ON_WM_DROPFILES()
+	ON_STN_CLICKED(IDC_TILESETSIZE, &CMapTool::OnStnClickedTilesetsize)
 END_MESSAGE_MAP()
 
 
@@ -422,13 +436,12 @@ void CMapTool::OnPaint()
 void CMapTool::OnLbnDblclkTileList()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-
-
 	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 	NULL_CHECK(pFrameWnd);
 
 	CMiniView* pMiniView = dynamic_cast<CMiniView*>(pFrameWnd->m_SecondSplitter.GetPane(0, 0));
 	NULL_CHECK(pMiniView);
+
 	CString tileName;
 	int iIndex = m_TileSetList.GetCurSel();
 	m_TileSetList.GetText(iIndex, tileName);
@@ -439,8 +452,19 @@ void CMapTool::OnLbnDblclkTileList()
 	}
 
 	pMiniView->Initialize(tileName);
-
 	m_TileName = tileName;
+
+	//타일크기 지정.
+	m_texInfo = m_pTextureMgr->GetTexInfo(L"TILE_MAP", tileName.operator LPCWSTR());
+	UpdateData(TRUE);
+
+	int width = m_texInfo->tImgInfo.Width;
+	int height = m_texInfo->tImgInfo.Height;
+	m_TileSetSize.Format(L"%d x %d", width, height);
+	
+	UpdateData(FALSE);
+
+	
 
 	Invalidate(FALSE);
 
@@ -519,4 +543,36 @@ void CMapTool::OnDropFiles(HDROP hDropInfo)
 	ReleaseDC(pDC);
 
 	CDialogEx::OnDropFiles(hDropInfo);
+}
+
+
+void CMapTool::OnStnClickedTilesetsize()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+
+BOOL CMapTool::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->message == WM_KEYDOWN)
+	{
+		//엔터키 눌렀을때!
+		if (pMsg->wParam == VK_RETURN)
+		{
+			CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+			NULL_CHECK_MSG(pFrameWnd,L"Map Tool pFrameWnd nullptr");
+
+			CMiniView* pMiniView = dynamic_cast<CMiniView*>(pFrameWnd->m_SecondSplitter.GetPane(0, 0));
+			NULL_CHECK_MSG(pMiniView,L"Map Tool pMiniView nullptr");
+
+			cout << "타일크기 지정" << endl;
+			UpdateData(TRUE);
+			pMiniView->SetTileSize(m_iTileSizeX, m_iTileSizeY);
+			UpdateData(FALSE);
+		}
+	}
+
+	if (pMsg->wParam == VK_RETURN || pMsg->wParam == VK_ESCAPE) return TRUE;
+
+	return CDialogEx::PreTranslateMessage(pMsg);
 }

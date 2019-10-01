@@ -187,9 +187,12 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimTool.h" />
+    <ClInclude Include="BoxColliderPage.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraMgr.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="ComponentSheet.h" />
     <ClInclude Include="DeviceMgr.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="HierarchyView.h" />
@@ -208,6 +211,7 @@
     <ClInclude Include="ShaderMgr.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TexCompPage.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureMgr.h" />
     <ClInclude Include="TextureRenderer.h" />
@@ -216,9 +220,12 @@
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnimTool.cpp" />
+    <ClCompile Include="BoxColliderPage.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraMgr.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="ComponentSheet.cpp" />
     <ClCompile Include="DeviceMgr.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="HierarchyView.cpp" />
@@ -240,6 +247,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TexCompPage.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureMgr.cpp" />
     <ClCompile Include="TextureRenderer.cpp" />

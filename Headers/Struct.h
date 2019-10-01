@@ -62,7 +62,22 @@ typedef struct tagMapTile
 
 #endif
 
+typedef struct tagAnimationClip
+{
+	float			  _startTime;
+	D3DXVECTOR3		  _pos;
+	XMFLOAT3		  _rot;
+	D3DXVECTOR3		  _Scale;
+	XMFLOAT2		  _Tex[4];
+}ANIM_CLIP;
 
+typedef struct tagAnimation
+{
+	wstring				_texName;
+	float				_texSizeX;
+	float				_texSizeY;
+	vector<ANIM_CLIP>	_clips;
+}ANIMATION;
 
 #define __STRUCT_H__
 #endif

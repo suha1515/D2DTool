@@ -86,6 +86,7 @@ using namespace DirectX;
 #include "ObjectMgr.h"			//오브젝트 매니저
 
 #include "ShaderMgr.h"			//쉐이더   매니저
+#include <afxdlgs.h>
 
 //유니코드 String을위한 것
 typedef std::basic_string<TCHAR> tstring;

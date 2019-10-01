@@ -9,11 +9,15 @@
 #define IDR_Hierarchymenu               130
 #define IDD_MYFORM                      310
 #define IDD_UNITTOOL                    311
+#define IDD_TEXCOMPPAGE                 312
+#define IDD_BOXCOLLIDERPAGE             313
 #define IDD_SAVETOOL                    314
 #define IDD_INSPECTOR                   316
 #define IDD_MAPTOOL                     318
 #define IDD_HIERARCHY                   321
 #define IDR_MENU3                       325
+#define IDD_ANIMTOOL                    326
+#define IDD_ANIMFRAME                   329
 #define IDC_BUTTON1                     1000
 #define IDC_BUTTON2                     1001
 #define IDC_BUTTON4                     1002
@@ -29,7 +33,9 @@
 #define IDC_MAPLIST                     1015
 #define IDC_BUTTON3                     1018
 #define IDC_ToolList                    1019
+#define IDC_BUTTON5                     1019
 #define IDC_OBJNAME                     1020
+#define IDC_BUTTON6                     1020
 #define IDC_TAG                         1022
 #define IDC_LAYER                       1023
 #define IDC_POSX                        1024
@@ -42,16 +48,44 @@
 #define IDC_SCALEX                      1033
 #define IDC_SCALEY                      1034
 #define IDC_SACLEZ                      1035
+#define IDC_PLACEHOLDER                 1057
+#define IDC_COMBO1                      1058
+#define IDC_CHECKCOMPONENT              1059
+#define IDC_EDIT9                       1068
+#define IDC_EDIT10                      1069
+#define IDC_CLIPLIST                    1069
+#define IDC_EDIT1                       1070
+#define IDC_EDIT2                       1071
+#define IDC_EDIT3                       1072
+#define IDC_CLIP_POS_Z                  1072
+#define IDC_EDIT4                       1079
+#define IDC_EDIT5                       1080
+#define IDC_EDIT6                       1081
+#define IDC_EDIT7                       1082
+#define IDC_EDIT8                       1083
+#define IDC_EDIT11                      1084
+#define IDC_CHECK1                      1085
+#define IDC_SLIDER1                     1086
+#define IDC_ANIMLIST                    1087
+#define IDC_ANIMSEARCH                  1088
+#define IDC_ANIMLOAD                    1089
+#define IDC_OPENTOOL                    1090
+#define IDC_TILESETSIZE                 1091
+#define IDC_CHECK2                      1093
+#define IDC_CLIP_POS_X                  1094
+#define IDC_CHECK3                      1095
+#define IDC_CLIP_POS_Y                  1095
 #define ID_32771                        32771
 #define ID_32772                        32772
+#define ID_32773                        32773
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        326
-#define _APS_NEXT_COMMAND_VALUE         32773
-#define _APS_NEXT_CONTROL_VALUE         1048
-#define _APS_NEXT_SYMED_VALUE           312
+#define _APS_NEXT_RESOURCE_VALUE        331
+#define _APS_NEXT_COMMAND_VALUE         32774
+#define _APS_NEXT_CONTROL_VALUE         1096
+#define _APS_NEXT_SYMED_VALUE           314
 #endif
 #endif
