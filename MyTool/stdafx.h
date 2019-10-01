@@ -86,6 +86,9 @@ using namespace DirectX;
 #include "ObjectMgr.h"			//오브젝트 매니저
 
 #include "ShaderMgr.h"			//쉐이더   매니저
+#include "TimeMgr.h"			//타임	   매니저
+#include "FrameMgr.h"			//프레임   매니저
+
 #include <afxdlgs.h>
 
 //유니코드 String을위한 것

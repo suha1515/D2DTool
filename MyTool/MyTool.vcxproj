@@ -187,6 +187,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationFrame.h" />
     <ClInclude Include="AnimTool.h" />
     <ClInclude Include="BoxColliderPage.h" />
     <ClInclude Include="Camera.h" />
@@ -194,6 +195,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentSheet.h" />
     <ClInclude Include="DeviceMgr.h" />
+    <ClInclude Include="FrameMgr.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="HierarchyView.h" />
     <ClInclude Include="InspectView.h" />
@@ -215,11 +217,13 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureMgr.h" />
     <ClInclude Include="TextureRenderer.h" />
+    <ClInclude Include="TimeMgr.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UnitTool.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationFrame.cpp" />
     <ClCompile Include="AnimTool.cpp" />
     <ClCompile Include="BoxColliderPage.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -227,6 +231,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ComponentSheet.cpp" />
     <ClCompile Include="DeviceMgr.cpp" />
+    <ClCompile Include="FrameMgr.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="HierarchyView.cpp" />
     <ClCompile Include="InspectView.cpp" />
@@ -251,6 +256,7 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureMgr.cpp" />
     <ClCompile Include="TextureRenderer.cpp" />
+    <ClCompile Include="TimeMgr.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="UnitTool.cpp" />
   </ItemGroup>

@@ -123,6 +123,9 @@ BOOL CMyToolApp::InitInstance()
 	// 창 하나만 초기화되었으므로 이를 표시하고 업데이트합니다.
 	m_pMainWnd->ShowWindow(SW_SHOW);
 	m_pMainWnd->UpdateWindow();
+
+
+	
 	return TRUE;
 }
 
@@ -180,3 +183,34 @@ void CMyToolApp::OnAppAbout()
 
 
 
+
+
+BOOL CMyToolApp::OnIdle(LONG lCount)
+{
+	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
+	m_pFrameMgr = CFrameMgr::GetInstance();
+	m_pMain = (CMainFrame*)m_pMainWnd;
+	m_pToolView = (CMyToolView*)m_pMain->m_MainSplitter.GetPane(0, 1);
+
+
+	if (this->m_pMainWnd->IsIconic())
+	{
+		return FALSE;
+	}
+	else
+	{
+		//루프처리
+		if (m_pToolView->GetIsPlaying())
+		{
+			if (m_pFrameMgr->LockFrame(60.f))
+			{
+				//MainGame
+				m_pToolView->Update();
+				m_pToolView->Render();
+			}
+		}
+	}
+	return TRUE;
+
+	return CWinAppEx::OnIdle(lCount);
+}

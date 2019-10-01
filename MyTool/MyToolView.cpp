@@ -48,6 +48,9 @@ BEGIN_MESSAGE_MAP(CMyToolView, CScrollView)
 	ON_WM_RBUTTONDOWN()
 	ON_WM_CONTEXTMENU()
 	ON_COMMAND(ID_32771, &CMyToolView::OnObjectPopUp)
+	ON_COMMAND(ID_32774, &CMyToolView::OnPlay)
+	ON_COMMAND(ID_32775, &CMyToolView::OnPause)
+	ON_COMMAND(ID_32776, &CMyToolView::OnInit)
 END_MESSAGE_MAP()
 
 // CMyToolView 생성/소멸
@@ -65,6 +68,9 @@ CMyToolView::CMyToolView()
 	g_hWnd = m_hWnd;
 
 	HRESULT hr = 0;
+
+	m_bIsActive = false;
+	m_bIsReInit = false;
 
 	hr = m_pDeviceMgr->InitDevice(CDeviceMgr::MODE_WIN);
 	m_pShaderMgr->Initialize();
@@ -112,8 +118,6 @@ void CMyToolView::OnDraw(CDC* /*pDC*/)
 	m_pDeviceMgr->Render_Begin();
 
 	D3DXMATRIX* mat = m_Cam->GetViewProjMatrix();
-
-	
 	m_pDeviceMgr->GetLine()->SetWidth(1.f);
 	m_pDeviceMgr->GetLine()->Begin();
 	{
@@ -155,8 +159,19 @@ void CMyToolView::OnDraw(CDC* /*pDC*/)
 	}
 	m_pDeviceMgr->GetSprite()->End();
 
-	m_pObjectMgr->Update();
-	m_pObjectMgr->Render();
+	switch (m_Mode)
+	{
+	case MAP:
+		m_pObjectMgr->Update();
+		m_pObjectMgr->Render();
+		break;
+	case ANIM:
+		
+		break;
+	default:
+		break;
+	}
+	
 
 	m_pDeviceMgr->Render_End(m_hWnd);
 }
@@ -246,9 +261,6 @@ void CMyToolView::OnInitialUpdate()
 	// MainFrame의 윈도우 위치와 크기를 다시 조정.
 	m_pFrameWnd->SetWindowPos(
 		nullptr, 0, 0, WINCX + iGapX, WINCY + iGapY, SWP_NOZORDER);
-	
-
-	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 
 	RECT rc = {};
 	GetClientRect(&rc);
@@ -259,6 +271,8 @@ void CMyToolView::OnInitialUpdate()
 		m_Cam = new CCamera;
 	m_pCameraMgr->SetMainCamera(m_Cam);
 	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(1.0f, 1.0f, 1.0f));
+
+	m_Mode = MAP;
 
 }
 
@@ -344,30 +358,6 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 //타일 지우기
 void CMyToolView::OnRButtonDown(UINT nFlags, CPoint point)
 {
-	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-
-	//CScrollView::OnRButtonDown(nFlags, point);
-
-	//const CPoint mousePos = MousePicking(point);
-
-	////해당 좌표의 오브젝트를 찾는다. 타일중에서.
-	//auto iter_find = find_if(m_GameObject.begin(), m_GameObject.end(),
-	//[&mousePos](CGameObject* pObject)
-	//{
-	//	CTransform* pTransform = pObject->GetComponent<CTransform>();
-	//	if (pTransform->GetPosition() == D3DXVECTOR3(mousePos.x, mousePos.y, 0.0f))
-	//	{
-	//		return true;
-	//	}
-	//	else return false;
-	//});
-
-	//if (m_GameObject.end() != iter_find)
-	//{
-	//	SafeDelete((*iter_find));
-	//	m_GameObject.erase(iter_find);
-	//	Invalidate(FALSE);
-	//}
 }
 
 void CMyToolView::OnMouseMove(UINT nFlags, CPoint point)
@@ -387,17 +377,13 @@ void CMyToolView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	
 	CScrollView::OnKeyDown(nChar, nRepCnt, nFlags);
-	cout << "키누름" << endl;
-	
 	if (nChar == VK_LEFT)
 	{
 		m_Cam->MoveCamera(-5.0f, 0.0f);
-		cout << "툴뷰 왼쪽!" << endl;
 	}
 	else if (nChar == VK_UP)
 	{
 		m_Cam->MoveCamera(0.0f, 5.0f);
-		cout << "툴뷰 위!" << endl;
 	}
 	else if (nChar == VK_DOWN)
 	{
@@ -416,18 +402,14 @@ void CMyToolView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 BOOL CMyToolView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	
-	
 	float scale = 0.0f;
 	if (zDelta <= 0)
 	{
 		scale = -0.1f;
-		cout << "마우스 휠 다운" << endl;
 	}
 	else
 	{
 		scale = 0.1f;
-		cout << "마우스 휠 업" << endl;
 	}
 	m_Cam->Scaling(scale, scale);
 	Invalidate(FALSE);
@@ -468,6 +450,35 @@ const CPoint& CMyToolView::MousePicking(const CPoint& point)
 	return CPoint(newX, newY);
 }
 
+void CMyToolView::Update()
+{
+	m_pObjectMgr->Update();
+}
+
+void CMyToolView::Render()
+{
+	m_pDeviceMgr->Render_Begin();
+	m_pObjectMgr->Render();
+
+	m_pDeviceMgr->GetSprite()->Begin(D3DXSPRITE_ALPHABLEND);
+	{
+		CFrameMgr::GetInstance()->RenderFPS();
+	}
+	m_pDeviceMgr->GetSprite()->End();
+
+	m_pDeviceMgr->Render_End(m_hWnd);
+}
+
+bool CMyToolView::GetIsPlaying()
+{
+	return m_bIsActive;
+}
+
+void CMyToolView::SetMode(MODE mode)
+{
+	m_Mode = mode;
+}
+
 //오른쪽 클릭시 나오는것
 void CMyToolView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
@@ -505,4 +516,24 @@ void CMyToolView::OnObjectPopUp()
 	m_pObjectMgr->AddObject(pGameObject);
 
 
+}
+
+
+void CMyToolView::OnPlay()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	m_bIsActive = true;
+}
+
+
+void CMyToolView::OnPause()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	m_bIsActive = false;
+}
+
+
+void CMyToolView::OnInit()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 }

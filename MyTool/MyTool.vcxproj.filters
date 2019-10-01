@@ -100,6 +100,21 @@
     <Filter Include="06.PropertySheet\02.BoxCollider">
       <UniqueIdentifier>{e538ad2f-ec23-40e1-a421-2eabcf3263f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96.Component\02.BoxCollider">
+      <UniqueIdentifier>{9a58658c-a1ec-4505-9fb5-9a37e6151254}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.Component\03.Animator">
+      <UniqueIdentifier>{1cfc5959-f436-4714-84ee-d4375c669cce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.Component\04.Camera">
+      <UniqueIdentifier>{5234b99d-5292-474b-84d5-1e7506c65ac4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\04.FrameMgr">
+      <UniqueIdentifier>{a29ea9bc-2118-4d0f-b40a-f9076e05a342}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\05.TimeMgr">
+      <UniqueIdentifier>{8536b5ff-eab4-44f1-91a3-e60bc4d9945b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -198,6 +213,15 @@
     <ClInclude Include="AnimTool.h">
       <Filter>03.View\00.FormView</Filter>
     </ClInclude>
+    <ClInclude Include="AnimationFrame.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameMgr.h">
+      <Filter>98.Managers\04.FrameMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeMgr.h">
+      <Filter>98.Managers\05.TimeMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -283,6 +307,15 @@
     </ClCompile>
     <ClCompile Include="AnimTool.cpp">
       <Filter>03.View\00.FormView</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationFrame.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameMgr.cpp">
+      <Filter>98.Managers\04.FrameMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeMgr.cpp">
+      <Filter>98.Managers\05.TimeMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

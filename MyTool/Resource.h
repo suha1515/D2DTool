@@ -59,11 +59,17 @@
 #define IDC_EDIT3                       1072
 #define IDC_CLIP_POS_Z                  1072
 #define IDC_EDIT4                       1079
+#define IDC_CLIP_ROT_X                  1079
 #define IDC_EDIT5                       1080
+#define IDC_CLIP_ROT_Y                  1080
 #define IDC_EDIT6                       1081
+#define IDC_CLIP_ROT_Z                  1081
 #define IDC_EDIT7                       1082
+#define IDC_CLIP_SIZE_X                 1082
 #define IDC_EDIT8                       1083
+#define IDC_CLIP_SIZE_Y                 1083
 #define IDC_EDIT11                      1084
+#define IDC_CLIP_SIZE_Z                 1084
 #define IDC_CHECK1                      1085
 #define IDC_SLIDER1                     1086
 #define IDC_ANIMLIST                    1087
@@ -75,17 +81,27 @@
 #define IDC_CLIP_POS_X                  1094
 #define IDC_CHECK3                      1095
 #define IDC_CLIP_POS_Y                  1095
+#define IDC_PLAY_TIME                   1096
+#define IDC_TEXTURE_NAME                1097
+#define IDC_TEXTURE_SIZE_X              1098
+#define IDC_TEXTURE_SIZE_Y              1099
+#define IDC_TOTAL_TIME                  1100
+#define IDC_ISPOSSIBLE                  1101
+#define IDC_ANIMOBJ                     1102
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_32773                        32773
+#define ID_32774                        32774
+#define ID_32775                        32775
+#define ID_32776                        32776
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        331
-#define _APS_NEXT_COMMAND_VALUE         32774
-#define _APS_NEXT_CONTROL_VALUE         1096
+#define _APS_NEXT_COMMAND_VALUE         32777
+#define _APS_NEXT_CONTROL_VALUE         1103
 #define _APS_NEXT_SYMED_VALUE           314
 #endif
 #endif

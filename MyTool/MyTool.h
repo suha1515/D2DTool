@@ -14,6 +14,8 @@
 // 이 클래스의 구현에 대해서는 MyTool.cpp을 참조하십시오.
 //
 
+class CMyToolView;
+class CMainFrame;
 class CMyToolApp : public CWinAppEx
 {
 public:
@@ -28,6 +30,14 @@ public:
 // 구현입니다.
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
+	virtual BOOL OnIdle(LONG lCount);
+
+
+	//프레임 매니저 , 메인프레임
+private:
+	CMainFrame*		m_pMain;
+	CFrameMgr*		m_pFrameMgr;
+	CMyToolView*	m_pToolView;
 };
 
 extern CMyToolApp theApp;

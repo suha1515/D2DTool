@@ -10,6 +10,8 @@ class CMyForm;
 class CInspectView;
 
 
+static enum MODE { MAP, ANIM };
+
 class CCamera;
 class CMyToolDoc;
 class CGameObject;
@@ -49,8 +51,27 @@ public:
 
 	//타일피킹
 	XMFLOAT2			 m_TileSize;
+
+	//툴 모드
+	MODE				 m_Mode;
+
+	//게임 실행, 정지 ,초기화
+	bool				 m_bIsActive;
+	bool				 m_bIsReInit;
 public:
 	const CPoint& MousePicking(const CPoint& point);
+public:
+	//업데이트
+	void Update();
+	//렌더
+	void Render();
+	//게임 재생상태
+public:
+	bool GetIsPlaying();
+
+public:
+	//모드 변경
+	void		  SetMode(MODE mode);
 
 // 재정의입니다.
 public:
@@ -86,6 +107,9 @@ public:
 	
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 	afx_msg void OnObjectPopUp();
+	afx_msg void OnPlay();
+	afx_msg void OnPause();
+	afx_msg void OnInit();
 };
 
 #ifndef _DEBUG  // MyToolView.cpp의 디버그 버전
