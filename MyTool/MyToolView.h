@@ -10,7 +10,7 @@ class CMyForm;
 class CInspectView;
 
 
-static enum MODE { MAP, ANIM };
+enum MODE { MAP, ANIM,UNIT };
 
 class CCamera;
 class CMyToolDoc;
@@ -46,11 +46,11 @@ public:
 	CMyForm*		m_pMyForm;
 	CInspectView*	m_pInspect;
 
-	//임시 오브젝트 표현 변수.
-	vector<CGameObject*> m_GameObject;
-
 	//타일피킹
 	XMFLOAT2			 m_TileSize;
+
+	//애니메이션 모드용 객체.
+	CGameObject*		 m_AnimObject;
 
 	//툴 모드
 	MODE				 m_Mode;

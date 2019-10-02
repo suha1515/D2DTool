@@ -16,6 +16,7 @@
 
 class CMyToolView;
 class CMainFrame;
+class CAnimationFrame;
 class CMyToolApp : public CWinAppEx
 {
 public:
@@ -33,11 +34,12 @@ public:
 	virtual BOOL OnIdle(LONG lCount);
 
 
-	//프레임 매니저 , 메인프레임
+	//프레임 매니저 , 메인프레임 ,애니메이션 다이얼로그
 private:
-	CMainFrame*		m_pMain;
-	CFrameMgr*		m_pFrameMgr;
-	CMyToolView*	m_pToolView;
+	CMainFrame*			m_pMain;
+	CFrameMgr*			m_pFrameMgr;
+	CMyToolView*		m_pToolView;
+	CAnimationFrame*	m_pAnimFrame;
 };
 
 extern CMyToolApp theApp;

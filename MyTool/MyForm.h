@@ -53,7 +53,11 @@ public:
 	virtual void OnDraw(CDC* /*pDC*/);
 
 public:
+	//맵툴 다이얼로그 포인터 반환
 	CMapTool* GetMapTool();
+	//애니메이션 다이얼로그 포인터 반환
+	CAnimTool* GetAnimTool();
+
 private:
 
 	map<CString, MAP_INFO*> m_mapTileSetData;

@@ -54,6 +54,11 @@ private:
 	float fTexY;
 	
 	XMFLOAT2 tex[4];
+
+	//마우스 위치
+	XMFLOAT2		m_MousePos;
+	//상자위치
+	
 	virtual void OnInitialUpdate();
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);

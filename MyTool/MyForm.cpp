@@ -8,6 +8,7 @@
 
 #include "MainFrm.h"
 #include "MiniView.h"
+#include "MyToolView.h"
 
 
 
@@ -111,9 +112,17 @@ CMapTool * CMyForm::GetMapTool()
 {
 	return &m_MapTool;
 }
+CAnimTool * CMyForm::GetAnimTool()
+{
+	return &m_AnimTool;
+}
 void CMyForm::OnTcnSelchangeToollist(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	NULL_CHECK(pFrameWnd);
+
+	CMyToolView* pMyToolView = dynamic_cast<CMyToolView*>(pFrameWnd->m_MainSplitter.GetPane(0, 1));
+	NULL_CHECK(pMyToolView);
 	int iSel = m_ToolList.GetCurSel();
 
 	switch (iSel)
@@ -122,16 +131,25 @@ void CMyForm::OnTcnSelchangeToollist(NMHDR *pNMHDR, LRESULT *pResult)
 		m_MapTool.ShowWindow(SW_SHOW);
 		m_UnitTool.ShowWindow(SW_HIDE);
 		m_AnimTool.ShowWindow(SW_HIDE);
+
+		pMyToolView->SetMode(MODE::MAP);
+		cout << "맵모드 전환" << endl;
 		break;
 	case 1:
 		m_MapTool.ShowWindow(SW_HIDE);
 		m_UnitTool.ShowWindow(SW_SHOW);
 		m_AnimTool.ShowWindow(SW_HIDE);
+
+		pMyToolView->SetMode(MODE::UNIT);
+		cout << "유닛모드 전환" << endl;
 		break;
 	case 2:
 		m_UnitTool.ShowWindow(SW_HIDE);
 		m_MapTool.ShowWindow(SW_HIDE);
 		m_AnimTool.ShowWindow(SW_SHOW);
+
+		pMyToolView->SetMode(MODE::ANIM);
+		cout << "애니메이션모드 전환" << endl;
 		break;
 	default:
 		break;

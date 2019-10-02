@@ -65,14 +65,17 @@ void CFrameMgr::RenderFPS()
 
 	// FPS 출력
 	D3DXMATRIX matTrans;
-	D3DXMatrixTranslation(&matTrans, 600.f, 100.f, 0.f);
-
+	D3DXMatrixTranslation(&matTrans, 0.0, 0.0f, 0.f);
 	CDeviceMgr::GetInstance()->GetSprite()->SetTransform(&matTrans);
-	CDeviceMgr::GetInstance()->GetFont()->DrawText(
-		CDeviceMgr::GetInstance()->GetSprite(), /* 스프라이트 Com 객체*/
-		m_szFPS, /* 출력할 문자열 */
-		lstrlen(m_szFPS), /* 문자열 길이 */
-		nullptr, /* 사각형 영역 */
-		0, /* 사각형 영역 안에 그릴 때의 옵션 */
-		D3DCOLOR_ARGB(255, 0, 255, 0) /* 출력 색상 */);
+	CDeviceMgr::GetInstance()->GetSprite()->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_SORT_TEXTURE);
+	{
+		CDeviceMgr::GetInstance()->GetFont()->DrawText(
+			CDeviceMgr::GetInstance()->GetSprite(), /* 스프라이트 Com 객체*/
+			m_szFPS, /* 출력할 문자열 */
+			lstrlen(m_szFPS), /* 문자열 길이 */
+			nullptr, /* 사각형 영역 */
+			0, /* 사각형 영역 안에 그릴 때의 옵션 */
+			D3DCOLOR_ARGB(255, 0, 255, 0) /* 출력 색상 */);
+	}
+	CDeviceMgr::GetInstance()->GetSprite()->End();
 }

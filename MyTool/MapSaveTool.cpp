@@ -50,104 +50,104 @@ END_MESSAGE_MAP()
 
 void CMapSaveTool::OnBnClickedMapSave()
 {
-	cout << "맵저장!" << endl;
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
-	NULL_CHECK(pFrameWnd);
+	//cout << "맵저장!" << endl;
+	//// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	//CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	//NULL_CHECK(pFrameWnd);
 
-	CMyToolView* pToolView = dynamic_cast<CMyToolView*>(pFrameWnd->m_MainSplitter.GetPane(0, 1));
-	NULL_CHECK(pToolView);
+	//CMyToolView* pToolView = dynamic_cast<CMyToolView*>(pFrameWnd->m_MainSplitter.GetPane(0, 1));
+	//NULL_CHECK(pToolView);
 
-	const vector<CGameObject*>& temp = pToolView->m_GameObject;
+	//const vector<CGameObject*>& temp = pToolView->m_GameObject;
 
-	vector<MAP_TILE> temp2;
-	CString m_strPath;
-	CFile file;
-	CFileException ex;
-	CFileDialog dlg(FALSE, _T("*.map"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, _T("Map Files(*.map)|*.map|"), NULL);
+	//vector<MAP_TILE> temp2;
+	//CString m_strPath;
+	//CFile file;
+	//CFileException ex;
+	//CFileDialog dlg(FALSE, _T("*.map"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, _T("Map Files(*.map)|*.map|"), NULL);
 
-	int iIndex = m_MapList.GetCurSel();
-	if (-1 == iIndex)
-	{
-		if (dlg.DoModal() == IDOK)
-		{
-			//저장할 이름 가져오기 (리스트에 추가)
-			TCHAR filePath[MAX_STR] = L"";
-			TCHAR* fileName;
-			lstrcpy(filePath, (LPWSTR)(LPCTSTR)dlg.GetFileName());
-			
-			//확장자 제거
-			PathRemoveExtension(filePath);
-			//파일이름만.
-			fileName = PathFindFileName(filePath);
+	//int iIndex = m_MapList.GetCurSel();
+	//if (-1 == iIndex)
+	//{
+	//	if (dlg.DoModal() == IDOK)
+	//	{
+	//		//저장할 이름 가져오기 (리스트에 추가)
+	//		TCHAR filePath[MAX_STR] = L"";
+	//		TCHAR* fileName;
+	//		lstrcpy(filePath, (LPWSTR)(LPCTSTR)dlg.GetFileName());
+	//		
+	//		//확장자 제거
+	//		PathRemoveExtension(filePath);
+	//		//파일이름만.
+	//		fileName = PathFindFileName(filePath);
 
-			m_strPath = dlg.GetPathName();
-			if (m_strPath.Right(4) != ".map")
-			{
-				m_strPath += ".map";
-			}
-			file.Open(m_strPath, CFile::modeCreate | CFile::modeReadWrite, &ex);
-			MAP_TILE info;
-			for (auto& i : temp)
-			{
-				info.pos = i->GetComponent<CTransform>()->GetPosition();
+	//		m_strPath = dlg.GetPathName();
+	//		if (m_strPath.Right(4) != ".map")
+	//		{
+	//			m_strPath += ".map";
+	//		}
+	//		file.Open(m_strPath, CFile::modeCreate | CFile::modeReadWrite, &ex);
+	//		MAP_TILE info;
+	//		for (auto& i : temp)
+	//		{
+	//			info.pos = i->GetComponent<CTransform>()->GetPosition();
 
-				CTextureRenderer *pRender = i->GetComponent<CTextureRenderer>();
-				info.tex[0] = pRender->GetTexPos(0);
-				info.tex[1] = pRender->GetTexPos(1);
-			    info.tex[2] = pRender->GetTexPos(2);
-				info.tex[3] = pRender->GetTexPos(3);
+	//			CTextureRenderer *pRender = i->GetComponent<CTextureRenderer>();
+	//			info.tex[0] = pRender->GetTexPos(0);
+	//			info.tex[1] = pRender->GetTexPos(1);
+	//		    info.tex[2] = pRender->GetTexPos(2);
+	//			info.tex[3] = pRender->GetTexPos(3);
 
-				_tcscpy(info.texture, pRender->GetTexName().c_str());
-				file.Write(&info, sizeof(MAP_TILE));
-				temp2.push_back(info);
-			}
-			file.Close();
+	//			_tcscpy(info.texture, pRender->GetTexName().c_str());
+	//			file.Write(&info, sizeof(MAP_TILE));
+	//			temp2.push_back(info);
+	//		}
+	//		file.Close();
 
-			pToolView->m_MapName = fileName;
-			m_map.insert({ fileName,temp2 });
-			m_MapList.AddString(fileName);
+	//		pToolView->m_MapName = fileName;
+	//		m_map.insert({ fileName,temp2 });
+	//		m_MapList.AddString(fileName);
 
-			MessageBox(L"맵파일을 성공적으로 저장", L"Success");
-		}
+	//		MessageBox(L"맵파일을 성공적으로 저장", L"Success");
+	//	}
 
-	}
-	else
-	{
-		int iIndex = m_MapList.GetCurSel();
-		CString tileName;
-		m_MapList.GetText(iIndex, tileName);
+	//}
+	//else
+	//{
+	//	int iIndex = m_MapList.GetCurSel();
+	//	CString tileName;
+	//	m_MapList.GetText(iIndex, tileName);
 
-		auto iter_find = m_map.find(tileName);
-		if (m_map.end() != iter_find)
-		{
-			(*iter_find).second.clear();
+	//	auto iter_find = m_map.find(tileName);
+	//	if (m_map.end() != iter_find)
+	//	{
+	//		(*iter_find).second.clear();
 
-			CString path = L"../Texture/mapData/";
-			path = path + tileName + L".map";
+	//		CString path = L"../Texture/mapData/";
+	//		path = path + tileName + L".map";
 
-			file.Open(path, CFile::modeCreate | CFile::modeReadWrite, &ex);
-			MAP_TILE info;
-			for (auto& i : temp)
-			{
-				info.pos = i->GetComponent<CTransform>()->GetPosition();
-				CTextureRenderer *pRender = i->GetComponent<CTextureRenderer>();
-				info.tex[0] = pRender->GetTexPos(0);
-				info.tex[1] = pRender->GetTexPos(1);
-				info.tex[2] = pRender->GetTexPos(2);
-				info.tex[3] = pRender->GetTexPos(3);
+	//		file.Open(path, CFile::modeCreate | CFile::modeReadWrite, &ex);
+	//		MAP_TILE info;
+	//		for (auto& i : temp)
+	//		{
+	//			info.pos = i->GetComponent<CTransform>()->GetPosition();
+	//			CTextureRenderer *pRender = i->GetComponent<CTextureRenderer>();
+	//			info.tex[0] = pRender->GetTexPos(0);
+	//			info.tex[1] = pRender->GetTexPos(1);
+	//			info.tex[2] = pRender->GetTexPos(2);
+	//			info.tex[3] = pRender->GetTexPos(3);
 
-				_tcscpy(info.texture, pRender->GetTexName().c_str());
-				file.Write(&info, sizeof(MAP_TILE));
-				m_map[tileName].push_back(info);
-			}
-			file.Close();
-			MessageBox(L"맵파일을 성공적으로 저장", L"Success");
-		}
-		else
-			return;
+	//			_tcscpy(info.texture, pRender->GetTexName().c_str());
+	//			file.Write(&info, sizeof(MAP_TILE));
+	//			m_map[tileName].push_back(info);
+	//		}
+	//		file.Close();
+	//		MessageBox(L"맵파일을 성공적으로 저장", L"Success");
+	//	}
+	//	else
+	//		return;
 
-	}
+	//}
 }
 
 
@@ -208,41 +208,41 @@ void CMapSaveTool::OnBnClickedMapLoad()
 
 void CMapSaveTool::OnLbnDblclkMaplist()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	//// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 
-	int iIndex = m_MapList.GetCurSel();
-	if (iIndex != -1)
-	{
-		CString mapName;
-		m_MapList.GetText(iIndex, mapName);
-	
-		CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
-		NULL_CHECK(pFrameWnd);
+	//int iIndex = m_MapList.GetCurSel();
+	//if (iIndex != -1)
+	//{
+	//	CString mapName;
+	//	m_MapList.GetText(iIndex, mapName);
+	//
+	//	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+	//	NULL_CHECK(pFrameWnd);
 
-		CMyToolView* pToolView = dynamic_cast<CMyToolView*>(pFrameWnd->m_MainSplitter.GetPane(0, 1));
-		NULL_CHECK(pToolView);
+	//	CMyToolView* pToolView = dynamic_cast<CMyToolView*>(pFrameWnd->m_MainSplitter.GetPane(0, 1));
+	//	NULL_CHECK(pToolView);
 
-		//타일안에 무엇인가 있을경우..
-		if (!pToolView->m_GameObject.empty())
-		{
-			for (auto& i : pToolView->m_GameObject)
-			{
-				SafeDelete(i);
-			}
-			pToolView->m_GameObject.clear();
-		}
-		for (auto& i : m_map[mapName])
-		{
-			/*CGameObject* pGameObject = new CGameObject;
-			pGameObject->Initialize();
-			pGameObject->SetPosition(i.pos);
-			pGameObject->GetComponent<CTextureRenderer>()->SetTexture(i.texture);
-			pGameObject->GetComponent<CTextureRenderer>()->SetVertex(16, i.tex);
+	//	//타일안에 무엇인가 있을경우..
+	//	if (!pToolView->m_GameObject.empty())
+	//	{
+	//		for (auto& i : pToolView->m_GameObject)
+	//		{
+	//			SafeDelete(i);
+	//		}
+	//		pToolView->m_GameObject.clear();
+	//	}
+	//	for (auto& i : m_map[mapName])
+	//	{
+	//		/*CGameObject* pGameObject = new CGameObject;
+	//		pGameObject->Initialize();
+	//		pGameObject->SetPosition(i.pos);
+	//		pGameObject->GetComponent<CTextureRenderer>()->SetTexture(i.texture);
+	//		pGameObject->GetComponent<CTextureRenderer>()->SetVertex(16, i.tex);
 
-			pToolView->m_GameObject.push_back(pGameObject);*/
-		}
-		pToolView->Invalidate(FALSE);
-	}
+	//		pToolView->m_GameObject.push_back(pGameObject);*/
+	//	}
+	//	pToolView->Invalidate(FALSE);
+	//}
 }
 
 //선택해제

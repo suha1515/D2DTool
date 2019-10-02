@@ -115,6 +115,9 @@
     <Filter Include="98.Managers\05.TimeMgr">
       <UniqueIdentifier>{8536b5ff-eab4-44f1-91a3-e60bc4d9945b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96.Component\05.Scripts">
+      <UniqueIdentifier>{8910da01-eb42-420b-a47e-60a4e6b66627}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -222,6 +225,12 @@
     <ClInclude Include="TimeMgr.h">
       <Filter>98.Managers\05.TimeMgr</Filter>
     </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>96.Component\03.Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxCollider.h">
+      <Filter>96.Component\02.BoxCollider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -316,6 +325,12 @@
     </ClCompile>
     <ClCompile Include="TimeMgr.cpp">
       <Filter>98.Managers\05.TimeMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>96.Component\03.Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxCollider.cpp">
+      <Filter>96.Component\02.BoxCollider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

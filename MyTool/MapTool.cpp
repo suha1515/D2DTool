@@ -11,6 +11,7 @@
 #include "MainFrm.h"
 //미니뷰
 #include "MiniView.h"
+#include "MyToolView.h"
 
 //카메라 클래스
 #include "Camera.h"
@@ -163,6 +164,7 @@ BEGIN_MESSAGE_MAP(CMapTool, CDialogEx)
 	ON_LBN_DBLCLK(IDC_TILESET_1, &CMapTool::OnLbnDblclkTileList)
 	ON_WM_DROPFILES()
 	ON_STN_CLICKED(IDC_TILESETSIZE, &CMapTool::OnStnClickedTilesetsize)
+	ON_WM_ACTIVATE()
 END_MESSAGE_MAP()
 
 

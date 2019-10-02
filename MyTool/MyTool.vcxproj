@@ -188,7 +188,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationFrame.h" />
+    <ClInclude Include="Animator.h" />
     <ClInclude Include="AnimTool.h" />
+    <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="BoxColliderPage.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraMgr.h" />
@@ -224,7 +226,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationFrame.cpp" />
+    <ClCompile Include="Animator.cpp" />
     <ClCompile Include="AnimTool.cpp" />
+    <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="BoxColliderPage.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraMgr.cpp" />

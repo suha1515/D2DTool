@@ -66,6 +66,7 @@ public:
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 	afx_msg void OnStnClickedTilesetsize();
 
+
 	// //타일셋 이름
 	CEdit m_TileSetName;
 	// //타일셋 리스트

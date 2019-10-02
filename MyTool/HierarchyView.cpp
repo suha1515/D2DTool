@@ -43,7 +43,7 @@ int CHierarchyView::AddObject(CGameObject * object)
 	//선택된 아이템이 있을경우. 자식으로 생성
 	if (selItem != NULL)
 	{
-		CGameObject* parentObj= m_objectlist[selItem];
+		CGameObject* parentObj = m_objectlist.find(selItem)->second;
 		int index =  parentObj->GetChildernVector().size() + 1;
 		wstring objectName = parentObj->GetObjectName() +L"_child_"+to_wstring(index);
 		object->SetObjectName(objectName);
@@ -137,6 +137,7 @@ void CHierarchyView::OnNMClickHierarchytree(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CHierarchyView::OnTvnSelchangedHierarchytree(NMHDR *pNMHDR, LRESULT *pResult)
 {
+	cout << m_objectlist.size() << endl;
 
 	LPNMTREEVIEW pNMTreeView = reinterpret_cast<LPNMTREEVIEW>(pNMHDR);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
@@ -154,6 +155,7 @@ void CHierarchyView::OnTvnSelchangedHierarchytree(NMHDR *pNMHDR, LRESULT *pResul
 
 	HTREEITEM hTreeItem = m_Hierarchy.GetSelectedItem();
 
+	
 	auto& iter_find = m_objectlist.find(hTreeItem);
 	if (iter_find == m_objectlist.end())
 		m_CurClicked = nullptr;
@@ -187,7 +189,7 @@ void CHierarchyView::OnTvnSelchangedHierarchytree(NMHDR *pNMHDR, LRESULT *pResul
 			if (!check)
 			{	
 				m_PreClicked->SetObjectCliked(false);
-				//이전 클릭도니 객체가 자식을 가지고 있을경우
+				//이전 클릭된 객체가 자식을 가지고 있을경우
 				if (m_PreClicked->GetChildernVector().size()>0)
 				{
 					for (auto &i : m_PreClicked->GetChildernVector())
@@ -215,7 +217,7 @@ void CHierarchyView::OnNMDblclkHierarchytree(NMHDR *pNMHDR, LRESULT *pResult)
 	HTREEITEM hItem = m_Hierarchy.GetSelectedItem();
 	if (hItem != NULL)
 	{
-		CCameraMgr::GetInstance()->SetCameraPosition(m_objectlist[hItem]->GetComponent<CTransform>()->GetPosition());
+		CCameraMgr::GetInstance()->SetCameraPosition(m_objectlist.find(hItem)->second->GetComponent<CTransform>()->GetPosition());
 		CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 		NULL_CHECK(pFrameWnd);
 
@@ -280,13 +282,16 @@ void CHierarchyView::OnBnClickedDeleteObject()
 			{
 				hNextItem = m_Hierarchy.GetNextItem(hChildItem, TVGN_NEXT);
 				m_Hierarchy.DeleteItem(hChildItem);
+				m_objectlist.erase(hChildItem);
 				hChildItem = hNextItem;
 			}
 		}
 		//해당 객체는 제거 메시지를 보낸다. 부모와 자식이 있을경우 오브젝트 매니저에서처리.
-		m_objectlist[selItem]->SetObjectDestroy(true);
+		m_objectlist.find(selItem)->second->SetObjectDestroy(true);
 		m_objectlist.erase(selItem);
 		m_Hierarchy.DeleteItem(selItem);
+
+		m_CurClicked = nullptr;
 
 		CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 		NULL_CHECK(pFrameWnd);

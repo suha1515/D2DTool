@@ -7,7 +7,10 @@
 #include "afxdialogex.h"
 
 
-// CUnitTool 대화 상자입니다.
+#include "MainFrm.h"
+#include "MyToolView.h"
+
+
 
 IMPLEMENT_DYNAMIC(CUnitTool, CDialogEx)
 
@@ -28,7 +31,6 @@ void CUnitTool::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(CUnitTool, CDialogEx)
+	ON_WM_ACTIVATE()
 END_MESSAGE_MAP()
 
-
-// CUnitTool 메시지 처리기입니다.

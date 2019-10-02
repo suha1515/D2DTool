@@ -1,5 +1,7 @@
 #pragma once
 
+#include "AnimationFrame.h"
+#include "afxwin.h"
 
 // CAnimTool 대화 상자입니다.
 
@@ -22,4 +24,17 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedOpentool();
+
+public:
+	CAnimationFrame			m_AnimMaker;
+public:
+	virtual BOOL OnInitDialog();
+	// //애니메이션 리스트
+	CListBox m_AnimList;
+	afx_msg void OnBnClickedAnimload();
+
+private:
+	map<CString, vector<ANIM_CLIP>>		m_AnimationList;
+public:
+	afx_msg void OnLbnDblclkAnimlist();
 };

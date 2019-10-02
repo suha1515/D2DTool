@@ -72,6 +72,8 @@ CMyToolView::CMyToolView()
 	m_bIsActive = false;
 	m_bIsReInit = false;
 
+	m_AnimObject = nullptr;
+
 	hr = m_pDeviceMgr->InitDevice(CDeviceMgr::MODE_WIN);
 	m_pShaderMgr->Initialize();
 	FAILED_CHECK_MSG(hr, L"InitDevice Failed");
@@ -82,11 +84,6 @@ CMyToolView::CMyToolView()
 CMyToolView::~CMyToolView()
 {
 	cout << "툴뷰소멸자" << endl;
-
-	for (auto &i : m_GameObject)
-		SafeDelete(i);
-	m_GameObject.clear();
-	m_GameObject.shrink_to_fit();
 
 	m_pObjectMgr->DestroyInstance();
 	m_pShaderMgr->DestroyInstance();
@@ -112,68 +109,41 @@ void CMyToolView::OnDraw(CDC* /*pDC*/)
 	if (!pDoc)
 		return;
 
-	m_Cam->Update();
-	m_Cam->SetTransform();
-
-	m_pDeviceMgr->Render_Begin();
-
-	D3DXMATRIX* mat = m_Cam->GetViewProjMatrix();
-	m_pDeviceMgr->GetLine()->SetWidth(1.f);
-	m_pDeviceMgr->GetLine()->Begin();
+	if (m_Mode == MAP)
 	{
-		//Horizontal
-		//1024*1024
-		for (int i = 0; i < 64; ++i)
+		m_Cam->Update();
+		m_Cam->SetTransform();
+
+		m_pDeviceMgr->Render_Begin();
+
+		D3DXMATRIX* mat = m_Cam->GetViewProjMatrix();
+		m_pDeviceMgr->GetLine()->SetWidth(1.f);
+		m_pDeviceMgr->GetLine()->Begin();
 		{
-			m_Line[0] = { (-512.f),  (512.f) - (i*16.f),0.0f };
-			m_Line[1] = { (512.f),  (512.f) - (i*16.f),0.0f };
-			m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(23, 234, 0));
+			//Horizontal
+			//1024*1024
+			for (int i = 0; i < 64; ++i)
+			{
+				m_Line[0] = { (-512.f),  (512.f) - (i*16.f),0.0f };
+				m_Line[1] = { (512.f),  (512.f) - (i*16.f),0.0f };
+				m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(23, 234, 0));
+			}
+			for (int i = 0; i < 64; ++i)
+			{
+				m_Line[0] = { (-512.f) + (i*16.f),  (512.f) ,0.0f };
+				m_Line[1] = { (-512.f) + (i*16.f), -(512.f) ,0.0f };
+				m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(23, 234, 0));
+			}
 		}
-		for (int i = 0; i < 64; ++i)
-		{
-			m_Line[0] = { (-512.f) + (i*16.f),  (512.f) ,0.0f };
-			m_Line[1] = { (-512.f) + (i*16.f), -(512.f) ,0.0f };
-			m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(23, 234, 0));
-		}
-	}
-	m_pDeviceMgr->GetLine()->End();
-
-
-	D3DXMATRIX matTrans;
-	D3DXMATRIX matScale;
-	D3DXMatrixScaling(&matScale, 1.0f, -1.0f, 1.0f);
-	D3DXMATRIX matWorld;
-	
-	TCHAR szIndex[MIN_STR] = L"";
-	
-
-	m_pDeviceMgr->GetSprite()->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_OBJECTSPACE| D3DXSPRITE_SORT_TEXTURE);
-	{
-		D3DXMatrixTranslation(&matTrans,0.0f,0.0f, 0.0f);
-		matWorld = matScale * matTrans;
-		swprintf_s(szIndex, L"%d", 4000);
-		m_pDeviceMgr->GetSprite()->SetTransform(&matWorld);
-		m_pDeviceMgr->GetFont()->DrawText(m_pDeviceMgr->GetSprite(),
-			szIndex, lstrlen(szIndex), nullptr, 0, D3DCOLOR_ARGB(255, 255, 255, 255));
-	
-	}
-	m_pDeviceMgr->GetSprite()->End();
-
-	switch (m_Mode)
-	{
-	case MAP:
+		m_pDeviceMgr->GetLine()->End();
+		//오브젝트들 업데이트
 		m_pObjectMgr->Update();
+		//오브젝트 렌더.
 		m_pObjectMgr->Render();
-		break;
-	case ANIM:
-		
-		break;
-	default:
-		break;
+
+		m_pDeviceMgr->Render_End(m_hWnd);
 	}
 	
-
-	m_pDeviceMgr->Render_End(m_hWnd);
 }
 
 
@@ -272,6 +242,10 @@ void CMyToolView::OnInitialUpdate()
 	m_pCameraMgr->SetMainCamera(m_Cam);
 	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(1.0f, 1.0f, 1.0f));
 
+
+	//기본값.
+	m_TileSize.x = 16;
+	m_TileSize.y = 16;
 	m_Mode = MAP;
 
 }
@@ -298,31 +272,17 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	CView::OnLButtonDown(nFlags, point);
 
-	CString tileName = m_pMyForm->GetMapTool()->GetTileName();
-	const XMFLOAT2* tex = m_pMyForm->GetMapTool()->GetTexPos();
-	const XMFLOAT2& size = m_pMyForm->GetMapTool()->GetTileSize();
-	m_TileSize = size;
-	const CPoint mousePos = MousePicking(point);
-	if (tex != nullptr)
+	if (m_Mode == MAP)
 	{
-		//타일 중복 검사 - 중복시 텍스처 정보만 바꾼다.
-		auto iter_find = find_if(m_GameObject.begin(), m_GameObject.end(),
-		[&mousePos](CGameObject* pGameObject)
+		CString tileName = m_pMyForm->GetMapTool()->GetTileName();
+		const XMFLOAT2* tex = m_pMyForm->GetMapTool()->GetTexPos();
+		const XMFLOAT2& size = m_pMyForm->GetMapTool()->GetTileSize();
+		if (size.x != 0 && size.y != 0)
 		{
-			CTransform* pTransform = pGameObject->GetComponent<CTransform>();
-			if (pTransform->GetPosition() == D3DXVECTOR3(mousePos.x, mousePos.y, 1.0f))
-			{
-				return true;
-			}
-			return false;
-		});
-
-		if (m_GameObject.end() != iter_find)
-		{
-			(*iter_find)->GetComponent<CTextureRenderer>()->SetTexture((LPCTSTR)tileName);
-			(*iter_find)->GetComponent<CTextureRenderer>()->SetVertex(size.x, size.y, tex);
+			m_TileSize = size;
 		}
-		else
+		const CPoint mousePos = MousePicking(point);
+		if (tex != nullptr)
 		{
 			wstring name = L"GameObject" + to_wstring(m_pObjectMgr->GetObjectCount());
 
@@ -345,16 +305,14 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 
 			pGameObject->AddComponent(pRender);
 
-			
+
 			//0을 반환한 경우는 부모로생성하는것
 			m_pInspect->m_HierarchyView.AddObject(pGameObject);
 			m_pObjectMgr->AddObject(pGameObject);
-			
+			Invalidate(FALSE);
 		}
-		Invalidate(FALSE);
 	}
 }
-
 //타일 지우기
 void CMyToolView::OnRButtonDown(UINT nFlags, CPoint point)
 {
@@ -421,51 +379,65 @@ BOOL CMyToolView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 
 const CPoint& CMyToolView::MousePicking(const CPoint& point)
 {
-	RECT rc = {};
-	GetClientRect(&rc);
-	float winX = rc.right - rc.left;
-	float winY = rc.bottom - rc.top;
+	if (m_Mode == MAP)
+	{
+		RECT rc = {};
+		GetClientRect(&rc);
+		float winX = rc.right - rc.left;
+		float winY = rc.bottom - rc.top;
 
-	D3DXVECTOR3 vMouse = { float(point.x) - winX*0.5f,(winY*0.5f - float(point.y)),1.0f };
-	D3DXVECTOR4 vMouse2;
-	D3DXMATRIX viewMat = *m_Cam->GetViewMatrix();
-	D3DXMATRIX InvViewMat;
-	D3DXMatrixInverse(&InvViewMat, NULL, &viewMat);
-	D3DXVec3Transform(&vMouse2, &vMouse, &InvViewMat);
+		D3DXVECTOR3 vMouse = { float(point.x) - winX*0.5f,(winY*0.5f - float(point.y)),1.0f };
+		D3DXVECTOR4 vMouse2;
+		D3DXMATRIX viewMat = *m_Cam->GetViewMatrix();
+		D3DXMATRIX InvViewMat;
+		D3DXMatrixInverse(&InvViewMat, NULL, &viewMat);
+		D3DXVec3Transform(&vMouse2, &vMouse, &InvViewMat);
 
-	cout << vMouse.x << " , " << vMouse.y << endl;
-	float newX, newY;
-	if (vMouse2.x>0)
-		newX = ((int)vMouse2.x / (int)m_TileSize.x)*m_TileSize.x + m_TileSize.x*0.5f;
-	else
-		newX = ((int)vMouse2.x / (int)m_TileSize.x)*m_TileSize.x - m_TileSize.x*0.5f;
+		cout << vMouse.x << " , " << vMouse.y << endl;
+		float newX, newY;
+		if (vMouse2.x>0)
+			newX = ((int)vMouse2.x / (int)m_TileSize.x)*m_TileSize.x + m_TileSize.x*0.5f;
+		else
+			newX = ((int)vMouse2.x / (int)m_TileSize.x)*m_TileSize.x - m_TileSize.x*0.5f;
 
-	if (vMouse2.y>0)
-		newY = ((int)vMouse2.y / (int)m_TileSize.y)*m_TileSize.y + m_TileSize.y*0.5f;
-	else
-		newY = ((int)vMouse2.y / (int)m_TileSize.y)*m_TileSize.y - m_TileSize.y*0.5f;
+		if (vMouse2.y>0)
+			newY = ((int)vMouse2.y / (int)m_TileSize.y)*m_TileSize.y + m_TileSize.y*0.5f;
+		else
+			newY = ((int)vMouse2.y / (int)m_TileSize.y)*m_TileSize.y - m_TileSize.y*0.5f;
 
-	cout << newX << " , " << newY << endl;
+		cout << newX << " , " << newY << endl;
 
-	return CPoint(newX, newY);
+		return CPoint(newX, newY);
+	}
+	return CPoint(0, 0);
 }
 
 void CMyToolView::Update()
 {
+	//카메라 업데이트
+	m_Cam->Update();
+	m_Cam->SetTransform();
+	if (m_Mode == ANIM)
+	{
+		if (m_AnimObject != nullptr)
+			m_AnimObject->Update();
+	}
+	else
 	m_pObjectMgr->Update();
 }
 
 void CMyToolView::Render()
 {
 	m_pDeviceMgr->Render_Begin();
+	if (m_Mode == ANIM)
+	{
+		if (m_AnimObject != nullptr)
+			m_AnimObject->Render();
+	}
+	else
 	m_pObjectMgr->Render();
 
-	m_pDeviceMgr->GetSprite()->Begin(D3DXSPRITE_ALPHABLEND);
-	{
-		CFrameMgr::GetInstance()->RenderFPS();
-	}
-	m_pDeviceMgr->GetSprite()->End();
-
+	CFrameMgr::GetInstance()->RenderFPS();
 	m_pDeviceMgr->Render_End(m_hWnd);
 }
 
@@ -479,7 +451,7 @@ void CMyToolView::SetMode(MODE mode)
 	m_Mode = mode;
 }
 
-//오른쪽 클릭시 나오는것
+//오른쪽 클릭시 나오는것 (컨텍스트 메뉴)
 void CMyToolView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
@@ -488,8 +460,17 @@ void CMyToolView::OnContextMenu(CWnd* pWnd, CPoint point)
 	CMenu* pMenu;
 	popup.LoadMenuW(IDR_MENU3);
 	
+	if(m_Mode ==MAP )
+	{
 	pMenu = popup.GetSubMenu(0);
 	pMenu->TrackPopupMenu(TPM_LEFTALIGN || TPM_RIGHTBUTTON, point.x, point.y,this);
+	}
+	else if (m_Mode == UNIT)
+	{
+		pMenu = popup.GetSubMenu(2);
+		pMenu->TrackPopupMenu(TPM_LEFTALIGN || TPM_RIGHTBUTTON, point.x, point.y, this);
+	}
+	
 }
 
 
@@ -530,6 +511,7 @@ void CMyToolView::OnPause()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 	m_bIsActive = false;
+	Invalidate(FALSE);
 }
 
 

@@ -82,6 +82,7 @@ void CMiniView::OnDraw(CDC* pDC)
 		m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
 
 	}
+	m_pDeviceMgr->GetLine()->End();
 	m_pDeviceMgr->Render_End(m_hWnd);
 }
 
@@ -128,6 +129,8 @@ void CMiniView::Initialize(CString tileName)
 	fGapY = (float)itileSizeY / imgHeight;
 	CScrollView::SetScrollSizes(MM_TEXT, CSize(cx, cy));
 	
+	
+
 	VerTexUpdate();
 	Invalidate(FALSE);
 
@@ -252,6 +255,9 @@ void CMiniView::OnInitialUpdate()
 
 	//ºû²û
 	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_LIGHTING, false);
+
+	m_MousePos.x = 0.0f;
+	m_MousePos.y = 0.0f;
 }
 
 
@@ -275,6 +281,10 @@ void CMiniView::OnLButtonDown(UINT nFlags, CPoint point)
 		if (m_texInfo != nullptr)
 		 {
 			D3DXVECTOR3 vMouse = { float(point.x) + GetScrollPos(0),float(point.y) + GetScrollPos(1),0.f };
+			
+			m_MousePos.x = vMouse.x;
+			m_MousePos.y = vMouse.y;
+
 			cout << int(vMouse.x) / itileSizeX << " , " << int(vMouse.y) / itileSizeY << endl;
 			int indexX = int(vMouse.x) / itileSizeX;
 			int indexY = int(vMouse.y) / itileSizeY;
@@ -303,7 +313,16 @@ void CMiniView::OnLButtonDown(UINT nFlags, CPoint point)
 			str = (LPCTSTR)szIndex;
 			cout << str << endl;
 			//ÅØ½ºÃÄ ÁÂÇ¥ Àü´Þ.
-			pMyForm->GetMapTool()->Renew(tex);
+			if (pMyForm->GetMapTool()->IsWindowVisible())
+			{
+				pMyForm->GetMapTool()->Renew(tex);
+				cout << "¸ÊÅø¿¡ Àü´ÞµÊ" << endl;
+			}
+			if (pMyForm->GetAnimTool()->m_AnimMaker.IsWindowVisible())
+			{
+				pMyForm->GetAnimTool()->m_AnimMaker.SetTexture(m_texInfo->textureName.c_str(), tex,&XMFLOAT2(itileSizeX,itileSizeY));
+				cout << "¾Ö´Ï¸ÞÀÌ¼Ç Åø¿¡ Àü´ÞµÊ" << endl;
+			}			
 		}
 	
 	}

@@ -69,13 +69,15 @@ typedef struct tagAnimationClip
 	XMFLOAT3		  _rot;
 	D3DXVECTOR3		  _Scale;
 	XMFLOAT2		  _Tex[4];
+
+	TCHAR 				_texName[256] = L"";
+	float				_texSizeX;
+	float				_texSizeY;
 }ANIM_CLIP;
 
 typedef struct tagAnimation
 {
-	wstring				_texName;
-	float				_texSizeX;
-	float				_texSizeY;
+	TCHAR				_AnimName[256] = L"";
 	vector<ANIM_CLIP>	_clips;
 }ANIMATION;
 

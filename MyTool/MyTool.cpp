@@ -11,6 +11,8 @@
 #include "MyToolDoc.h"
 #include "MyToolView.h"
 
+#include "AnimationFrame.h"
+#include "MyForm.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -187,11 +189,11 @@ void CMyToolApp::OnAppAbout()
 
 BOOL CMyToolApp::OnIdle(LONG lCount)
 {
-	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 	m_pFrameMgr = CFrameMgr::GetInstance();
 	m_pMain = (CMainFrame*)m_pMainWnd;
 	m_pToolView = (CMyToolView*)m_pMain->m_MainSplitter.GetPane(0, 1);
-
+	CMyForm* pMyForm = (CMyForm*)m_pMain->m_SecondSplitter.GetPane(1, 0);
+	m_pAnimFrame = &pMyForm->GetAnimTool()->m_AnimMaker;
 
 	if (this->m_pMainWnd->IsIconic())
 	{
@@ -200,13 +202,19 @@ BOOL CMyToolApp::OnIdle(LONG lCount)
 	else
 	{
 		//루프처리
-		if (m_pToolView->GetIsPlaying())
+		if (m_pFrameMgr->LockFrame(60.f))
 		{
-			if (m_pFrameMgr->LockFrame(60.f))
-			{
+			CTimeMgr::GetInstance()->UpdateTime();
+			
+			if (m_pToolView->GetIsPlaying())
+			{		
 				//MainGame
 				m_pToolView->Update();
 				m_pToolView->Render();
+			}
+			if (m_pAnimFrame->IsPlaying())
+			{
+				m_pAnimFrame->Update();
 			}
 		}
 	}

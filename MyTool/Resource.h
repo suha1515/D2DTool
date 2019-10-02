@@ -88,6 +88,7 @@
 #define IDC_TOTAL_TIME                  1100
 #define IDC_ISPOSSIBLE                  1101
 #define IDC_ANIMOBJ                     1102
+#define IDC_ANIMIMG                     1103
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_32773                        32773
@@ -99,9 +100,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        331
+#define _APS_NEXT_RESOURCE_VALUE        332
 #define _APS_NEXT_COMMAND_VALUE         32777
-#define _APS_NEXT_CONTROL_VALUE         1103
+#define _APS_NEXT_CONTROL_VALUE         1104
 #define _APS_NEXT_SYMED_VALUE           314
 #endif
 #endif
