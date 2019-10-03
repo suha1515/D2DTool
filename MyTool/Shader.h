@@ -20,9 +20,9 @@ private:
 	CDeviceMgr*			m_pDeviceMgr;
 
 	// CComponent을(를) 통해 상속됨
-	virtual void Action(CGameObject * pObject) override;
+	virtual void Action() override;
 
 	// CComponent을(를) 통해 상속됨
-	virtual void Initialize() override;
+	virtual void Initialize(CGameObject * pObject) override;
 };
 

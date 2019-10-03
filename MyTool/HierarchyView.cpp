@@ -256,7 +256,7 @@ void CHierarchyView::OnBnClickedAddObject()
 
 	//Æ®·£½ºÆû ÄÄÆ÷³ÍÆ®
 	CTransform* pTransform = new CTransform;
-	pTransform->Initialize();
+	pTransform->Initialize(pGameObject);
 	pTransform->SetPosition(D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	pGameObject->AddComponent(pTransform);

@@ -33,7 +33,7 @@ CAnimationFrame::CAnimationFrame(CWnd* pParent /*=NULL*/)
 	, m_TextureSizeX(0)
 	, m_TextureSizeY(0)
 {
-
+	
 }
 
 CAnimationFrame::~CAnimationFrame()
@@ -84,6 +84,13 @@ END_MESSAGE_MAP()
 
 // CAnimationFrame 메시지 처리기입니다.
 
+bool FindIter(CLIP_INFO info,int index)
+{
+	if (info._index == index)
+		return true;
+	return false;
+}
+
 
 void CAnimationFrame::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized)
 {
@@ -91,12 +98,90 @@ void CAnimationFrame::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized)
 	
 }
 
+void CAnimationFrame::UpDateInfo(ANIM_CLIP & clipinfo)
+{
+	UpdateData(TRUE);
+
+	//툴에서 클립의 첫번째 클립의 정보로 채운다.
+	vector<CLIP_INFO>::iterator iter_begin = clipinfo._clips.begin();
+	m_ClipName = clipinfo._clipName;
+	wcout << m_ClipName.operator LPCWSTR() << endl;
+	
+	if (!clipinfo._clips.empty())
+	{
+		//위치 정보
+		m_PositionX		= iter_begin->_pos.x;
+		m_PositionY		= iter_begin->_pos.y;
+		m_PositionZ		= iter_begin->_pos.z;
+
+		//회전 정보
+		m_RotationX		= iter_begin->_rot.x;
+		m_RotationY		= iter_begin->_rot.y;
+		m_RotationZ		= iter_begin->_rot.z;
+
+		//크기 정보
+		m_ScaleX		= iter_begin->_Scale.x;
+		m_ScaleY		= iter_begin->_Scale.y;
+		m_ScaleZ		= iter_begin->_Scale.z;
+
+		//텍스처 정보.
+		m_TexName		= iter_begin->_texName;
+		m_TextureSizeX  = iter_begin->_texSizeX;
+		m_TextureSizeY  = iter_begin->_texSizeY;
+
+		//재생 시간
+		m_PlayTime		= iter_begin->_startTime;
+
+		//이미지 정보 갱신 
+		XMFLOAT2 size = XMFLOAT2(m_TextureSizeX, m_TextureSizeY);
+		SetTexture(m_TexName, iter_begin->_Tex, &size);
+
+		//총 시간
+		float total=0.0f;
+		for (auto& i : clipinfo._clips)
+		{
+			total += i._startTime;
+		}
+			
+
+		m_EndTime = total;
+	}
+	//만약 클립내용이 하나도 없을경우.
+	else
+	{
+		//위치 정보
+		m_PositionX = 0.0f;
+		m_PositionY = 0.0f;
+		m_PositionZ = 0.0f;
+
+		//회전 정보
+		m_RotationX = 0.0f;
+		m_RotationY = 0.0f;
+		m_RotationZ = 0.0f;
+
+		//크기 정보
+		m_ScaleX = 0.0f;
+		m_ScaleY = 0.0f;
+		m_ScaleZ = 0.0f;
+
+		//텍스처 정보.
+		m_TexName = L"";
+		m_TextureSizeX = 0.0f;
+		m_TextureSizeY = 0.0f;
+
+		//재생 시간
+		m_PlayTime = 0.0f;
+
+		cout << "클립이 비었습니다" << endl;
+	}
+	UpdateData(FALSE);
+}
+
 void CAnimationFrame::SetTexture(const CString& clipName, const XMFLOAT2 * tex,const XMFLOAT2* size)
 {
-
 	HRESULT hr = 0;
 	m_texInfo = m_pTextureMgr->GetTexInfo(L"TILE_MAP", clipName.operator LPCWSTR());
-	NULL_CHECK_MSG(m_texInfo, L"AnimFrame texinfo is nullptr");
+	NULL_CHECK_MSG_RETURN(m_texInfo, L"AnimFrame 텍스처 정보가 없습니다");
 
 	m_Tex[0] = tex[0];
 	m_Tex[1] = tex[1];
@@ -106,15 +191,9 @@ void CAnimationFrame::SetTexture(const CString& clipName, const XMFLOAT2 * tex,c
 	m_TexName = m_texInfo->textureName.c_str();
 	m_Size = *size;
 
-	UpdateData(TRUE);
-
 	m_TextureName  = m_TexName;
 	m_TextureSizeX = size->x;
 	m_TextureSizeY = size->y;
-
-	UpdateData(FALSE);
-
-
 
 	VertexUpdate();
 	Invalidate(FALSE);
@@ -170,27 +249,29 @@ void CAnimationFrame::Initialize()
 
 void CAnimationFrame::Update()
 {
-	if (m_StartIndex != m_EndIndex)
+	//벡터 시작 - 끝 0,1,2,3,4  시작 0 끝 5
+
+	if (m_startIndex < m_endIndex)
 	{
-		XMFLOAT2 size = XMFLOAT2(m_StartIndex->second._texSizeX, m_StartIndex->second._texSizeY);
-		SetTexture(m_StartIndex->second._texName, m_StartIndex->second._Tex, &size);
-		if (m_time >= m_StartIndex->second._startTime)
+		XMFLOAT2 size = XMFLOAT2(m_Clips[m_startIndex]._texSizeX, m_Clips[m_startIndex]._texSizeY);
+		SetTexture(m_Clips[m_startIndex]._texName, m_Clips[m_startIndex]._Tex, &size);
+		if (m_time >= m_Clips[m_startIndex]._startTime)
 		{
-			m_StartIndex++;
+			m_startIndex++;
 			m_time -= m_time;
 		}
 	}
 	else
-	{
-		m_StartIndex = m_Clips.begin();
+	{ 
+		m_startIndex = 0;
 		if (!m_CheckLoop.GetCheck())
 		{
-			XMFLOAT2 size = XMFLOAT2(m_StartIndex->second._texSizeX, m_StartIndex->second._texSizeY);
-			SetTexture(m_StartIndex->second._texName, m_StartIndex->second._Tex, &size);
+			XMFLOAT2 size = XMFLOAT2(m_Clips[m_startIndex]._texSizeX, m_Clips[m_startIndex]._texSizeY);
+			SetTexture(m_Clips[m_startIndex]._texName, m_Clips[m_startIndex]._Tex, &size);
 			m_IsPlaying = false;
 		}
-	}
 
+	}
 	Render();
 	m_time += CTimeMgr::GetInstance()->GetDeltaTime();
 }
@@ -263,17 +344,36 @@ void CAnimationFrame::VertexUpdate()
 	m_pIB->Unlock();
 }
 
-void CAnimationFrame::LoadAnimation(const CString& clipName, const vector<ANIM_CLIP>& clips)
+void CAnimationFrame::Renew()
 {
+	//리스트 박스 갱신
+	m_ClipList.ResetContent();
+	//인덱스 갱신
 	int index = 0;
-	for (auto&i : clips)
+	wcout << m_ClipName.operator LPCWSTR() << endl;
+	for (auto& i  : m_Clips)
 	{
-		CString name;
-		name.Format(L"%s_%d", clipName, index);
-		m_Clips[name] = i;
-		m_ClipList.AddString(name);
+		i._index = index;
 		index++;
+
+		//리스트 박스 원소추가
+		CString clipName;
+		clipName.Format(L"%s_%d", m_ClipName, index);
+		m_ClipList.AddString(clipName);
 	}
+}
+
+void CAnimationFrame::LoadClip(ANIM_CLIP& clipinfo)
+{
+	if (m_Clip != nullptr)
+		m_Clip = nullptr;
+
+	m_Clip  = &clipinfo;
+	m_Clips = m_Clip->_clips;
+
+	UpDateInfo(clipinfo);
+
+	Renew();
 }
 
 bool CAnimationFrame::IsPlaying()
@@ -361,10 +461,10 @@ BOOL CAnimationFrame::OnInitDialog()
 void CAnimationFrame::OnBnClickedClipAdd()
 {
 	//클립정보를 종합한다.
-	ANIM_CLIP clip;
+	CLIP_INFO clip;
 	UpdateData(TRUE);
-	clip._pos   = D3DXVECTOR3(m_PositionX, m_PositionY, m_PositionZ);		//애니메이션 위치
-	clip._rot   = XMFLOAT3(m_RotationX, m_RotationY, m_RotationZ);			//애니메이션 회전
+	clip._pos = D3DXVECTOR3(m_PositionX, m_PositionY, m_PositionZ);			//애니메이션 위치
+	clip._rot = XMFLOAT3(m_RotationX, m_RotationY, m_RotationZ);			//애니메이션 회전
 	clip._Scale = D3DXVECTOR3(m_ScaleX, m_ScaleY, m_ScaleZ);				//애니메이션 크기
 	clip._startTime = m_PlayTime;											//애니메이션 재생시간
 
@@ -377,13 +477,32 @@ void CAnimationFrame::OnBnClickedClipAdd()
 	clip._texSizeX = m_Size.x;
 	clip._texSizeY = m_Size.y;
 
-	CString clipName;
-	int size = m_Clips.size();
-	clipName.Format(L"%s_%d", m_ClipName, size);
-
-	m_Clips.insert({ clipName,clip });
-	m_ClipList.AddString(clipName);
-
+	//리스트 항목을 선택했을경우. ( 중간삽입 항목아이템 바로아래 , 그리고 나머지 아이템도 갱신해야함)
+	int index = m_ClipList.GetCurSel();
+	if (index != -1)
+	{
+		auto iter_find = find_if(m_Clips.begin(), m_Clips.end(), 
+			[&index](CLIP_INFO info)
+			{
+			if (info._index == index)
+				return true;
+			return false;
+			}
+		);
+		if (m_Clips.end() == iter_find)
+		{
+			MessageBox(L"리스트 항목을 찾을수 없습니다", L"ANIMFRAME");
+			return;
+		}
+		iter_find++;
+		m_Clips.insert(iter_find, clip);
+	}
+	//인덱스가 마지막이거나//선택하지 않은 경우는 새로 생성한다. 바로 끝자락에
+	else if (index == m_ClipList.GetCount()-1||index == -1)
+	{
+		m_Clips.push_back(clip);
+	}
+	Renew();
 	UpdateData(FALSE);
 }
 
@@ -398,39 +517,30 @@ void CAnimationFrame::OnBnClickedClipRemove()
 		m_ClipList.GetText(index, clipName);
 
 		m_ClipList.DeleteString(index);
-		m_Clips.erase(clipName);
+		
+		//해당 인덱스에 근거해 벡터를 지운다.
+		auto iter_find = find_if(m_Clips.begin(), m_Clips.end(),
+			[&index](CLIP_INFO info)
+		{
+			if (info._index == index)
+				return true;
+			return false;
+		}
+		);
+
+		m_Clips.erase(iter_find);
+		//중간 원소를 지웠을수 있으므로 다시 리스트 갱신
+		Renew();
 	}
 }
 
 
 void CAnimationFrame::OnBnClickedAnimationSave()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CString m_strPath;
-	CFile file;
-	CFileException ex;
-	CFileDialog dlg(FALSE, _T("*.anim"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, _T("Anim File(*.anim)|*.anim|"), NULL);
+	//따로 클립별 저장이아니다
 
-	if (dlg.DoModal() == IDOK)
-	{
-		m_strPath = dlg.GetPathName();
-		if (m_strPath.Right(5) != ".anim")
-		{
-			m_strPath += ".anim";
-		}
-		file.Open(m_strPath, CFile::modeCreate | CFile::modeReadWrite, &ex);
-		TCHAR _AnimName[256] = L"";
-		lstrcpy(_AnimName, m_ClipName);
-		ANIM_CLIP info;
-		file.Write(&_AnimName, sizeof(_AnimName));
-		for (auto& i : m_Clips)
-		{
-			info = i.second;
-			file.Write(&info, sizeof(ANIM_CLIP));
-		}
-		file.Close();
-		MessageBox(L"애니메이션 파일을 성공적으로 저장", L"Success");
-	}
+	//수정한 클립들을 저장시켜준다.
+	m_Clip->_clips = m_Clips;
 }
 
 
@@ -445,10 +555,8 @@ void CAnimationFrame::OnBnClickedPlay()
 	{
 		if (m_IsPlaying != true)
 		{
-			for (auto& i : m_Clips)
-				m_EndTime += i.second._startTime;
-			m_StartIndex = m_Clips.begin();
-			m_EndIndex = m_Clips.end();
+			m_startIndex = 0;
+			m_endIndex = m_Clips.size();
 			m_IsPlaying = true;
 		}
 	}
@@ -458,10 +566,10 @@ void CAnimationFrame::OnBnClickedPlay()
 
 void CAnimationFrame::OnBnClickedReWind()
 {
-	auto& iter_begin = m_Clips.begin();
+	/*auto& iter_begin = m_Clips.begin();
 	XMFLOAT2		m_size = XMFLOAT2(iter_begin->second._texSizeX, iter_begin->second._texSizeY);
 	SetTexture(iter_begin->second._texName , iter_begin->second._Tex, &m_size);
-
+*/
 }
 
 
@@ -472,8 +580,6 @@ void CAnimationFrame::OnBnClickedPause()
 		m_IsPlaying = false;
 	}
 }
-
-
 void CAnimationFrame::OnLbnDblclkCliplist()
 {
 	int index = m_ClipList.GetCurSel();
@@ -482,8 +588,19 @@ void CAnimationFrame::OnLbnDblclkCliplist()
 	{
 		CString clipName;
 		m_ClipList.GetText(index, clipName);
-		ANIM_CLIP info = m_Clips.find(clipName)->second;
+		auto iter_find = find_if(m_Clips.begin(), m_Clips.end(),
+			[&index](CLIP_INFO info)
+		{
+			if (info._index == index)
+				return true;
+			return false;
+		}
+		);
 
+		if (iter_find == m_Clips.end())
+			return;
+		
+		CLIP_INFO info = *iter_find;
 		UpdateData(TRUE);
 
 		m_PositionX = info._pos.x;
@@ -504,7 +621,6 @@ void CAnimationFrame::OnLbnDblclkCliplist()
 
 		m_PlayTime = info._startTime;
 
-		m_ClipName = clipName;
 		UpdateData(FALSE);
 
 		SetTexture(m_TextureName, info._Tex, &XMFLOAT2(m_TextureSizeX, m_TextureSizeY));
@@ -527,7 +643,7 @@ BOOL CAnimationFrame::PreTranslateMessage(MSG* pMsg)
 				CString clipName;
 				m_ClipList.GetText(index, clipName);
 
-				ANIM_CLIP clip;
+				CLIP_INFO clip;
 				UpdateData(TRUE);
 				clip._pos = D3DXVECTOR3(m_PositionX, m_PositionY, m_PositionZ);			//애니메이션 위치
 				clip._rot = XMFLOAT3(m_RotationX, m_RotationY, m_RotationZ);			//애니메이션 회전
@@ -539,11 +655,11 @@ BOOL CAnimationFrame::PreTranslateMessage(MSG* pMsg)
 				clip._Tex[2] = m_Tex[2];
 				clip._Tex[3] = m_Tex[3];
 
-				lstrcpy(clip._texName, m_texInfo->textureName.c_str());
 				clip._texSizeX = m_Size.x;
 				clip._texSizeY = m_Size.y;
 
-				m_Clips[clipName] = clip;
+				m_Clips[index] = clip;
+
 				UpdateData(FALSE);
 			}
 		}

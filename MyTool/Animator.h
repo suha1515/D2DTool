@@ -8,15 +8,17 @@ public:
 	~CAnimator();
 
 	// CComponent을(를) 통해 상속됨
-	virtual void Initialize() override;
-	virtual void Action(CGameObject * pObject) override;
+	virtual void Initialize(CGameObject *pObject) override;
+	virtual void Action() override;
 
 public:
 	bool		Play(const wstring& clipName,ANIMATION_TYPE type);		//애니메이션 플레이
 	void		Stop();													//애니메이션 중지
 	void		ReSet();												//애니메이션 리셋.
+	bool		IsPlaying(const wstring& clipName);						//애니메이션 플레이 체크.
+public:
+	void		SetClips(const wstring& _animation);
 
-	bool		IsPlaying(const wstring& clipName);
 
 private:
 	map < wstring, vector<ANIM_CLIP>>	m_AnimationClip;		//애니메이션 클립

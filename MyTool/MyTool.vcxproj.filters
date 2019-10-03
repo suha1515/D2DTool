@@ -118,6 +118,9 @@
     <Filter Include="96.Component\05.Scripts">
       <UniqueIdentifier>{8910da01-eb42-420b-a47e-60a4e6b66627}</UniqueIdentifier>
     </Filter>
+    <Filter Include="98.Managers\06.AnimationMgr">
+      <UniqueIdentifier>{2d83ef60-ff5a-41b0-ad7b-b6aa9d166bd3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -231,6 +234,12 @@
     <ClInclude Include="BoxCollider.h">
       <Filter>96.Component\02.BoxCollider</Filter>
     </ClInclude>
+    <ClInclude Include="AnimationMgr.h">
+      <Filter>98.Managers\06.AnimationMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -331,6 +340,12 @@
     </ClCompile>
     <ClCompile Include="BoxCollider.cpp">
       <Filter>96.Component\02.BoxCollider</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationMgr.cpp">
+      <Filter>98.Managers\06.AnimationMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

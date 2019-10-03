@@ -30,12 +30,12 @@ void CShader::SetEffect(const wstring & filePath)
 	FAILED_CHECK_MSG_RETURN(hr, L"이펙트 파일 읽기 실패.");
 }
 
-void CShader::Action(CGameObject * pObject)
+void CShader::Action()
 {
 
 }
 
-void CShader::Initialize()
+void CShader::Initialize(CGameObject * pObject)
 {
 }
 

@@ -24,17 +24,39 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedOpentool();
-
+	afx_msg void OnLbnDblclkAnimlist();
+	afx_msg void OnBnClickedAddAnim();
+	afx_msg void OnBnClickedAnimload();
 public:
 	CAnimationFrame			m_AnimMaker;
 public:
 	virtual BOOL OnInitDialog();
-	// //애니메이션 리스트
+	// 애니메이션 리스트
 	CListBox m_AnimList;
-	afx_msg void OnBnClickedAnimload();
+	// 클립 리스트
+	CListBox m_ClipList;
+
 
 private:
-	map<CString, vector<ANIM_CLIP>>		m_AnimationList;
+	map<CString, vector<ANIM_CLIP>>				m_AnimationList;
+	//map<CString, map<CString, vector<ANIM_CLIP>>>	m_AnimationList;
+
 public:
-	afx_msg void OnLbnDblclkAnimlist();
+	// 애니메이션 종류 이름
+	CString m_AnimName;
+	//클립 리스트 클립네임
+	CString m_ClipName;
+	afx_msg void OnLbnDblclkCliplist();
+	afx_msg void OnBnClickedClipAdd();
+
+	afx_msg void OnBnClickedClipSave();
+	afx_msg void OnBnClickedSaveAnim();
+	afx_msg void OnBnClickedListLoad();
+
+public:
+	void		AnimationLoad(const wstring& filePath);
+	void		AnimationSave(const wstring& filePath,const wstring& anim);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnBnClickedRemoveAnim();
+	afx_msg void OnBnClickedRemoveClip();
 };

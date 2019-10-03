@@ -20,7 +20,7 @@ CTextureRenderer::~CTextureRenderer()
 		m_pIB->Release();
 }
 
-void CTextureRenderer::Initialize()
+void CTextureRenderer::Initialize(CGameObject * pObject)
 {
 	XMFLOAT2 tex[4];
 	tex[0].x = 0.0f, tex[0].y = 0.0f;
@@ -31,6 +31,7 @@ void CTextureRenderer::Initialize()
 
 	m_pShader = CShaderMgr::GetInstance()->GetEffect(L"firstShader");
 
+	m_GameObject = pObject;
 }
 
 void CTextureRenderer::Render(const D3DXMATRIX& world)
@@ -147,17 +148,17 @@ const XMFLOAT2 & CTextureRenderer::GetTexSize()
 	return m_Size;
 }
 
-void CTextureRenderer::Action(CGameObject * pObject)
+void CTextureRenderer::Action()
 {
 	if (m_ComponentOn)
 	{
-		CTransform* pTransform = pObject->GetComponent<CTransform>();
+		CTransform* pTransform = m_GameObject->GetComponent<CTransform>();
 
 		NULL_CHECK_MSG_RETURN(pTransform, L"GameObject Transform component is null");
 		D3DXMATRIX worldMat = pTransform->GetWorldMat();
 		Render(worldMat);
 
-		D3DXVECTOR3 objectPos = pObject->GetComponent<CTransform>()->GetPosition();
+		D3DXVECTOR3 objectPos = m_GameObject->GetComponent<CTransform>()->GetPosition();
 		cout << "현재 오브젝트 위치" << objectPos.x << " , " << objectPos.y << endl;
 	}
 }

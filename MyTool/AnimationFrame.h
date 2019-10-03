@@ -7,7 +7,6 @@ class CGameObject;
 class CAnimationFrame : public CDialogEx
 {
 	DECLARE_DYNAMIC(CAnimationFrame)
-
 public:
 	CAnimationFrame(CWnd* pParent = NULL);   // 표준 생성자입니다.
 	virtual ~CAnimationFrame();
@@ -43,14 +42,16 @@ public:
 
 
 public:
+	void				UpDateInfo(ANIM_CLIP& clipinfo);			//툴의 정보를 바꾸기 위한 함수
 	void				SetTexture(const CString&clipName, const XMFLOAT2* tex, const XMFLOAT2* size);
 	void				Initialize();
 	void				Update();
 	void				Render();
 	void				VertexUpdate();
+	void				Renew();
 
 	//SetAnim
-	void				LoadAnimation(const CString& clipName, const vector<ANIM_CLIP>& clips);
+	void				LoadClip(ANIM_CLIP& clipinfo);
 public:
 	bool				IsPlaying();
 private:
@@ -74,13 +75,14 @@ private:
 	///////////////////////////
 
 	//클립 저장을 위한 맵
-	map<CString, ANIM_CLIP>		m_Clips;
+	//map<CString, CLIP_INFO>		m_Clips;
+	vector<CLIP_INFO>			m_Clips;
 	XMFLOAT2					m_Size;
 
 	CGameObject*		m_ClickedObject;
 
-	map<CString, ANIM_CLIP>::iterator m_StartIndex;
-	map<CString, ANIM_CLIP>::iterator m_EndIndex;
+	//클립저장을 위한 변수
+	ANIM_CLIP*			m_Clip;
 
 	//재생을위한 불 변수
 	bool				m_IsPlaying;
@@ -88,10 +90,15 @@ private:
 	//재생
 	float				m_time;
 	float				m_EndTime;
+	
+	int					m_startIndex;
+	int					m_endIndex;
 
 public:
 	// 클립이름
 	CString m_ClipName;
+
+
 	afx_msg void OnPaint();
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedClipAdd();

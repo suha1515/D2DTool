@@ -62,23 +62,31 @@ typedef struct tagMapTile
 
 #endif
 
+typedef struct tagClip_Info
+{
+	float			  _startTime=0.0f;					//애니메이션 플레이시간
+	D3DXVECTOR3		  _pos;								//애니메이션 위치
+	XMFLOAT3		  _rot;								//애니메이션 회전
+	D3DXVECTOR3		  _Scale;							//애니메이션 크기
+	XMFLOAT2		  _Tex[4];							//프레임 텍스쳐 좌표
+
+	TCHAR 			_texName[256] = L"";			//텍스쳐 이름
+	float			_texSizeX=0.0f;					//텍스쳐 사이즈x
+	float			_texSizeY=0.0f;					//텍스쳐 사이즈y
+	int				_index;							//클립 인덱스
+}CLIP_INFO;
 typedef struct tagAnimationClip
 {
-	float			  _startTime;
-	D3DXVECTOR3		  _pos;
-	XMFLOAT3		  _rot;
-	D3DXVECTOR3		  _Scale;
-	XMFLOAT2		  _Tex[4];
-
-	TCHAR 				_texName[256] = L"";
-	float				_texSizeX;
-	float				_texSizeY;
+	TCHAR				_clipName[256] = L"";
+	int					_clipSize = 0;
+	vector<CLIP_INFO>	_clips;
 }ANIM_CLIP;
 
 typedef struct tagAnimation
 {
-	TCHAR				_AnimName[256] = L"";
-	vector<ANIM_CLIP>	_clips;
+	TCHAR							_AnimName[256] = L"";
+	int								_AnimSize;
+	map<wstring, vector<ANIM_CLIP>>	_AnimClip;
 }ANIMATION;
 
 #define __STRUCT_H__

@@ -19,6 +19,13 @@
 #define DEAD_OBJ		1
 #define CHANGE_SCENE	2
 
+#define STL_END_CHECK(iterator,container) \
+if(iterator==container.end()) {return;} 
+
+#define STL_END_CHECK_MSG(iterator,container,msg) \
+if(iterator==container.end()) {:MessageBox(0, msg, L"System Error", MB_OK);} 
+
+
 #define NULL_CHECK(ptr)	\
 if(nullptr == (ptr)) { return; }
 

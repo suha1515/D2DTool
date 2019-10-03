@@ -11,7 +11,7 @@ CTransform::~CTransform()
 {
 }
 
-void CTransform::Initialize()
+void CTransform::Initialize(CGameObject *pObject)
 {
 	//행렬 초기화
 	D3DXMatrixIdentity(&m_TransMat);
@@ -35,9 +35,9 @@ void CTransform::Initialize()
 	SetWorld();
 }
 
-void CTransform::Action(CGameObject *pObject)
+void CTransform::Action()
 {
-	Update(pObject);
+	Update(m_GameObject);
 }
 
 void CTransform::Update(CGameObject *pObject)

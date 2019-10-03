@@ -173,10 +173,21 @@ END_MESSAGE_MAP()
 
 void CMapTool::OnBnClickedTileSetOpen()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
 	static TCHAR BASED_CODE szFilter[] = _T("이미지파일(*.BMP,*.GIF,*JPG,*PNG)|*.BMP;,*.GIF;,*.JPG;,*PNG;*.bmp;*.jpg;*.gif;*.png|모든파일(*.*)|*.*||");
 	CFileDialog dlg(true, _T("*.jpg"), _T("imamge"), OFN_HIDEREADONLY, szFilter);
+
+	TCHAR szCurrentPath[MAX_STR] = L"";
+
+	// 현재 작업 경로를 얻어오는 함수.
+	::GetCurrentDirectory(MAX_STR, szCurrentPath);
+
+	// 현재 경로에서 파일명 제거하는 함수. 제거할 파일명이 없으면 말단 폴더명을 제거한다.
+	::PathRemoveFileSpec(szCurrentPath);
+	lstrcat(szCurrentPath, L"\\Texture");
+
+	// 현재 대화상자에서 보여질 초기 경로 설정.
+	dlg.m_ofn.lpstrInitialDir = szCurrentPath; // 상대경로 X
 
 	if (IDOK == dlg.DoModal())
 	{
@@ -285,6 +296,18 @@ void CMapTool::OnBnClickedTileListSave()
 	CFileException ex;
 	CFileDialog dlg(FALSE, _T("*.dat"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, _T("DataFile(*.dat)|*.dat|"), NULL);
 
+	TCHAR szCurrentPath[MAX_STR] = L"";
+
+	// 현재 작업 경로를 얻어오는 함수.
+	::GetCurrentDirectory(MAX_STR, szCurrentPath);
+
+	// 현재 경로에서 파일명 제거하는 함수. 제거할 파일명이 없으면 말단 폴더명을 제거한다.
+	::PathRemoveFileSpec(szCurrentPath);
+	lstrcat(szCurrentPath, L"\\Texture\\map");
+
+	// 현재 대화상자에서 보여질 초기 경로 설정.
+	dlg.m_ofn.lpstrInitialDir = szCurrentPath; // 상대경로 X
+
 	if (dlg.DoModal() == IDOK)
 	{
 		m_strPath = dlg.GetPathName();
@@ -314,6 +337,19 @@ void CMapTool::OnBnClickedTileListLoad()
 	CStdioFile	file;
 	CFileException kEx;
 	CFileDialog dlg(TRUE, _T("*.dat"), NULL, OFN_FILEMUSTEXIST, _T("DAT Files(*.dat)|*.dat|"), NULL);
+	
+	TCHAR szCurrentPath[MAX_STR] = L"";
+
+	// 현재 작업 경로를 얻어오는 함수.
+	::GetCurrentDirectory(MAX_STR, szCurrentPath);
+
+	// 현재 경로에서 파일명 제거하는 함수. 제거할 파일명이 없으면 말단 폴더명을 제거한다.
+	::PathRemoveFileSpec(szCurrentPath);
+	lstrcat(szCurrentPath, L"\\Texture\\map");
+
+	// 현재 대화상자에서 보여질 초기 경로 설정.
+	dlg.m_ofn.lpstrInitialDir = szCurrentPath; // 상대경로 X
+
 	CString m_strPath;
 
 	if (dlg.DoModal() == IDOK)

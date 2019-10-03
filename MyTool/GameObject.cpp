@@ -34,7 +34,7 @@ int CGameObject::Update()
 		//텍스처 렌더 컴포넌트만 Render에서 진행한다.
 		if (typeid(i).name() == typeid(CTextureRenderer).name())
 			continue;
-		i->Action(this);
+		i->Action();
 	}	
 	
 	//클릭시 박스렌더.
@@ -51,7 +51,7 @@ void CGameObject::Render()
 	{
 		//텍스처 렌더 컴포넌트만 Render에서 진행한다.
 		if (typeid(i).name() == typeid(CTextureRenderer).name())
-			i->Action(this);
+			i->Action();
 	}
 }
 

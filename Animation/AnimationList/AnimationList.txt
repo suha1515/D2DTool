@@ -1,0 +1,2 @@
+../Animation/Player.anim
+../Animation/Player_Throw.anim

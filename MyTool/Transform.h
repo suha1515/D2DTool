@@ -8,8 +8,8 @@ public:
 	~CTransform();
 
 	// CComponent을(를) 통해 상속됨
-	virtual void Initialize();
-	virtual void Action(CGameObject *pObject);
+	virtual void Initialize(CGameObject *pObject) override;
+	virtual void Action() override;
 	void		 Update(CGameObject *pObject);
 	
 public:

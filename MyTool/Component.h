@@ -6,15 +6,16 @@ public:
 	explicit CComponent();
 	virtual ~CComponent();
 public:
-	virtual	void		Initialize()=0;
-			void		SetOn(bool on);
-			bool		GetOn();
-	virtual void		Action(CGameObject* pObject) = 0;
+	virtual	void		Initialize(CGameObject* pObject)=0;						//컴포넌트 초기화
+			void		SetOn(bool on);						//컴포넌트 활성화
+			bool		GetOn();							//컴포넌트 활성화 체크
+	virtual void		Action() = 0;	//컴포넌트 작업 수행
 public:
 	template<typename T>
 	T* GetComponent();
 protected:
-	bool		m_ComponentOn;
+	bool				m_ComponentOn;
+	CGameObject*		m_GameObject;
 };
 
 template<typename T>

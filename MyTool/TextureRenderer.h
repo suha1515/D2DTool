@@ -28,8 +28,8 @@ public:
 public:
 	// CComponent을(를) 통해 상속됨
 	// 컴포넌트 초기화
-	virtual void Initialize();
-	virtual void Action(CGameObject * pObject) override;
+	virtual void Initialize(CGameObject * pObject)override;
+	virtual void Action() override;
 private:
 	//텍스처 매니저
 	CTextureMgr*	m_pTextureMgr;

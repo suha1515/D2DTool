@@ -187,7 +187,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationFrame.h" />
+    <ClInclude Include="AnimationMgr.h" />
     <ClInclude Include="Animator.h" />
     <ClInclude Include="AnimTool.h" />
     <ClInclude Include="BoxCollider.h" />
@@ -225,7 +227,9 @@
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationFrame.cpp" />
+    <ClCompile Include="AnimationMgr.cpp" />
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="AnimTool.cpp" />
     <ClCompile Include="BoxCollider.cpp" />

@@ -192,8 +192,6 @@ void CMyToolView::OnInitialUpdate()
 {
 	CView::OnInitialUpdate();
 
-	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
-
 	//스크롤 범위를 지정하는곳
 	int cx = TILECX*TILEX;
 	int cy = TILECY / 2 * TILEY;
@@ -292,14 +290,14 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 
 			//트랜스폼 컴포넌트
 			CTransform* pTransform = new CTransform;
-			pTransform->Initialize();
+			pTransform->Initialize(pGameObject);
 			pTransform->SetPosition(D3DXVECTOR3(mousePos.x, mousePos.y, 0.0f));
 
 			pGameObject->AddComponent(pTransform);
 
 			// 렌더 컴포넌트 넣기.
 			CTextureRenderer* pRender = new CTextureRenderer;
-			pRender->Initialize();
+			pRender->Initialize(pGameObject);
 			pRender->SetTexture((LPCTSTR)tileName);
 			pRender->SetVertex(size.x, size.y, tex);
 
@@ -355,8 +353,6 @@ void CMyToolView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 }
 
 
-
-
 BOOL CMyToolView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
@@ -374,8 +370,6 @@ BOOL CMyToolView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	return CScrollView::OnMouseWheel(nFlags, zDelta, pt);
 	
 }
-
-
 
 const CPoint& CMyToolView::MousePicking(const CPoint& point)
 {
@@ -488,7 +482,7 @@ void CMyToolView::OnObjectPopUp()
 
 	//트랜스폼 컴포넌트
 	CTransform* pTransform = new CTransform;
-	pTransform->Initialize();
+	pTransform->Initialize(pGameObject);
 	pTransform->SetPosition(D3DXVECTOR3(mousePos.x, mousePos.y, 0.0f));
 
 	pGameObject->AddComponent(pTransform);
@@ -499,13 +493,11 @@ void CMyToolView::OnObjectPopUp()
 
 }
 
-
 void CMyToolView::OnPlay()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 	m_bIsActive = true;
 }
-
 
 void CMyToolView::OnPause()
 {
@@ -513,7 +505,6 @@ void CMyToolView::OnPause()
 	m_bIsActive = false;
 	Invalidate(FALSE);
 }
-
 
 void CMyToolView::OnInit()
 {
