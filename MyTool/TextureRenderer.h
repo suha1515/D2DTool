@@ -14,7 +14,7 @@ public:
 public:
 	// 오브젝트 버텍스, 텍스처 지정 함수 
 	void SetTexture(const tstring& tileName);
-	void SetVertex(const int& sizeX, const int& sizeY, const XMFLOAT2* tex);
+	void SetVertex(const XMFLOAT2& size, const XMFLOAT2* tex);
 
 public:
 	//텍스처 위치 가져오기

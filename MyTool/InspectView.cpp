@@ -160,8 +160,6 @@ void CInspectView::UpdateInfo()
 		m_ScaleZ = pTransform->GetScale().z;
 
 		m_pComponentSheet->UpdateInfo(m_ClickedObject);
-
-		
 	}
 	else
 	{
@@ -181,8 +179,6 @@ void CInspectView::UpdateInfo()
 		m_ScaleY = 0.0f;
 		m_ScaleZ = 0.0f;
 	}
-	
-
 	UpdateData(FALSE);
 }
 
@@ -210,9 +206,6 @@ void CInspectView::UpdateObject()
 	UpdateData(FALSE);
 }
 
-
-
-
 BOOL CInspectView::PreTranslateMessage(MSG* pMsg)
 {
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
@@ -229,6 +222,7 @@ BOOL CInspectView::PreTranslateMessage(MSG* pMsg)
 			NULL_CHECK_MSG(pMyToolView,L"InspectView toolview is nullptr");
 
 			UpdateObject();
+			UpdateInfo();
 			m_HierarchyView.Update();
 			pMyToolView->Invalidate(FALSE);
 		}

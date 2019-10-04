@@ -49,4 +49,6 @@ public:
 	CButton m_ComponentAdd;
 	CButton m_ComponentRemove;
 	virtual BOOL OnInitDialog();
+	afx_msg void OnBnClickedAddComp();
+	afx_msg void OnBnClickedRemoveComp();
 };

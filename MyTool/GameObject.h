@@ -48,6 +48,9 @@ public:
 	//컴포넌트 추가
 public:
 	void  AddComponent(CComponent* component);
+	//컴포넌트 제거
+public:
+	HRESULT RemoveComponent(const string& strType);
 	//컴포넌트 접근
 public:
 	template<typename T>
@@ -80,7 +83,7 @@ protected:
 	D3DXCOLOR				m_ColorBox;
 
 	//컴포넌트
-	vector<CComponent*>		m_Components;
+	map<string,CComponent*>m_Components;
 
 
 	bool					m_bIsInit;
@@ -98,7 +101,12 @@ private:
 template<typename T>
 inline T * CGameObject::GetComponent()
 {
-	for (auto& i : m_Components)
+	auto&i = m_Components.find(typeid(T).name());
+	if (m_Components.end() == i)
+		return nullptr;
+
+	return dynamic_cast<T*>(i->second);
+	/*for (auto& i : m_Components)
 	{
 		if (typeid(*i).name() == typeid(T).name())
 		{
@@ -106,5 +114,5 @@ inline T * CGameObject::GetComponent()
 		}
 			
 	}
-	return nullptr;
+	return nullptr;*/
 }

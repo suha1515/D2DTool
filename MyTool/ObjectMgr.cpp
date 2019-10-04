@@ -35,7 +35,7 @@ void CObjectMgr::Update()
 	//트리 계층별 업데이트를한다.
 	// 0 계층은 최상위 부모 객체들
 	// 1,2,3.. 계층은 0계층 부모객체들의 자식객체들..
-	for (int i = 0; i < m_Objects.size(); ++i)
+	for (size_t i = 0; i < m_Objects.size(); ++i)
 	{
 		vector<CGameObject*>::iterator iter_begin = m_Objects[i].begin();
 		vector<CGameObject*>::iterator iter_end = m_Objects[i].end();

@@ -27,7 +27,12 @@ void CTextureRenderer::Initialize(CGameObject * pObject)
 	tex[1].x = 0.0f, tex[1].y = 0.0f;
 	tex[2].x = 0.0f, tex[2].y = 0.0f;
 	tex[3].x = 0.0f, tex[3].y = 0.0f;
-	SetVertex(16,16, tex);
+
+	//버텍스,인덱스 버퍼 생성.
+	m_pDeviceMgr->GetDevice()->CreateVertexBuffer(4 * sizeof(Vertex), D3DUSAGE_WRITEONLY, FVF_VERTEX, D3DPOOL_MANAGED, &m_pVB, 0);
+	m_pDeviceMgr->GetDevice()->CreateIndexBuffer(6 * sizeof(WORD), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_pIB, 0);
+
+	SetVertex(XMFLOAT2(16,16), tex);
 
 	m_pShader = CShaderMgr::GetInstance()->GetEffect(L"firstShader");
 
@@ -77,22 +82,15 @@ void CTextureRenderer::SetTexture(const tstring & tileName)
 	NULL_CHECK_RETURN(m_texInfo);
 }
 
-void CTextureRenderer::SetVertex(const int & sizeX,const int&sizeY, const XMFLOAT2 * tex)
+void CTextureRenderer::SetVertex(const XMFLOAT2& size, const XMFLOAT2 * tex)
 {
-	if (m_pVB != nullptr)
-		m_pVB->Release();
-	if (m_pIB != nullptr)
-		m_pIB->Release();
-
-	m_Size.x = sizeX;
-	m_Size.y = sizeY;
+	m_Size.x = size.x;
+	m_Size.y = size.y;
 
 	m_Vertex[0] = Vertex(-m_Size.x*0.5f,  m_Size.y*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, tex[0].x, tex[0].y);
 	m_Vertex[1] = Vertex(-m_Size.x*0.5f, -m_Size.y*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, tex[1].x, tex[1].y);
 	m_Vertex[2] = Vertex( m_Size.x*0.5f,  m_Size.y*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, tex[2].x, tex[2].y);
 	m_Vertex[3] = Vertex( m_Size.x*0.5f, -m_Size.y*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, tex[3].x, tex[3].y);
-
-	m_pDeviceMgr->GetDevice()->CreateVertexBuffer(4 * sizeof(Vertex), D3DUSAGE_WRITEONLY, FVF_VERTEX, D3DPOOL_MANAGED, &m_pVB, 0);
 	Vertex* v;
 	m_pVB->Lock(0, 0, (void**)&v, 0);
 
@@ -103,13 +101,10 @@ void CTextureRenderer::SetVertex(const int & sizeX,const int&sizeY, const XMFLOA
 
 	m_pVB->Unlock();
 
-	m_pDeviceMgr->GetDevice()->CreateIndexBuffer(6 * sizeof(WORD), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_pIB, 0);
-
 	WORD* i = 0;
 	m_pIB->Lock(0, 0, (void**)&i, 0);
 	i[0] = 0, i[1] = 2, i[2] = 1;
 	i[3] = 1, i[4] = 2, i[5] = 3;
-
 
 	m_pIB->Unlock();
 }
@@ -158,7 +153,7 @@ void CTextureRenderer::Action()
 		D3DXMATRIX worldMat = pTransform->GetWorldMat();
 		Render(worldMat);
 
-		D3DXVECTOR3 objectPos = m_GameObject->GetComponent<CTransform>()->GetPosition();
-		cout << "현재 오브젝트 위치" << objectPos.x << " , " << objectPos.y << endl;
+		//D3DXVECTOR3 objectPos = m_GameObject->GetComponent<CTransform>()->GetPosition();
+		//cout << "현재 오브젝트 위치" << objectPos.x << " , " << objectPos.y << endl;
 	}
 }

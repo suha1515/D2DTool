@@ -339,7 +339,7 @@ void CAnimTool::OnBnClickedListLoad()
 			m_AnimationList.clear();		//클리어
 
 		m_AnimList.ResetContent();			//리스트도 클리어.
-
+		CAnimationMgr::GetInstance()->LoadAnimationFromList(Dlg.GetPathName().operator LPCWSTR());
 		TCHAR		animPath[MAX_STR] = L"";
 		while (true)
 		{
@@ -347,7 +347,7 @@ void CAnimTool::OnBnClickedListLoad()
 			if (!lstrcmp(animPath, L""))
 				break;
 			AnimationLoad(animPath);		//애니메이션 정보 불러온다.
-
+			
 			if (fin.eof())					//다불러왔을경우 루프종료
 				break;
 		}

@@ -64,9 +64,6 @@
     <Filter Include="98.Managers\02.CameraMgr">
       <UniqueIdentifier>{8dc19847-c938-48a5-a9f6-72393dde8125}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03.View\00.FormView\00.MapDlg">
-      <UniqueIdentifier>{9c2c6faf-9c08-47a2-b3b3-bd142dc82e1c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03.View\02.InspectorView">
       <UniqueIdentifier>{63b68625-c538-43e9-873e-6d8599a99dce}</UniqueIdentifier>
     </Filter>
@@ -120,6 +117,33 @@
     </Filter>
     <Filter Include="98.Managers\06.AnimationMgr">
       <UniqueIdentifier>{2d83ef60-ff5a-41b0-ad7b-b6aa9d166bd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.Component\03.Animator\00.Animation">
+      <UniqueIdentifier>{cbc95389-689f-4d5c-8dda-6912526b4071}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.PropertySheet\03.Animator">
+      <UniqueIdentifier>{a020d7cd-afd3-4da1-8e22-9a86630b8cd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95.Design">
+      <UniqueIdentifier>{7144b810-e076-4e7e-84ca-251ab4f13f46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95.Design\00.Subject">
+      <UniqueIdentifier>{5195adc8-4a4f-49e2-acd9-e17b31716b80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95.Design\00.Subject\00.PlayerSubject">
+      <UniqueIdentifier>{862efb6c-12d6-414d-a302-16569cb03571}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.Component\05.Scripts\00.Player">
+      <UniqueIdentifier>{46078acf-f1c2-4664-aa85-26ee51b9fbfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Dialog\01.AnimTool">
+      <UniqueIdentifier>{d89a095d-46dd-4e6c-a557-392020a922ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Dialog\02.MapDlg">
+      <UniqueIdentifier>{9c2c6faf-9c08-47a2-b3b3-bd142dc82e1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06.PropertySheet\04.Scripts">
+      <UniqueIdentifier>{97bf93dd-c0f0-4dd7-8a87-49566c117138}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -175,13 +199,10 @@
       <Filter>05.GameObject</Filter>
     </ClInclude>
     <ClInclude Include="MapSaveTool.h">
-      <Filter>03.View\00.FormView\00.MapDlg</Filter>
+      <Filter>04.Dialog\02.MapDlg</Filter>
     </ClInclude>
     <ClInclude Include="InspectView.h">
       <Filter>03.View\02.InspectorView</Filter>
-    </ClInclude>
-    <ClInclude Include="MapTool.h">
-      <Filter>03.View\00.FormView</Filter>
     </ClInclude>
     <ClInclude Include="UnitTool.h">
       <Filter>04.Dialog\00.UnitTool</Filter>
@@ -216,12 +237,6 @@
     <ClInclude Include="BoxColliderPage.h">
       <Filter>06.PropertySheet\02.BoxCollider</Filter>
     </ClInclude>
-    <ClInclude Include="AnimTool.h">
-      <Filter>03.View\00.FormView</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimationFrame.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="FrameMgr.h">
       <Filter>98.Managers\04.FrameMgr</Filter>
     </ClInclude>
@@ -238,7 +253,37 @@
       <Filter>98.Managers\06.AnimationMgr</Filter>
     </ClInclude>
     <ClInclude Include="Animation.h">
+      <Filter>96.Component\03.Animator\00.Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatorPage.h">
+      <Filter>06.PropertySheet\03.Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>95.Design</Filter>
+    </ClInclude>
+    <ClInclude Include="Subject.h">
+      <Filter>95.Design</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerSubject.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts.h">
+      <Filter>96.Component\05.Scripts</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationFrame.h">
+      <Filter>04.Dialog\01.AnimTool</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimTool.h">
+      <Filter>04.Dialog\01.AnimTool</Filter>
+    </ClInclude>
+    <ClInclude Include="MapTool.h">
+      <Filter>04.Dialog\02.MapDlg</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerScript.h">
+      <Filter>96.Component\05.Scripts\00.Player</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptPage.h">
+      <Filter>06.PropertySheet\04.Scripts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -282,13 +327,10 @@
       <Filter>05.GameObject</Filter>
     </ClCompile>
     <ClCompile Include="MapSaveTool.cpp">
-      <Filter>03.View\00.FormView\00.MapDlg</Filter>
+      <Filter>04.Dialog\02.MapDlg</Filter>
     </ClCompile>
     <ClCompile Include="InspectView.cpp">
       <Filter>03.View\02.InspectorView</Filter>
-    </ClCompile>
-    <ClCompile Include="MapTool.cpp">
-      <Filter>03.View\00.FormView</Filter>
     </ClCompile>
     <ClCompile Include="UnitTool.cpp">
       <Filter>04.Dialog\00.UnitTool</Filter>
@@ -323,20 +365,11 @@
     <ClCompile Include="BoxColliderPage.cpp">
       <Filter>06.PropertySheet\02.BoxCollider</Filter>
     </ClCompile>
-    <ClCompile Include="AnimTool.cpp">
-      <Filter>03.View\00.FormView</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimationFrame.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="FrameMgr.cpp">
       <Filter>98.Managers\04.FrameMgr</Filter>
     </ClCompile>
     <ClCompile Include="TimeMgr.cpp">
       <Filter>98.Managers\05.TimeMgr</Filter>
-    </ClCompile>
-    <ClCompile Include="Animator.cpp">
-      <Filter>96.Component\03.Animator</Filter>
     </ClCompile>
     <ClCompile Include="BoxCollider.cpp">
       <Filter>96.Component\02.BoxCollider</Filter>
@@ -345,7 +378,40 @@
       <Filter>98.Managers\06.AnimationMgr</Filter>
     </ClCompile>
     <ClCompile Include="Animation.cpp">
+      <Filter>96.Component\03.Animator\00.Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>96.Component\03.Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatorPage.cpp">
+      <Filter>06.PropertySheet\03.Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="Observer.cpp">
+      <Filter>95.Design</Filter>
+    </ClCompile>
+    <ClCompile Include="Subject.cpp">
+      <Filter>95.Design</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerSubject.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripts.cpp">
+      <Filter>96.Component\05.Scripts</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationFrame.cpp">
+      <Filter>04.Dialog\01.AnimTool</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimTool.cpp">
+      <Filter>04.Dialog\01.AnimTool</Filter>
+    </ClCompile>
+    <ClCompile Include="MapTool.cpp">
+      <Filter>04.Dialog\02.MapDlg</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerScript.cpp">
+      <Filter>96.Component\05.Scripts\00.Player</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptPage.cpp">
+      <Filter>06.PropertySheet\04.Scripts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

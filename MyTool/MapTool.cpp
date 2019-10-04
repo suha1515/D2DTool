@@ -86,10 +86,6 @@ void CMapTool::Renew(XMFLOAT2 * tex)
 
 void CMapTool::VertexUpdate()
 {
-	if (m_pVB != nullptr)
-		m_pVB->Release();
-	if (m_pIB != nullptr)
-		m_pIB->Release();
 	if (m_Cam == nullptr)
 		m_Cam = new CCamera;
 
@@ -97,10 +93,10 @@ void CMapTool::VertexUpdate()
 	CStatic* staticSize = (CStatic*)GetDlgItem(IDC_TILE_VIEW);
 	staticSize->GetClientRect(rect);
 
-	float winX = (rect.right - rect.left);
-	float winY = (rect.bottom - rect.top);
+	int winX = (rect.right - rect.left);
+	int winY = (rect.bottom - rect.top);
 
-	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(1.0f, 1.0f, 1.0f));
+	m_Cam->Initialize(winX, winY, 0.0f, XMFLOAT3(1.0f, 1.0f, 1.0f));
 	m_Cam->Update();
 
 	m_Vertex[0] = Vertex(-winX*0.5f, winY*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, m_Tex[0].x, m_Tex[0].y);
@@ -108,7 +104,6 @@ void CMapTool::VertexUpdate()
 	m_Vertex[2] = Vertex(winX*0.5f, winY*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, m_Tex[2].x, m_Tex[2].y);
 	m_Vertex[3] = Vertex(winX*0.5f, -winY*0.5f, 0.0f, 0.0f, 0.0f, 0.0f, m_Tex[3].x, m_Tex[3].y);
 
-	m_pDeviceMgr->GetDevice()->CreateVertexBuffer(4 * sizeof(Vertex), D3DUSAGE_WRITEONLY, FVF_VERTEX, D3DPOOL_MANAGED, &m_pVB, 0);
 	Vertex* v;
 	m_pVB->Lock(0, 0, (void**)&v, 0);
 
@@ -118,7 +113,6 @@ void CMapTool::VertexUpdate()
 	v[3] = m_Vertex[3];
 
 	m_pVB->Unlock();
-	m_pDeviceMgr->GetDevice()->CreateIndexBuffer(6 * sizeof(WORD), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_pIB, 0);
 
 	WORD* i = 0;
 	m_pIB->Lock(0, 0, (void**)&i, 0);
@@ -145,7 +139,7 @@ const CString & CMapTool::GetTileName()
 const XMFLOAT2 & CMapTool::GetTileSize()
 {
 	// TODO: 여기에 반환 구문을 삽입합니다.
-	m_fTileSize = XMFLOAT2(m_iTileSizeX, m_iTileSizeY);
+	m_fTileSize = XMFLOAT2((float)m_iTileSizeX,(float)m_iTileSizeY);
 	return m_fTileSize;
 }
 
@@ -319,9 +313,9 @@ void CMapTool::OnBnClickedTileListSave()
 		MAP_SAVE info;
 		for (auto& i : m_mapTileSetData)
 		{
-			_tcscpy(info.objectkey, i.first);
-			_tcscpy(info.fileName, i.second->s_fileName.c_str());
-			_tcscpy(info.filePath, i.second->s_filePath.c_str());
+			_tcscpy_s(info.objectkey, i.first);
+			_tcscpy_s(info.fileName, i.second->s_fileName.c_str());
+			_tcscpy_s(info.filePath, i.second->s_filePath.c_str());
 			info.Index = i.second->i_Index;
 			file.Write(&info, sizeof(MAP_SAVE));
 		}
@@ -406,12 +400,12 @@ BOOL CMapTool::OnInitDialog()
 
 	RECT rc = {};
 	GetClientRect(&rc);
-	float winX = rc.right - rc.left;
-	float winY = rc.bottom - rc.top;
+	int winX = rc.right - rc.left;
+	int winY = rc.bottom - rc.top;
 
 	if (m_Cam == nullptr)
 		m_Cam = new CCamera;
-	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(1.0f, 1.0f, 1.0f));
+	m_Cam->Initialize(winX, winY, 0.0f, XMFLOAT3(1.0f, 1.0f, 1.0f));
 
 	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
@@ -432,6 +426,9 @@ BOOL CMapTool::OnInitDialog()
 
 	//빛끔
 	m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_LIGHTING, false);
+
+	m_pDeviceMgr->GetDevice()->CreateVertexBuffer(4 * sizeof(Vertex), D3DUSAGE_WRITEONLY, FVF_VERTEX, D3DPOOL_MANAGED, &m_pVB, 0);
+	m_pDeviceMgr->GetDevice()->CreateIndexBuffer(6 * sizeof(WORD), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_pIB, 0);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
@@ -501,10 +498,8 @@ void CMapTool::OnLbnDblclkTileList()
 	m_TileSetSize.Format(L"%d x %d", width, height);
 	
 	UpdateData(FALSE);
-
-	
-
 	Invalidate(FALSE);
+	
 
 }
 void CMapTool::OnDropFiles(HDROP hDropInfo)

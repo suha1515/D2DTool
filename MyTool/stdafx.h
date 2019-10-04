@@ -90,6 +90,9 @@ using namespace DirectX;
 #include "ShaderMgr.h"			//쉐이더   매니저
 #include "TimeMgr.h"			//타임	   매니저
 #include "FrameMgr.h"			//프레임   매니저
+#include "AnimationMgr.h"		//애니메이션 매니저.
+
+#include "PlayerSubject.h"		//플레이어 서브젝트
 
 #include <afxdlgs.h>
 

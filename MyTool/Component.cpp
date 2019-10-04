@@ -5,6 +5,7 @@
 CComponent::CComponent()
 {
 	m_ComponentOn = true;
+	m_GameObject = nullptr;
 }
 CComponent::~CComponent()
 {

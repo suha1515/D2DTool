@@ -76,8 +76,8 @@ void CTexCompPage::Update()
 
 			m_ComponentAdd.EnableWindow(FALSE);
 			UpdateData(TRUE);
-			m_sizeX = pComponent->GetTexSize().x;
-			m_sizeY = pComponent->GetTexSize().y;
+			m_sizeX = (int)pComponent->GetTexSize().x;
+			m_sizeY = (int)pComponent->GetTexSize().y;
 			//(*pComponent->GetTexInfo())->
 			UpdateData(FALSE);	
 		}
@@ -109,6 +109,8 @@ BEGIN_MESSAGE_MAP(CTexCompPage, CPropertyPage)
 	ON_EN_CHANGE(IDC_EDIT9, &CTexCompPage::OnEnChangeEdit9)
 	ON_BN_CLICKED(IDC_BUTTON1, &CTexCompPage::OnBnClickedChangeTex)
 	ON_BN_CLICKED(IDC_CHECKCOMPONENT, &CTexCompPage::OnBnClickedCheckcomponent)
+	ON_BN_CLICKED(IDC_BUTTON2, &CTexCompPage::OnBnClickedAddComp)
+	ON_BN_CLICKED(IDC_BUTTON4, &CTexCompPage::OnBnClickedRemoveComp)
 END_MESSAGE_MAP()
 
 
@@ -174,3 +176,28 @@ BOOL CTexCompPage::OnInitDialog()
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
 }
+
+
+void CTexCompPage::OnBnClickedAddComp()
+{
+	if (m_pObject->GetComponent<CTextureRenderer>() != nullptr)
+	{
+		wstring alert = m_pObject->GetObjectName() + L"번 오브젝트는 이미 텍스처 컴포넌트가 있습니다.";
+		MessageBox(alert.c_str(),L"Fail",ERROR);
+		return;
+	}
+	
+	CTextureRenderer* pComponent = new CTextureRenderer;
+	pComponent->Initialize(m_pObject);
+
+	m_pObject->AddComponent(pComponent);
+	Update();
+}
+
+
+void CTexCompPage::OnBnClickedRemoveComp()
+{
+	m_pObject->RemoveComponent(typeid(CTextureRenderer).name());
+	Update();
+}
+

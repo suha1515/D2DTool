@@ -59,7 +59,7 @@ public:
 	bool				 m_bIsActive;
 	bool				 m_bIsReInit;
 public:
-	const CPoint& MousePicking(const CPoint& point);
+	const CPoint MousePicking(const CPoint& point);
 public:
 	//업데이트
 	void Update();

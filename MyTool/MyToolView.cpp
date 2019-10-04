@@ -232,8 +232,8 @@ void CMyToolView::OnInitialUpdate()
 
 	RECT rc = {};
 	GetClientRect(&rc);
-	float winX = rc.right - rc.left;
-	float winY = rc.bottom - rc.top;
+	int winX = rc.right - rc.left;
+	int winY = rc.bottom - rc.top;
 
 	if (m_Cam == nullptr)
 		m_Cam = new CCamera;
@@ -255,8 +255,8 @@ void CMyToolView::OnSize(UINT nType, int cx, int cy)
 	RECT rcView = {};
 	GetClientRect(&rcView);
 
-	float winX = rcView.right - rcView.left;
-	float winY = rcView.bottom - rcView.top;
+	int winX = rcView.right - rcView.left;
+	int winY = rcView.bottom - rcView.top;
 
 	if (m_Cam == nullptr)
 		m_Cam = new CCamera;
@@ -291,7 +291,8 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 			//Æ®·£½ºÆû ÄÄÆ÷³ÍÆ®
 			CTransform* pTransform = new CTransform;
 			pTransform->Initialize(pGameObject);
-			pTransform->SetPosition(D3DXVECTOR3(mousePos.x, mousePos.y, 0.0f));
+			D3DXVECTOR3 pos = D3DXVECTOR3((float)mousePos.x, (float)mousePos.y, 0.0f);
+			pTransform->SetPosition(pos);
 
 			pGameObject->AddComponent(pTransform);
 
@@ -299,7 +300,7 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 			CTextureRenderer* pRender = new CTextureRenderer;
 			pRender->Initialize(pGameObject);
 			pRender->SetTexture((LPCTSTR)tileName);
-			pRender->SetVertex(size.x, size.y, tex);
+			pRender->SetVertex(size, tex);
 
 			pGameObject->AddComponent(pRender);
 
@@ -371,14 +372,14 @@ BOOL CMyToolView::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	
 }
 
-const CPoint& CMyToolView::MousePicking(const CPoint& point)
+const CPoint CMyToolView::MousePicking(const CPoint& point)
 {
 	if (m_Mode == MAP)
 	{
 		RECT rc = {};
 		GetClientRect(&rc);
-		float winX = rc.right - rc.left;
-		float winY = rc.bottom - rc.top;
+		float winX = float(rc.right - rc.left);
+		float winY = float(rc.bottom - rc.top);
 
 		D3DXVECTOR3 vMouse = { float(point.x) - winX*0.5f,(winY*0.5f - float(point.y)),1.0f };
 		D3DXVECTOR4 vMouse2;
@@ -401,7 +402,7 @@ const CPoint& CMyToolView::MousePicking(const CPoint& point)
 
 		cout << newX << " , " << newY << endl;
 
-		return CPoint(newX, newY);
+		return CPoint((int)newX, (int)newY);
 	}
 	return CPoint(0, 0);
 }
@@ -483,7 +484,8 @@ void CMyToolView::OnObjectPopUp()
 	//Æ®·£½ºÆû ÄÄÆ÷³ÍÆ®
 	CTransform* pTransform = new CTransform;
 	pTransform->Initialize(pGameObject);
-	pTransform->SetPosition(D3DXVECTOR3(mousePos.x, mousePos.y, 0.0f));
+	D3DXVECTOR3 objPos = D3DXVECTOR3((float)mousePos.x, (float)mousePos.y, 0.0f);
+	pTransform->SetPosition(objPos);
 
 	pGameObject->AddComponent(pTransform);
 

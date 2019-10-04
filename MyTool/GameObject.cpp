@@ -16,7 +16,7 @@ CGameObject::~CGameObject()
 {
 	//컴포넌트 제거
 	for (auto& i : m_Components)
-		SafeDelete(i);
+		SafeDelete(i.second);
 	m_Components.clear();
 
 	//자식 오브젝트 벡터 모두 제거 (해제는 오브젝트 매니저에서)
@@ -29,13 +29,20 @@ int CGameObject::Update()
 		return DEAD_OBJ;
 
 	//컴포넌트 기능 수행
-	for (auto& i : m_Components)
+	for (auto&i : m_Components)
 	{
-		//텍스처 렌더 컴포넌트만 Render에서 진행한다.
-		if (typeid(i).name() == typeid(CTextureRenderer).name())
+		//업데이트에서는 텍스처 렌더 컴포넌트를 수행하지 않는다.
+		if (typeid(CTextureRenderer).name() == i.first)
 			continue;
-		i->Action();
-	}	
+		i.second->Action();
+	}
+	//for (auto& i : m_Components)
+	//{
+	//	//텍스처 렌더 컴포넌트만 Render에서 진행한다.
+	//	if (typeid(*i).name() == typeid(CTextureRenderer).name())
+	//		continue;
+	//	i->Action();
+	//}	
 	
 	//클릭시 박스렌더.
 	if(m_bIsClicked)
@@ -46,17 +53,15 @@ int CGameObject::Update()
 
 void CGameObject::Render()
 {
-	//컴포넌트 기능 수행
-	for (auto& i : m_Components)
-	{
-		//텍스처 렌더 컴포넌트만 Render에서 진행한다.
-		if (typeid(i).name() == typeid(CTextureRenderer).name())
-			i->Action();
-	}
+	//렌더는 텍스처 렌더러 컴포넌트만 관여한다.
+	auto iter_find = m_Components.find(typeid(CTextureRenderer).name());
+	if (m_Components.end() != iter_find)
+		iter_find->second->Action();
 }
 
 void CGameObject::LateUpdate()
 {
+
 }
 
 HRESULT CGameObject::Initialize(CGameObject* pParent)
@@ -173,7 +178,31 @@ const Layer & CGameObject::GetObjectLayer() const
 }
 void CGameObject::AddComponent(CComponent * component)
 {
-	m_Components.push_back(component);
+	m_Components.insert({ typeid(*component).name(),component});
+}
+
+HRESULT CGameObject::RemoveComponent(const string& strType)
+{
+	auto iter_find = m_Components.find(strType);
+	if (m_Components.end() == iter_find)
+		return E_FAIL;
+
+	SafeDelete(iter_find->second);
+	m_Components.erase(iter_find);
+	/*auto iter_begin = m_Components.begin();
+	auto iter_end = m_Components.end();
+	for (;iter_begin!=iter_end;iter_begin++)
+	{
+		cout << typeid(*(*iter_begin)).name()<<endl;
+		cout << typeid(*component).name()<< endl;
+		if (typeid(*(*iter_begin)).name() == typeid(*component).name())
+		{
+			SafeDelete((*iter_begin));
+			m_Components.erase(iter_begin);
+			break;
+		}
+	}*/
+	return S_OK;
 }
 
 void CGameObject::SetParentObject(CGameObject * parent)

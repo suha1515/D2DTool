@@ -2,6 +2,8 @@
 
 #include "TexCompPage.h"
 #include "BoxColliderPage.h"
+#include "AnimatorPage.h"
+#include "ScriptPage.h"
 
 // CComponentSheet
 class CGameObject;
@@ -20,6 +22,9 @@ protected:
 private:
 	CTexCompPage			m_TexCompPage;
 	CBoxColliderPage		m_BoxCompPage;
+	CAnimatorPage			m_AnimatorCompPage;
+	CScriptPage				m_ScriptCompPage;
+	
 public:
 	afx_msg void OnRemove();
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);

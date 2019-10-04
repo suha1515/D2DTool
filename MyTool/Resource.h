@@ -12,8 +12,11 @@
 #define IDD_TEXCOMPPAGE                 312
 #define IDD_BOXCOLLIDERPAGE             313
 #define IDD_SAVETOOL                    314
+#define IDD_ANIMATORPAGE                315
 #define IDD_INSPECTOR                   316
+#define IDD_SCRIPTSPAGE                 317
 #define IDD_MAPTOOL                     318
+#define IDD_SCRIPTPAGE                  319
 #define IDD_HIERARCHY                   321
 #define IDR_MENU3                       325
 #define IDD_ANIMTOOL                    326
@@ -22,6 +25,8 @@
 #define IDC_BUTTON2                     1001
 #define IDC_BUTTON4                     1002
 #define IDC_TILE_VIEW                   1003
+#define IDC_BUTTON8                     1003
+#define IDC_BUTTON9                     1004
 #define IDC_TEX_VALUE                   1005
 #define IDC_TILESET_1                   1006
 #define IDC_FILE_OPEN                   1009
@@ -92,6 +97,7 @@
 #define IDC_ANIMNAME                    1104
 #define IDC_CLIPNAME                    1105
 #define IDC_BUTTON7                     1106
+#define IDC_COMBO2                      1107
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_32773                        32773
@@ -103,9 +109,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        332
+#define _APS_NEXT_RESOURCE_VALUE        334
 #define _APS_NEXT_COMMAND_VALUE         32777
-#define _APS_NEXT_CONTROL_VALUE         1107
-#define _APS_NEXT_SYMED_VALUE           314
+#define _APS_NEXT_CONTROL_VALUE         1109
+#define _APS_NEXT_SYMED_VALUE           320
 #endif
 #endif

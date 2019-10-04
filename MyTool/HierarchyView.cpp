@@ -44,12 +44,12 @@ int CHierarchyView::AddObject(CGameObject * object)
 	if (selItem != NULL)
 	{
 		CGameObject* parentObj = m_objectlist.find(selItem)->second;
-		int index =  parentObj->GetChildernVector().size() + 1;
-		wstring objectName = parentObj->GetObjectName() +L"_child_"+to_wstring(index);
+		int index = parentObj->GetChildernVector().size() + 1;
+		wstring objectName = parentObj->GetObjectName() + L"_child_" + to_wstring(index);
 		object->SetObjectName(objectName);
-		
+
 		HTREEITEM item = m_Hierarchy.InsertItem(objectName.c_str(), 0, 0, selItem, TVI_LAST);
-		m_objectlist.insert({ item,object});
+		m_objectlist.insert({ item,object });
 
 		//부모설정.
 		object->SetParentObject(parentObj);
@@ -65,20 +65,16 @@ int CHierarchyView::AddObject(CGameObject * object)
 	else
 	{
 		CString objectName = object->GetObjectName().c_str();
-		
+
 		//계층은 0이다.
 		object->SetObjectLevel(0);
 
 		HTREEITEM item = m_Hierarchy.InsertItem(objectName, 0, 0, TVI_ROOT, TVI_LAST);
 		m_objectlist.insert({ item,object, });
-		
+
 		//루트로 생성시 0반환
 		return 0;
 	}
-	
-	//m_objectlist.push_back(make_pair(object,item));
-
-	
 }
 
 void CHierarchyView::Update()
@@ -108,16 +104,6 @@ BOOL CHierarchyView::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// TODO:  여기에 추가 초기화 작업을 추가합니다.
-
-	/*HTREEITEM root, hChild1, hChild2,root2;
-
-	root    = m_Hierarchy.InsertItem(L"root", 0, 0, TVI_ROOT, TVI_LAST);
-	root2   = m_Hierarchy.InsertItem(L"Third", 0, 0, TVI_ROOT, TVI_LAST);
-	hChild1 = m_Hierarchy.InsertItem(L"First", 0, 0, root, TVI_LAST);
-	hChild2 = m_Hierarchy.InsertItem(L"Second", 0, 0, root, TVI_LAST);
-	m_Hierarchy.InsertItem(L"Forth", 0, 0, root2, TVI_LAST);*/
-	
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
@@ -291,7 +277,7 @@ void CHierarchyView::OnBnClickedDeleteObject()
 		m_objectlist.erase(selItem);
 		m_Hierarchy.DeleteItem(selItem);
 
-		m_CurClicked = nullptr;
+		
 
 		CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 		NULL_CHECK(pFrameWnd);
@@ -300,5 +286,14 @@ void CHierarchyView::OnBnClickedDeleteObject()
 		CMyToolView* pMyToolView = dynamic_cast<CMyToolView*>(pFrameWnd->m_MainSplitter.GetPane(0, 1));
 		NULL_CHECK_MSG(pMyToolView, L"Hierarchy tool view nullptr");
 		pMyToolView->Invalidate(FALSE);
+
+		CInspectView* pInspectView = dynamic_cast<CInspectView*>(pFrameWnd->m_MainSplitter.GetPane(0, 2));
+		NULL_CHECK_MSG(pInspectView, L"InspectView tool view nullptr");
+
+		if (m_Hierarchy.GetCount() == 0)
+		{
+			pInspectView->SetObject(nullptr);
+			pInspectView->UpdateInfo();
+		}
 	}
 }
