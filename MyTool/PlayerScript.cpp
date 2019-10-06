@@ -1,9 +1,12 @@
 #include "stdafx.h"
 #include "PlayerScript.h"
+#include "GameObject.h"
+#include "Transform.h"
 
 
 CPlayerScript::CPlayerScript()
 {
+	m_ScriptName = "PlayerScript";
 }
 
 
@@ -11,26 +14,64 @@ CPlayerScript::~CPlayerScript()
 {
 }
 
-void CPlayerScript::ScriptInit()
+//라이프 사이클.
+void CPlayerScript::OnInit()
 {
 }
 
-void CPlayerScript::ScriptLateInit()
+void CPlayerScript::OnEnable()
 {
 }
 
-void CPlayerScript::Update()
+void CPlayerScript::OnCollision(CGameObject * pGameObject)
 {
 }
 
-void CPlayerScript::Release()
+void CPlayerScript::OnInput()
 {
 }
 
-void CPlayerScript::Initialize(CGameObject * pObject)
+void CPlayerScript::OnUpdate()
+{
+	CTransform* pTransform = m_pGameObject->GetComponent<CTransform>();
+	if (pTransform != nullptr)
+	{
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+		{
+			D3DXVECTOR3& playerPos = pTransform->GetPosition();
+			playerPos.x -= 0.5f;
+		}
+		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+		{
+			D3DXVECTOR3& playerPos = pTransform->GetPosition();
+			playerPos.x += 0.5f;
+		}
+		if (GetAsyncKeyState(VK_UP) & 0x8000)
+		{
+			D3DXVECTOR3& playerPos = pTransform->GetPosition();
+			playerPos.y += 0.5f;
+		}
+		if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+		{
+			D3DXVECTOR3& playerPos = pTransform->GetPosition();
+			playerPos.y -= 0.5f;
+		}
+	}
+}
+
+void CPlayerScript::OnLateUpdate()
 {
 }
 
-void CPlayerScript::Action()
+void CPlayerScript::OnRender()
 {
 }
+
+void CPlayerScript::OnDisable()
+{
+}
+
+void CPlayerScript::OnDestroy()
+{
+}
+

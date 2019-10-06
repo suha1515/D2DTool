@@ -1,5 +1,6 @@
 #pragma once
 class CComponent;
+class CScripts;
 class CGameObject
 {
 public:
@@ -12,6 +13,7 @@ public:
 	//업데이트 ,렌더링, 늦은 업데이트
 	virtual int Update();
 	virtual void Render();
+	virtual void DebugRender();
 	virtual void LateUpdate();
 
 	//매개변수 있을시 부모 가된다.
@@ -56,6 +58,18 @@ public:
 	template<typename T>
 	T* GetComponent();
 
+	//스크립트 추가
+public:
+	void AddScripts(CScripts* pScript);
+	//스크립트 제거.
+public:
+	HRESULT RemoveScript(const string& strScript);
+public:
+	const map<string, CScripts*>&	GetScripts();
+	//스크립트 접근
+public:
+	CScripts*	GetScript(const string& scriptName);
+
 public:
 	// *부모,자식 오브젝트에 대한 함수들*
 	//부모 오브젝트 설정
@@ -69,7 +83,6 @@ public:
 	vector<CGameObject*>& GetChildernVector();
 	//자신의 계층 반환
 	int					GetLevel();
-
 	
 protected:
 	// 디바이스 매니저
@@ -84,11 +97,13 @@ protected:
 
 	//컴포넌트
 	map<string,CComponent*>m_Components;
-
+	//스크립트
+	map<string, CScripts*> m_Scripts;
 
 	bool					m_bIsInit;
 	bool					m_bIsClicked;
 	bool					m_bIsDead;
+	bool					m_bIsDebug;
 
 private:
 	//부모 객체, 자식 벡터, 자신이 속한 계층.
@@ -106,13 +121,4 @@ inline T * CGameObject::GetComponent()
 		return nullptr;
 
 	return dynamic_cast<T*>(i->second);
-	/*for (auto& i : m_Components)
-	{
-		if (typeid(*i).name() == typeid(T).name())
-		{
-			return dynamic_cast<T*>(i);
-		}
-			
-	}
-	return nullptr;*/
 }

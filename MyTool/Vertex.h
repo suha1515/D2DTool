@@ -21,6 +21,13 @@ struct Vertex
 	//float _nx, _ny, _nz;
 	//float _u, _v; // texture coordinates
 };
+
+struct Vertex01
+{
+	Vertex01() {}
+	D3DXMATRIX worldMat;
+	D3DXVECTOR2 tex0,tex1;
+};
 #define FVF_VERTEX (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1)
 
 #endif // __vertexH__

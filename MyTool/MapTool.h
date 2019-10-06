@@ -50,6 +50,8 @@ private:
 	const TEX_INFO*			m_texInfo;
 	CString					m_TileName;
 	//-------------------------------------------
+	//인스턴스 객체 생성
+	bool					m_bIsInstance;
 
 	//맵툴 다이얼로그
 	CMapSaveTool				m_SaveTool;
@@ -78,4 +80,7 @@ public:
 	int m_iTileSizeY;
 	XMFLOAT2	m_fTileSize;
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	// 인스턴스 체크 박스
+	CButton m_Instacne;
+	afx_msg void OnBnClickedInstance();
 };

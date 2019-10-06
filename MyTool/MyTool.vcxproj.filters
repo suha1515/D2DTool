@@ -145,6 +145,15 @@
     <Filter Include="06.PropertySheet\04.Scripts">
       <UniqueIdentifier>{97bf93dd-c0f0-4dd7-8a87-49566c117138}</UniqueIdentifier>
     </Filter>
+    <Filter Include="98.Managers\07.ScriptMgr">
+      <UniqueIdentifier>{ecb28818-b192-4791-9b6f-0047f871cba3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\08.InstanceMgr">
+      <UniqueIdentifier>{a6a5e293-f2b0-40ed-89f8-e8cbb0f40685}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Managers\09.CollisionMgr">
+      <UniqueIdentifier>{20e08048-95e1-4774-a465-47b26dfaf643}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -285,6 +294,15 @@
     <ClInclude Include="ScriptPage.h">
       <Filter>06.PropertySheet\04.Scripts</Filter>
     </ClInclude>
+    <ClInclude Include="ScriptMgr.h">
+      <Filter>98.Managers\07.ScriptMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="InstanceMgr.h">
+      <Filter>98.Managers\08.InstanceMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionMgr.h">
+      <Filter>98.Managers\09.CollisionMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -413,6 +431,15 @@
     <ClCompile Include="ScriptPage.cpp">
       <Filter>06.PropertySheet\04.Scripts</Filter>
     </ClCompile>
+    <ClCompile Include="ScriptMgr.cpp">
+      <Filter>98.Managers\07.ScriptMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="InstanceMgr.cpp">
+      <Filter>98.Managers\08.InstanceMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionMgr.cpp">
+      <Filter>98.Managers\09.CollisionMgr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MyTool.rc">
@@ -437,6 +464,9 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Shaders\myShader1.fx">
+      <Filter>96.Shaders\fxfile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shaders\InstanceShader.fx">
       <Filter>96.Shaders\fxfile</Filter>
     </FxCompile>
   </ItemGroup>

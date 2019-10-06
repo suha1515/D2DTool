@@ -4,6 +4,7 @@
 #include "BoxColliderPage.h"
 #include "AnimatorPage.h"
 #include "ScriptPage.h"
+#include "BoxCollider.h"
 
 // CComponentSheet
 class CGameObject;

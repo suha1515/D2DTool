@@ -9,10 +9,13 @@
 #include "GameObject.h"
 // CAnimatorPage 대화 상자입니다.
 #include "Animator.h"
-
+#include "Transform.h"
+#include "TextureRenderer.h"
 
 #include "MainFrm.h"
 #include "MyToolView.h"
+
+
 
 IMPLEMENT_DYNAMIC(CAnimatorPage, CPropertyPage)
 
@@ -63,45 +66,45 @@ void CAnimatorPage::Update()
 				m_CompAdd.EnableWindow(FALSE);		//컴포넌트 추가버튼 비활성화
 				m_CompRemove.EnableWindow(TRUE);	//컴포넌트 제거버튼 활성화
 
-				m_AnimCombo.EnableWindow(TRUE);	//애니메이션 콤보박스 활성화
-				m_ClipCombo.EnableWindow(TRUE);	//클립		 콤보박스 활성화
+				m_AnimCombo.EnableWindow(TRUE);		//애니메이션 콤보박스 활성화
+				m_ClipCombo.EnableWindow(TRUE);		//클립		 콤보박스 활성화
 				
-				m_PlayBtn.EnableWindow(TRUE);	//클립 재생버튼 활성화
-				m_PauseBtn.EnableWindow(TRUE);  //클립 정지버튼 활성화
-				m_InitBtn.EnableWindow(TRUE);	//클립 초기화 버튼 활성화
+				m_PlayBtn.EnableWindow(TRUE);		//클립 재생버튼 활성화
+				m_PauseBtn.EnableWindow(TRUE);		//클립 정지버튼 활성화
+				m_InitBtn.EnableWindow(TRUE);		//클립 초기화 버튼 활성화
 
 				m_animListRenew.EnableWindow(TRUE);	//애니메이션 지정 버튼 활성화
 			}
 			//컴포넌트가 활성화 되지 않은 경우.
 			else
 			{
-				m_CompSwitch.SetCheck(FALSE);		//컴포넌트 활성화 버튼 언체크
-				m_CompAdd.EnableWindow(FALSE);		//컴포넌트 추가버튼 비활성화
-				m_CompRemove.EnableWindow(TRUE);	//컴포넌트 제거버튼 활성화
+				m_CompSwitch.SetCheck(FALSE);			//컴포넌트 활성화 버튼 언체크
+				m_CompAdd.EnableWindow(FALSE);			//컴포넌트 추가버튼 비활성화
+				m_CompRemove.EnableWindow(TRUE);		//컴포넌트 제거버튼 활성화
 
 				m_AnimCombo.EnableWindow(FALSE);		//애니메이션 콤보박스 비활성화
 				m_ClipCombo.EnableWindow(FALSE);		//클립		 콤보박스 비활성화
 
-				m_PlayBtn.EnableWindow(FALSE);		//클립 재생버튼 비활성화
-				m_PauseBtn.EnableWindow(FALSE);		//클립 정지버튼 비활성화
-				m_InitBtn.EnableWindow(FALSE);		//클립 초기화 버튼 비활성화
+				m_PlayBtn.EnableWindow(FALSE);			//클립 재생버튼 비활성화
+				m_PauseBtn.EnableWindow(FALSE);			//클립 정지버튼 비활성화
+				m_InitBtn.EnableWindow(FALSE);			//클립 초기화 버튼 비활성화
 
-				m_animListRenew.EnableWindow(FALSE);		//애니메이션 지정 버튼 비활성화
+				m_animListRenew.EnableWindow(FALSE);	//애니메이션 지정 버튼 비활성화
 			}
 		}
 		//컴포넌트가 없는경우.
 		else
 		{
-			m_CompSwitch.SetCheck(FALSE);		//컴포넌트 활성화 버튼 언체크
-			m_CompAdd.EnableWindow(TRUE);		//컴포넌트 추가버튼 활성화
-			m_CompRemove.EnableWindow(FALSE);	//컴포넌트 제거버튼 비활성화
+			m_CompSwitch.SetCheck(FALSE);				//컴포넌트 활성화 버튼 언체크
+			m_CompAdd.EnableWindow(TRUE);				//컴포넌트 추가버튼 활성화
+			m_CompRemove.EnableWindow(FALSE);			//컴포넌트 제거버튼 비활성화
 
-			m_AnimCombo.EnableWindow(FALSE);	//애니메이션 콤보박스 비활성
-			m_ClipCombo.EnableWindow(FALSE);	//클립		 콤보박스 비활성
+			m_AnimCombo.EnableWindow(FALSE);			//애니메이션 콤보박스 비활성
+			m_ClipCombo.EnableWindow(FALSE);			//클립		 콤보박스 비활성
 
-			m_PlayBtn.EnableWindow(FALSE);		//클립 재생버튼 비활성화
-			m_PauseBtn.EnableWindow(FALSE);		//클립 정지버튼 비활성화
-			m_InitBtn.EnableWindow(FALSE);		//클립 초기화 버튼 비활성화
+			m_PlayBtn.EnableWindow(FALSE);				//클립 재생버튼 비활성화
+			m_PauseBtn.EnableWindow(FALSE);				//클립 정지버튼 비활성화
+			m_InitBtn.EnableWindow(FALSE);				//클립 초기화 버튼 비활성화
 
 			m_animListRenew.EnableWindow(FALSE);		//애니메이션 지정 버튼 비활성화
 		}
@@ -184,13 +187,24 @@ void CAnimatorPage::OnBnClickedAddComp()
 {
 	if (m_pObject != nullptr)
 	{
+		if (m_pObject->GetComponent<CTextureRenderer>() == nullptr)
+		{
+			wstring alert = m_pObject->GetObjectName() + L"번 오브젝트는 텍스처 컴포넌트가 없습니다.";
+			MessageBox(alert.c_str(), L"Fail", ERROR);
+			return;
+		}
+		if (m_pObject->GetComponent<CTransform>() == nullptr)
+		{
+			wstring alert = m_pObject->GetObjectName() + L"번 오브젝트는 트랜스폼 컴포넌트가 없습니다.";
+			MessageBox(alert.c_str(), L"Fail", ERROR);
+			return;
+		}
 		if (m_pObject->GetComponent<CAnimator>() != nullptr)
 		{
 			wstring alert = m_pObject->GetObjectName() + L"번 오브젝트는 이미 애니메이터 컴포넌트가 있습니다.";
 			MessageBox(alert.c_str(), L"Fail", ERROR);
 			return;
 		}
-
 		CAnimator* pComponent = new CAnimator;
 		pComponent->Initialize(m_pObject);
 

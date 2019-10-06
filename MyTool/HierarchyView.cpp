@@ -211,6 +211,11 @@ void CHierarchyView::OnNMDblclkHierarchytree(NMHDR *pNMHDR, LRESULT *pResult)
 		CMyToolView* pMyToolView = dynamic_cast<CMyToolView*>(pFrameWnd->m_MainSplitter.GetPane(0, 1));
 		NULL_CHECK_MSG(pMyToolView, L"Hierarchy tool view nullptr");
 		pMyToolView->Invalidate(FALSE);
+
+		CInspectView* pInspectView = dynamic_cast<CInspectView*>(pFrameWnd->m_MainSplitter.GetPane(0, 2));
+		NULL_CHECK_MSG(pInspectView, L"InspectView tool view nullptr");
+
+		pInspectView->UpdateInfo();
 	}
 }
 

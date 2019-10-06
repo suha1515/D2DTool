@@ -4,6 +4,7 @@
 
 CScripts::CScripts()
 {
+	m_ScriptName = "";
 }
 
 
@@ -11,10 +12,12 @@ CScripts::~CScripts()
 {
 }
 
-void CScripts::Initialize(CGameObject * pObject)
+string CScripts::GetScriptName()
 {
+	return m_ScriptName;
 }
 
-void CScripts::Action()
+void CScripts::SetGameObject(CGameObject * pGameObject)
 {
+	m_pGameObject = pGameObject;
 }

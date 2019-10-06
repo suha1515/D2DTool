@@ -80,7 +80,7 @@ void CAnimator::Loop()
 			auto vec = (*m_pAnimation)[0];
 			XMFLOAT2 size = XMFLOAT2(vec->_texSizeX, vec->_texSizeY);
 			m_pTexture->SetTexture(vec->_texName);
-			m_pTexture->SetVertex(size, vec->_Tex);
+			m_pTexture->SetTexPos(vec->_Tex);
 		}
 		else
 			return;
@@ -93,7 +93,7 @@ void CAnimator::Loop()
 			auto vec = (*m_pAnimation)[m_StartIndex];
 			XMFLOAT2 size = XMFLOAT2(vec->_texSizeX, vec->_texSizeY);
 			m_pTexture->SetTexture(vec->_texName);
-			m_pTexture->SetVertex(size, vec->_Tex);
+			m_pTexture->SetTexPos(vec->_Tex);
 			if (m_Time >= vec->_startTime)
 			{
 				m_Time -= m_Time;
@@ -130,7 +130,7 @@ void CAnimator::ReSet()
 	auto vec = (*m_pAnimation)[0];
 	XMFLOAT2 size = XMFLOAT2(vec->_texSizeX, vec->_texSizeY);
 	m_pTexture->SetTexture(vec->_texName);
-	m_pTexture->SetVertex(size, vec->_Tex);
+	m_pTexture->SetTexPos(vec->_Tex);
 	m_bIsPlaying = false;
 
 	m_StartIndex = 0;

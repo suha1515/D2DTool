@@ -1,13 +1,20 @@
 #include "stdafx.h"
 #include "GameObject.h"
 
+//스크립트 
+#include"Scripts.h"
 
 //렌더 컴포넌트
 #include "TextureRenderer.h"
 //트랜스폼 컴포넌트
 #include "Transform.h"
-
-CGameObject::CGameObject(): m_bIsInit(false),m_pDeviceMgr(CDeviceMgr::GetInstance())
+//박스 트랜스폼
+#include "BoxCollider.h"
+//애니메이션
+#include "Animator.h"
+CGameObject::CGameObject() : m_bIsInit(false),
+					m_pDeviceMgr(CDeviceMgr::GetInstance()),
+					m_ParentObj(nullptr)
 {
 }
 
@@ -45,8 +52,8 @@ int CGameObject::Update()
 	//}	
 	
 	//클릭시 박스렌더.
-	if(m_bIsClicked)
-	 DrawBox();
+	if (m_bIsClicked)
+		DrawBox();
 
 	return NO_EVENT;
 }
@@ -57,6 +64,18 @@ void CGameObject::Render()
 	auto iter_find = m_Components.find(typeid(CTextureRenderer).name());
 	if (m_Components.end() != iter_find)
 		iter_find->second->Action();
+
+	//클릭시 박스렌더.
+	if (m_bIsClicked)
+		DrawBox();
+}
+
+void CGameObject::DebugRender()
+{
+	//디버그시 박스콜라이더 그리기.
+		CBoxCollider* pComponent = GetComponent<CBoxCollider>();
+		if (pComponent != nullptr)
+			pComponent->DrawBox();
 }
 
 void CGameObject::LateUpdate()
@@ -203,6 +222,35 @@ HRESULT CGameObject::RemoveComponent(const string& strType)
 		}
 	}*/
 	return S_OK;
+}
+
+void CGameObject::AddScripts(CScripts * pScript)
+{
+	m_Scripts.insert({ pScript->GetScriptName(),pScript });
+}
+
+HRESULT CGameObject::RemoveScript(const string & strScript)
+{
+	auto iter_find = m_Scripts.find(strScript);
+	if (m_Scripts.end() == iter_find)
+		return E_FAIL;
+
+	SafeDelete(iter_find->second);
+	m_Scripts.erase(iter_find);
+}
+
+const map<string,CScripts*>& CGameObject::GetScripts()
+{
+	return m_Scripts;
+}
+
+CScripts * CGameObject::GetScript(const string & scriptName)
+{
+	auto iter_find = m_Scripts.find(scriptName);
+	if (m_Scripts.end() == iter_find)
+		return nullptr;
+
+	return iter_find->second;
 }
 
 void CGameObject::SetParentObject(CGameObject * parent)

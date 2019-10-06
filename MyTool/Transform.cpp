@@ -20,6 +20,9 @@ void CTransform::Initialize(CGameObject *pObject)
 	D3DXMatrixIdentity(&m_RotMatZ);
 	D3DXMatrixIdentity(&m_ScaleMat);
 	D3DXMatrixIdentity(&m_WorldMat);
+	D3DXMatrixIdentity(&m_ParentMat);
+
+	m_GameObject = pObject;
 
 	//위치,크기,회전값 초기화
 	m_Pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -86,10 +89,18 @@ void CTransform::Scale(const D3DXVECTOR3 & vec)
 
 void CTransform::SetWorld()
 {
-	m_WorldMat = m_ScaleMat*( m_RotMatX*m_RotMatY*m_RotMatZ)* m_TransMat;
+	//부모 객체가 있으면
+	if (m_GameObject->GetParentObject() != nullptr)
+	{
+		m_ParentMat = m_GameObject->GetComponent<CTransform>()->GetWorldMat();
+	}
+	else
+		D3DXMatrixIdentity(&m_ParentMat);
+
+	m_WorldMat = m_ScaleMat*( m_RotMatX*m_RotMatY*m_RotMatZ)* m_TransMat*m_ParentMat;
 }
 
-const D3DXVECTOR3 & CTransform::GetPosition() const
+ D3DXVECTOR3 & CTransform::GetPosition()
 {
 	return m_Pos;
 }
