@@ -1,9 +1,7 @@
 //월드,뷰,투영 행렬
-float4x4 worldMat;
+
 float4x4 viewMat;
 float4x4 projMat;
-
-float4	animTex;			//애니메이션을 위한 전역변수.
 
 texture tex0;
 sampler s_2D = sampler_state
@@ -19,6 +17,14 @@ struct VS_IN
 	float3 pos    :POSITION;
 	float3 normal :NOMRAL;
 	float2 tex    :TEXCOORD0;
+
+	float4 right	:TEXCOORD1;
+	float4 up		:TEXCOORD2;
+	float4 look		:TEXCOORD3;
+	float4 position  :TEXCOORD4;
+
+	float2 tex1		:TEXCOORD5;			//좌상단
+	float2 tex2		:TEXCOORD6;			//크기.
 };
 
 struct VS_OUT
@@ -40,13 +46,14 @@ VS_OUT VS_MAIN(VS_IN In)
 	float4x4 matWorldView;
 	float4x4 matWorldViewProj;
 
+	float4x4 matWorld = float4x4(In.right, In.up, In.look, In.position);
+
 	
-	matWorldView = mul(worldMat,viewMat);
+	matWorldView = mul(matWorld,viewMat);
 	matWorldViewProj = mul(matWorldView, projMat);
 		
 	v_out.pos = mul(float4(In.pos,1.f), matWorldViewProj);
-	//v_out.uv  = In.tex;
-	v_out.uv = float2(In.tex.x*animTex.x, In.tex.y*animTex.y) + float2(animTex.z, animTex.w);
+	v_out.uv = float2(In.tex.x*In.tex2.x,In.tex.y*In.tex2.y) + In.tex1;				//텍스쳐 좌표계산
 	
 	return v_out;
 }

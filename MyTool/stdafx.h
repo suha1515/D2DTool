@@ -85,12 +85,16 @@ using namespace DirectX;
 #include "DeviceMgr.h"			//디바이스 매니저
 #include "TextureMgr.h"			//텍스처   매니저
 #include "CameraMgr.h"			//카메라   매니저
-#include "ObjectMgr.h"			//오브젝트 매니저
-
-#include "ShaderMgr.h"			//쉐이더   매니저
 #include "TimeMgr.h"			//타임	   매니저
 #include "FrameMgr.h"			//프레임   매니저
-#include "AnimationMgr.h"		//애니메이션 매니저.
+#include "AnimationMgr.h"		//애니메이션 매니저
+#include "ScriptMgr.h"			//스크립트 매니저
+#include "InstanceMgr.h"		//인스턴스 매니저
+#include "ObjectMgr.h"			//오브젝트 매니저
+#include "ShaderMgr.h"			//쉐이더   매니저
+#include "CollisionMgr.h"		//콜라이더 매니저
+
+
 
 #include "PlayerSubject.h"		//플레이어 서브젝트
 

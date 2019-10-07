@@ -26,7 +26,7 @@ public:
 
 public:
 	//위치값 리턴하는 함수.
-	const D3DXVECTOR3&  GetPosition()	 const;
+	D3DXVECTOR3&  GetPosition();
 
 	//회전값 리턴하는 함수.
 	const XMFLOAT3&		GetRotation()	 const;
@@ -44,6 +44,7 @@ private:
 	D3DXMATRIX				m_TransMat;
 
 	D3DXMATRIX				m_WorldMat;
+	D3DXMATRIX				m_ParentMat;
 
 	//오브젝트 위치,회전,크기
 	D3DXVECTOR3				m_Pos;
