@@ -83,8 +83,4 @@ public:
 	// 인스턴스 체크 박스
 	CButton m_Instacne;
 	afx_msg void OnBnClickedInstance();
-	// 충돌박스인지 체크
-	CButton m_Collide;
-	// 레이어
-	CComboBox m_Layer;
 };

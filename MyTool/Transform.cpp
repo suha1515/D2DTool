@@ -80,7 +80,6 @@ void CTransform::Rotate(const XMFLOAT3 & rot)
 	D3DXMatrixRotationX(&m_RotMatX, D3DXToRadian(rot.x));
 	D3DXMatrixRotationY(&m_RotMatY, D3DXToRadian(rot.y));
 	D3DXMatrixRotationZ(&m_RotMatZ, D3DXToRadian(rot.z));
-	m_RotateMat = m_RotMatX*m_RotMatY*m_RotMatZ;
 }
 
 void CTransform::Scale(const D3DXVECTOR3 & vec)
@@ -93,13 +92,12 @@ void CTransform::SetWorld()
 	//부모 객체가 있으면
 	if (m_GameObject->GetParentObject() != nullptr)
 	{
-		CGameObject*  m_ParentObj = m_GameObject->GetParentObject();
-		m_ParentMat = m_ParentObj->GetComponent<CTransform>()->GetWorldMat();
+		m_ParentMat = m_GameObject->GetComponent<CTransform>()->GetWorldMat();
 	}
 	else
 		D3DXMatrixIdentity(&m_ParentMat);
 
-	m_WorldMat = m_ScaleMat*m_RotateMat* m_TransMat*m_ParentMat;
+	m_WorldMat = m_ScaleMat*( m_RotMatX*m_RotMatY*m_RotMatZ)* m_TransMat*m_ParentMat;
 }
 
  D3DXVECTOR3 & CTransform::GetPosition()
@@ -115,21 +113,6 @@ const XMFLOAT3 & CTransform::GetRotation() const
 const D3DXVECTOR3 & CTransform::GetScale() const
 {
 	return m_Scale;
-}
-
-const D3DXMATRIX & CTransform::GetTransMat() const
-{
-	return m_TransMat;
-}
-
-const D3DXMATRIX & CTransform::GetRotateMat() const
-{
-	return m_RotateMat;
-}
-
-const D3DXMATRIX & CTransform::GetScaleMat() const
-{
-	return m_ScaleMat;
 }
 
 const D3DXMATRIX & CTransform::GetWorldMat() const

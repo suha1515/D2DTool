@@ -148,7 +148,7 @@ BOOL CScriptPage::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	m_ScriptList.AddString(L"CPlayerScript");			//플레이어 스크립트.
+	m_ScriptList.AddString(L"PlayerScript");			//플레이어 스크립트.
 
 	return TRUE;  
 }

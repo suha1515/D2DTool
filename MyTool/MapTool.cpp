@@ -64,8 +64,6 @@ void CMapTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT1, m_iTileSizeX);
 	DDX_Text(pDX, IDC_EDIT2, m_iTileSizeY);
 	DDX_Control(pDX, IDC_CHECK1, m_Instacne);
-	DDX_Control(pDX, IDC_CHECK4, m_Collide);
-	DDX_Control(pDX, IDC_COMBO1, m_Layer);
 }
 
 void CMapTool::Renew(XMFLOAT2 * tex)
@@ -434,14 +432,6 @@ BOOL CMapTool::OnInitDialog()
 
 	m_pDeviceMgr->GetDevice()->CreateVertexBuffer(4 * sizeof(Vertex), D3DUSAGE_WRITEONLY, FVF_VERTEX, D3DPOOL_MANAGED, &m_pVB, 0);
 	m_pDeviceMgr->GetDevice()->CreateIndexBuffer(6 * sizeof(WORD), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_pIB, 0);
-
-
-	m_Layer.AddString(L"LAYER_0");
-	m_Layer.AddString(L"LAYER_1");
-	m_Layer.AddString(L"LAYER_2");
-	m_Layer.AddString(L"LAYER_3");
-	m_Layer.AddString(L"LAYER_4");
-	m_Layer.AddString(L"LAYER_5");
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.

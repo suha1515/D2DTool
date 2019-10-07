@@ -10,7 +10,7 @@ public:
 	//라이프 사이클.
 	virtual void OnInit()=0;
 	virtual void OnEnable()=0;
-	virtual void OnCollision(CGameObject * pGameObject=nullptr, XMFLOAT2* move=nullptr) = 0;
+	virtual void OnCollision(CGameObject* pGameObject=nullptr) = 0;
 	virtual void OnInput() = 0;
 	virtual void OnUpdate() = 0;
 	virtual void OnLateUpdate() = 0;

@@ -13,11 +13,6 @@ CAnimation::~CAnimation()
 	m_Clips.clear();
 }
 
-wstring CAnimation::GetAnimationName()
-{
-	return m_AnimName;
-}
-
 bool CAnimation::SetClip(const wstring & _clipName)
 {
 	m_ClipName = _clipName;
@@ -72,8 +67,6 @@ HRESULT CAnimation::LoadClip(const wstring& wstrAnimName)
 	{
 		m_Clips[i._clipName] = &i._clips;									  //ANIM_CLIP이 가지고있는 클립들의 이름으로 클립map을 만든다.
 	}
-
-	m_AnimName = wstrAnimName;
 
 	return S_OK;
 }

@@ -101,8 +101,6 @@
 #define IDC_COMBO2                      1107
 #define IDC_Scriptname                  1109
 #define IDC_LIST1                       1110
-#define IDC_CHECK4                      1111
-#define IDC_CHECK5                      1112
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_32773                        32773
@@ -116,7 +114,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        334
 #define _APS_NEXT_COMMAND_VALUE         32777
-#define _APS_NEXT_CONTROL_VALUE         1113
+#define _APS_NEXT_CONTROL_VALUE         1111
 #define _APS_NEXT_SYMED_VALUE           320
 #endif
 #endif

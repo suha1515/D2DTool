@@ -13,10 +13,9 @@ public:
 	void Render(const D3DXMATRIX& world);
 public:
 	// 오브젝트 버텍스, 텍스처 지정 함수 ,텍스처 크기 지정함수
-	void SetTexture(const wstring& tileName);
+	void SetTexture(const tstring& tileName);
 	void SetVertex(const XMFLOAT2& size, const XMFLOAT2* tex);
 	void SetTexPos(const XMFLOAT2* tex);
-	void SetTexSize(const XMFLOAT2& size);
 
 public:
 	//텍스처 위치 가져오기
@@ -45,7 +44,7 @@ private:
 	IDirect3DIndexBuffer9*	m_pIB;
 
 	//오브젝트 정점
-	Vertex						m_Vertex[4];
+	Vertex			  m_Vertex[4];
 
 	//오브젝트 텍스쳐
 	const TEX_INFO*				m_texInfo;
@@ -58,8 +57,6 @@ private:
 
 	//크기
 	XMFLOAT2					m_Size;
-	//텍스처 이름
-	wstring						m_TexName;
 
 	
 };

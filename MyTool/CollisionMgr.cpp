@@ -66,8 +66,6 @@ bool CCollisionMgr::CheckAABB(CBoxCollider * pSource, CBoxCollider * pDest)
 	fmaxdstY = __max(destBox[1].y, __max(destBox[0].y, __max(destBox[3].y, destBox[2].y)));
 	fmindstY = __min(destBox[1].y, __min(destBox[0].y, __min(destBox[3].y, destBox[2].y)));
 
-	
-
 	//x√‡ ∞ÀªÁ
 	if (fmaxsrcX < fmindstX || fminsrcX > fmaxdstX)
 		return false;

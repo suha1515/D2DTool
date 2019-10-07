@@ -57,18 +57,6 @@ int CHierarchyView::AddObject(CGameObject * object)
 		parentObj->GetChildernVector().push_back(object);
 		//부모객체보다 높은 계층에 존재
 		object->SetObjectLevel(parentObj->GetLevel() + 1);
-		//부모객체 기준으로 좌표계 설정
-		D3DXVECTOR3 pos =object->GetComponent<CTransform>()->GetPosition();
-		D3DXMATRIX parentMat = parentObj->GetComponent<CTransform>()->GetWorldMat();
-		//월드행렬의 역행렬은 전치행렬이므로. 전치화
-		D3DXMatrixInverse(&parentMat, 0, &parentMat);
-
-		//D3DXMatrixTranspose(&parentMat, &parentMat);
-		
-		D3DXVECTOR4 newPos;
-		D3DXVec3Transform(&newPos, &pos, &parentMat);
-
-		object->GetComponent<CTransform>()->SetPosition(D3DXVECTOR3(newPos.x, newPos.y, newPos.z));
 
 		//자식으로 생성시 1 반환.
 		return 1;
@@ -87,50 +75,6 @@ int CHierarchyView::AddObject(CGameObject * object)
 		//루트로 생성시 0반환
 		return 0;
 	}
-}
-
-void CHierarchyView::LoadObject()
-{
-	const map<int, vector<CGameObject*>>& temp = CObjectMgr::GetInstance()->GetObjects();
-	for (size_t i = 0; i < temp.size(); ++i)
-	{
-		for (auto&j : temp.find(i)->second)
-		{
-			if (j->GetParentObject() != nullptr)
-			{
-				CString parentName = j->GetParentObject()->GetObjectName().c_str();
-				CString childName = j->GetObjectName().c_str();
-				auto iter_find = find_if(m_objectlist.begin(), m_objectlist.end(),
-					[&](std::pair<HTREEITEM,CGameObject*>item)
-					{
-						CString itemName = m_Hierarchy.GetItemText(item.first);
-						if (itemName == parentName)
-							return true;
-						return false;
-					}
-				);
-				HTREEITEM parentItem = (*iter_find).first;
-
-				HTREEITEM childItem = m_Hierarchy.InsertItem(childName, 0, 0, parentItem, TVI_LAST);
-				m_objectlist.insert({ childItem ,j});
-			}
-			else
-			{
-				CString objectName = j->GetObjectName().c_str();
-				//계층은 0이다.
-				HTREEITEM item = m_Hierarchy.InsertItem(objectName, 0, 0, TVI_ROOT, TVI_LAST);
-				m_objectlist.insert({ item,j});
-
-			}
-		}
-	}
-
-}
-
-void CHierarchyView::Clear()
-{
-	m_Hierarchy.DeleteAllItems();
-	m_objectlist.clear();
 }
 
 void CHierarchyView::Update()

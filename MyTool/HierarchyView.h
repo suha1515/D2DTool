@@ -23,9 +23,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	int AddObject(CGameObject* object);
-public:
-	void LoadObject();
-	void Clear();
 	void Update();
 
 public:

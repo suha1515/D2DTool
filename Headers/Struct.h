@@ -70,10 +70,10 @@ typedef struct tagClip_Info
 	D3DXVECTOR3		  _Scale;							//애니메이션 크기
 	XMFLOAT2		  _Tex[4];							//프레임 텍스쳐 좌표
 
-	TCHAR 			_texName[256] = L"";				//텍스쳐 이름
-	float			_texSizeX=0.0f;						//텍스쳐 사이즈x
-	float			_texSizeY=0.0f;						//텍스쳐 사이즈y
-	int				_index;								//클립 인덱스
+	TCHAR 			_texName[256] = L"";			//텍스쳐 이름
+	float			_texSizeX=0.0f;					//텍스쳐 사이즈x
+	float			_texSizeY=0.0f;					//텍스쳐 사이즈y
+	int				_index;							//클립 인덱스
 }CLIP_INFO;
 typedef struct tagAnimationClip
 {
@@ -89,51 +89,5 @@ typedef struct tagAnimation
 	map<wstring, vector<ANIM_CLIP>>	_AnimClip;
 }ANIMATION;
 
-typedef struct ObjectInfo
-{
-	TCHAR				_ObjectName[256] = L"";
-	TCHAR				_ObjectTag[256] = L"";
-	Layer				_ObjectLayer;
-	int					_ObjectLevel;
-	TCHAR				_ParentObject[256] = L"";
-}OBJ_INFO;
-
-typedef struct TransformInfo
-{
-	D3DXVECTOR3		   _ObjectPos;
-	D3DXVECTOR3		   _ObjectScale;
-	XMFLOAT3		   _ObjectRotation;
-}TRANSFORM_INFO;
-
-typedef struct TextureInfo
-{
-	XMFLOAT2		   _TexturPos[4];
-	XMFLOAT2		   _TextureSize;
-	TCHAR			   _TextrueName[256] = L"";
-}TEXTURE_INFO;
-
-typedef struct BoxColliderInfo
-{
-	float			  _BoxWidth, _BoxHeight;
-	float			  _BoxOffsetX, _BoxOffsetY;
-}BOXCOL_INFO;
-
-typedef struct AnimatorInfo
-{
-	TCHAR			_AnimationName[256] = L"";
-}ANIM_INFO;
-//스크립트 인포는 읽기전에 몇개를 읽어야하는지 알아야함.
-typedef struct ScriptInfo
-{
-	TCHAR			_ScriptName[256] = L"";
-}SCRIPT_INFO;
-
-typedef struct ComponentCount
-{
-	int			_Transform=0;
-	int			_Texture=0;
-	int			_BoxCol=0;
-	int			_Animator=0;
-}COMP_INFO;
 #define __STRUCT_H__
 #endif

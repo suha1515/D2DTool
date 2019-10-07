@@ -35,7 +35,6 @@ void CBoxCollider::Action()
 void CBoxCollider::DrawBox()
 {
 	D3DXMATRIX*	mat = CCameraMgr::GetInstance()->GetViewProjMatrix();
-	
 	CDeviceMgr::GetInstance()->GetLine()->SetWidth(3.f);
 	CDeviceMgr::GetInstance()->GetLine()->Begin();
 	{
@@ -77,29 +76,17 @@ void CBoxCollider::SetBoxCollider()
 	NULL_CHECK_MSG_RETURN(m_pTransform, Alert.c_str());
 
 	m_ObjectPos = m_pTransform->GetPosition();
-	m_BoxPos[0] = D3DXVECTOR3(-1*((m_width*0.5f) + m_PosX),(m_height*0.5f) + m_PosY, 0.0f);
-	m_BoxPos[1] = D3DXVECTOR3(-1*((m_width*0.5f) + m_PosX),-1*((m_height*0.5f) + m_PosY), 0.0f);
-	m_BoxPos[2] = D3DXVECTOR3((m_width*0.5f) + m_PosX,(m_height*0.5f) + m_PosY, 0.0f);
-	m_BoxPos[3] = D3DXVECTOR3((m_width*0.5f) + m_PosX,-1*((m_height*0.5f) + m_PosY), 0.0f);
-
-	D3DXMATRIX	worldMat = m_GameObject->GetComponent<CTransform>()->GetWorldMat();
-	D3DXVECTOR4 pos;
-	D3DXVec3Transform(&pos,&m_BoxPos[0], &worldMat);
-	m_BoxPos[0] = D3DXVECTOR3(pos.x, pos.y, pos.z);
-	D3DXVec3Transform(&pos, &m_BoxPos[1], &worldMat);
-	m_BoxPos[1] = D3DXVECTOR3(pos.x, pos.y, pos.z);
-	D3DXVec3Transform(&pos, &m_BoxPos[2], &worldMat);
-	m_BoxPos[2] = D3DXVECTOR3(pos.x, pos.y, pos.z);
-	D3DXVec3Transform(&pos, &m_BoxPos[3], &worldMat);
-	m_BoxPos[3] = D3DXVECTOR3(pos.x, pos.y, pos.z);
-
+	m_BoxPos[0] = D3DXVECTOR3(m_ObjectPos.x - (m_width*0.5f) + m_PosX, m_ObjectPos.y + (m_height*0.5f) + m_PosY, 0.0f);
+	m_BoxPos[1] = D3DXVECTOR3(m_ObjectPos.x - (m_width*0.5f) + m_PosX, m_ObjectPos.y - (m_height*0.5f) + m_PosY, 0.0f);
+	m_BoxPos[2] = D3DXVECTOR3(m_ObjectPos.x + (m_width*0.5f) + m_PosX, m_ObjectPos.y + (m_height*0.5f) + m_PosY, 0.0f);
+	m_BoxPos[3] = D3DXVECTOR3(m_ObjectPos.x + (m_width*0.5f) + m_PosX, m_ObjectPos.y - (m_height*0.5f) + m_PosY, 0.0f);
 
 	m_BoxPosition = D3DXVECTOR3(m_ObjectPos.x + m_PosX, m_ObjectPos.y + m_PosY, 0.0f);
 
 }
 const D3DXVECTOR3 * CBoxCollider::GetBox()
 {
-	return m_BoxPos;
+	return &m_ObjectPos;
 }
 
 const D3DXVECTOR3* CBoxCollider::GetBoxPosition()
