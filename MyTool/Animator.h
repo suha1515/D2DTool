@@ -23,6 +23,8 @@ public:
 public:
 	HRESULT		SetClips(const wstring& _clipName);
 	void		LoadClips(const wstring& _animation);
+public:
+	wstring		GetAnimationName();
 
 
 private:
@@ -38,6 +40,8 @@ private:
 	int									m_EndIndex;				//마지막 인덱스
 
 	bool								m_bIsPlaying;			//플레이 불 변수.
+
+	wstring								m_AnimationName;		//애니메이션이름
 	
 };
 

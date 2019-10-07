@@ -16,6 +16,7 @@ CGameObject::CGameObject() : m_bIsInit(false),
 					m_pDeviceMgr(CDeviceMgr::GetInstance()),
 					m_ParentObj(nullptr)
 {
+
 }
 
 
@@ -92,7 +93,7 @@ HRESULT CGameObject::Initialize(CGameObject* pParent)
 	SetObjectName(L"GameObject");
 	SetObjectTag(L"none");
 	SetObjectLayer(LAYER_0);
-
+	SetObjectLevel(0);
 	//오브젝트 박스 컬러
 	m_ColorBox = D3DXCOLOR(1.0f, 0.0f, 0.0f, 1.0f);
 	m_ParentObj = pParent;
@@ -158,25 +159,27 @@ void CGameObject::DrawBox()
 
 	//기본 오브젝트 박스 렌더링.
 	D3DXMATRIX* mat = CCameraMgr::GetInstance()->GetViewProjMatrix();
+	D3DXMATRIX worldMat = GetComponent<CTransform>()->GetWorldMat();
+	worldMat = worldMat* (*mat);
 	m_pDeviceMgr->GetLine()->SetWidth(3.f);
 	m_pDeviceMgr->GetLine()->Begin();
 	{
 		D3DXVECTOR3 m_Line[2];
-		m_Line[0] = { m_Pos.x - 8.0f,m_Pos.y + 8.0f,0.0f };
-		m_Line[1] = { m_Pos.x + 8.0f,m_Pos.y + 8.0f,0.0f };
-		m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, mat, m_ColorBox);
+		m_Line[0] = {  -8.0f , 8.0f,0.0f };
+		m_Line[1] = {   8.0f , 8.0f,0.0f };
+		m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, &worldMat, m_ColorBox);
 
-		m_Line[0] = { m_Pos.x + 8.0f,m_Pos.y + 8.0f,0.0f };
-		m_Line[1] = { m_Pos.x + 8.0f,m_Pos.y - 8.0f,0.0f };
-		m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, mat, m_ColorBox);
+		m_Line[0] = { 8.0f,+8.0f,0.0f };
+		m_Line[1] = { 8.0f,-8.0f,0.0f };
+		m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, &worldMat, m_ColorBox);
 
-		m_Line[0] = { m_Pos.x + 8.0f,m_Pos.y - 8.0f,0.0f };
-		m_Line[1] = { m_Pos.x - 8.0f,m_Pos.y - 8.0f,0.0f };
-		m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, mat, m_ColorBox);
+		m_Line[0] = {+8.0f,-8.0f,0.0f };
+		m_Line[1] = {-8.0f,-8.0f,0.0f };
+		m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, &worldMat, m_ColorBox);
 
-		m_Line[0] = { m_Pos.x - 8.0f,m_Pos.y - 8.0f,0.0f };
-		m_Line[1] = { m_Pos.x - 8.0f,m_Pos.y + 8.0f,0.0f };
-		m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, mat, m_ColorBox);
+		m_Line[0] = {-8.0f,-8.0f,0.0f };
+		m_Line[1] = {-8.0f,+8.0f,0.0f };
+		m_pDeviceMgr->GetLine()->DrawTransform(m_Line, 2, &worldMat, m_ColorBox);
 	}
 	m_pDeviceMgr->GetLine()->End();
 }
@@ -194,6 +197,10 @@ const wstring & CGameObject::GetObjectTag() const
 const Layer & CGameObject::GetObjectLayer() const
 {
 	return m_ObjectLayer;
+}
+const int & CGameObject::GetObjectLevel() const
+{
+	return m_Level;
 }
 void CGameObject::AddComponent(CComponent * component)
 {

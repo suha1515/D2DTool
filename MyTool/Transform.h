@@ -31,8 +31,17 @@ public:
 	//회전값 리턴하는 함수.
 	const XMFLOAT3&		GetRotation()	 const;
 
-	//크긱밧 리턴하는 함수.
-	const D3DXVECTOR3&	GetScale()	 const;
+	//크긱값 리턴하는 함수.
+	const D3DXVECTOR3&	GetScale()		 const;
+
+	//위치행렬을 리턴하는 함수.
+	const D3DXMATRIX&	GetTransMat()    const;
+
+	//회전행렬을 리턴하는 함수.
+	const D3DXMATRIX&	GetRotateMat()	 const;
+
+	//크기 행렬을 리턴하는 함수.
+	const D3DXMATRIX&	GetScaleMat()	 const;
 
 	//월드행렬을 리턴하는 함수.
 	const D3DXMATRIX&	GetWorldMat()	 const;
@@ -41,6 +50,7 @@ private:
 	//오브젝트 크기,회전,이동,월드
 	D3DXMATRIX				m_ScaleMat;
 	D3DXMATRIX				m_RotMatX,m_RotMatY,m_RotMatZ;
+	D3DXMATRIX				m_RotateMat;
 	D3DXMATRIX				m_TransMat;
 
 	D3DXMATRIX				m_WorldMat;

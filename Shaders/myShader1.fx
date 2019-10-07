@@ -4,6 +4,7 @@ float4x4 viewMat;
 float4x4 projMat;
 
 float4	animTex;			//애니메이션을 위한 전역변수.
+float2  texSize;			//텍스쳐 크기.
 
 texture tex0;
 sampler s_2D = sampler_state
@@ -40,6 +41,10 @@ VS_OUT VS_MAIN(VS_IN In)
 	float4x4 matWorldView;
 	float4x4 matWorldViewProj;
 
+	float texX = texSize.x*0.5f;
+	float texY = texSize.y*0.5f;
+
+	v_out.pos = float4(In.pos.x*texX,In.pos.y*texY,In.pos.z,1.0f);
 	
 	matWorldView = mul(worldMat,viewMat);
 	matWorldViewProj = mul(matWorldView, projMat);

@@ -34,4 +34,5 @@ public:
 	CListBox m_MapList;
 	afx_msg void OnBnClickedButton3();
 	virtual BOOL OnInitDialog();
+	afx_msg void OnBnClickedButton8();
 };

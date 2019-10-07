@@ -35,7 +35,7 @@ HRESULT CScriptMgr::LoadScripts(const wstring & wstrScriptName, CGameObject* pOb
 		return E_FAIL;
 	}
 	//플레이어 스크립트 초기화
-		if (wstrScriptName == L"PlayerScript")				
+		if (wstrScriptName == L"CPlayerScript")				
 		{
 			CScripts* pScript = new CPlayerScript;
 			pObject->AddScripts(pScript);

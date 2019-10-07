@@ -4,7 +4,8 @@ class CAnimation
 public:
 	CAnimation();
 	~CAnimation();
-
+public:
+	wstring								GetAnimationName();
 public:
 	bool								SetClip(const wstring& _clipName=L"");
 	const vector<CLIP_INFO>*			GetClip(const wstring& wstrClipkey=L"");
