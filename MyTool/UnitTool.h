@@ -21,4 +21,8 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
+	// 유닛 툴 검색용
+	CString m_Search;
+	// 하이라키에 내놓을 이름
+	CString m_name;
 };

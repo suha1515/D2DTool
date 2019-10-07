@@ -37,12 +37,16 @@ public:
 	void OnUpdate();
 	void OnDestroy();
 
+
+
 public:
 	void SetDebug(bool on);
 	void Clear();
 
 public:
 	const map<int, vector<CGameObject*>>& GetObjects();
+public:
+	HRESULT LoadObject(const wstring& filePath);
 
 
 private:

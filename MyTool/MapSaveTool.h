@@ -27,7 +27,7 @@ public:
 
 	//맵 정보를 담을 컨테이너
 private:
-	map<CString, vector<MAP_TILE>> m_map;
+	map<CString, CString> m_map;
 
 public:
 	afx_msg void OnLbnDblclkMaplist();
@@ -35,4 +35,5 @@ public:
 	afx_msg void OnBnClickedButton3();
 	virtual BOOL OnInitDialog();
 	afx_msg void OnBnClickedButton8();
+	afx_msg void OnBnClickedButton4();
 };

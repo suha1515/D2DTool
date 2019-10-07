@@ -6,6 +6,7 @@
 #include "BoxCollider.h"
 #include "Scripts.h"
 #include "Transform.h"
+#include "Animator.h"
 IMPLEMENT_SINGLETON(CObjectMgr);
 CObjectMgr::CObjectMgr()
 {
@@ -282,4 +283,142 @@ void CObjectMgr::Clear()
 const map<int, vector<CGameObject*>>& CObjectMgr::GetObjects()
 {
 	return m_Objects;
+}
+
+HRESULT CObjectMgr::LoadObject(const wstring & filePath)
+{
+	HANDLE hFile = CreateFile(filePath.c_str(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	//string 함수를 이용해 파일이름과 확장자를 추출해야한다.
+	wstring path = filePath;
+	wstring name;
+	size_t sep = path.find_last_of(L"\\/");								//파일경로에서 마지막 / or \\을찾는다
+
+	if (sep != std::wstring::npos)										//찾는 문자열이 없을경우 npos를 반환하게된다.
+		path = path.substr(sep + 1, path.size() - sep - 1);				//substr을 이용하여 해당 인덱스부터 끝까지 추출
+
+	size_t dot = path.find_last_of(L".");								//추출된 내용에서 .까지의 인덱스를 찾는다.
+	if (dot != std::wstring::npos)
+	{
+		name = path.substr(0, dot);										//처음부터 .까지의 문자를 추출하면 파일이름
+	}
+	else
+		name = path;
+
+	//불러오기 이므로 오브젝트 모두 없애기
+	Clear();
+
+	TCHAR	tmp[MAX_STR] = L"";
+	OBJ_INFO		objInfo;						//오브젝트정보
+	TRANSFORM_INFO  transInfo;						//트랜스폼정보
+	TEXTURE_INFO	textureInfo;					//텍스처정보
+	BOXCOL_INFO		boxcolInfo;						//콜라이더정보
+	ANIM_INFO		animInfo;						//애니메이터정보
+	SCRIPT_INFO		scriptInfo;						//스크립트정보.
+	COMP_INFO compInfo;
+
+	int sizeScript = 0;
+	DWORD dwBytes = 0;
+	while (true)
+	{
+		ReadFile(hFile, &compInfo, sizeof(COMP_INFO), &dwBytes, nullptr);
+		if (0 == dwBytes)
+			break;
+		//오브젝트 생성
+		CGameObject* pGameObject = new CGameObject;
+		pGameObject->Initialize();
+		//========================================오브젝트 정보 불러오기===========================================
+		ReadFile(hFile, &objInfo, sizeof(OBJ_INFO), &dwBytes, nullptr);
+		wstring strInfo;
+		pGameObject->SetObjectName(objInfo._ObjectName);		//오브젝트 이름설정
+		pGameObject->SetObjectTag(objInfo._ObjectTag);			//오브젝트 태그설정
+		pGameObject->SetObjectLayer(objInfo._ObjectLayer);		//오브젝트 레이어설정
+
+		if (lstrcmp(objInfo._ParentObject, L""))				//불러온 자료중 부모 오브젝트 이름이 있다면
+		{
+			CGameObject* pObject = CObjectMgr::GetInstance()->FindObjectWithName(objInfo._ParentObject); //부모 오브젝트를 찾아서 넣는다. 0계층인 부모는 무조건 있으므로.. 순서만 바뀌지 않으면 여기서 문제가 없을것이다.
+			pGameObject->SetParentObject(pObject);					//찾아서 해당 오브젝트의 부모 오브젝트로 등록한다
+			pObject->GetChildernVector().push_back(pGameObject);	//더욱이 부모 벡터에는 자식을 넣는다.
+			pGameObject->SetObjectLevel(pObject->GetLevel() + 1);		//부모의 계층보다 1높을것이다.
+		}															//아니라면 그냥 넘어간다.
+																	//==========================================================================================================	
+
+																	//========================================트랜스폼 정보 불러오기===========================================
+		if (compInfo._Transform == 1)
+		{
+			ReadFile(hFile, &transInfo, sizeof(TRANSFORM_INFO), &dwBytes, nullptr);
+			CTransform*	pTransform = new CTransform;
+			pTransform->Initialize(pGameObject);					//컴포넌트 주체 오브젝트 지정.
+			pTransform->SetPosition(transInfo._ObjectPos);			//트랜스폼 위치 지정.
+			pTransform->SetRotation(transInfo._ObjectRotation);		//트랜스폼 회전 지정.
+			pTransform->SetScaling(transInfo._ObjectScale);			//트랜스폼 크기 지정.
+
+			pGameObject->AddComponent(pTransform);					//오브젝트 컴포넌트 지정.
+		}
+		//==========================================================================================================	
+
+		//========================================텍스쳐 정보 불러오기==============================================
+		if (compInfo._Texture == 1)
+		{
+			ReadFile(hFile, &textureInfo, sizeof(TEXTURE_INFO), &dwBytes, nullptr);
+			CTextureRenderer*	pTexture = new CTextureRenderer;
+			pTexture->Initialize(pGameObject);						//텍스쳐 컴포넌트 주체 오브젝트 지정.
+			pTexture->SetTexture(textureInfo._TextrueName);			//텍스쳐 이름 지정.
+
+			XMFLOAT2 tex[4];										//텍스쳐 위치
+			tex[0] = textureInfo._TexturPos[0];
+			tex[1] = textureInfo._TexturPos[1];
+			tex[2] = textureInfo._TexturPos[2];
+			tex[3] = textureInfo._TexturPos[3];
+
+			pTexture->SetVertex(textureInfo._TextureSize, tex);		//텍스처 크기와 위치를 지정한다.
+			pGameObject->AddComponent(pTexture);					//오브젝트에 텍스쳐 컴포넌트 지정.
+		}
+		//==========================================================================================================	
+
+
+		//========================================콜라이더 정보 불러오기==============================================
+		if (compInfo._BoxCol == 1)
+		{
+			ReadFile(hFile, &boxcolInfo, sizeof(BOXCOL_INFO), &dwBytes, nullptr);
+			CBoxCollider* pBoxCollider = new CBoxCollider;
+			pBoxCollider->Initialize(pGameObject);					//박스 콜라이더 컴포넌트 오브젝트 지정.
+			pBoxCollider->SetBoxSize(boxcolInfo._BoxWidth, boxcolInfo._BoxHeight);	//박스콜라이더 너비,높이지정.
+			pBoxCollider->SetBoxOffset(boxcolInfo._BoxOffsetX, boxcolInfo._BoxOffsetY);	//박스콜라이더 오프셋지정.
+
+			pGameObject->AddComponent(pBoxCollider);				//박스 콜라이더 지정.
+		}
+		//==========================================================================================================	
+
+		//========================================애니메이터 정보 불러오기==============================================
+		if (compInfo._Animator == 1)
+		{
+			ReadFile(hFile, &animInfo, sizeof(ANIM_INFO), &dwBytes, nullptr);
+			CAnimator*	pAnimator = new CAnimator;
+			pAnimator->Initialize(pGameObject);					//애니메이터 오브젝트 지정.
+			pAnimator->LoadClips(animInfo._AnimationName);		//애니메이션 지정.
+
+			pGameObject->AddComponent(pAnimator);
+		}
+		//==========================================================================================================	
+
+
+		//========================================스크립트 정보 불러오기==============================================
+
+		ReadFile(hFile, &sizeScript, sizeof(int), &dwBytes, nullptr);
+		for (int i = 0; i < sizeScript; ++i)
+		{
+			ReadFile(hFile, &tmp, sizeof(tmp), &dwBytes, nullptr);
+			CScriptMgr::GetInstance()->LoadScripts(tmp, pGameObject);
+		}
+		//==========================================================================================================	
+
+		//완성된 오브젝트를 추가
+		AddObject(pGameObject);
+	}
+	CloseHandle(hFile);
+
 }

@@ -48,6 +48,7 @@ BEGIN_MESSAGE_MAP(CMapSaveTool, CDialogEx)
 	ON_LBN_DBLCLK(IDC_MAPLIST, &CMapSaveTool::OnLbnDblclkMaplist)
 	ON_BN_CLICKED(IDC_BUTTON3, &CMapSaveTool::OnBnClickedButton3)
 	ON_BN_CLICKED(IDC_BUTTON8, &CMapSaveTool::OnBnClickedButton8)
+	ON_BN_CLICKED(IDC_BUTTON4, &CMapSaveTool::OnBnClickedButton4)
 END_MESSAGE_MAP()
 
 
@@ -191,7 +192,8 @@ void CMapSaveTool::OnBnClickedMapSave()
 					}
 				}
 			}
-
+			m_MapList.AddString(fileName);
+			m_map.insert({ fileName,m_strPath });
 			file.Close();
 
 			MessageBox(L"맵파일을 성공적으로 저장", L"Success");
@@ -207,9 +209,8 @@ void CMapSaveTool::OnBnClickedMapSave()
 		auto iter_find = m_map.find(tileName);
 		if (m_map.end() != iter_find)
 		{
-			(*iter_find).second.clear();
 
-			CString path = L"../Texture/mapData/";
+			CString path = L"../Texture/map/";
 			path = path + tileName + L".map";
 
 			file.Open(path, CFile::modeCreate | CFile::modeReadWrite, &ex);
@@ -351,115 +352,21 @@ void CMapSaveTool::OnBnClickedMapLoad()
 		PathRemoveExtension(filePath);
 		//파일이름만.
 		fileName = PathFindFileName(filePath);
-
-		file.Open(m_strPath, CFile::modeReadWrite, &kEx);
-
-		TCHAR	tmp[MAX_STR] = L"";
-		OBJ_INFO		objInfo;						//오브젝트정보
-		TRANSFORM_INFO  transInfo;						//트랜스폼정보
-		TEXTURE_INFO	textureInfo;					//텍스처정보
-		BOXCOL_INFO		boxcolInfo;						//콜라이더정보
-		ANIM_INFO		animInfo;						//애니메이터정보
-		SCRIPT_INFO		scriptInfo;						//스크립트정보.
-		COMP_INFO compInfo;
 		
-		int sizeScript=0;
-		while (file.Read(&compInfo, sizeof(COMP_INFO)))
+		//이미 존재하는지 확인 이미존재한다면 다시 로드만한다.
+		auto iter_find = m_map.find(fileName);
+		if (iter_find != m_map.end())
 		{
-			//오브젝트 생성
-			CGameObject* pGameObject = new CGameObject;
-			pGameObject->Initialize();
-			//========================================오브젝트 정보 불러오기===========================================
-			file.Read(&objInfo, sizeof(OBJ_INFO));
-			wstring strInfo;
-			pGameObject->SetObjectName(objInfo._ObjectName);		//오브젝트 이름설정
-			pGameObject->SetObjectTag(objInfo._ObjectTag);			//오브젝트 태그설정
-			pGameObject->SetObjectLayer(objInfo._ObjectLayer);		//오브젝트 레이어설정
-			
-			if (lstrcmp(objInfo._ParentObject, L""))				//불러온 자료중 부모 오브젝트 이름이 있다면
-			{
-				CGameObject* pObject = CObjectMgr::GetInstance()->FindObjectWithName(objInfo._ParentObject); //부모 오브젝트를 찾아서 넣는다. 0계층인 부모는 무조건 있으므로.. 순서만 바뀌지 않으면 여기서 문제가 없을것이다.
-				pGameObject->SetParentObject(pObject);					//찾아서 해당 오브젝트의 부모 오브젝트로 등록한다
-				pObject->GetChildernVector().push_back(pGameObject);	//더욱이 부모 벡터에는 자식을 넣는다.
-				pGameObject->SetObjectLevel(pObject->GetLevel()+1);		//부모의 계층보다 1높을것이다.
-			}															//아니라면 그냥 넘어간다.
-			//==========================================================================================================	
-
-			//========================================트랜스폼 정보 불러오기===========================================
-			if (compInfo._Transform == 1)
-			{
-				file.Read(&transInfo, sizeof(TRANSFORM_INFO));
-				CTransform*	pTransform = new CTransform;
-				pTransform->Initialize(pGameObject);					//컴포넌트 주체 오브젝트 지정.
-				pTransform->SetPosition(transInfo._ObjectPos);			//트랜스폼 위치 지정.
-				pTransform->SetRotation(transInfo._ObjectRotation);		//트랜스폼 회전 지정.
-				pTransform->SetScaling(transInfo._ObjectScale);			//트랜스폼 크기 지정.
-
-				pGameObject->AddComponent(pTransform);					//오브젝트 컴포넌트 지정.
-			}
-			//==========================================================================================================	
-
-			//========================================텍스쳐 정보 불러오기==============================================
-			if (compInfo._Texture == 1)
-			{
-				file.Read(&textureInfo, sizeof(TEXTURE_INFO));
-				CTextureRenderer*	pTexture = new CTextureRenderer;	
-				pTexture->Initialize(pGameObject);						//텍스쳐 컴포넌트 주체 오브젝트 지정.
-				pTexture->SetTexture(textureInfo._TextrueName);			//텍스쳐 이름 지정.
-
-				XMFLOAT2 tex[4];										//텍스쳐 위치
-				tex[0] = textureInfo._TexturPos[0];
-				tex[1] = textureInfo._TexturPos[1];
-				tex[2] = textureInfo._TexturPos[2];
-				tex[3] = textureInfo._TexturPos[3];
-
-				pTexture->SetVertex(textureInfo._TextureSize, tex);		//텍스처 크기와 위치를 지정한다.
-				pGameObject->AddComponent(pTexture);					//오브젝트에 텍스쳐 컴포넌트 지정.
-			}
-			//==========================================================================================================	
-
-
-			//========================================콜라이더 정보 불러오기==============================================
-			if (compInfo._BoxCol == 1)
-			{
-				file.Read(&boxcolInfo, sizeof(BOXCOL_INFO));
-				CBoxCollider* pBoxCollider = new CBoxCollider;
-				pBoxCollider->Initialize(pGameObject);					//박스 콜라이더 컴포넌트 오브젝트 지정.
-				pBoxCollider->SetBoxSize(boxcolInfo._BoxWidth, boxcolInfo._BoxHeight);	//박스콜라이더 너비,높이지정.
-				pBoxCollider->SetBoxOffset(boxcolInfo._BoxOffsetX,boxcolInfo._BoxOffsetY);	//박스콜라이더 오프셋지정.
-
-				pGameObject->AddComponent(pBoxCollider);				//박스 콜라이더 지정.
-			}
-			//==========================================================================================================	
-
-			//========================================애니메이터 정보 불러오기==============================================
-			if (compInfo._Animator == 1)
-			{
-				file.Read(&animInfo, sizeof(ANIM_INFO));
-				CAnimator*	pAnimator = new CAnimator;
-				pAnimator->Initialize(pGameObject);					//애니메이터 오브젝트 지정.
-				pAnimator->LoadClips(animInfo._AnimationName);		//애니메이션 지정.
-
-				pGameObject->AddComponent(pAnimator);
-			}
-			//==========================================================================================================	
-	
-
-			//========================================스크립트 정보 불러오기==============================================
-
-			file.Read(&sizeScript, sizeof(int));
-			for (int i = 0; i < sizeScript; ++i)
-			{
-				file.Read(tmp, sizeof(tmp));
-				CScriptMgr::GetInstance()->LoadScripts(tmp, pGameObject);
-			}
-			//==========================================================================================================	
-
-			//완성된 오브젝트를 추가
-
-			CObjectMgr::GetInstance()->AddObject(pGameObject);
+			MessageBox( L"이미 존재하므로 다시 로드합니다", L"ReLoad");
+			CObjectMgr::GetInstance()->LoadObject(m_strPath.operator LPCWSTR());
+			pInspectView->m_HierarchyView.LoadObject();
+			return;
 		}
-		file.Close();
+
+		CObjectMgr::GetInstance()->LoadObject(m_strPath.operator LPCWSTR());
+
+		m_MapList.AddString(fileName);
+		m_map.insert({ fileName,m_strPath });
 		//하이라키뷰 갱신
 		pInspectView->m_HierarchyView.LoadObject();
 		MessageBox(L"맵파일을 성공적으로 불러옴", L"Success");
@@ -469,41 +376,37 @@ void CMapSaveTool::OnBnClickedMapLoad()
 
 void CMapSaveTool::OnLbnDblclkMaplist()
 {
-	//// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 
-	//int iIndex = m_MapList.GetCurSel();
-	//if (iIndex != -1)
-	//{
-	//	CString mapName;
-	//	m_MapList.GetText(iIndex, mapName);
-	//
-	//	CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
-	//	NULL_CHECK(pFrameWnd);
+	int iIndex = m_MapList.GetCurSel();
+	if (iIndex != -1)
+	{
+		CString mapName;
+		m_MapList.GetText(iIndex, mapName);
+	
+		CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
+		NULL_CHECK(pFrameWnd);
 
-	//	CMyToolView* pToolView = dynamic_cast<CMyToolView*>(pFrameWnd->m_MainSplitter.GetPane(0, 1));
-	//	NULL_CHECK(pToolView);
+		CMyToolView* pToolView = dynamic_cast<CMyToolView*>(pFrameWnd->m_MainSplitter.GetPane(0, 1));
+		NULL_CHECK(pToolView);
 
-	//	//타일안에 무엇인가 있을경우..
-	//	if (!pToolView->m_GameObject.empty())
-	//	{
-	//		for (auto& i : pToolView->m_GameObject)
-	//		{
-	//			SafeDelete(i);
-	//		}
-	//		pToolView->m_GameObject.clear();
-	//	}
-	//	for (auto& i : m_map[mapName])
-	//	{
-	//		/*CGameObject* pGameObject = new CGameObject;
-	//		pGameObject->Initialize();
-	//		pGameObject->SetPosition(i.pos);
-	//		pGameObject->GetComponent<CTextureRenderer>()->SetTexture(i.texture);
-	//		pGameObject->GetComponent<CTextureRenderer>()->SetVertex(16, i.tex);
+		CInspectView* pInspectView = dynamic_cast<CInspectView*>(pFrameWnd->m_MainSplitter.GetPane(0, 2));
+		NULL_CHECK_MSG(pInspectView, L"InspectView tool view nullptr");
 
-	//		pToolView->m_GameObject.push_back(pGameObject);*/
-	//	}
-	//	pToolView->Invalidate(FALSE);
-	//}
+		auto iter_find = m_map.find(mapName);
+		if (iter_find != m_map.end())
+		{
+			pInspectView->m_HierarchyView.Clear();
+			wstring filePath = iter_find->second;
+			wstring text = mapName + L"을 다시 로드합니다";
+			MessageBox(text.c_str(), L"ReLoad");
+			CObjectMgr::GetInstance()->LoadObject(filePath);
+			pInspectView->m_HierarchyView.LoadObject();
+			return;
+		}
+	
+		pToolView->Invalidate(FALSE);
+	}
 }
 
 //선택해제
@@ -518,16 +421,103 @@ BOOL CMapSaveTool::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// TODO:  여기에 추가 초기화 작업을 추가합니다.
+	
 
 
 
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // 예외: OCX 속성 페이지는 FALSE를 반환해야 합니다.
+	return TRUE;  
 }
 
 
 void CMapSaveTool::OnBnClickedButton8()
 {
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	// 파일 열기 혹은 저장에 관한 대화상자 MFC 클래스
+	CFileDialog Dlg(TRUE, L".txt", L"제목없음.txt",
+		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		L"Text Files(*.txt)|*.txt|Data Files(*.dat)|*.dat||",
+		this);
+
+	TCHAR szCurrentPath[MAX_STR] = L"";
+
+	// 현재 작업 경로를 얻어오는 함수.
+	::GetCurrentDirectory(MAX_STR, szCurrentPath);
+
+	// 현재 경로에서 파일명 제거하는 함수. 제거할 파일명이 없으면 말단 폴더명을 제거한다.
+	::PathRemoveFileSpec(szCurrentPath);
+	lstrcat(szCurrentPath, L"\\Map\\MapList");
+
+	// 현재 대화상자에서 보여질 초기 경로 설정.
+	Dlg.m_ofn.lpstrInitialDir = szCurrentPath; // 상대경로 X
+
+	if (IDOK == Dlg.DoModal())
+	{
+		wifstream fin;
+		fin.open(Dlg.GetPathName());
+
+		if (fin.fail())
+			return;
+
+		if (!m_map.empty())		//불러오는데 맵을 비워야한다.
+			m_map.clear();		//클리어
+
+		//맵 리스트도 비운다.
+		m_MapList.ResetContent();
+		TCHAR		mapPath[MAX_STR] = L"";
+
+		while (true)
+		{
+			fin.getline(mapPath, MAX_STR);	//맵 의 상대경로를 불러온다.
+			if (!lstrcmp(mapPath, L""))
+				break;
+			if (fin.eof())					//다불러왔을경우 루프종료
+				break;
+
+		}
+
+		fin.close();
+	}
+}
+
+
+void CMapSaveTool::OnBnClickedButton4()
+{
+	TCHAR filePath[MAX_STR] = L"../Map/Maplist.txt";
+	// 파일 열기 혹은 저장에 관한 대화상자 MFC 클래스
+	CFileDialog Dlg(FALSE, L".txt", L"제목없음.txt",
+		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		L"Text Files(*.txt)|*.txt|Data Files(*.dat)|*.dat||",
+		this);
+
+	TCHAR szCurrentPath[MAX_STR] = L"";
+
+	// 현재 작업 경로를 얻어오는 함수.
+	::GetCurrentDirectory(MAX_STR, szCurrentPath);
+
+	// 현재 경로에서 파일명 제거하는 함수. 제거할 파일명이 없으면 말단 폴더명을 제거한다.
+	::PathRemoveFileSpec(szCurrentPath);
+	lstrcat(szCurrentPath, L"\\Map\\MapList");
+
+	// 현재 대화상자에서 보여질 초기 경로 설정.
+	Dlg.m_ofn.lpstrInitialDir = szCurrentPath; // 상대경로 X
+
+	TCHAR mapList[MAX_STR] = L"";
+
+	if (IDOK == Dlg.DoModal())
+	{
+		wofstream fout;
+		fout.open(Dlg.GetPathName());
+
+		if (fout.fail())
+			return;
+
+		for (auto& i : m_map)
+		{
+			wstring temp = L"../Map/" + i.first + ".anim";
+			fout <<i.first<<temp << endl;
+		}
+		fout.close();
+
+		AfxMessageBox(filePath);
+	}
 }
