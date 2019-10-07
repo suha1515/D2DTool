@@ -36,6 +36,17 @@ public:
 	CButton m_CompRemove;
 	// 스크립트 리스트.
 	CComboBox m_ScriptList;
-	// 스크립트 지정 변수
-	CButton m_SetScriptBtn;
+
+	// 스크립트 이름
+	CString m_ScriptName;
+
+	afx_msg void OnBnClickedCompAdd();
+	afx_msg void OnBnClickedCompRemove();
+	afx_msg void OnBnClickedCheckBox();
+	virtual BOOL OnInitDialog();
+
+
+	CButton m_AddScript;
+	CButton m_RemoveScriptBtn;
+	CListBox m_list;
 };

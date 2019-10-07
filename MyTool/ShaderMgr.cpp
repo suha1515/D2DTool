@@ -21,6 +21,9 @@ void CShaderMgr::Initialize()
 	m_Efftects.insert({ L"firstShader",make_shared<CShader>() });
 	m_Efftects[L"firstShader"]->SetEffect(L"../Shaders/myShader1.fx");
 
+	m_Efftects.insert({ L"InstanceShader",make_shared<CShader>() });
+	m_Efftects[L"InstanceShader"]->SetEffect(L"../Shaders/InstanceShader.fx");
+
 }
 
 shared_ptr<CShader> CShaderMgr::GetEffect(const wstring& effectKey)

@@ -62,6 +62,7 @@ CMyToolView::CMyToolView()
 	m_pCameraMgr(CCameraMgr::GetInstance()),
 	m_pObjectMgr(CObjectMgr::GetInstance()),
 	m_pShaderMgr(CShaderMgr::GetInstance()),
+	m_pInstanceMgr(CInstanceMgr::GetInstance()),
 	m_Cam(nullptr)
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
@@ -76,6 +77,7 @@ CMyToolView::CMyToolView()
 
 	hr = m_pDeviceMgr->InitDevice(CDeviceMgr::MODE_WIN);
 	m_pShaderMgr->Initialize();
+	m_pInstanceMgr->Initialize();
 	FAILED_CHECK_MSG(hr, L"InitDevice Failed");
 
 	
@@ -87,6 +89,7 @@ CMyToolView::~CMyToolView()
 
 	m_pObjectMgr->DestroyInstance();
 	m_pShaderMgr->DestroyInstance();
+	m_pInstanceMgr->DestroyInstance();
 }
 
 BOOL CMyToolView::PreCreateWindow(CREATESTRUCT& cs)
@@ -287,6 +290,7 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 			CGameObject* pGameObject = new CGameObject;
 			pGameObject->Initialize();
 			pGameObject->SetObjectName(name);
+			pGameObject->SetObjectTag(L"Instance");
 
 			//트랜스폼 컴포넌트
 			CTransform* pTransform = new CTransform;
@@ -304,11 +308,11 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 
 			pGameObject->AddComponent(pRender);
 
-
 			//0을 반환한 경우는 부모로생성하는것
 			m_pInspect->m_HierarchyView.AddObject(pGameObject);
 			m_pObjectMgr->AddObject(pGameObject);
 			Invalidate(FALSE);
+
 		}
 	}
 }
@@ -319,8 +323,6 @@ void CMyToolView::OnRButtonDown(UINT nFlags, CPoint point)
 
 void CMyToolView::OnMouseMove(UINT nFlags, CPoint point)
 {
-	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-
 	CView::OnMouseMove(nFlags, point);
 
 	m_MousePoint = point;
@@ -331,26 +333,27 @@ void CMyToolView::OnMouseMove(UINT nFlags, CPoint point)
 
 void CMyToolView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
-	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	
 	CScrollView::OnKeyDown(nChar, nRepCnt, nFlags);
-	if (nChar == VK_LEFT)
+	if (m_Mode == MAP)
 	{
-		m_Cam->MoveCamera(-5.0f, 0.0f);
+		if (nChar == VK_LEFT)
+		{
+			m_Cam->MoveCamera(-5.0f, 0.0f);
+		}
+		else if (nChar == VK_UP)
+		{
+			m_Cam->MoveCamera(0.0f, 5.0f);
+		}
+		else if (nChar == VK_DOWN)
+		{
+			m_Cam->MoveCamera(0.0f, -5.0f);
+		}
+		else if (nChar == VK_RIGHT)
+		{
+			m_Cam->MoveCamera(5.0f, 0.0f);
+		}
+		Invalidate(FALSE);
 	}
-	else if (nChar == VK_UP)
-	{
-		m_Cam->MoveCamera(0.0f, 5.0f);
-	}
-	else if (nChar == VK_DOWN)
-	{
-		m_Cam->MoveCamera(0.0f, -5.0f);
-	}
-	else if (nChar == VK_RIGHT)
-	{
-		m_Cam->MoveCamera(5.0f, 0.0f);
-	}
-	Invalidate(FALSE);
 }
 
 

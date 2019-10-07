@@ -27,6 +27,7 @@ CInspectView::CInspectView()
 	, m_ScaleX(0)
 	, m_ScaleY(0)
 	, m_ScaleZ(0)
+	, m_ObjectTag(_T(""))
 {
 	ZeroMemory(&m_ScaleY, sizeof(FILETIME));
 
@@ -52,10 +53,14 @@ void CInspectView::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_SCALEY, m_ScaleY);
 	DDX_Text(pDX, IDC_SCALEY, m_ScaleY);
 	DDX_Text(pDX, IDC_SACLEZ, m_ScaleZ);
+	DDX_Text(pDX, IDC_EDIT1, m_ObjectTag);
+	DDX_Control(pDX, IDC_LAYER, m_ObjectLayer);
+	DDX_Control(pDX, IDC_CHECK1, m_Debug);
 }
 
 BEGIN_MESSAGE_MAP(CInspectView, CFormView)
 	ON_BN_CLICKED(IDC_BUTTON1, &CInspectView::OnBnClickedHierarchy)
+	ON_BN_CLICKED(IDC_CHECK1, &CInspectView::OnBnClickedCheck1)
 END_MESSAGE_MAP()
 
 
@@ -117,7 +122,13 @@ void CInspectView::OnInitialUpdate()
 	m_pComponentSheet->ModifyStyle(0, WS_TABSTOP);
 	m_pComponentSheet->SetActivePage(0);
 
-	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
+
+	m_ObjectLayer.AddString(L"LAYER_0");
+	m_ObjectLayer.AddString(L"LAYER_1");
+	m_ObjectLayer.AddString(L"LAYER_2");
+	m_ObjectLayer.AddString(L"LAYER_3");
+	m_ObjectLayer.AddString(L"LAYER_4");
+	m_ObjectLayer.AddString(L"LAYER_5");
 }
 
 
@@ -139,7 +150,13 @@ void CInspectView::UpdateInfo()
 	UpdateData(TRUE);
 	if (m_ClickedObject != nullptr)
 	{
+		//오브젝트이름
 		m_ObjectName.SetWindowTextW(m_ClickedObject->GetObjectName().c_str());
+		//오브젝트 태그
+		m_ObjectTag = m_ClickedObject->GetObjectTag().c_str();
+		//오브젝트 레이어
+		Layer objLayer = m_ClickedObject->GetObjectLayer();
+		m_ObjectLayer.SetCurSel(objLayer);
 
 		CTransform* pTransform = m_ClickedObject->GetComponent<CTransform>();
 		NULL_CHECK_MSG_RETURN(pTransform, L"Inspect View GameObject Transform is null");
@@ -163,7 +180,10 @@ void CInspectView::UpdateInfo()
 	}
 	else
 	{
+
 		m_ObjectName.SetWindowTextW(L"");
+		m_ObjectTag = L"";
+		m_ObjectLayer.SetCurSel(-1);
 		//위치 값 갱신
 		m_PosX = 0.0f;
 		m_PosY = 0.0f;
@@ -199,9 +219,18 @@ void CInspectView::UpdateObject()
 		pTransform->SetRotation(rot);
 		pTransform->SetScaling(scale);
 
+		//오브젝트 이름지정
 		CString name;
 		m_ObjectName.GetWindowTextW(name);
 		m_ClickedObject->SetObjectName(name.operator LPCWSTR());
+
+		//오브젝트 태그지정
+		m_ClickedObject->SetObjectTag(m_ObjectTag.operator LPCWSTR());
+
+		//오브젝트 레이어지정.
+		int layer = m_ObjectLayer.GetCurSel();
+		m_ClickedObject->SetObjectLayer((Layer)layer);
+
 	}
 	UpdateData(FALSE);
 }
@@ -231,4 +260,21 @@ BOOL CInspectView::PreTranslateMessage(MSG* pMsg)
 
 
 	return CFormView::PreTranslateMessage(pMsg);
+}
+
+
+void CInspectView::OnBnClickedCheck1()
+{
+	//컴포넌트 활성화버튼이 눌렸을때. 비활성화 되었으면
+	if (m_Debug.GetCheck() == 0)
+	{
+		CObjectMgr::GetInstance()->SetDebug(false);
+		cout << "디버그 끄기" << endl;
+	}
+	//활성화라면
+	else
+	{
+		cout << "디버그 켜기" << endl;
+		CObjectMgr::GetInstance()->SetDebug(true);
+	}
 }

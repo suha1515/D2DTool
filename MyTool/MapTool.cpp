@@ -63,6 +63,7 @@ void CMapTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_TILESETSIZE, m_TileSetSize);
 	DDX_Text(pDX, IDC_EDIT1, m_iTileSizeX);
 	DDX_Text(pDX, IDC_EDIT2, m_iTileSizeY);
+	DDX_Control(pDX, IDC_CHECK1, m_Instacne);
 }
 
 void CMapTool::Renew(XMFLOAT2 * tex)
@@ -159,6 +160,7 @@ BEGIN_MESSAGE_MAP(CMapTool, CDialogEx)
 	ON_WM_DROPFILES()
 	ON_STN_CLICKED(IDC_TILESETSIZE, &CMapTool::OnStnClickedTilesetsize)
 	ON_WM_ACTIVATE()
+	ON_BN_CLICKED(IDC_CHECK1, &CMapTool::OnBnClickedInstance)
 END_MESSAGE_MAP()
 
 
@@ -397,6 +399,7 @@ BOOL CMapTool::OnInitDialog()
 	if (nullptr == m_SaveTool.GetSafeHwnd())
 		m_SaveTool.Create(IDD_SAVETOOL);
 
+	m_bIsInstance = false;
 
 	RECT rc = {};
 	GetClientRect(&rc);
@@ -608,4 +611,17 @@ BOOL CMapTool::PreTranslateMessage(MSG* pMsg)
 	if (pMsg->wParam == VK_RETURN || pMsg->wParam == VK_ESCAPE) return TRUE;
 
 	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+
+void CMapTool::OnBnClickedInstance()
+{
+	if (m_Instacne.GetCheck() == 0)
+	{
+		m_bIsInstance = false;
+	}
+	else
+	{
+		m_bIsInstance = true;
+	}
 }

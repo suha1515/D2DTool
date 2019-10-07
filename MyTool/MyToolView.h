@@ -32,7 +32,7 @@ public:
 	CCameraMgr*		m_pCameraMgr;		//카메라   매니저
 	CObjectMgr*		m_pObjectMgr;		//오브젝트 매니저
 	CShaderMgr*		m_pShaderMgr;		//쉐이더   매니저
-
+	CInstanceMgr*   m_pInstanceMgr;		//인스턴스 매니저
 
 	D3DXVECTOR3		m_Line[2];
 

@@ -33,10 +33,7 @@ CComponentSheet::CComponentSheet(CWnd * pParentWnd)
 	AddPage(&m_AnimatorCompPage);
 	AddPage(&m_ScriptCompPage);
 
-	SetActivePage(&m_TexCompPage);
-	SetActivePage(&m_BoxCompPage);
-	SetActivePage(&m_AnimatorCompPage);
-//	SetActivePage(&m_ScriptCompPage);
+
 }
 
 CComponentSheet::~CComponentSheet()
@@ -68,8 +65,16 @@ BOOL CComponentSheet::OnCommand(WPARAM wParam, LPARAM lParam)
 
 void CComponentSheet::UpdateInfo(CGameObject * pObject)
 {
+	SetActivePage(&m_TexCompPage);
+	SetActivePage(&m_BoxCompPage);
+	SetActivePage(&m_AnimatorCompPage);
+	SetActivePage(&m_ScriptCompPage);
+	SetActivePage(&m_TexCompPage);
+
 	m_TexCompPage.SetObject(pObject);
+	m_BoxCompPage.SetObject(pObject);
 	m_AnimatorCompPage.SetObject(pObject);
+	m_ScriptCompPage.SetObject(pObject);
 }
 
 void CComponentSheet::RemoveAll()

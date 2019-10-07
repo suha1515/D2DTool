@@ -64,6 +64,13 @@ private:
 public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 
+	// 오브젝트 태그
+	CString m_ObjectTag;
+	// 오브젝트 레이어
+	CComboBox m_ObjectLayer;
+	// //디버그 모드
+	CButton m_Debug;
+	afx_msg void OnBnClickedCheck1();
 };
 
 

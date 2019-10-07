@@ -1,23 +1,29 @@
 #pragma once
 #include "Component.h"
-
-class CScripts : public CComponent
+class CGameObject;
+class CScripts
 {
 public:
 	explicit CScripts();
 	virtual ~CScripts();
 public:
-	virtual void	ScriptInit() = 0;
-	virtual void	ScriptLateInit() = 0;
-	virtual void	Update() = 0;
-	virtual void	Release() = 0;
+	//라이프 사이클.
+	virtual void OnInit()=0;
+	virtual void OnEnable()=0;
+	virtual void OnCollision(CGameObject* pGameObject=nullptr) = 0;
+	virtual void OnInput() = 0;
+	virtual void OnUpdate() = 0;
+	virtual void OnLateUpdate() = 0;
+	virtual void OnRender() = 0;
+	virtual void OnDisable() = 0;
+	virtual void OnDestroy() = 0;
+public:
+	string GetScriptName();
+	void	SetGameObject(CGameObject* pGameObject);
 
-
-	// CComponent을(를) 통해 상속됨
-	virtual void Initialize(CGameObject * pObject)=0;
-
-	virtual void Action()=0;
-
+protected:
+		string				m_ScriptName;
+		CGameObject*		m_pGameObject;
 };
 
 //스크립트 클래스는 게임오브젝트마다 추가할 수 있는 컴포넌트로써

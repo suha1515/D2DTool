@@ -110,6 +110,12 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>2.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -157,6 +163,12 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>2.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -197,6 +209,7 @@
     <ClInclude Include="BoxColliderPage.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraMgr.h" />
+    <ClInclude Include="CollisionMgr.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentSheet.h" />
     <ClInclude Include="DeviceMgr.h" />
@@ -204,6 +217,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="HierarchyView.h" />
     <ClInclude Include="InspectView.h" />
+    <ClInclude Include="InstanceMgr.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MapSaveTool.h" />
     <ClInclude Include="MapTool.h" />
@@ -217,6 +231,7 @@
     <ClInclude Include="PlayerScript.h" />
     <ClInclude Include="PlayerSubject.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="ScriptMgr.h" />
     <ClInclude Include="ScriptPage.h" />
     <ClInclude Include="Scripts.h" />
     <ClInclude Include="Shader.h" />
@@ -244,6 +259,7 @@
     <ClCompile Include="BoxColliderPage.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraMgr.cpp" />
+    <ClCompile Include="CollisionMgr.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ComponentSheet.cpp" />
     <ClCompile Include="DeviceMgr.cpp" />
@@ -251,6 +267,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="HierarchyView.cpp" />
     <ClCompile Include="InspectView.cpp" />
+    <ClCompile Include="InstanceMgr.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MapSaveTool.cpp" />
     <ClCompile Include="MapTool.cpp" />
@@ -263,6 +280,7 @@
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="PlayerScript.cpp" />
     <ClCompile Include="PlayerSubject.cpp" />
+    <ClCompile Include="ScriptMgr.cpp" />
     <ClCompile Include="ScriptPage.cpp" />
     <ClCompile Include="Scripts.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -294,6 +312,7 @@
     <Image Include="res\Toolbar.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Shaders\InstanceShader.fx" />
     <FxCompile Include="..\Shaders\myShader1.fx">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">2.0</ShaderModel>

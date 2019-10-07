@@ -49,6 +49,7 @@ CMyToolApp::CMyToolApp()
 
 	// TODO: 여기에 생성 코드를 추가합니다.
 	// InitInstance에 모든 중요한 초기화 작업을 배치합니다.
+	
 }
 
 // 유일한 CMyToolApp 개체입니다.
