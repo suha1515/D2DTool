@@ -24,6 +24,7 @@
 #include "TextureRenderer.h"
 //트랜스폼 컴포넌트
 #include "Transform.h"
+#include "BoxCollider.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -290,7 +291,14 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 			CGameObject* pGameObject = new CGameObject;
 			pGameObject->Initialize();
 			pGameObject->SetObjectName(name);
-			pGameObject->SetObjectTag(L"Instance");
+			//인스턴스 일경우.
+			if (m_pMyForm->m_MapTool.m_Instacne.GetCheck() == 1)
+			{
+				pGameObject->SetObjectTag(L"Instance");
+			}
+			//레이어지정
+			if (m_pMyForm->m_MapTool.m_Layer.GetCurSel() != -1)
+				pGameObject->SetObjectLayer((Layer)m_pMyForm->m_MapTool.m_Layer.GetCurSel());
 
 			//트랜스폼 컴포넌트
 			CTransform* pTransform = new CTransform;
@@ -308,10 +316,20 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 
 			pGameObject->AddComponent(pRender);
 
+			//충돌하는경우.
+			if (m_pMyForm->m_MapTool.m_Collide.GetCheck() == 1)
+			{
+				CBoxCollider*	pBoxCollider = new CBoxCollider;
+				pBoxCollider->Initialize(pGameObject);
+				pGameObject->AddComponent(pBoxCollider);
+			}
+
 			//0을 반환한 경우는 부모로생성하는것
 			m_pInspect->m_HierarchyView.AddObject(pGameObject);
 			m_pObjectMgr->AddObject(pGameObject);
 			Invalidate(FALSE);
+
+	
 
 		}
 	}

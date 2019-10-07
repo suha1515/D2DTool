@@ -45,6 +45,8 @@ public:
 	const wstring&		GetObjectTag()   const;
 	//오브젝트 레이어 반환함수
 	const Layer&		GetObjectLayer() const;
+	//오브젝트 계층 반환
+	const int&		    GetObjectLevel() const;
 	
 
 	//컴포넌트 추가

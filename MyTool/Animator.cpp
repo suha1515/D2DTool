@@ -81,6 +81,7 @@ void CAnimator::Loop()
 			XMFLOAT2 size = XMFLOAT2(vec->_texSizeX, vec->_texSizeY);
 			m_pTexture->SetTexture(vec->_texName);
 			m_pTexture->SetTexPos(vec->_Tex);
+			m_pTexture->SetTexSize(size);
 		}
 		else
 			return;
@@ -94,6 +95,7 @@ void CAnimator::Loop()
 			XMFLOAT2 size = XMFLOAT2(vec->_texSizeX, vec->_texSizeY);
 			m_pTexture->SetTexture(vec->_texName);
 			m_pTexture->SetTexPos(vec->_Tex);
+			m_pTexture->SetTexSize(size);
 			if (m_Time >= vec->_startTime)
 			{
 				m_Time -= m_Time;
@@ -131,6 +133,7 @@ void CAnimator::ReSet()
 	XMFLOAT2 size = XMFLOAT2(vec->_texSizeX, vec->_texSizeY);
 	m_pTexture->SetTexture(vec->_texName);
 	m_pTexture->SetTexPos(vec->_Tex);
+	m_pTexture->SetTexSize(size);
 	m_bIsPlaying = false;
 
 	m_StartIndex = 0;
@@ -164,4 +167,9 @@ void CAnimator::LoadClips(const wstring & _animation)
 	hr = m_pAnimation->LoadClip(_animation);
 	wstring alert = m_GameObject->GetObjectName()+L"번 오브젝트 애니메이션 클립 로드 실패";
 	FAILED_CHECK_MSG_RETURN(hr, alert.c_str());
+}
+
+wstring CAnimator::GetAnimationName()
+{
+	return m_pAnimation->GetAnimationName();
 }

@@ -112,6 +112,7 @@ void CMainFrame::Dump(CDumpContext& dc) const
 //분할창 사용시 CFrameWnd 에서만  붙일수있는 컨트롤인 OnCreateClient를 재정의한다.
 BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
+	setlocale(LC_ALL, "");
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 
 	//창3개 분할.

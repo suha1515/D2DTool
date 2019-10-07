@@ -166,6 +166,34 @@ int CObjectMgr::GetObjectCount()
 	return m_Objects[0].size();
 }
 
+CGameObject * CObjectMgr::FindObjectWithName(const wstring & name)
+{
+	for (auto &i : m_Objects)
+	{
+		for (auto& j : i.second)
+		{
+			wstring objName =j->GetObjectName();
+			if (objName == name)
+				return j;
+		}
+	}
+	return nullptr;
+}
+
+CGameObject * CObjectMgr::FindObjectWithTag(const wstring & tag)
+{
+	for (auto &i : m_Objects)
+	{
+		for (auto& j : i.second)
+		{
+			wstring objTag = j->GetObjectTag();
+			if (objTag == tag)
+				return j;
+		}
+	}
+	return nullptr;
+}
+
 void CObjectMgr::OnInit()
 {
 	//모든 객체 스크립트 OnInit
@@ -193,11 +221,13 @@ void CObjectMgr::OnCollision()
 				CBoxCollider* pDest = (*iter_begin2)->GetComponent<CBoxCollider>();
 				if (pDest->GetOn())
 				{
-					if (CCollisionMgr::GetInstance()->CheckAABB(pSource, pDest))
+					float fMoveX = 0.0f, fMoveY = 0.0f;
+					XMFLOAT2 move;
+					if (CCollisionMgr::GetInstance()->CheckRect(pSource, pDest,&move.x,&move.y))
 					{
 						//스크립트의 OnCollision 실행 충돌대상으로 포인터를 전달한다.
 						for (auto& i : (*iter_begin)->GetScripts())
-							i.second->OnCollision((*iter_begin2));
+							i.second->OnCollision((*iter_begin2),&move);
 					}
 				}
 			}
@@ -228,4 +258,28 @@ void CObjectMgr::OnDestroy()
 void CObjectMgr::SetDebug(bool on)
 {
 	m_bIsDebug = on;
+}
+
+void CObjectMgr::Clear()
+{
+	for (auto &i : m_Objects)
+	{
+		for (auto& j : i.second)
+		{
+			SafeDelete(j);
+		}
+		i.second.clear();
+	}
+	m_Objects.clear();
+	for (auto& i : m_RenderObjects)
+	{
+		i.clear();
+	}
+	m_CollideObj.clear();
+	m_SciptObject.clear();
+}
+
+const map<int, vector<CGameObject*>>& CObjectMgr::GetObjects()
+{
+	return m_Objects;
 }
