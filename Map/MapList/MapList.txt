@@ -1,0 +1,2 @@
+Player|../Map/Player.map
+Test_Obj|../Map/Test_Obj.map

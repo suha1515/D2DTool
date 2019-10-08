@@ -1,8 +1,13 @@
 #pragma once
 #include "Scripts.h"
+class CTransform;
+class CAnimator;
 class CPlayerScript :
 	public CScripts
 {
+	enum STATE {IDLE, RUN_START, RUN, RUN_END};
+	enum DIR   {UP,RIGHT_UP_45,RIGHT,RIGHT_DOWN_45,DOWN,
+				LEFT_UP_45,LEFT,LEFT_DOWN_45};
 public:
 	CPlayerScript();
 	~CPlayerScript();
@@ -17,5 +22,21 @@ public:
 	virtual void OnDisable() override;
 	virtual void OnDestroy() override;
 	
+private:
+	CTransform* pTransform;
+	CAnimator*	pAnimator;
+
+public:
+	void AnimState();
+	void DirState();
+
+	bool		bIsInit = false;;
+	
+private:
+	DIR			m_Dir;
+	STATE		m_PreState;
+	STATE		m_CurState;
+
+	float		m_Velocity;
 };
 

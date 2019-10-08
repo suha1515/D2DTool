@@ -40,9 +40,6 @@
     <Filter Include="98.Managers\01.TextureMgr">
       <UniqueIdentifier>{eaee4895-83e2-482b-8a0d-dde2f1e564d5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05.GameObject\00.Terrain">
-      <UniqueIdentifier>{4429b944-04e1-45dc-8b5c-1d90677dfe88}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03.View\00.FormView">
       <UniqueIdentifier>{356ccba3-6ed9-4d2a-bd38-b94a145a8b7e}</UniqueIdentifier>
     </Filter>

@@ -19,6 +19,7 @@
 #define DEAD_OBJ		1
 #define CHANGE_SCENE	2
 
+#define GRAVITY         9.8f
 #define STL_END_CHECK(iterator,container) \
 if(iterator==container.end()) {return;} 
 

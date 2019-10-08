@@ -35,6 +35,14 @@ typedef struct tagInfo
 	D3DXVECTOR3 vSize;
 	D3DXMATRIX matWorld; // 월드행렬 = 크기행렬 * 자전행렬 * 이동행렬 * 공전행렬 * 부모행렬
 }INFO;
+typedef struct tagMapDB
+{
+	TCHAR   objectkey[256] = L"";
+	TCHAR	fileName[256] = L"";
+	TCHAR	filePath[256] = L"";
+	int     Index;
+	//MAP_INFO info;
+}MAP_SAVE;
 
 #ifdef TOOL
 typedef struct tagMapInfo
@@ -44,14 +52,6 @@ typedef struct tagMapInfo
 	wstring s_filePath = L"";
 }MAP_INFO;
 
-typedef struct tagMapDB
-{
-	TCHAR   objectkey[256] = L"";
-	TCHAR	fileName[256]  = L"";
-	TCHAR	filePath[256]  = L"";
-	int     Index;
-	//MAP_INFO info;
-}MAP_SAVE;
 
 typedef struct tagMapTile
 {

@@ -50,6 +50,22 @@ BEGIN_MESSAGE_MAP(CMiniView, CScrollView)
 	ON_WM_GETMINMAXINFO()
 END_MESSAGE_MAP()
 
+// CMiniView 진단입니다.
+
+#ifdef _DEBUG
+void CMiniView::AssertValid() const
+{
+	CView::AssertValid();
+}
+
+#ifndef _WIN32_WCE
+void CMiniView::Dump(CDumpContext& dc) const
+{
+	CView::Dump(dc);
+}
+#endif
+#endif //_DEBUG
+
 
 // CMiniView 그리기입니다.
 
@@ -89,17 +105,17 @@ void CMiniView::OnDraw(CDC* pDC)
 
 // CMiniView 진단입니다.
 
-#ifdef _DEBUG
-void CMiniView::AssertValid() const
-{
-	CView::AssertValid();
-}
 
-#ifndef _WIN32_WCE
-void CMiniView::Dump(CDumpContext& dc) const
-{
-	CView::Dump(dc);
-}
+//void CMiniView::AssertValid() const
+//{
+//	CView::AssertValid();
+//}
+//
+//#ifndef _WIN32_WCE
+//void CMiniView::Dump(CDumpContext& dc) const
+//{
+//	CView::Dump(dc);
+//}
 void CMiniView::Initialize(CString tileName)
 {
 
@@ -224,8 +240,6 @@ void CMiniView::SetTileSize(int sizeX,int sizeY)
 	fGapX = (float)itileSizeX / imgWidth;
 	fGapY = (float)itileSizeY / imgHeight;
 }
-#endif
-#endif //_DEBUG
 
 
 // CMiniView 메시지 처리기입니다.
@@ -237,9 +251,9 @@ void CMiniView::OnInitialUpdate()
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 	CScrollView::SetScrollSizes(MM_TEXT, CSize(0, 0));
 
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_POINT);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_NONE);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_NONE);
+	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
 
 	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_BORDER);
 	m_pDeviceMgr->GetDevice()->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_BORDER);

@@ -102,7 +102,6 @@
 #define IDC_Scriptname                  1109
 #define IDC_LIST1                       1110
 #define IDC_CHECK4                      1111
-#define IDC_CHECK5                      1112
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_32773                        32773

@@ -49,6 +49,7 @@ BEGIN_MESSAGE_MAP(CMapSaveTool, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON3, &CMapSaveTool::OnBnClickedButton3)
 	ON_BN_CLICKED(IDC_BUTTON8, &CMapSaveTool::OnBnClickedButton8)
 	ON_BN_CLICKED(IDC_BUTTON4, &CMapSaveTool::OnBnClickedButton4)
+	ON_BN_CLICKED(IDC_BUTTON5, &CMapSaveTool::OnBnClickedReMove)
 END_MESSAGE_MAP()
 
 
@@ -74,6 +75,18 @@ void CMapSaveTool::OnBnClickedMapSave()
 	CFile file;
 	CFileException ex;
 	CFileDialog dlg(FALSE, _T("*.map"), NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, _T("Map Files(*.map)|*.map|"), NULL);
+
+	TCHAR szCurrentPath[MAX_STR] = L"";
+
+	// 현재 작업 경로를 얻어오는 함수.
+	::GetCurrentDirectory(MAX_STR, szCurrentPath);
+
+	// 현재 경로에서 파일명 제거하는 함수. 제거할 파일명이 없으면 말단 폴더명을 제거한다.
+	::PathRemoveFileSpec(szCurrentPath);
+	lstrcat(szCurrentPath, L"\\Map\\MapList");
+
+	// 현재 대화상자에서 보여질 초기 경로 설정.
+	dlg.m_ofn.lpstrInitialDir = szCurrentPath; // 상대경로 X
 
 	int iIndex = m_MapList.GetCurSel();
 	if (-1 == iIndex)
@@ -335,6 +348,18 @@ void CMapSaveTool::OnBnClickedMapLoad()
 	CFileDialog dlg(TRUE, _T("*.map"), NULL, OFN_FILEMUSTEXIST, _T("MAP Files(*.map)|*.map|"), NULL);
 	CString m_strPath;
 
+	TCHAR szCurrentPath[MAX_STR] = L"";
+
+	// 현재 작업 경로를 얻어오는 함수.
+	::GetCurrentDirectory(MAX_STR, szCurrentPath);
+
+	// 현재 경로에서 파일명 제거하는 함수. 제거할 파일명이 없으면 말단 폴더명을 제거한다.
+	::PathRemoveFileSpec(szCurrentPath);
+	lstrcat(szCurrentPath, L"\\Map\\MapList");
+
+	// 현재 대화상자에서 보여질 초기 경로 설정.
+	dlg.m_ofn.lpstrInitialDir = szCurrentPath; // 상대경로 X
+
 	if (dlg.DoModal() == IDOK)
 	{
 		//오브젝트 모두 없애기 (불러오기 이므로)
@@ -421,10 +446,6 @@ BOOL CMapSaveTool::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	
-
-
-
 	return TRUE;  
 }
 
@@ -464,15 +485,17 @@ void CMapSaveTool::OnBnClickedButton8()
 		//맵 리스트도 비운다.
 		m_MapList.ResetContent();
 		TCHAR		mapPath[MAX_STR] = L"";
-
+		TCHAR		mapName[MAX_STR] = L"";
 		while (true)
 		{
-			fin.getline(mapPath, MAX_STR);	//맵 의 상대경로를 불러온다.
-			if (!lstrcmp(mapPath, L""))
-				break;
+			fin.getline(mapName, MAX_STR, '|');
+			fin.getline(mapPath, MAX_STR);
+;
 			if (fin.eof())					//다불러왔을경우 루프종료
 				break;
-
+			m_map.insert({ mapName,mapPath });
+			
+			m_MapList.AddString(mapName);
 		}
 
 		fin.close();
@@ -513,11 +536,28 @@ void CMapSaveTool::OnBnClickedButton4()
 
 		for (auto& i : m_map)
 		{
-			wstring temp = L"../Map/" + i.first + ".anim";
-			fout <<i.first<<temp << endl;
+			wstring temp = i.first+L"|"+L"../Map/" + i.first + ".map";
+			fout << temp << endl;
 		}
 		fout.close();
 
 		AfxMessageBox(filePath);
+	}
+}
+
+
+void CMapSaveTool::OnBnClickedReMove()
+{
+	int index = m_MapList.GetCurSel();
+	if (index != -1)
+	{
+		CString name;
+		m_MapList.GetText(index, name);
+		auto iter = m_map.find(name);
+		if (m_map.end() != iter)
+		{
+			m_map.erase(iter);
+		}
+		m_MapList.DeleteString(index);
 	}
 }

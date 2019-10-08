@@ -129,8 +129,11 @@ void CHierarchyView::LoadObject()
 
 void CHierarchyView::Clear()
 {
-	m_Hierarchy.DeleteAllItems();
 	m_objectlist.clear();
+	m_CurClicked = nullptr;
+	m_PreClicked = nullptr;
+
+	m_Hierarchy.DeleteAllItems();
 }
 
 void CHierarchyView::Update()
