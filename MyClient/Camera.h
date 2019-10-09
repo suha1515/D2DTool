@@ -26,7 +26,7 @@ public:
 	D3DXMATRIX*				GetViewMatrix();
 	D3DXMATRIX*				GetProjectMatrix();
 	D3DXMATRIX*				GetViewProjMatrix();
-
+	XMFLOAT3				GetScaleFactor();
 public:
 	void					Scaling(const float&_x = 0.0f, const float& _y = 0.0f);
 	void					MoveCamera(const D3DXVECTOR3& pos);

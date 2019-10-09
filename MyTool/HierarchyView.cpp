@@ -15,6 +15,10 @@
 
 // CHierarchyView 대화 상자입니다.
 #include "Transform.h"
+#include "TextureRenderer.h"
+#include "Animator.h"
+#include "BoxCollider.h"
+#include "Scripts.h"
 
 IMPLEMENT_DYNAMIC(CHierarchyView, CDialogEx)
 
@@ -87,6 +91,98 @@ int CHierarchyView::AddObject(CGameObject * object)
 		//루트로 생성시 0반환
 		return 0;
 	}
+}
+
+int CHierarchyView::AddCopyObject(const OBJ_COPY* copy,const wstring& name)
+{
+	Clear();
+	CObjectMgr::GetInstance()->MakeObjectByCopy(copy, name, nullptr);
+	LoadObject();
+	return 0;
+}
+
+void CHierarchyView::AddList(HTREEITEM * item, const OBJ_COPY * copy, const wstring& name,CGameObject* parent)
+{
+	//CString ObjectName = name.c_str();
+	//HTREEITEM _item;
+	//if(item==nullptr)
+	//	_item = m_Hierarchy.InsertItem(ObjectName, 0, 0, TVI_ROOT, TVI_LAST);
+	//else
+	//{
+	//	_item = m_Hierarchy.InsertItem(ObjectName, 0, 0, *item, TVI_LAST);
+	//}
+
+	//CGameObject* pGameObject = new CGameObject;
+
+	////오브젝트 정보넣기
+	//if (name == L"")
+	//	pGameObject->SetObjectName(copy->objInfo._ObjectName);
+	//else
+	//	pGameObject->SetObjectName(name);		//새로운 이름을 넣어도된다.
+	//pGameObject->SetObjectLayer(copy->objInfo._ObjectLayer);
+	//pGameObject->SetObjectLevel(copy->objInfo._ObjectLevel);
+	//pGameObject->SetObjectTag(copy->objInfo._ObjectTag);
+
+	//if (parent != nullptr)
+	//{
+	//	pGameObject->SetParentObject(parent);
+	//	parent->GetChildernVector().push_back(pGameObject);
+	//}
+	////Comp정보참조
+	//if (copy->compInfo._Transform == 1)
+	//{
+	//	CTransform* pTransform = new CTransform;
+	//	pTransform->Initialize(pGameObject);
+	//	pTransform->SetPosition(copy->transformInfo._ObjectPos);
+	//	pTransform->SetRotation(copy->transformInfo._ObjectRotation);
+	//	pTransform->SetScaling(copy->transformInfo._ObjectScale);
+
+	//	pGameObject->AddComponent(pTransform);
+	//}
+	//if (copy->compInfo._Texture == 1)
+	//{
+	//	CTextureRenderer* pTexture = new CTextureRenderer;
+	//	pTexture->Initialize(pGameObject);
+	//	pTexture->SetTexture(copy->textureInfo._TextrueName);
+	//	pTexture->SetTexSize(copy->textureInfo._TextureSize);
+	//	pTexture->SetTexPos(copy->textureInfo._TexturPos);
+
+	//	pGameObject->AddComponent(pTexture);
+	//}
+	//if (copy->compInfo._BoxCol == 1)
+	//{
+	//	CBoxCollider* pBoxCollider = new CBoxCollider;
+	//	pBoxCollider->Initialize(pGameObject);
+	//	pBoxCollider->SetBoxSize(copy->boxcolInfo._BoxWidth, copy->boxcolInfo._BoxHeight);
+	//	pBoxCollider->SetBoxOffset(copy->boxcolInfo._BoxOffsetX, copy->boxcolInfo._BoxOffsetY);
+
+	//	pGameObject->AddComponent(pBoxCollider);
+	//}
+	//if (copy->compInfo._Animator == 1)
+	//{
+	//	CAnimator* pAnimator = new CAnimator;
+	//	pAnimator->Initialize(pGameObject);
+	//	pAnimator->LoadClips(copy->animInfo._AnimationName);
+
+	//	pGameObject->AddComponent(pAnimator);
+	//}
+
+	////스크립트
+	//if (copy->scriptInfo.size() > 0)
+	//{
+	//	for (auto&i : copy->scriptInfo)
+	//	{
+	//		CScriptMgr::GetInstance()->LoadScripts(i._ScriptName, pGameObject);
+	//	}
+	//}
+	////자식이 있을경우
+	//if (copy->childInfo.size() > 0)
+	//{
+	//	for (auto&i : copy->childInfo)
+	//		AddList(&_item, &i, i.objInfo._ObjectName, pGameObject);
+	//}
+	//m_objectlist.insert({ _item,pGameObject });
+	//AddObject(pGameObject);
 }
 
 void CHierarchyView::LoadObject()

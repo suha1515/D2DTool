@@ -10,9 +10,9 @@ texture tex0;
 sampler s_2D = sampler_state
 {
 	Texture = (tex0);
-	magfilter = point;
-	minfilter = point;
-	mipfilter = point;
+	magfilter = None;
+	minfilter = None;
+	mipfilter = None;
 };
 
 struct VS_IN

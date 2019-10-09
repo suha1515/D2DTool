@@ -1,4 +1,5 @@
 #pragma once
+#include "afxwin.h"
 
 
 // CUnitTool 대화 상자입니다.
@@ -25,4 +26,20 @@ public:
 	CString m_Search;
 	// 하이라키에 내놓을 이름
 	CString m_name;
+	afx_msg void OnBnClickedAddObject();
+
+	OBJ_COPY MakeCopy(CGameObject* pObject);
+	void	 WriteCopy(CFile* pFile,OBJ_COPY* copy);
+
+public:
+	//추가한 유닛을 넣을 컨테이너.
+	map<wstring,OBJ_COPY>		m_Units;
+	// //담을 오브젝트
+	CListBox m_ObjectList;
+	afx_msg void OnBnClickedSaveList();
+	afx_msg void OnBnClickedLoadObject();
+	// 카피된 오브젝트 이름
+	CString m_CopyName;
+	afx_msg void OnBnClickedToHierarchy();
+	afx_msg void OnBnClickedRemove();
 };

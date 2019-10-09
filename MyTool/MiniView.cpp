@@ -329,7 +329,21 @@ void CMiniView::OnLButtonDown(UINT nFlags, CPoint point)
 			//ÅØ½ºÃÄ ÁÂÇ¥ Àü´Þ.
 			if (pMyForm->GetMapTool()->IsWindowVisible())
 			{
+				if(pMyForm->GetMapTool()->m_InvertY.GetCheck()==0)
 				pMyForm->GetMapTool()->Renew(tex);
+				else
+				{
+					XMFLOAT2 temp[2];
+					temp[0] = tex[0];
+					temp[1] = tex[1];
+
+					tex[0] = tex[2];
+					tex[1] = tex[3];
+					tex[2] = temp[0];
+					tex[3] = temp[1]; 
+					pMyForm->GetMapTool()->Renew(tex);
+					
+				}
 				cout << "¸ÊÅø¿¡ Àü´ÞµÊ" << endl;
 			}
 			if (pMyForm->GetAnimTool()->m_AnimMaker.IsWindowVisible())

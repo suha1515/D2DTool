@@ -87,4 +87,6 @@ public:
 	CButton m_Collide;
 	// 레이어
 	CComboBox m_Layer;
+	// y축반전
+	CButton m_InvertY;
 };

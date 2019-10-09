@@ -108,6 +108,11 @@ D3DXMATRIX * CCamera::GetViewProjMatrix()
 	return  &m_ViewProjMat;
 }
 
+XMFLOAT3 CCamera::GetScaleFactor()
+{
+	return m_ScaleFactors;
+}
+
 void CCamera::Scaling(const float & _x, const float & _y)
 {
 	m_ScaleFactors.x += _x;

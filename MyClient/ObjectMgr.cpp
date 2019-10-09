@@ -122,7 +122,7 @@ void CObjectMgr::Update()
 
 	//모든 컴포넌트 업데이트가 끝나면 스크립트 라이프 사이클을 진행한다.
 	//위에서 너비조사를 진행했으므로 부모부터 스크립트 오브젝트를 실행할것이다.
-	OnCollision();			//충돌검사
+	//OnCollision();			//충돌검사
 	OnUpdate();				//스크립트 업데이트
 	OnDestroy();			//스크립트 제거
 
@@ -135,8 +135,10 @@ void CObjectMgr::Render()
 	CInstanceMgr::GetInstance()->InstanceRender();
 	for (int i = 0; i < LAYER_END; ++i)
 	{
-		//Y축 소팅.
-		m_RenderObjects[i].sort(CLess<CGameObject*,CTransform>());
+		//Y축 소팅. 
+		if (Layer(i) != LAYER_0)//타일일경우 하지않는다. 
+			m_RenderObjects[i].sort(CLess<CGameObject*, CTransform>());
+		
 		for (auto& object : m_RenderObjects[i])
 		{
 			//활성화 상태만 렌더함.
@@ -279,6 +281,11 @@ void CObjectMgr::Clear()
 	m_CollideObj.clear();
 	m_SciptObject.clear();
 }
+void CObjectMgr::ClearCopy()
+{
+	m_CopyObjects.clear();
+}
+
 
 const map<int, vector<CGameObject*>>& CObjectMgr::GetObjects()
 {
@@ -421,4 +428,213 @@ HRESULT CObjectMgr::LoadObject(const wstring & filePath)
 	}
 	CloseHandle(hFile);
 
+}
+OBJ_COPY CObjectMgr::ReadCopyObject(HANDLE * hFile, DWORD * dwBytes)
+{
+	TCHAR	tmp[MAX_STR] = L"";
+	OBJ_INFO		objInfo;						//오브젝트정보
+	TRANSFORM_INFO  transInfo;						//트랜스폼정보
+	TEXTURE_INFO	textureInfo;					//텍스처정보
+	BOXCOL_INFO		boxcolInfo;						//콜라이더정보
+	ANIM_INFO		animInfo;						//애니메이터정보
+	SCRIPT_INFO		scriptInfo;						//스크립트정보.
+	COMP_INFO compInfo;
+
+	int sizeScript = 0;
+
+	ReadFile(*hFile, &compInfo, sizeof(COMP_INFO), dwBytes, nullptr);
+
+	OBJ_COPY copyObject;
+	copyObject.compInfo = compInfo;
+	//========================================오브젝트 정보 불러오기===========================================
+	ReadFile(*hFile, &objInfo, sizeof(OBJ_INFO), dwBytes, nullptr);
+	copyObject.objInfo = objInfo;
+	wstring name = objInfo._ObjectName;
+
+	//==========================================================================================================	
+
+	//========================================트랜스폼 정보 불러오기===========================================
+	if (compInfo._Transform == 1)
+	{
+		ReadFile(*hFile, &transInfo, sizeof(TRANSFORM_INFO), dwBytes, nullptr);
+		copyObject.transformInfo = transInfo;
+	}
+	//==========================================================================================================	
+
+	//========================================텍스쳐 정보 불러오기==============================================
+	if (compInfo._Texture == 1)
+	{
+		ReadFile(*hFile, &textureInfo, sizeof(TEXTURE_INFO), dwBytes, nullptr);
+		copyObject.textureInfo = textureInfo;
+	}
+	//==========================================================================================================	
+
+
+	//========================================콜라이더 정보 불러오기==============================================
+	if (compInfo._BoxCol == 1)
+	{
+		ReadFile(*hFile, &boxcolInfo, sizeof(BOXCOL_INFO), dwBytes, nullptr);
+		copyObject.boxcolInfo = boxcolInfo;
+	}
+	//==========================================================================================================	
+
+	//========================================애니메이터 정보 불러오기==============================================
+	if (compInfo._Animator == 1)
+	{
+		ReadFile(*hFile, &animInfo, sizeof(ANIM_INFO), dwBytes, nullptr);
+		copyObject.animInfo = animInfo;
+	}
+	//==========================================================================================================	
+
+
+	//========================================스크립트 정보 불러오기==============================================
+
+	ReadFile(*hFile, &sizeScript, sizeof(int), dwBytes, nullptr);
+	for (int i = 0; i < sizeScript; ++i)
+	{
+		ScriptInfo info;
+		ReadFile(hFile, &info, sizeof(ScriptInfo), dwBytes, nullptr);
+		copyObject.scriptInfo.push_back(info);
+	}
+	//==========================================================================================================
+	//자식이 있을경우
+	int childSize = 0;
+	ReadFile(*hFile, &childSize, sizeof(int), dwBytes, nullptr);
+
+	if (childSize > 0)
+	{
+		for (int i = 0; i < childSize; ++i)
+		{
+			OBJ_COPY child;
+			child = ReadCopyObject(hFile, dwBytes);
+			copyObject.childInfo.push_back(child);
+		}
+	}
+	return copyObject;
+}
+
+HRESULT CObjectMgr::LoadCopyObjectFromFile(const wstring & filePath)
+{
+	HANDLE hFile = CreateFile(filePath.c_str(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	//string 함수를 이용해 파일이름과 확장자를 추출해야한다.
+	wstring path = filePath;
+	wstring name;
+	size_t sep = path.find_last_of(L"\\/");								//파일경로에서 마지막 / or \\을찾는다
+
+	if (sep != std::wstring::npos)										//찾는 문자열이 없을경우 npos를 반환하게된다.
+		path = path.substr(sep + 1, path.size() - sep - 1);				//substr을 이용하여 해당 인덱스부터 끝까지 추출
+
+	size_t dot = path.find_last_of(L".");								//추출된 내용에서 .까지의 인덱스를 찾는다.
+	if (dot != std::wstring::npos)
+	{
+		name = path.substr(0, dot);										//처음부터 .까지의 문자를 추출하면 파일이름
+	}
+	else
+		name = path;
+
+	ClearCopy();
+
+	int sizeScript = 0;
+	DWORD dwBytes = 0;
+	TCHAR copyName[MAX_STR];
+	while (true)
+	{
+		OBJ_COPY copyObject;
+		ReadFile(hFile, copyName, sizeof(copyName), &dwBytes, nullptr);
+		copyObject = ReadCopyObject(&hFile, &dwBytes);
+		if (dwBytes == 0)
+			break;
+		m_CopyObjects.insert({ copyName,copyObject });
+	}
+	CloseHandle(hFile);
+	return S_OK;
+}
+
+CGameObject* CObjectMgr::MakeObjectFromCopy(const OBJ_COPY * copy, const wstring & name, CGameObject * parent)
+{
+	CGameObject* pGameObject = new CGameObject;
+	pGameObject->Initialize();
+	//오브젝트 정보넣기
+	if (name == L"")
+		pGameObject->SetObjectName(copy->objInfo._ObjectName);
+	else
+		pGameObject->SetObjectName(name);		//새로운 이름을 넣어도된다.
+	pGameObject->SetObjectLayer(copy->objInfo._ObjectLayer);
+	pGameObject->SetObjectLevel(copy->objInfo._ObjectLevel);
+	pGameObject->SetObjectTag(copy->objInfo._ObjectTag);
+
+	if (parent != nullptr)
+	{
+		pGameObject->SetParentObject(parent);
+		parent->GetChildernVector().push_back(pGameObject);
+	}
+	//Comp정보참조
+	if (copy->compInfo._Transform == 1)
+	{
+		//부모의 기본위치는 따로 정해준다. 자식은 부모를 따라온다.
+		CTransform* pTransform = new CTransform;
+		pTransform->Initialize(pGameObject);
+		pTransform->SetPosition(copy->transformInfo._ObjectPos);
+		pTransform->SetRotation(copy->transformInfo._ObjectRotation);
+		pTransform->SetScaling(copy->transformInfo._ObjectScale);
+		pGameObject->AddComponent(pTransform);
+	}
+	if (copy->compInfo._Texture == 1)
+	{
+		CTextureRenderer* pTexture = new CTextureRenderer;
+		pTexture->Initialize(pGameObject);
+		pTexture->SetTexture(copy->textureInfo._TextrueName);
+		pTexture->SetTexSize(copy->textureInfo._TextureSize);
+		pTexture->SetTexPos(copy->textureInfo._TexturPos);
+
+		pGameObject->AddComponent(pTexture);
+	}
+	if (copy->compInfo._BoxCol == 1)
+	{
+		CBoxCollider* pBoxCollider = new CBoxCollider;
+		pBoxCollider->Initialize(pGameObject);
+		pBoxCollider->SetBoxSize(copy->boxcolInfo._BoxWidth, copy->boxcolInfo._BoxHeight);
+		pBoxCollider->SetBoxOffset(copy->boxcolInfo._BoxOffsetX, copy->boxcolInfo._BoxOffsetY);
+
+		pGameObject->AddComponent(pBoxCollider);
+	}
+	if (copy->compInfo._Animator == 1)
+	{
+		CAnimator* pAnimator = new CAnimator;
+		pAnimator->Initialize(pGameObject);
+		pAnimator->LoadClips(copy->animInfo._AnimationName);
+
+		pGameObject->AddComponent(pAnimator);
+	}
+
+	//스크립트
+	if (copy->scriptInfo.size() > 0)
+	{
+		for (auto&i : copy->scriptInfo)
+		{
+			CScriptMgr::GetInstance()->LoadScripts(i._ScriptName, pGameObject);
+		}
+	}
+
+	//자식이 있을경우
+	if (copy->childInfo.size() > 0)
+	{
+		for (auto&i : copy->childInfo)
+			MakeObjectFromCopy(&i, i.objInfo._ObjectName, pGameObject);
+	}
+
+	AddObject(pGameObject);
+
+	return pGameObject;
+}
+
+CGameObject * CObjectMgr::AddCopy(const wstring & name, const wstring & newName)
+{
+	auto iter_find = m_CopyObjects.find(name);
+	if (m_CopyObjects.end() == iter_find)
+		return nullptr;
+	return MakeObjectFromCopy(&iter_find->second,newName,nullptr);
 }

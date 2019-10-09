@@ -5,11 +5,12 @@ class CAnimator;
 class CPlayerScript :
 	public CScripts
 {
-	enum STATE { IDLE, RUN_START, RUN, RUN_END };
+	enum STATE { IDLE, RUN_START, RUN, RUN_END,THROW,THROW_END };
 	enum DIR {
 		UP, RIGHT_UP_45, RIGHT, RIGHT_DOWN_45, DOWN,
 		LEFT_UP_45, LEFT, LEFT_DOWN_45
 	};
+	enum AttackDir{RIGHT_ATK,LEFT_ATK};
 public:
 	CPlayerScript();
 	~CPlayerScript();
@@ -30,8 +31,16 @@ private:
 	CKeyMgr*	pKeyMgr;
 
 public:
+	void	MoveInput();			//이동 입력키
+	void	MouseInput();			//마우스 입력키
+
+
 	void AnimState();
 	void DirState();
+	void AtkState();
+
+	//원거리 공격
+	void AttackBullet();
 
 	bool		bIsInit = false;
 
@@ -41,6 +50,8 @@ private:
 	STATE		m_PreState;
 	STATE		m_CurState;
 
+	AttackDir   m_AtkDir;
+
 	float		m_fVelocity;
 	float		m_fAcc;
 
@@ -48,5 +59,9 @@ private:
 	bool		m_Left;
 	bool		m_Down;
 	bool		m_Up;
+	
+	bool		m_bIsDebug=false;	//디버그모드
+
+	D3DXVECTOR3 m_PreScale;			//이전 값.
 };
 

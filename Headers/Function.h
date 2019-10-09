@@ -31,5 +31,13 @@ namespace strings {
 	}
 }
 
+inline float GetAngle(const D3DXVECTOR3& pStart, const D3DXVECTOR3& pEnd)
+{
+	float dx = pEnd.x - pStart.x;
+	float dy = pEnd.y - pStart.y;
+
+	return D3DXToDegree(atan2f(dy, dx));
+}
+
 #define __FUNCTION_H__
 #endif

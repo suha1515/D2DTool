@@ -1,5 +1,7 @@
 #pragma once
 #include "Scene.h"
+class CCamera;
+class CMouse;
 class CTestScene :
 	public CScene
 {
@@ -19,5 +21,7 @@ public:
 
 private:
 	CCamera*		m_Cam;
+	CMouse*			m_Mouse;
+
 };
 

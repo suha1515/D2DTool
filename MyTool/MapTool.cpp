@@ -66,6 +66,7 @@ void CMapTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK1, m_Instacne);
 	DDX_Control(pDX, IDC_CHECK4, m_Collide);
 	DDX_Control(pDX, IDC_COMBO1, m_Layer);
+	DDX_Control(pDX, IDC_CHECK3, m_InvertY);
 }
 
 void CMapTool::Renew(XMFLOAT2 * tex)

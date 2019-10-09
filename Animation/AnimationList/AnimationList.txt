@@ -1,2 +1,2 @@
 ../Animation/Player.anim
-../Animation/Player_Throw.anim
+../Animation/Player_bullet.anim

@@ -42,17 +42,27 @@ public:
 public:
 	void SetDebug(bool on);
 	void Clear();
+	void ClearCopy();
 
 public:
 	const map<int, vector<CGameObject*>>& GetObjects();
+
+	const map<wstring, OBJ_COPY>&		  GetCopyObject();
 public:
-	HRESULT LoadObject(const wstring& filePath);
+	HRESULT  LoadObject(const wstring& filePath);
+	OBJ_COPY ReadCopy(HANDLE* hFile, DWORD* dwBytes);
+public:
+	HRESULT LoadCopyObject(const wstring& filePath);
+
+public:
+	HRESULT	MakeObjectByCopy(const OBJ_COPY* copy, const wstring& name=L"",CGameObject* parent=nullptr);
 
 
 private:
 	list<CGameObject*>				m_CollideObj;
 	list<CGameObject*>				m_SciptObject;
 	map<int, vector<CGameObject*>>	m_Objects;
+	map<wstring, OBJ_COPY>		m_CopyObjects;
 	list<CGameObject*>				m_RenderObjects[LAYER_END];
 
 	bool							m_bIsDebug;

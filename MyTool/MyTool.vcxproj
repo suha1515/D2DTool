@@ -99,6 +99,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -152,6 +153,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>

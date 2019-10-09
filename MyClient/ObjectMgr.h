@@ -29,7 +29,7 @@ public:
 	CGameObject* FindObjectWithName(const wstring& name);
 	//태그로 오브젝트 찾기
 	CGameObject* FindObjectWithTag(const wstring& tag);
-	
+
 public:
 	//오브젝트 스크립트 라이프 사이클
 	void OnInit();
@@ -42,17 +42,30 @@ public:
 public:
 	void SetDebug(bool on);
 	void Clear();
+	void ClearCopy();
 
 public:
 	const map<int, vector<CGameObject*>>& GetObjects();
+
+	const map<wstring, OBJ_COPY>&		  GetCopyObject();
 public:
-	HRESULT LoadObject(const wstring& filePath);
+	HRESULT  LoadObject(const wstring& filePath);
+	OBJ_COPY ReadCopyObject(HANDLE* hFile, DWORD* dwBytes);
+public:
+	HRESULT LoadCopyObjectFromFile(const wstring& filePath);
+
+public:
+	CGameObject* MakeObjectFromCopy(const OBJ_COPY* copy, const wstring& name = L"", CGameObject* parent = nullptr);
+
+public:
+	CGameObject* AddCopy(const wstring& name, const wstring& newName=L"");
 
 
 private:
 	list<CGameObject*>				m_CollideObj;
 	list<CGameObject*>				m_SciptObject;
 	map<int, vector<CGameObject*>>	m_Objects;
+	map<wstring, OBJ_COPY>			m_CopyObjects;
 	list<CGameObject*>				m_RenderObjects[LAYER_END];
 
 	bool							m_bIsDebug;

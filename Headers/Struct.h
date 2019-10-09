@@ -135,5 +135,17 @@ typedef struct ComponentCount
 	int			_BoxCol=0;
 	int			_Animator=0;
 }COMP_INFO;
+
+typedef struct CopyObject
+{
+	OBJ_INFO objInfo;
+	TRANSFORM_INFO transformInfo;
+	TEXTURE_INFO   textureInfo;
+	BOXCOL_INFO		boxcolInfo;
+	ANIM_INFO		animInfo;
+	vector<SCRIPT_INFO>		scriptInfo;
+	COMP_INFO		compInfo;
+	vector<CopyObject>	childInfo;
+}OBJ_COPY;
 #define __STRUCT_H__
 #endif

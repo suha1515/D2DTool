@@ -23,6 +23,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	int AddObject(CGameObject* object);
+	int AddCopyObject(const OBJ_COPY* copy, const wstring& name);
+	void AddList(HTREEITEM * item, const OBJ_COPY * copy, const wstring& name, CGameObject* parent);
 public:
 	void LoadObject();
 	void Clear();
