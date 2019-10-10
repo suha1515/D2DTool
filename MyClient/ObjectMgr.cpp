@@ -11,6 +11,7 @@ IMPLEMENT_SINGLETON(CObjectMgr);
 CObjectMgr::CObjectMgr()
 {
 	m_bIsDebug = false;
+	m_Tiles.reserve(m_MapSizeX*m_MapSizeY);
 }
 
 
@@ -30,6 +31,9 @@ CObjectMgr::~CObjectMgr()
 
 void CObjectMgr::AddObject(CGameObject * object)
 {
+	//타일일경우
+	if(object->GetObjectLayer()==LAYER_0)
+		
 	m_Objects[object->GetLevel()].push_back(object);
 }
 

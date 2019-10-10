@@ -95,7 +95,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions);TOOL</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\JBS\Source\Repos\D2DTool\Headers;C:\Users\JBS\Documents\Visual Studio 2015\Projects\MyTool\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Headers/%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

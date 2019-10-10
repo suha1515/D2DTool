@@ -62,12 +62,16 @@ public:
 
 
 private:
-	list<CGameObject*>				m_CollideObj;
-	list<CGameObject*>				m_SciptObject;
-	map<int, vector<CGameObject*>>	m_Objects;
-	map<wstring, OBJ_COPY>			m_CopyObjects;
-	list<CGameObject*>				m_RenderObjects[LAYER_END];
+	list<CGameObject*>				m_CollideObj;	//충돌체들
+	list<CGameObject*>				m_SciptObject;	//스크립트 오브젝트들
+	map<int, vector<CGameObject*>>	m_Objects;		//모든오브젝트들
+	map<wstring, OBJ_COPY>			m_CopyObjects;	//복사본
+	list<CGameObject*>				m_RenderObjects[LAYER_END];		//렌더할녀석들
+
+	vector<CGameObject*>			m_Tiles;		//타일들
 
 	bool							m_bIsDebug;
+	int								m_MapSizeX;
+	int								m_MapSizeY;
 };
 

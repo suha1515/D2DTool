@@ -22,6 +22,7 @@ void CBulletScript::OnInit()
 
 	m_fLifeTime = 3.0f;
 
+	if(pAnimator!=nullptr)
 	pAnimator->Play(L"Basic_Big_Bullet", ANIMATION_LOOP);
 
 	bIsInit = true;
@@ -50,12 +51,8 @@ void CBulletScript::OnUpdate()
 	
 
 	if (m_fLifeTime <0.0f)
-	{
 		m_pGameObject->SetObjectDestroy(true);
-		cout << "Á×À½!" << endl;
-	}
 	m_fLifeTime-= CTimeMgr::GetInstance()->GetDeltaTime();
-	cout << m_fLifeTime << endl;
 }
 
 void CBulletScript::OnLateUpdate()

@@ -361,7 +361,7 @@ void CUnitTool::OnBnClickedRemove()
 		m_ObjectList.GetText(index, name);
 
 		auto iter_find = m_Units.find(name.operator LPCWSTR());
-		if (m_Units.end() != iter_find);
+		if (m_Units.end() != iter_find)
 		m_Units.erase(iter_find);
 		m_ObjectList.DeleteString(index);
 	}

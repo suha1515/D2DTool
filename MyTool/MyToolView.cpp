@@ -196,11 +196,7 @@ void CMyToolView::OnInitialUpdate()
 {
 	CView::OnInitialUpdate();
 
-	//스크롤 범위를 지정하는곳
-	int cx = TILECX*TILEX;
-	int cy = TILECY / 2 * TILEY;
-
-	CScrollView::SetScrollSizes(MM_TEXT, CSize(cx, cy));
+	CScrollView::SetScrollSizes(MM_TEXT, CSize(300,300));
 
 	m_pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 	NULL_CHECK(m_pFrameWnd);
