@@ -54,6 +54,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	//v_out.uv  = In.tex;
 	v_out.uv = float2(In.tex.x*animTex.x, In.tex.y*animTex.y) + float2(animTex.z, animTex.w);
 	
+	//v_out.uv = float2(1.f - v_out.uv.x, v_out.uv.y);
 	return v_out;
 }
 

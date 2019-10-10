@@ -84,15 +84,15 @@ void CBoxCollider::SetBoxCollider()
 		m_ObjectPos += parentPos;
 	}
 
-	m_BoxPos[0] = D3DXVECTOR3(-1*((m_width*0.5f) + m_PosX)+ m_ObjectPos.x,(m_height*0.5f) + m_PosY + m_ObjectPos.y, 0.0f);
-	m_BoxPos[1] = D3DXVECTOR3(-1*((m_width*0.5f) + m_PosX + m_ObjectPos.x),-1*((m_height*0.5f) + m_PosY + m_ObjectPos.y), 0.0f);
+	m_BoxPos[0] = D3DXVECTOR3(-1*((m_width*0.5f)) + m_PosX+ m_ObjectPos.x,(m_height*0.5f) + m_PosY + m_ObjectPos.y, 0.0f);
+	m_BoxPos[1] = D3DXVECTOR3(-1*((m_width*0.5f)) + m_PosX + m_ObjectPos.x,-1*((m_height*0.5f)) + m_PosY + m_ObjectPos.y, 0.0f);
 	m_BoxPos[2] = D3DXVECTOR3((m_width*0.5f) + m_PosX + m_ObjectPos.x,(m_height*0.5f) + m_PosY + m_ObjectPos.y, 0.0f);
-	m_BoxPos[3] = D3DXVECTOR3((m_width*0.5f) + m_PosX + m_ObjectPos.x,-1*((m_height*0.5f) + m_PosY + m_ObjectPos.y), 0.0f);
+	m_BoxPos[3] = D3DXVECTOR3((m_width*0.5f) + m_PosX + m_ObjectPos.x,-1*((m_height*0.5f)) + m_PosY + m_ObjectPos.y, 0.0f);
 
-	m_BoxDrawPos[0] = D3DXVECTOR3(-1 * ((m_width*0.5f) + m_PosX) , (m_height*0.5f) + m_PosY , 0.0f);
-	m_BoxDrawPos[1] = D3DXVECTOR3(-1 * ((m_width*0.5f) + m_PosX ), -1 * ((m_height*0.5f) + m_PosY ), 0.0f);
+	m_BoxDrawPos[0] = D3DXVECTOR3(-1 * ((m_width*0.5f)) + m_PosX , (m_height*0.5f) + m_PosY , 0.0f);
+	m_BoxDrawPos[1] = D3DXVECTOR3(-1 * ((m_width*0.5f)) + m_PosX, -1 * ((m_height*0.5f)) + m_PosY , 0.0f);
 	m_BoxDrawPos[2] = D3DXVECTOR3((m_width*0.5f) + m_PosX  , (m_height*0.5f) + m_PosY, 0.0f);
-	m_BoxDrawPos[3] = D3DXVECTOR3((m_width*0.5f) + m_PosX  , -1 * ((m_height*0.5f) + m_PosY ), 0.0f);
+	m_BoxDrawPos[3] = D3DXVECTOR3((m_width*0.5f) + m_PosX  , -1 * ((m_height*0.5f)) + m_PosY , 0.0f);
 
 	D3DXMATRIX	worldMat = m_GameObject->GetComponent<CTransform>()->GetWorldMat();
 	D3DXVECTOR4 pos;

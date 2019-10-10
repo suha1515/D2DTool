@@ -647,7 +647,7 @@ void CPlayerScript::DirState()
 			pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 			break;
 		case RIGHT_DOWN_45:
-			cout << "오른아래." << endl;
+			cout << "오른아래." << endl;	
 			pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 			break;
 		}
@@ -731,17 +731,10 @@ void CPlayerScript::CheckTiles()
 				{
 					cout << "충돌중!" << endl;
 					CTransform* pTransform = m_pGameObject->GetComponent<CTransform>();
-					wstring pname = i->GetObjectName();
-					wstring name = i->GetObjectName();
 
-					wstring text = name + L" 오브젝트는 " + pname + L" 오브젝트와 충돌중이다";
-					//string text2;
-					//text2.assign(text.begin(), text.end());
-					wcout << text << endl;
-					cout << "충돌중" << endl;
 					//밀어내기
 					D3DXVECTOR3& playerPos = pTransform->GetPosition();
-					D3DXVECTOR3 destPos =   i->GetComponent<CTransform>()->GetPosition();
+					D3DXVECTOR3 destPos =   i->GetComponent<CTransform>()->GetRealPos();
 					//파고든 깊이가 짧은쪽으로 밀어내기
 					if (x > y)
 					{
@@ -759,6 +752,7 @@ void CPlayerScript::CheckTiles()
 						else
 							playerPos.x = playerPos.x- x;
 					}
+					return;
 				}
 
 				if (CCollisionMgr::GetInstance()->CheckAABB(m_pGameObject->GetComponent<CBoxCollider>(), pBoxCollider))

@@ -72,6 +72,7 @@ private:
 	bool		m_bIsThrow;
 	
 	bool		m_bIsDebug=false;	//디버그모드
+	bool		m_bIsCollide = false;
 
 	D3DXVECTOR3	 m_PreScale;		//이전 값.
 	D3DXVECTOR3*  playerPos;		//플레이어 위치값
