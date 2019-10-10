@@ -11,7 +11,7 @@ IMPLEMENT_SINGLETON(CObjectMgr);
 CObjectMgr::CObjectMgr()
 {
 	m_bIsDebug = false;
-	m_Tiles.reserve(m_MapSizeX*m_MapSizeY);
+
 }
 
 
@@ -32,8 +32,29 @@ CObjectMgr::~CObjectMgr()
 void CObjectMgr::AddObject(CGameObject * object)
 {
 	//타일일경우
-	if(object->GetObjectLayer()==LAYER_0)
+	if (object->GetObjectLayer() == LAYER_0)
+	{
+		CTransform* pTransform = object->GetComponent<CTransform>();
+		CBoxCollider* pBoxCollider = object->GetComponent<CBoxCollider>();
+		if (pTransform != nullptr)
+		{
+			D3DXVECTOR3 pos = pTransform->GetRealPos();
+			if (pos.x == 8&&pos.y == 8)
+				cout << "" << endl;
+			int indexX = ((m_MapSizeX / 2) + pos.x)/16;
+			int indexY = ((m_MapSizeY / 2) - pos.y)/16;
+
+			m_index.push_back({ indexX,indexY });
+			int index = indexX + (indexY*m_MapSizeX);
+			m_Tiles[index] = object;
+		}
+		if (pBoxCollider != nullptr)
+		{
+			m_CollideTile.push_back(object);
+		}
 		
+		
+	}
 	m_Objects[object->GetLevel()].push_back(object);
 }
 
@@ -114,16 +135,17 @@ void CObjectMgr::Update()
 				if ((*iter_begin)->GetScripts().size() > 0)
 					m_SciptObject.push_back((*iter_begin));
 
-				//오브젝트가 콜라이더를 가지고있으면 콜라이더 계산을 위해 리스트에 넣는다.
-				if ((*iter_begin)->GetComponent<CBoxCollider>() != nullptr)
-					m_CollideObj.push_back((*iter_begin));
-
-				
+				//타일일경우 건너뛴다 (콜라이더를 넣지않음)
+				if ((*iter_begin)->GetObjectLayer() != LAYER_0)
+				{
+					//오브젝트가 콜라이더를 가지고있으면 콜라이더 계산을 위해 리스트에 넣는다.
+					if ((*iter_begin)->GetComponent<CBoxCollider>() != nullptr)
+						m_CollideObj.push_back((*iter_begin));
+				}
 				iter_begin++;
 			}
 		}
 	}
-
 	//모든 컴포넌트 업데이트가 끝나면 스크립트 라이프 사이클을 진행한다.
 	//위에서 너비조사를 진행했으므로 부모부터 스크립트 오브젝트를 실행할것이다.
 	//OnCollision();			//충돌검사
@@ -153,7 +175,10 @@ void CObjectMgr::Render()
 	}
 
 	if (m_bIsDebug)
+	{
 		DebugRender();
+	}
+		
 
 	m_SciptObject.clear();
 	m_CollideObj.clear();
@@ -165,7 +190,10 @@ void CObjectMgr::DebugRender()
 	{
 		i->DebugRender();
 	}
-		
+	for (auto&i : m_CollideTile)
+	{
+		i->DebugRender();
+	}
 }
 
 int CObjectMgr::GetObjectCount()
@@ -262,6 +290,14 @@ void CObjectMgr::OnDestroy()
 		}
 }
 
+void CObjectMgr::SetTileSize(int x, int y)
+{
+	m_MapSizeX = x;
+	m_MapSizeY = y;
+	m_Tiles.reserve(x*y);
+	m_Tiles.assign(x*y,nullptr);
+}
+
 void CObjectMgr::SetDebug(bool on)
 {
 	m_bIsDebug = on;
@@ -294,6 +330,11 @@ void CObjectMgr::ClearCopy()
 const map<int, vector<CGameObject*>>& CObjectMgr::GetObjects()
 {
 	return m_Objects;
+}
+
+const vector<CGameObject*>& CObjectMgr::GetTiles()
+{
+	return m_Tiles;
 }
 
 HRESULT CObjectMgr::LoadObject(const wstring & filePath)

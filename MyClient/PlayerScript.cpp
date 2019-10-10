@@ -2,6 +2,7 @@
 #include "PlayerScript.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include "BoxCollider.h"
 #include "Animator.h"
 #include "Camera.h"
 #include "BulletScript.h"
@@ -69,35 +70,7 @@ void CPlayerScript::OnCollision(CGameObject * pGameObject, XMFLOAT2* move)
 {
 	if (nullptr != pGameObject)
 	{
-		//CTransform* pTransform = m_pGameObject->GetComponent<CTransform>();
-		//wstring pname = pGameObject->GetObjectName();
-		//wstring name = m_pGameObject->GetObjectName();
-
-		//wstring text = name + L" 오브젝트는 " + pname + L" 오브젝트와 충돌중이다";
-		////string text2;
-		////text2.assign(text.begin(), text.end());
-		//wcout << text << endl;
-		//cout << "충돌중" << endl;
-		////밀어내기
-		//D3DXVECTOR3 playerPos = pTransform->GetPosition();
-		//D3DXVECTOR3 destPos =   pGameObject->GetComponent<CTransform>()->GetPosition();
-		////파고든 깊이가 짧은쪽으로 밀어내기
-		//if (move->x > move->y)
-		//{
-		//	//y축 밀어내기		
-		//	if (playerPos.y > destPos.y)
-		//		pTransform->SetPosition(D3DXVECTOR3(playerPos.x,playerPos.y + move->y,0.0f));
-		//	else
-		//		pTransform->SetPosition(D3DXVECTOR3(playerPos.x, playerPos.y- move->y, 0.0f));
-		//}
-		//else
-		//	//x축 밀어내기
-		//{
-		//	if (playerPos.x > destPos.x)
-		//		pTransform->SetPosition(D3DXVECTOR3(playerPos.x+ move->x, playerPos.y, 0.0f));
-		//	else
-		//		pTransform->SetPosition(D3DXVECTOR3(playerPos.x- move->x, playerPos.y , 0.0f));
-		//}
+		
 	}
 }
 
@@ -112,6 +85,7 @@ void CPlayerScript::OnUpdate()
 	CTransform* pTransform = m_pGameObject->GetComponent<CTransform>();
 	if (pTransform != nullptr)
 	{
+		m_PrePos = *playerPos;
 		//방향키 입력
 		MoveInput();
 		//마우스 입력
@@ -124,6 +98,7 @@ void CPlayerScript::OnUpdate()
 		AtkState();
 		//이동 애니메이션 상태변화
 		AnimState();
+		CheckTiles();
 		//이동
 		Moving();
 	}
@@ -719,4 +694,93 @@ void CPlayerScript::AttackBullet()
 	pBullet->AddScripts(CBulletScript::Create(m_BulletAngle, 400.f, pBullet));
 	cout << m_MouseAngle << endl;
 }
+
+void CPlayerScript::CheckTiles()
+{
+	const vector<CGameObject*>& tiles = CObjectMgr::GetInstance()->GetTiles();
+
+	int mapSizex = CObjectMgr::GetInstance()->m_MapSizeX;
+	int mapSizey = CObjectMgr::GetInstance()->m_MapSizeY;
+
+	int indexX = ((( mapSizex / 2)+ playerPos->x)/ 16);
+	int indexY = ((( mapSizey / 2)- playerPos->y)/ 16);
+	int index = indexX + indexY*mapSizex;
+	vector<CGameObject*> temp;
+
+	temp.push_back(tiles[(indexX-1)+ (indexY-1)*mapSizex]);
+	temp.push_back(tiles[ indexX + (indexY-1)*mapSizex]);
+	temp.push_back(tiles[(indexX+1) + (indexY-1)*mapSizex]);
+	temp.push_back(tiles[(indexX-1) + indexY*mapSizex]);
+	temp.push_back(tiles[indexX + indexY*mapSizex]);
+	temp.push_back(tiles[(indexX+1) + indexY*mapSizex]);
+	temp.push_back(tiles[(indexX-1) + (indexY+1)*mapSizex]);
+	temp.push_back(tiles[indexX + (indexY-1)*mapSizex]);
+	temp.push_back(tiles[(indexX+1) + (indexY-1)*mapSizex]);
+
+	for (auto& i : temp)
+	{
+		if (i != nullptr)
+		{
+			i->SetObjectCliked(true, D3DCOLOR_XRGB(255, 0, 0));
+
+			CBoxCollider* pBoxCollider = i->GetComponent<CBoxCollider>();
+			if (pBoxCollider != nullptr)
+			{
+				float x, y;
+				if (CCollisionMgr::GetInstance()->CheckRect(m_pGameObject->GetComponent<CBoxCollider>(), pBoxCollider, &x, &y))
+				{
+					cout << "충돌중!" << endl;
+					CTransform* pTransform = m_pGameObject->GetComponent<CTransform>();
+					wstring pname = i->GetObjectName();
+					wstring name = i->GetObjectName();
+
+					wstring text = name + L" 오브젝트는 " + pname + L" 오브젝트와 충돌중이다";
+					//string text2;
+					//text2.assign(text.begin(), text.end());
+					wcout << text << endl;
+					cout << "충돌중" << endl;
+					//밀어내기
+					D3DXVECTOR3& playerPos = pTransform->GetPosition();
+					D3DXVECTOR3 destPos =   i->GetComponent<CTransform>()->GetPosition();
+					//파고든 깊이가 짧은쪽으로 밀어내기
+					if (x > y)
+					{
+						//y축 밀어내기		
+						if (playerPos.y > destPos.y)
+							playerPos.y =playerPos.y+y;
+						else
+							playerPos.y =playerPos.y-y;
+					}
+					else
+						//x축 밀어내기
+					{
+						if (playerPos.x > destPos.x)
+							playerPos.x = playerPos.x + x;
+						else
+							playerPos.x = playerPos.x- x;
+					}
+				}
+
+				if (CCollisionMgr::GetInstance()->CheckAABB(m_pGameObject->GetComponent<CBoxCollider>(), pBoxCollider))
+				{
+					CTransform* pTransform = m_pGameObject->GetComponent<CTransform>();
+					D3DXVECTOR3& playerPos = pTransform->GetPosition();
+					D3DXVECTOR3 destPos = i->GetComponent<CTransform>()->GetPosition();
+					//m_fVelocity = 0.0f;
+				/*	cout << "충돌중" << endl;
+					if (playerPos.y > destPos.y)
+						playerPos.y += 0.5f;
+					else if(playerPos.y < destPos.y)
+						playerPos.y -= 0.5f;
+					else if (playerPos.x > destPos.x)
+						playerPos.x += 0.5f;
+					else if (playerPos.x < destPos.x)
+						playerPos.x -= 0.5f;*/
+					//playerPos = m_PrePos;
+				}
+			}
+		}		
+	}
+}
+
 

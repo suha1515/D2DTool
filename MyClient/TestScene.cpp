@@ -22,6 +22,8 @@ void CTestScene::Update()
 	m_pObjectMgr->Update();
 
 	
+
+	
 }
 
 void CTestScene::LateUpdate()
@@ -35,6 +37,7 @@ void CTestScene::Render()
 
 HRESULT CTestScene::Initialize()
 {
+	m_pObjectMgr->SetTileSize(1024, 1024);
 	m_pObjectMgr->LoadObject(L"../Map/Map2.map");
 	
 	m_Cam = new CCamera;
@@ -57,6 +60,7 @@ HRESULT CTestScene::Initialize()
 	if (pBullet == nullptr)
 		MessageBox(0, L"총알 널포인트입니다", L"ERROR", 0);
 
+	
 	return S_OK;
 }
 

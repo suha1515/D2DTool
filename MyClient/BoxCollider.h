@@ -39,6 +39,8 @@ public:
 private:
 	//박스의 각점들
 	D3DXVECTOR3			m_BoxPos[4];
+	//박스 그림
+	D3DXVECTOR3			m_BoxDrawPos[4];
 	//박스 가로,세로
 	float				m_width,m_height;
 	//오브젝트 기준 박스 위치

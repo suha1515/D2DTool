@@ -37,7 +37,7 @@ public:
 	void OnUpdate();
 	void OnDestroy();
 
-
+	void SetTileSize(int x, int y);
 
 public:
 	void SetDebug(bool on);
@@ -45,9 +45,11 @@ public:
 	void ClearCopy();
 
 public:
-	const map<int, vector<CGameObject*>>& GetObjects();
+	const map<int, vector<CGameObject*>>& GetObjects();			//오브젝트맵 접근
 
-	const map<wstring, OBJ_COPY>&		  GetCopyObject();
+	const map<wstring, OBJ_COPY>&		  GetCopyObject();		//카피맵 접근
+
+	const vector<CGameObject*>&			  GetTiles();			//타일들 접근
 public:
 	HRESULT  LoadObject(const wstring& filePath);
 	OBJ_COPY ReadCopyObject(HANDLE* hFile, DWORD* dwBytes);
@@ -69,8 +71,11 @@ private:
 	list<CGameObject*>				m_RenderObjects[LAYER_END];		//렌더할녀석들
 
 	vector<CGameObject*>			m_Tiles;		//타일들
+	vector<CGameObject*>			m_CollideTile;
+	vector<pair<int, int>>			m_index;		//인덱스확인용;
 
 	bool							m_bIsDebug;
+public:
 	int								m_MapSizeX;
 	int								m_MapSizeY;
 };

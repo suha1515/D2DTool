@@ -41,8 +41,12 @@ public:
 	void DirState();
 	void AtkState();
 
+
 	//원거리 공격
 	void AttackBullet();
+
+	//타일 체크.
+	void CheckTiles();
 
 	bool		bIsInit = false;
 
@@ -71,6 +75,7 @@ private:
 
 	D3DXVECTOR3	 m_PreScale;		//이전 값.
 	D3DXVECTOR3*  playerPos;		//플레이어 위치값
+	D3DXVECTOR3  m_PrePos;			//이전 위치
 
 	float		m_MouseAngle;		//마우스 각도
 	float		m_BulletAngle;		//총알 각도

@@ -52,10 +52,6 @@ int CGameObject::Update()
 	//	i->Action();
 	//}	
 	
-	//클릭시 박스렌더.
-	if (m_bIsClicked)
-		DrawBox();
-
 	return NO_EVENT;
 }
 
@@ -68,7 +64,10 @@ void CGameObject::Render()
 
 	//클릭시 박스렌더.
 	if (m_bIsClicked)
+	{
 		DrawBox();
+		m_bIsClicked = false;
+	}
 }
 
 void CGameObject::DebugRender()
@@ -77,6 +76,7 @@ void CGameObject::DebugRender()
 		CBoxCollider* pComponent = GetComponent<CBoxCollider>();
 		if (pComponent != nullptr)
 			pComponent->DrawBox();
+		
 }
 
 void CGameObject::LateUpdate()
@@ -156,7 +156,6 @@ void CGameObject::DrawBox()
 	}
 	else
 		m_Pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-
 	//기본 오브젝트 박스 렌더링.
 	D3DXMATRIX* mat = CCameraMgr::GetInstance()->GetViewProjMatrix();
 	D3DXMATRIX worldMat = GetComponent<CTransform>()->GetWorldMat();
