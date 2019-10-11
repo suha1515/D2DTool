@@ -147,5 +147,13 @@ typedef struct CopyObject
 	COMP_INFO		compInfo;
 	vector<CopyObject>	childInfo;
 }OBJ_COPY;
+
+typedef struct CollideDepth
+{
+	float depthX;
+	float depthY;
+}COL_DEPTH;
+
+
 #define __STRUCT_H__
 #endif

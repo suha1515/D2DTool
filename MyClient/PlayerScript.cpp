@@ -86,6 +86,8 @@ void CPlayerScript::OnUpdate()
 	if (pTransform != nullptr)
 	{
 		m_PrePos = *playerPos;
+		//타일확인
+		CheckTiles();
 		//방향키 입력
 		MoveInput();
 		//마우스 입력
@@ -98,7 +100,6 @@ void CPlayerScript::OnUpdate()
 		AtkState();
 		//이동 애니메이션 상태변화
 		AnimState();
-		CheckTiles();
 		//이동
 		Moving();
 	}
@@ -107,6 +108,10 @@ void CPlayerScript::OnUpdate()
 	m_Left = false;
 	m_Down = false;
 	m_Up = false;
+
+	//타일제거
+	m_NearTiles.clear();
+	
 }
 
 void CPlayerScript::OnLateUpdate()
@@ -304,6 +309,8 @@ void CPlayerScript::MeeleAttack()
 void CPlayerScript::Moving()
 {
 	float m_fSpeed=0.5f;
+	float m_moveX = 0.0f;
+	float m_moveY = 0.0f;
 	if (m_CurState == THROW|| m_CurState == THROW_END)
 	{
 		m_fSpeed = 0.2f;
@@ -311,34 +318,52 @@ void CPlayerScript::Moving()
 	switch (m_CurMoveDir)
 	{
 	case UP:
-		playerPos->y += m_fSpeed*m_fVelocity;
+		m_moveY = m_fSpeed*m_fVelocity;
 		break;
 	case DOWN:
-		playerPos->y -= m_fSpeed*m_fVelocity;
+		m_moveY = -1*(m_fSpeed*m_fVelocity);
 		break;
 	case LEFT_UP_45:
-		playerPos->x -= m_fSpeed*m_fVelocity;
-		playerPos->y += m_fSpeed*m_fVelocity;
+		m_moveX = -1 * (m_fSpeed*m_fVelocity);
+		m_moveY = m_fSpeed*m_fVelocity;
 		break;
 	case RIGHT_UP_45:
-		playerPos->x += m_fSpeed*m_fVelocity;
-		playerPos->y += m_fSpeed*m_fVelocity;
+		m_moveX = m_fSpeed*m_fVelocity;
+		m_moveY = m_fSpeed*m_fVelocity;
 		break;
 	case LEFT:
-		playerPos->x -= m_fSpeed*m_fVelocity;
+		m_moveX = -1 * (m_fSpeed*m_fVelocity);
 		break;
 	case RIGHT:
-		playerPos->x += m_fSpeed*m_fVelocity;
+		m_moveX = m_fSpeed*m_fVelocity;
 		break;
 	case LEFT_DOWN_45:
-		playerPos->x -= m_fSpeed*m_fVelocity;
-		playerPos->y -= m_fSpeed*m_fVelocity;
+		m_moveX = -1 * (m_fSpeed*m_fVelocity);
+		m_moveY = -1 * (m_fSpeed*m_fVelocity);
 		break;
 	case RIGHT_DOWN_45:
-		playerPos->x += m_fSpeed*m_fVelocity;
-		playerPos->y -= m_fSpeed*m_fVelocity;
+		m_moveX = m_fSpeed*m_fVelocity;
+		m_moveY = -1 * (m_fSpeed*m_fVelocity);
 		break;
 	}
+	playerPos->x += m_moveX;
+	m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
+	if (CollideTiles())
+	{
+		*playerPos = m_PrePos;
+		m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
+		cout << "x충돌중" << endl;
+	}
+	m_PrePos = *playerPos;
+	playerPos->y += m_moveY;
+	m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
+	if (CollideTiles())
+	{
+		*playerPos = m_PrePos;
+		m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
+		cout << "y충돌중" << endl;
+	}
+	
 
 }
 
@@ -705,76 +730,42 @@ void CPlayerScript::CheckTiles()
 	int indexX = ((( mapSizex / 2)+ playerPos->x)/ 16);
 	int indexY = ((( mapSizey / 2)- playerPos->y)/ 16);
 	int index = indexX + indexY*mapSizex;
-	vector<CGameObject*> temp;
 
-	temp.push_back(tiles[(indexX-1)+ (indexY-1)*mapSizex]);
-	temp.push_back(tiles[ indexX + (indexY-1)*mapSizex]);
-	temp.push_back(tiles[(indexX+1) + (indexY-1)*mapSizex]);
-	temp.push_back(tiles[(indexX-1) + indexY*mapSizex]);
-	temp.push_back(tiles[indexX + indexY*mapSizex]);
-	temp.push_back(tiles[(indexX+1) + indexY*mapSizex]);
-	temp.push_back(tiles[(indexX-1) + (indexY+1)*mapSizex]);
-	temp.push_back(tiles[indexX + (indexY-1)*mapSizex]);
-	temp.push_back(tiles[(indexX+1) + (indexY-1)*mapSizex]);
+	m_NearTiles.push_back(tiles[(indexX-1)+ (indexY-1)*mapSizex]);
+	m_NearTiles.push_back(tiles[ indexX + (indexY-1)*mapSizex]);
+	m_NearTiles.push_back(tiles[(indexX+1) + (indexY-1)*mapSizex]);
+	m_NearTiles.push_back(tiles[(indexX-1) + indexY*mapSizex]);
+	m_NearTiles.push_back(tiles[indexX + indexY*mapSizex]);
+	m_NearTiles.push_back(tiles[(indexX+1) + indexY*mapSizex]);
+	m_NearTiles.push_back(tiles[(indexX-1) + (indexY+1)*mapSizex]);
+	m_NearTiles.push_back(tiles[indexX + (indexY+1)*mapSizex]);
+	m_NearTiles.push_back(tiles[(indexX+1) + (indexY+1)*mapSizex]);
+}
 
-	for (auto& i : temp)
+bool CPlayerScript::CollideTiles()
+{
+	D3DXVECTOR3& playerPos = pTransform->GetPosition();
+	for (auto& i : m_NearTiles)
 	{
 		if (i != nullptr)
 		{
-			i->SetObjectCliked(true, D3DCOLOR_XRGB(255, 0, 0));
-
+			if (m_bIsDebug)
+			{
+				//타일컬링되는 오브젝트들 확인.
+				i->SetObjectCliked(true, D3DCOLOR_XRGB(255, 0, 0));
+			}
 			CBoxCollider* pBoxCollider = i->GetComponent<CBoxCollider>();
+			D3DXVECTOR3	  destPos = i->GetComponent<CTransform>()->GetPosition();
 			if (pBoxCollider != nullptr)
 			{
-				float x, y;
-				if (CCollisionMgr::GetInstance()->CheckRect(m_pGameObject->GetComponent<CBoxCollider>(), pBoxCollider, &x, &y))
-				{
-					cout << "충돌중!" << endl;
-					CTransform* pTransform = m_pGameObject->GetComponent<CTransform>();
-
-					//밀어내기
-					D3DXVECTOR3& playerPos = pTransform->GetPosition();
-					D3DXVECTOR3 destPos =   i->GetComponent<CTransform>()->GetRealPos();
-					//파고든 깊이가 짧은쪽으로 밀어내기
-					if (x > y)
-					{
-						//y축 밀어내기		
-						if (playerPos.y > destPos.y)
-							playerPos.y =playerPos.y+y;
-						else
-							playerPos.y =playerPos.y-y;
-					}
-					else
-						//x축 밀어내기
-					{
-						if (playerPos.x > destPos.x)
-							playerPos.x = playerPos.x + x;
-						else
-							playerPos.x = playerPos.x- x;
-					}
-					return;
-				}
-
+				float x = 0, y = 0;
 				if (CCollisionMgr::GetInstance()->CheckAABB(m_pGameObject->GetComponent<CBoxCollider>(), pBoxCollider))
 				{
-					CTransform* pTransform = m_pGameObject->GetComponent<CTransform>();
-					D3DXVECTOR3& playerPos = pTransform->GetPosition();
-					D3DXVECTOR3 destPos = i->GetComponent<CTransform>()->GetPosition();
-					//m_fVelocity = 0.0f;
-				/*	cout << "충돌중" << endl;
-					if (playerPos.y > destPos.y)
-						playerPos.y += 0.5f;
-					else if(playerPos.y < destPos.y)
-						playerPos.y -= 0.5f;
-					else if (playerPos.x > destPos.x)
-						playerPos.x += 0.5f;
-					else if (playerPos.x < destPos.x)
-						playerPos.x -= 0.5f;*/
-					//playerPos = m_PrePos;
+					return true;
 				}
 			}
-		}		
+		}
 	}
+	return false;
 }
-
 

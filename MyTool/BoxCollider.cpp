@@ -35,26 +35,94 @@ void CBoxCollider::Action()
 void CBoxCollider::DrawBox()
 {
 	D3DXMATRIX*	mat = CCameraMgr::GetInstance()->GetViewProjMatrix();
-	
-	CDeviceMgr::GetInstance()->GetLine()->SetWidth(3.f);
+
+
+	CDeviceMgr::GetInstance()->GetLine()->SetWidth(2.f);
 	CDeviceMgr::GetInstance()->GetLine()->Begin();
 	{
 		D3DXVECTOR3 m_Line[2];
-		m_Line[0] = m_BoxPos[0];
-		m_Line[1] = m_BoxPos[2];
-		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0,125,125));
-
-		m_Line[0] = m_BoxPos[2];
-		m_Line[1] = m_BoxPos[3];
+		m_Line[0] = m_BoxDrawPos[0];
+		m_Line[1] = m_BoxDrawPos[2];
 		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
 
-		m_Line[0] = m_BoxPos[3];
-		m_Line[1] = m_BoxPos[1];
+		m_Line[0] = m_BoxDrawPos[2];
+		m_Line[1] = m_BoxDrawPos[3];
 		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
 
-		m_Line[0] = m_BoxPos[1];
-		m_Line[1] = m_BoxPos[0];
+		m_Line[0] = m_BoxDrawPos[3];
+		m_Line[1] = m_BoxDrawPos[1];
 		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+		m_Line[0] = m_BoxDrawPos[1];
+		m_Line[1] = m_BoxDrawPos[0];
+		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+	}
+	CDeviceMgr::GetInstance()->GetLine()->End();
+}
+
+void CBoxCollider::DrawTriangle()
+{
+	D3DXMATRIX*	mat = CCameraMgr::GetInstance()->GetViewProjMatrix();
+	CDeviceMgr::GetInstance()->GetLine()->SetWidth(2.f);
+	CDeviceMgr::GetInstance()->GetLine()->Begin();
+	//콜라이더 타입이 좌측상단 삼각형일경우.
+	{
+		D3DXVECTOR3 m_Line[2];
+		switch (m_CollideType)
+		{
+		case LEFT_TOP:
+			m_Line[0] = m_BoxDrawPos[0];
+			m_Line[1] = m_BoxDrawPos[2];
+			CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+			m_Line[0] = m_BoxDrawPos[2];
+			m_Line[1] = m_BoxDrawPos[1];
+			CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+			m_Line[0] = m_BoxDrawPos[1];
+			m_Line[1] = m_BoxDrawPos[0];
+			CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+			break;
+		case LEFT_BOTTOM:
+			m_Line[0] = m_BoxDrawPos[0];
+			m_Line[1] = m_BoxDrawPos[1];
+			CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+			m_Line[0] = m_BoxDrawPos[1];
+			m_Line[1] = m_BoxDrawPos[3];
+			CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+			m_Line[0] = m_BoxDrawPos[3];
+			m_Line[1] = m_BoxDrawPos[2];
+			CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+			break;
+		case RIGHT_TOP:
+			m_Line[0] = m_BoxDrawPos[0];
+			m_Line[1] = m_BoxDrawPos[2];
+			CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+			m_Line[0] = m_BoxDrawPos[2];
+			m_Line[1] = m_BoxDrawPos[3];
+			CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+			m_Line[0] = m_BoxDrawPos[3];
+			m_Line[1] = m_BoxDrawPos[0];
+			CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+			break;
+		case RIGHT_BOTTOM:
+			m_Line[0] = m_BoxDrawPos[2];
+			m_Line[1] = m_BoxDrawPos[3];
+			CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+			m_Line[0] = m_BoxDrawPos[3];
+			m_Line[1] = m_BoxDrawPos[1];
+			CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+			m_Line[0] = m_BoxDrawPos[1];
+			m_Line[1] = m_BoxDrawPos[2];
+			CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+			break;
+		}
 	}
 	CDeviceMgr::GetInstance()->GetLine()->End();
 }
@@ -77,21 +145,32 @@ void CBoxCollider::SetBoxCollider()
 	NULL_CHECK_MSG_RETURN(m_pTransform, Alert.c_str());
 
 	m_ObjectPos = m_pTransform->GetPosition();
-	m_BoxPos[0] = D3DXVECTOR3(-1*((m_width*0.5f) + m_PosX),(m_height*0.5f) + m_PosY, 0.0f);
-	m_BoxPos[1] = D3DXVECTOR3(-1*((m_width*0.5f) + m_PosX),-1*((m_height*0.5f) + m_PosY), 0.0f);
-	m_BoxPos[2] = D3DXVECTOR3((m_width*0.5f) + m_PosX,(m_height*0.5f) + m_PosY, 0.0f);
-	m_BoxPos[3] = D3DXVECTOR3((m_width*0.5f) + m_PosX,-1*((m_height*0.5f) + m_PosY), 0.0f);
+	if (m_GameObject->GetParentObject() != nullptr)
+	{
+		D3DXVECTOR3 parentPos = m_GameObject->GetParentObject()->GetComponent<CTransform>()->GetPosition();
+		m_ObjectPos += parentPos;
+	}
+
+	m_BoxPos[0] = D3DXVECTOR3(-1 * ((m_width*0.5f)) + m_PosX + m_ObjectPos.x, (m_height*0.5f) + m_PosY + m_ObjectPos.y, 0.0f);
+	m_BoxPos[1] = D3DXVECTOR3(-1 * ((m_width*0.5f)) + m_PosX + m_ObjectPos.x, -1 * ((m_height*0.5f)) + m_PosY + m_ObjectPos.y, 0.0f);
+	m_BoxPos[2] = D3DXVECTOR3((m_width*0.5f) + m_PosX + m_ObjectPos.x, (m_height*0.5f) + m_PosY + m_ObjectPos.y, 0.0f);
+	m_BoxPos[3] = D3DXVECTOR3((m_width*0.5f) + m_PosX + m_ObjectPos.x, -1 * ((m_height*0.5f)) + m_PosY + m_ObjectPos.y, 0.0f);
+
+	m_BoxDrawPos[0] = D3DXVECTOR3(-1 * ((m_width*0.5f)) + m_PosX, (m_height*0.5f) + m_PosY, 0.0f);
+	m_BoxDrawPos[1] = D3DXVECTOR3(-1 * ((m_width*0.5f)) + m_PosX, -1 * ((m_height*0.5f)) + m_PosY, 0.0f);
+	m_BoxDrawPos[2] = D3DXVECTOR3((m_width*0.5f) + m_PosX, (m_height*0.5f) + m_PosY, 0.0f);
+	m_BoxDrawPos[3] = D3DXVECTOR3((m_width*0.5f) + m_PosX, -1 * ((m_height*0.5f)) + m_PosY, 0.0f);
 
 	D3DXMATRIX	worldMat = m_GameObject->GetComponent<CTransform>()->GetWorldMat();
 	D3DXVECTOR4 pos;
-	D3DXVec3Transform(&pos,&m_BoxPos[0], &worldMat);
-	m_BoxPos[0] = D3DXVECTOR3(pos.x, pos.y, pos.z);
-	D3DXVec3Transform(&pos, &m_BoxPos[1], &worldMat);
-	m_BoxPos[1] = D3DXVECTOR3(pos.x, pos.y, pos.z);
-	D3DXVec3Transform(&pos, &m_BoxPos[2], &worldMat);
-	m_BoxPos[2] = D3DXVECTOR3(pos.x, pos.y, pos.z);
-	D3DXVec3Transform(&pos, &m_BoxPos[3], &worldMat);
-	m_BoxPos[3] = D3DXVECTOR3(pos.x, pos.y, pos.z);
+	D3DXVec3Transform(&pos, &m_BoxDrawPos[0], &worldMat);
+	m_BoxDrawPos[0] = D3DXVECTOR3(pos.x, pos.y, pos.z);
+	D3DXVec3Transform(&pos, &m_BoxDrawPos[1], &worldMat);
+	m_BoxDrawPos[1] = D3DXVECTOR3(pos.x, pos.y, pos.z);
+	D3DXVec3Transform(&pos, &m_BoxDrawPos[2], &worldMat);
+	m_BoxDrawPos[2] = D3DXVECTOR3(pos.x, pos.y, pos.z);
+	D3DXVec3Transform(&pos, &m_BoxDrawPos[3], &worldMat);
+	m_BoxDrawPos[3] = D3DXVECTOR3(pos.x, pos.y, pos.z);
 
 
 	m_BoxPosition = D3DXVECTOR3(m_ObjectPos.x + m_PosX, m_ObjectPos.y + m_PosY, 0.0f);

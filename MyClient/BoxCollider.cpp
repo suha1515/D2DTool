@@ -37,7 +37,7 @@ void CBoxCollider::DrawBox()
 	D3DXMATRIX*	mat = CCameraMgr::GetInstance()->GetViewProjMatrix();
 	
 	
-	CDeviceMgr::GetInstance()->GetLine()->SetWidth(3.f);
+	CDeviceMgr::GetInstance()->GetLine()->SetWidth(2.f);
 	CDeviceMgr::GetInstance()->GetLine()->Begin();
 	{
 		D3DXVECTOR3 m_Line[2];
@@ -56,6 +56,73 @@ void CBoxCollider::DrawBox()
 		m_Line[0] = m_BoxDrawPos[1];
 		m_Line[1] = m_BoxDrawPos[0];
 		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+	}
+	CDeviceMgr::GetInstance()->GetLine()->End();
+}
+
+void CBoxCollider::DrawTriangle()
+{
+	D3DXMATRIX*	mat = CCameraMgr::GetInstance()->GetViewProjMatrix();
+	CDeviceMgr::GetInstance()->GetLine()->SetWidth(2.f);
+	CDeviceMgr::GetInstance()->GetLine()->Begin();
+	//콜라이더 타입이 좌측상단 삼각형일경우.
+	{
+		D3DXVECTOR3 m_Line[2];
+	switch(m_CollideType)
+	{
+	case LEFT_TOP:
+		m_Line[0] = m_BoxDrawPos[0];
+		m_Line[1] = m_BoxDrawPos[2];
+		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+		m_Line[0] = m_BoxDrawPos[2];
+		m_Line[1] = m_BoxDrawPos[1];
+		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+		m_Line[0] = m_BoxDrawPos[1];
+		m_Line[1] = m_BoxDrawPos[0];
+		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+		break;
+	case LEFT_BOTTOM:
+		m_Line[0] = m_BoxDrawPos[0];
+		m_Line[1] = m_BoxDrawPos[1];
+		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+		m_Line[0] = m_BoxDrawPos[1];
+		m_Line[1] = m_BoxDrawPos[3];
+		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+		m_Line[0] = m_BoxDrawPos[3];
+		m_Line[1] = m_BoxDrawPos[2];
+		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+		break;
+	case RIGHT_TOP:
+		m_Line[0] = m_BoxDrawPos[0];
+		m_Line[1] = m_BoxDrawPos[2];
+		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+		m_Line[0] = m_BoxDrawPos[2];
+		m_Line[1] = m_BoxDrawPos[3];
+		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+		m_Line[0] = m_BoxDrawPos[3];
+		m_Line[1] = m_BoxDrawPos[0];
+		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+		break;
+	case RIGHT_BOTTOM:
+		m_Line[0] = m_BoxDrawPos[2];
+		m_Line[1] = m_BoxDrawPos[3];
+		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+		m_Line[0] = m_BoxDrawPos[3];
+		m_Line[1] = m_BoxDrawPos[1];
+		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+
+		m_Line[0] = m_BoxDrawPos[1];
+		m_Line[1] = m_BoxDrawPos[2];
+		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
+		break;
+	}	
 	}
 	CDeviceMgr::GetInstance()->GetLine()->End();
 }

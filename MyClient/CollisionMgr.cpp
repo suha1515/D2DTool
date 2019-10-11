@@ -21,17 +21,8 @@ bool CCollisionMgr::CheckRect(CBoxCollider * pSource, CBoxCollider* pDest, float
 	//두 사각형 X 축 가로 반지름합
 	float fRadiusX = fabsf((destBox[2].x - destBox[0].x)*0.5f + (srcBox[2].x - srcBox[0].x)*0.5f);
 
-	//D3DXVECTOR3 srcPos;
-	//srcPos.x =srcBox[0].x + (srcBox[2].x - srcBox[0].x)*0.5f;
-	//srcPos.y = srcBox[0].y - (srcBox[2].y - srcBox[3].y)*0.5f;
-
-	//D3DXVECTOR3 dstPos;
-	//srcPos.x = srcBox[0].x + (destBox[2].x - destBox[0].x)*0.5f;
-	//srcPos.y = srcBox[0].y - (srcBox[2].y - srcBox[3].y)*0.5f;
-
 	//두 사각형의 x축 절대값
 	float fDistX = fabsf(pDest->GetBoxPosition()->x - pSource->GetBoxPosition()->x);
-
 	//두 사각형의 y축 반지름 합
 	float fRadiusY = fabsf((destBox[2].y - destBox[3].y)*0.5f + (srcBox[2].y - srcBox[3].y)*0.5f);
 

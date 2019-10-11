@@ -47,6 +47,8 @@ public:
 
 	//타일 체크.
 	void CheckTiles();
+	//타일 충돌
+	bool CollideTiles();
 
 	bool		bIsInit = false;
 
@@ -81,5 +83,9 @@ private:
 	float		m_MouseAngle;		//마우스 각도
 	float		m_BulletAngle;		//총알 각도
 	float		m_MeeleCool;		//근접공격쿨타임.
+
+	vector<CGameObject*>		m_NearTiles;
+	vector<CGameObject*>		m_CollideTiles;
+	vector<COL_DEPTH>			m_Depths;
 };
 

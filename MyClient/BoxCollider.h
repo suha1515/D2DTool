@@ -14,6 +14,7 @@ public:
 
 public:
 	void	DrawBox();
+	void	DrawTriangle();
 public:
 	//	콜라이더 박스 크기지정
 	void	SetBoxSize(float width,float height);
@@ -53,6 +54,8 @@ private:
 	//콜라이더 박스 위치
 	D3DXVECTOR3			m_BoxPosition;
 
+	//콜라이더 종류 -박스, 삼각형 (삼각형vs박스충돌)
+	COLLIDE_TYPE		m_CollideType;
 
 };
 
