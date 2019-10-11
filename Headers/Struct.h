@@ -116,6 +116,7 @@ typedef struct BoxColliderInfo
 {
 	float			  _BoxWidth, _BoxHeight;
 	float			  _BoxOffsetX, _BoxOffsetY;
+	COLLIDE_TYPE	  _colType;
 }BOXCOL_INFO;
 
 typedef struct AnimatorInfo

@@ -32,6 +32,14 @@ void CBoxCollider::Action()
 	SetBoxCollider();
 }
 
+void CBoxCollider::DrawCollide()
+{
+	if (m_CollideType == NORMAL)
+		DrawBox();
+	else
+		DrawTriangle();
+}
+
 void CBoxCollider::DrawBox()
 {
 	D3DXMATRIX*	mat = CCameraMgr::GetInstance()->GetViewProjMatrix();
@@ -93,7 +101,7 @@ void CBoxCollider::DrawTriangle()
 		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
 
 		m_Line[0] = m_BoxDrawPos[3];
-		m_Line[1] = m_BoxDrawPos[2];
+		m_Line[1] = m_BoxDrawPos[0];
 		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 125, 125));
 		break;
 	case RIGHT_TOP:

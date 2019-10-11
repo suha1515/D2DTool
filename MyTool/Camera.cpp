@@ -38,7 +38,7 @@ void CCamera::Update()
 	if (m_Following != nullptr)
 	{
 		CTransform* pTransform = m_Following->GetComponent<CTransform>();
-		NULL_CHECK_MSG_RETURN(pTransform, L"Inspect View GameObject Transform is null");
+		NULL_CHECK_MSG_RETURN(pTransform, L"GameObject Transform is null");
 
 		m_CamPos = pTransform->GetPosition();
 	}
@@ -106,6 +106,11 @@ D3DXMATRIX * CCamera::GetViewProjMatrix()
 {
 	m_ViewProjMat = m_ViewMat*m_OrthographicMat;
 	return  &m_ViewProjMat;
+}
+
+XMFLOAT3 CCamera::GetScaleFactor()
+{
+	return m_ScaleFactors;
 }
 
 void CCamera::Scaling(const float & _x, const float & _y)

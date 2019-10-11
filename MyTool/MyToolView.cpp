@@ -81,7 +81,6 @@ CMyToolView::CMyToolView()
 	m_pInstanceMgr->Initialize();
 	FAILED_CHECK_MSG(hr, L"InitDevice Failed");
 
-	
 }
 
 CMyToolView::~CMyToolView()
@@ -108,7 +107,7 @@ BOOL CMyToolView::PreCreateWindow(CREATESTRUCT& cs)
 void CMyToolView::OnDraw(CDC* /*pDC*/)
 {
 	CMyToolDoc* pDoc = GetDocument();
-
+	
 	ASSERT_VALID(pDoc);
 	if (!pDoc)
 		return;
@@ -269,7 +268,6 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	CView::OnLButtonDown(nFlags, point);
-
 	if (m_Mode == MAP)
 	{
 		CString tileName = m_pMyForm->GetMapTool()->GetTileName();
@@ -280,6 +278,7 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 			m_TileSize = size;
 		}
 		const CPoint mousePos = MousePicking(point);
+		//auto temp = CObjectMgr::GetInstance()->GetObjects();
 		if (tex != nullptr)
 		{
 			wstring name = L"GameObject" + to_wstring(m_pObjectMgr->GetObjectCount());
@@ -317,6 +316,7 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 			{
 				CBoxCollider*	pBoxCollider = new CBoxCollider;
 				pBoxCollider->Initialize(pGameObject);
+				pBoxCollider->SetCollideType(NORMAL);
 				pGameObject->AddComponent(pBoxCollider);
 			}
 
@@ -324,21 +324,27 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 			m_pInspect->m_HierarchyView.AddObject(pGameObject);
 			m_pObjectMgr->AddObject(pGameObject);
 			Invalidate(FALSE);
-
-	
-
 		}
 	}
+
+	
 }
 //타일 지우기
 void CMyToolView::OnRButtonDown(UINT nFlags, CPoint point)
 {
+	cout << "aw" << endl;
 }
+
 
 void CMyToolView::OnMouseMove(UINT nFlags, CPoint point)
 {
 	CView::OnMouseMove(nFlags, point);
+	
+	if (CKeyMgr::GetInstance()->KeyPressing(KEY_LBUTTON))
+	{
 
+	}
+		
 	m_MousePoint = point;
 }
 

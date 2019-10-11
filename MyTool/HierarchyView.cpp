@@ -96,7 +96,7 @@ int CHierarchyView::AddObject(CGameObject * object)
 int CHierarchyView::AddCopyObject(const OBJ_COPY* copy,const wstring& name)
 {
 	Clear();
-	CObjectMgr::GetInstance()->MakeObjectByCopy(copy, name, nullptr);
+	CObjectMgr::GetInstance()->MakeObjectFromCopy(copy, name, nullptr);
 	LoadObject();
 	return 0;
 }

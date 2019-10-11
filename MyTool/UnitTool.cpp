@@ -167,6 +167,7 @@ OBJ_COPY CUnitTool::MakeCopy(CGameObject * pObject)
 		boxcolInfo._BoxWidth = pBoxCollider->GetBoxWidth();					//박스너비
 		boxcolInfo._BoxOffsetX = pBoxCollider->GetBoxOffsetX();				//오프셋X
 		boxcolInfo._BoxOffsetY = pBoxCollider->GetBoxoffsetY();				//오프셋Y
+		boxcolInfo._colType = pBoxCollider->GetCollideType();				//콜라이더 타입
 		copyObject.boxcolInfo = boxcolInfo;
 	}
 	//애니메이터 정보 쓰기

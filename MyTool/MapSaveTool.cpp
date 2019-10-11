@@ -184,6 +184,7 @@ void CMapSaveTool::OnBnClickedMapSave()
 						boxcolInfo._BoxWidth = pBoxCollider->GetBoxWidth();					//박스너비
 						boxcolInfo._BoxOffsetX = pBoxCollider->GetBoxOffsetX();				//오프셋X
 						boxcolInfo._BoxOffsetY = pBoxCollider->GetBoxoffsetY();				//오프셋Y
+						boxcolInfo._colType = pBoxCollider->GetCollideType();				//박스타입.
 						file.Write(&boxcolInfo, sizeof(BOXCOL_INFO));
 					}
 					//애니메이터 정보 쓰기
@@ -301,6 +302,7 @@ void CMapSaveTool::OnBnClickedMapSave()
 						boxcolInfo._BoxWidth = pBoxCollider->GetBoxWidth();					//박스너비
 						boxcolInfo._BoxOffsetX = pBoxCollider->GetBoxOffsetX();				//오프셋X
 						boxcolInfo._BoxOffsetY = pBoxCollider->GetBoxoffsetY();				//오프셋Y
+						boxcolInfo._colType = pBoxCollider->GetCollideType();				//박스타입.
 						file.Write(&boxcolInfo, sizeof(BOXCOL_INFO));
 					}
 					//애니메이터 정보 쓰기

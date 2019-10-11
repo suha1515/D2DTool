@@ -93,6 +93,7 @@ using namespace DirectX;
 #include "ObjectMgr.h"			//오브젝트 매니저
 #include "ShaderMgr.h"			//쉐이더   매니저
 #include "CollisionMgr.h"		//콜라이더 매니저
+#include "KeyMgr.h"
 
 
 

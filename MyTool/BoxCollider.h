@@ -13,6 +13,7 @@ public:
 	virtual void Action() override;
 
 public:
+	void    DrawCollider();
 	void	DrawBox();
 	void	DrawTriangle();
 public:
@@ -22,6 +23,8 @@ public:
 	void	SetBoxOffset(float x, float y);
 	//  콜라이더 박스 만들기.
 	void	SetBoxCollider();
+	//  콜라이더 종류 지정
+	void	SetCollideType(COLLIDE_TYPE type);
 
 public:
 	// 콜라이더 박스 받기
@@ -36,6 +39,9 @@ public:
 	// 콜라이더 박스 오프셋 값 받기
 	const float		GetBoxOffsetX();
 	const float		GetBoxoffsetY();
+
+	//콜라이더 종류받기
+	COLLIDE_TYPE	GetCollideType();
 
 private:
 	//박스의 각점들

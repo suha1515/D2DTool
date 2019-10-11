@@ -55,7 +55,9 @@ public:
 	HRESULT LoadCopyObject(const wstring& filePath);
 
 public:
-	HRESULT	MakeObjectByCopy(const OBJ_COPY* copy, const wstring& name=L"",CGameObject* parent=nullptr);
+	CGameObject* MakeObjectFromCopy(const OBJ_COPY* copy, const wstring& name = L"", CGameObject* parent = nullptr);
+public:
+	CGameObject* AddCopy(const wstring& name, const wstring& newName = L"");
 
 
 private:

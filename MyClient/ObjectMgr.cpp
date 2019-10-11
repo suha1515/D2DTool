@@ -34,13 +34,12 @@ void CObjectMgr::AddObject(CGameObject * object)
 	//타일일경우
 	if (object->GetObjectLayer() == LAYER_0)
 	{
+		
 		CTransform* pTransform = object->GetComponent<CTransform>();
 		CBoxCollider* pBoxCollider = object->GetComponent<CBoxCollider>();
 		if (pTransform != nullptr)
 		{
 			D3DXVECTOR3 pos = pTransform->GetRealPos();
-			if (pos.x == 8&&pos.y == 8)
-				cout << "" << endl;
 			int indexX = ((m_MapSizeX / 2) + pos.x)/16;
 			int indexY = ((m_MapSizeY / 2) - pos.y)/16;
 
@@ -52,9 +51,9 @@ void CObjectMgr::AddObject(CGameObject * object)
 		{
 			m_CollideTile.push_back(object);
 		}
-		
-		
+		m_RenderTile.push_back(object);
 	}
+	else
 	m_Objects[object->GetLevel()].push_back(object);
 }
 
@@ -173,7 +172,7 @@ void CObjectMgr::Render()
 		}
 		m_RenderObjects[i].clear();
 	}
-
+	
 	if (m_bIsDebug)
 	{
 		DebugRender();
@@ -194,6 +193,11 @@ void CObjectMgr::DebugRender()
 	{
 		i->DebugRender();
 	}
+	for (auto&i : m_RenderTile)
+	{
+		i->DebugRender();
+	}
+
 }
 
 int CObjectMgr::GetObjectCount()

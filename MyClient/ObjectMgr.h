@@ -71,6 +71,7 @@ private:
 	list<CGameObject*>				m_RenderObjects[LAYER_END];		//렌더할녀석들
 
 	vector<CGameObject*>			m_Tiles;		//타일들
+	vector<CGameObject*>			m_RenderTiles;
 	vector<CGameObject*>			m_CollideTile;
 	vector<pair<int, int>>			m_index;		//인덱스확인용;
 

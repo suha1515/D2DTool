@@ -65,7 +65,7 @@ void CGameObject::Render()
 	//클릭시 박스렌더.
 	if (m_bIsClicked)
 	{
-		DrawBox();
+		
 		m_bIsClicked = false;
 	}
 }
@@ -75,8 +75,9 @@ void CGameObject::DebugRender()
 	//디버그시 박스콜라이더 그리기.
 		CBoxCollider* pComponent = GetComponent<CBoxCollider>();
 		if (pComponent != nullptr)
-			pComponent->DrawBox();
-		
+			pComponent->DrawCollide();
+
+		DrawBox();	
 }
 
 void CGameObject::LateUpdate()

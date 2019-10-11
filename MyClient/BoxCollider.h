@@ -13,6 +13,7 @@ public:
 	virtual void Action() override;
 
 public:
+	void    DrawCollide();
 	void	DrawBox();
 	void	DrawTriangle();
 public:

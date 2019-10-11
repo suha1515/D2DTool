@@ -713,7 +713,7 @@ void CPlayerScript::AtkState()
 
 void CPlayerScript::AttackBullet()
 {
-	CGameObject* pBullet = CObjectMgr::GetInstance()->AddCopy(L"Small_Bullet", L"my_Bullet");
+	CGameObject* pBullet = CObjectMgr::GetInstance()->AddCopy(L"Small_Ball", L"my_Bullet");
 	pBullet->GetComponent<CTransform>()->SetPosition(pTransform->GetPosition());
 
 	pBullet->AddScripts(CBulletScript::Create(m_BulletAngle, 400.f, pBullet));
@@ -752,7 +752,7 @@ bool CPlayerScript::CollideTiles()
 			if (m_bIsDebug)
 			{
 				//타일컬링되는 오브젝트들 확인.
-				i->SetObjectCliked(true, D3DCOLOR_XRGB(255, 0, 0));
+				i->SetObjectCliked(true, D3DCOLOR_XRGB(255, 0, 0));		
 			}
 			CBoxCollider* pBoxCollider = i->GetComponent<CBoxCollider>();
 			D3DXVECTOR3	  destPos = i->GetComponent<CTransform>()->GetPosition();

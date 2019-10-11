@@ -352,11 +352,11 @@ HRESULT CObjectMgr::LoadObject(const wstring & filePath)
 			CGameObject* pObject = CObjectMgr::GetInstance()->FindObjectWithName(objInfo._ParentObject); //부모 오브젝트를 찾아서 넣는다. 0계층인 부모는 무조건 있으므로.. 순서만 바뀌지 않으면 여기서 문제가 없을것이다.
 			pGameObject->SetParentObject(pObject);					//찾아서 해당 오브젝트의 부모 오브젝트로 등록한다
 			pObject->GetChildernVector().push_back(pGameObject);	//더욱이 부모 벡터에는 자식을 넣는다.
-			pGameObject->SetObjectLevel(pObject->GetLevel() + 1);		//부모의 계층보다 1높을것이다.
+			pGameObject->SetObjectLevel(pObject->GetLevel() + 1);	//부모의 계층보다 1높을것이다.
 		}															//아니라면 그냥 넘어간다.
 		//==========================================================================================================	
 
-		//========================================트랜스폼 정보 불러오기===========================================
+		//========================================트랜스폼 정보 불러오기===============================================
 		if (compInfo._Transform == 1)
 		{
 			ReadFile(hFile, &transInfo, sizeof(TRANSFORM_INFO), &dwBytes, nullptr);
@@ -391,6 +391,7 @@ HRESULT CObjectMgr::LoadObject(const wstring & filePath)
 
 
 		//========================================콜라이더 정보 불러오기==============================================
+		
 		if (compInfo._BoxCol == 1)
 		{
 			ReadFile(hFile, &boxcolInfo, sizeof(BOXCOL_INFO), &dwBytes, nullptr);
@@ -398,7 +399,7 @@ HRESULT CObjectMgr::LoadObject(const wstring & filePath)
 			pBoxCollider->Initialize(pGameObject);					//박스 콜라이더 컴포넌트 오브젝트 지정.
 			pBoxCollider->SetBoxSize(boxcolInfo._BoxWidth, boxcolInfo._BoxHeight);	//박스콜라이더 너비,높이지정.
 			pBoxCollider->SetBoxOffset(boxcolInfo._BoxOffsetX, boxcolInfo._BoxOffsetY);	//박스콜라이더 오프셋지정.
-
+			pBoxCollider->SetCollideType(boxcolInfo._colType);
 			pGameObject->AddComponent(pBoxCollider);				//박스 콜라이더 지정.
 		}
 		//==========================================================================================================	
@@ -559,7 +560,7 @@ HRESULT CObjectMgr::LoadCopyObject(const wstring & filePath)
 	return S_OK;
 }
 
-HRESULT CObjectMgr::MakeObjectByCopy(const OBJ_COPY* copy, const wstring& name, CGameObject* parent)
+CGameObject* CObjectMgr::MakeObjectFromCopy(const OBJ_COPY * copy, const wstring & name, CGameObject * parent)
 {
 	CGameObject* pGameObject = new CGameObject;
 	pGameObject->Initialize();
@@ -567,10 +568,10 @@ HRESULT CObjectMgr::MakeObjectByCopy(const OBJ_COPY* copy, const wstring& name, 
 	if (name == L"")
 		pGameObject->SetObjectName(copy->objInfo._ObjectName);
 	else
-	pGameObject->SetObjectName(name);		//새로운 이름을 넣어도된다.
+		pGameObject->SetObjectName(name);		//새로운 이름을 넣어도된다.
 	pGameObject->SetObjectLayer(copy->objInfo._ObjectLayer);
 	pGameObject->SetObjectLevel(copy->objInfo._ObjectLevel);
-	pGameObject->SetObjectTag(copy->objInfo._ObjectTag) ;
+	pGameObject->SetObjectTag(copy->objInfo._ObjectTag);
 
 	if (parent != nullptr)
 	{
@@ -595,7 +596,7 @@ HRESULT CObjectMgr::MakeObjectByCopy(const OBJ_COPY* copy, const wstring& name, 
 		pTexture->SetTexture(copy->textureInfo._TextrueName);
 		pTexture->SetTexSize(copy->textureInfo._TextureSize);
 		pTexture->SetTexPos(copy->textureInfo._TexturPos);
-			
+
 		pGameObject->AddComponent(pTexture);
 	}
 	if (copy->compInfo._BoxCol == 1)
@@ -604,7 +605,7 @@ HRESULT CObjectMgr::MakeObjectByCopy(const OBJ_COPY* copy, const wstring& name, 
 		pBoxCollider->Initialize(pGameObject);
 		pBoxCollider->SetBoxSize(copy->boxcolInfo._BoxWidth, copy->boxcolInfo._BoxHeight);
 		pBoxCollider->SetBoxOffset(copy->boxcolInfo._BoxOffsetX, copy->boxcolInfo._BoxOffsetY);
-			
+		pBoxCollider->SetCollideType(copy->boxcolInfo._colType);
 		pGameObject->AddComponent(pBoxCollider);
 	}
 	if (copy->compInfo._Animator == 1)
@@ -629,10 +630,19 @@ HRESULT CObjectMgr::MakeObjectByCopy(const OBJ_COPY* copy, const wstring& name, 
 	if (copy->childInfo.size() > 0)
 	{
 		for (auto&i : copy->childInfo)
-			MakeObjectByCopy(&i, i.objInfo._ObjectName, pGameObject);
+			MakeObjectFromCopy(&i, i.objInfo._ObjectName, pGameObject);
 	}
 
 	AddObject(pGameObject);
-	
-	return E_NOTIMPL;
+
+	return pGameObject;
 }
+
+CGameObject * CObjectMgr::AddCopy(const wstring & name, const wstring & newName)
+{
+	auto iter_find = m_CopyObjects.find(name);
+	if (m_CopyObjects.end() == iter_find)
+		return nullptr;
+	return MakeObjectFromCopy(&iter_find->second, newName, nullptr);
+}
+

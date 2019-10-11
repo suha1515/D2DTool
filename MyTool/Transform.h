@@ -27,7 +27,8 @@ public:
 public:
 	//위치값 리턴하는 함수.
 	D3DXVECTOR3&  GetPosition();
-
+	//부모위치도 고려하여 반환
+	D3DXVECTOR3  GetRealPos();
 	//회전값 리턴하는 함수.
 	const XMFLOAT3&		GetRotation()	 const;
 

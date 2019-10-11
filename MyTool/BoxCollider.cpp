@@ -6,6 +6,7 @@
 
 CBoxCollider::CBoxCollider()
 {
+	m_CollideType = NORMAL;
 }
 
 
@@ -30,6 +31,14 @@ void CBoxCollider::Initialize(CGameObject * pObject)
 void CBoxCollider::Action()
 {
 	SetBoxCollider();
+}
+
+void CBoxCollider::DrawCollider()
+{
+	if (m_CollideType == NORMAL)
+		DrawBox();
+	else
+		DrawTriangle();
 }
 
 void CBoxCollider::DrawBox()
@@ -176,6 +185,13 @@ void CBoxCollider::SetBoxCollider()
 	m_BoxPosition = D3DXVECTOR3(m_ObjectPos.x + m_PosX, m_ObjectPos.y + m_PosY, 0.0f);
 
 }
+void CBoxCollider::SetCollideType(COLLIDE_TYPE type)
+{
+	if (type != NORMAL || type != LEFT_TOP || type != LEFT_BOTTOM || type != RIGHT_TOP || type != RIGHT_BOTTOM)
+		m_CollideType = NORMAL;
+	
+	m_CollideType = type;
+}
 const D3DXVECTOR3 * CBoxCollider::GetBox()
 {
 	return m_BoxPos;
@@ -204,4 +220,9 @@ const float CBoxCollider::GetBoxOffsetX()
 const float CBoxCollider::GetBoxoffsetY()
 {
 	return m_PosY;
+}
+
+COLLIDE_TYPE CBoxCollider::GetCollideType()
+{
+	return m_CollideType;
 }

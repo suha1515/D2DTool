@@ -58,4 +58,8 @@ public:
 	float m_PosX;
 	// 박스 위치Y
 	float m_PosY;
+	afx_msg void OnCbnSelchangeCombo1();
+	// 콜라이더 종류이다.
+	CComboBox m_CollideList;
+	virtual BOOL OnInitDialog();
 };

@@ -16,9 +16,6 @@
     <Filter Include="00.WinApp">
       <UniqueIdentifier>{1550de96-fb8e-485e-80e4-9ea3bed3f6b0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.DocuMent">
-      <UniqueIdentifier>{693b7537-13ff-4cc6-96cb-8762f72797be}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.MainFrame">
       <UniqueIdentifier>{2fe27a7b-d635-4d93-a522-b55b8d94b8fc}</UniqueIdentifier>
     </Filter>
@@ -151,6 +148,12 @@
     <Filter Include="98.Managers\09.CollisionMgr">
       <UniqueIdentifier>{20e08048-95e1-4774-a465-47b26dfaf643}</UniqueIdentifier>
     </Filter>
+    <Filter Include="98.Managers\10.KeyMgr">
+      <UniqueIdentifier>{047a5f3b-0692-456e-9a08-534586907900}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.WinApp\01.DocuMent">
+      <UniqueIdentifier>{693b7537-13ff-4cc6-96cb-8762f72797be}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -169,7 +172,7 @@
       <Filter>00.WinApp</Filter>
     </ClInclude>
     <ClInclude Include="MyToolDoc.h">
-      <Filter>01.DocuMent</Filter>
+      <Filter>00.WinApp\01.DocuMent</Filter>
     </ClInclude>
     <ClInclude Include="MainFrm.h">
       <Filter>02.MainFrame</Filter>
@@ -300,6 +303,9 @@
     <ClInclude Include="CollisionMgr.h">
       <Filter>98.Managers\09.CollisionMgr</Filter>
     </ClInclude>
+    <ClInclude Include="KeyMgr.h">
+      <Filter>98.Managers\10.KeyMgr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -309,7 +315,7 @@
       <Filter>00.WinApp</Filter>
     </ClCompile>
     <ClCompile Include="MyToolDoc.cpp">
-      <Filter>01.DocuMent</Filter>
+      <Filter>00.WinApp\01.DocuMent</Filter>
     </ClCompile>
     <ClCompile Include="MainFrm.cpp">
       <Filter>02.MainFrame</Filter>
@@ -436,6 +442,9 @@
     </ClCompile>
     <ClCompile Include="CollisionMgr.cpp">
       <Filter>98.Managers\09.CollisionMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyMgr.cpp">
+      <Filter>98.Managers\10.KeyMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
