@@ -30,6 +30,16 @@ CObjectMgr::~CObjectMgr()
 
 void CObjectMgr::AddObject(CGameObject * object)
 {
+	//타일일경우 (인스턴싱객체)
+	if (object->GetObjectTag() == L"Instance")
+	{
+		CBoxCollider* pBoxCollider = object->GetComponent<CBoxCollider>();
+		if (pBoxCollider != nullptr)
+		{
+			m_CollideTile.push_back(object);
+		}
+	}
+
 	m_Objects[object->GetLevel()].push_back(object);
 }
 
@@ -57,10 +67,13 @@ void CObjectMgr::Update()
 	//트리 계층별 업데이트를한다.
 	// 0 계층은 최상위 부모 객체들
 	// 1,2,3.. 계층은 0계층 부모객체들의 자식객체들..
+
+	int sizeObject = 0;
 	for (size_t i = 0; i < m_Objects.size(); ++i)
 	{
 		vector<CGameObject*>::iterator iter_begin = m_Objects[i].begin();
 		vector<CGameObject*>::iterator iter_end = m_Objects[i].end();
+		sizeObject += m_Objects[i].size();
 		for (;iter_begin!=iter_end;)
 		{
 			if ((*iter_begin)->Update() == DEAD_OBJ)
@@ -98,12 +111,13 @@ void CObjectMgr::Update()
 				if ((*iter_begin)->GetComponent<CTextureRenderer>() != nullptr)
 				{
 					//인스턴스 태그를 가지고 있을경우
-					if ((*iter_begin)->GetObjectTag() == L"Instance")
-					{
-						CInstanceMgr::GetInstance()->AddObject((*iter_begin));
-					}
-					//아닐경우
-					else
+					//if ((*iter_begin)->GetObjectTag() == L"Instance")
+					//{
+					//	CInstanceMgr::GetInstance()->AddObject((*iter_begin));
+					//	m_CollideTile.push_back((*iter_begin));
+					//}
+					////아닐경우
+					//else
 						m_RenderObjects[(*iter_begin)->GetObjectLayer()].push_back((*iter_begin));
 				}
 				//오브젝트가 스크립트 를가지고있으면 따로 스크립트 처리하기위해 컨테이너에 넣는다.
@@ -114,12 +128,12 @@ void CObjectMgr::Update()
 				if ((*iter_begin)->GetComponent<CBoxCollider>() != nullptr)
 					m_CollideObj.push_back((*iter_begin));
 
-				
 				iter_begin++;
 			}
 		}
 	}
-
+	//cout << "awda"<<endl;
+	cout << sizeObject << endl;
 	//모든 컴포넌트 업데이트가 끝나면 스크립트 라이프 사이클을 진행한다.
 	//위에서 너비조사를 진행했으므로 부모부터 스크립트 오브젝트를 실행할것이다.
 	OnCollision();			//충돌검사
@@ -132,15 +146,16 @@ void CObjectMgr::Update()
 void CObjectMgr::Render()
 {
 	//인스턴스 오브젝트는 가장 먼저그린다.
-	CInstanceMgr::GetInstance()->InstanceRender();
+	//CInstanceMgr::GetInstance()->InstanceRender();
 	for (int i = 0; i < LAYER_END; ++i)
 	{
-		//Y축 소팅.
-		m_RenderObjects[i].sort(CLess<CGameObject*,CTransform>());
+		//Y축 소팅. 
+		if (Layer(i) != LAYER_GROUND)//타일일경우 하지않는다. 
+			m_RenderObjects[i].sort(CLess<CGameObject*, CTransform>());
 		for (auto& object : m_RenderObjects[i])
 		{
 			//활성화 상태만 렌더함.
-			if(object->GetComponent<CTextureRenderer>()->GetOn())
+			if (object->GetComponent<CTextureRenderer>()->GetOn())
 				object->Render();
 		}
 		m_RenderObjects[i].clear();
@@ -155,9 +170,23 @@ void CObjectMgr::Render()
 
 void CObjectMgr::DebugRender()
 {
-	for (auto&i : m_CollideObj)
+	/*for (auto&i : m_CollideObj)
 	{
+		if (i != nullptr)
 		i->DebugRender();
+	}
+	for (auto&i : m_CollideTile)
+	{
+		if (i != nullptr)
+		i->DebugRender();
+	}*/
+
+	for (auto &i : m_Objects)
+	{
+		for (auto& j : i.second)
+		{
+			j->DebugRender();
+		}
 	}
 		
 }

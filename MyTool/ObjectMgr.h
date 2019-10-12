@@ -64,9 +64,11 @@ private:
 	list<CGameObject*>				m_CollideObj;
 	list<CGameObject*>				m_SciptObject;
 	map<int, vector<CGameObject*>>	m_Objects;
-	map<wstring, OBJ_COPY>		m_CopyObjects;
+	map<wstring, OBJ_COPY>			m_CopyObjects;
 	list<CGameObject*>				m_RenderObjects[LAYER_END];
 
+
+	vector<CGameObject*>			m_CollideTile;
 	bool							m_bIsDebug;
 };
 

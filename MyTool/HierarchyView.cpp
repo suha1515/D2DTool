@@ -62,7 +62,7 @@ int CHierarchyView::AddObject(CGameObject * object)
 		//부모객체보다 높은 계층에 존재
 		object->SetObjectLevel(parentObj->GetLevel() + 1);
 		//부모객체 기준으로 좌표계 설정
-		D3DXVECTOR3 pos =object->GetComponent<CTransform>()->GetPosition();
+		D3DXVECTOR3 pos =object->GetComponent<CTransform>()->GetLocalPosition();
 		D3DXMATRIX parentMat = parentObj->GetComponent<CTransform>()->GetWorldMat();
 		//월드행렬의 역행렬은 전치행렬이므로. 전치화
 		D3DXMatrixInverse(&parentMat, 0, &parentMat);
@@ -358,7 +358,7 @@ void CHierarchyView::OnNMDblclkHierarchytree(NMHDR *pNMHDR, LRESULT *pResult)
 	HTREEITEM hItem = m_Hierarchy.GetSelectedItem();
 	if (hItem != NULL)
 	{
-		CCameraMgr::GetInstance()->SetCameraPosition(m_objectlist.find(hItem)->second->GetComponent<CTransform>()->GetPosition());
+		CCameraMgr::GetInstance()->SetCameraPosition(m_objectlist.find(hItem)->second->GetComponent<CTransform>()->GetLocalPosition());
 		CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 		NULL_CHECK(pFrameWnd);
 
@@ -411,7 +411,31 @@ void CHierarchyView::OnBnClickedAddObject()
 	CObjectMgr::GetInstance()->AddObject(pGameObject);
 	
 }
-
+void CHierarchyView::RecursivelyDelete(HTREEITEM childItem)
+{
+	//자식이 있을경우 자식 다삭제.
+	if (m_Hierarchy.ItemHasChildren(childItem))
+	{
+		HTREEITEM hNextItem;
+		HTREEITEM hChildItem = m_Hierarchy.GetChildItem(childItem);
+		while (NULL != hChildItem)
+		{
+			hNextItem = m_Hierarchy.GetNextItem(hChildItem, TVGN_NEXT);
+			RecursivelyDelete(hChildItem);
+			hChildItem = hNextItem;
+		}
+		m_Hierarchy.DeleteItem(childItem);
+		m_objectlist.find(childItem)->second->SetObjectDestroy(true);
+		m_objectlist.erase(childItem);
+	}
+	else
+	{
+		m_Hierarchy.DeleteItem(childItem);
+		m_objectlist.find(childItem)->second->SetObjectDestroy(true);
+		m_objectlist.erase(childItem);
+	}
+}
+		
 //오브젝트 삭제.
 void CHierarchyView::OnBnClickedDeleteObject()
 {
@@ -419,26 +443,10 @@ void CHierarchyView::OnBnClickedDeleteObject()
 
 	if (NULL != selItem)
 	{
-		//자식이 있을경우 자식 다삭제.
-		if (m_Hierarchy.ItemHasChildren(selItem))
-		{
-			HTREEITEM hNextItem;
-			HTREEITEM hChildItem = m_Hierarchy.GetChildItem(selItem);
-			while (NULL != hChildItem)
-			{
-				hNextItem = m_Hierarchy.GetNextItem(hChildItem, TVGN_NEXT);
-				m_Hierarchy.DeleteItem(hChildItem);
-				m_objectlist.erase(hChildItem);
-				hChildItem = hNextItem;
-			}
-		}
-		//해당 객체는 제거 메시지를 보낸다. 부모와 자식이 있을경우 오브젝트 매니저에서처리.
-		m_objectlist.find(selItem)->second->SetObjectDestroy(true);
-		m_objectlist.erase(selItem);
-		m_Hierarchy.DeleteItem(selItem);
+		RecursivelyDelete(selItem);
 
-		
 
+		m_objectlist.begin();
 		CMainFrame* pFrameWnd = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 		NULL_CHECK(pFrameWnd);
 
@@ -449,11 +457,11 @@ void CHierarchyView::OnBnClickedDeleteObject()
 
 		CInspectView* pInspectView = dynamic_cast<CInspectView*>(pFrameWnd->m_MainSplitter.GetPane(0, 2));
 		NULL_CHECK_MSG(pInspectView, L"InspectView tool view nullptr");
-
 		if (m_Hierarchy.GetCount() == 0)
 		{
 			pInspectView->SetObject(nullptr);
 			pInspectView->UpdateInfo();
 		}
+		
 	}
 }

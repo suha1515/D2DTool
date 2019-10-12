@@ -31,29 +31,30 @@ CObjectMgr::~CObjectMgr()
 
 void CObjectMgr::AddObject(CGameObject * object)
 {
-	//타일일경우
-	if (object->GetObjectLayer() == LAYER_0)
+	//타일일경우 (인스턴싱객체)
+	if (object->GetObjectTag() == L"Instance")
 	{
-		
+	//	object->GetObjectTag() == L"Instance"
 		CTransform* pTransform = object->GetComponent<CTransform>();
+		wstring name = object->GetObjectName();
 		CBoxCollider* pBoxCollider = object->GetComponent<CBoxCollider>();
+		int index;
 		if (pTransform != nullptr)
 		{
-			D3DXVECTOR3 pos = pTransform->GetRealPos();
+			D3DXVECTOR3 pos = *pTransform->GetWorldPos();
 			int indexX = ((m_MapSizeX / 2) + pos.x)/16;
 			int indexY = ((m_MapSizeY / 2) - pos.y)/16;
 
 			m_index.push_back({ indexX,indexY });
-			int index = indexX + (indexY*m_MapSizeX);
-			m_Tiles[index] = object;
+			index = indexX + (indexY*m_MapSizeX);
+			if (pBoxCollider != nullptr)
+			{
+				m_Tiles[index] = object;
+			}	
 		}
-		if (pBoxCollider != nullptr)
-		{
-			m_CollideTile.push_back(object);
-		}
-		m_RenderTile.push_back(object);
+		m_RenderTiles.push_back(object);
 	}
-	else
+
 	m_Objects[object->GetLevel()].push_back(object);
 }
 
@@ -121,13 +122,13 @@ void CObjectMgr::Update()
 				//렌더 컴포넌트가 nullptr이 아닐경우. 레이어에따라 렌더할 오브젝트를 넣는다.
 				if ((*iter_begin)->GetComponent<CTextureRenderer>() != nullptr)
 				{
-					//인스턴스 태그를 가지고 있을경우
-					if ((*iter_begin)->GetObjectTag() == L"Instance")
+					//인스턴스 태그를 가지고 있을경우 (바꿈.. 레이어0으로 해야할듯하다)
+				/*	if ((*iter_begin)->GetObjectLayer()==LAYER_0)
 					{
 						CInstanceMgr::GetInstance()->AddObject((*iter_begin));
-					}
+					}*/
 					//아닐경우
-					else
+				/*	else*/
 						m_RenderObjects[(*iter_begin)->GetObjectLayer()].push_back((*iter_begin));
 				}
 				//오브젝트가 스크립트 를가지고있으면 따로 스크립트 처리하기위해 컨테이너에 넣는다.
@@ -135,11 +136,16 @@ void CObjectMgr::Update()
 					m_SciptObject.push_back((*iter_begin));
 
 				//타일일경우 건너뛴다 (콜라이더를 넣지않음)
-				if ((*iter_begin)->GetObjectLayer() != LAYER_0)
+				if ((*iter_begin)->GetObjectTag() != L"Instance")
 				{
 					//오브젝트가 콜라이더를 가지고있으면 콜라이더 계산을 위해 리스트에 넣는다.
 					if ((*iter_begin)->GetComponent<CBoxCollider>() != nullptr)
 						m_CollideObj.push_back((*iter_begin));
+				}
+				else
+				{
+					if((*iter_begin)->GetComponent<CBoxCollider>() != nullptr)
+					m_CollideTile.push_back((*iter_begin));
 				}
 				iter_begin++;
 			}
@@ -156,14 +162,13 @@ void CObjectMgr::Update()
 //레이어에 따라 렌더를 진행한다. 
 void CObjectMgr::Render()
 {
-	//인스턴스 오브젝트는 가장 먼저그린다.
-	CInstanceMgr::GetInstance()->InstanceRender();
+	//인스턴스 오브젝트는 가장 먼저그린다.(가장 밑바닥의 경우만가능할것같은데..
+	//CInstanceMgr::GetInstance()->InstanceRender();
 	for (int i = 0; i < LAYER_END; ++i)
 	{
 		//Y축 소팅. 
-		if (Layer(i) != LAYER_0)//타일일경우 하지않는다. 
+		if (Layer(i) != LAYER_GROUND)//타일일경우 하지않는다. 
 			m_RenderObjects[i].sort(CLess<CGameObject*, CTransform>());
-		
 		for (auto& object : m_RenderObjects[i])
 		{
 			//활성화 상태만 렌더함.
@@ -181,6 +186,7 @@ void CObjectMgr::Render()
 
 	m_SciptObject.clear();
 	m_CollideObj.clear();
+	m_CollideTile.clear();
 }
 
 void CObjectMgr::DebugRender()
@@ -193,7 +199,7 @@ void CObjectMgr::DebugRender()
 	{
 		i->DebugRender();
 	}
-	for (auto&i : m_RenderTile)
+	for (auto&i : m_RenderTiles)
 	{
 		i->DebugRender();
 	}
@@ -398,7 +404,7 @@ HRESULT CObjectMgr::LoadObject(const wstring & filePath)
 			CGameObject* pObject = CObjectMgr::GetInstance()->FindObjectWithName(objInfo._ParentObject); //부모 오브젝트를 찾아서 넣는다. 0계층인 부모는 무조건 있으므로.. 순서만 바뀌지 않으면 여기서 문제가 없을것이다.
 			pGameObject->SetParentObject(pObject);					//찾아서 해당 오브젝트의 부모 오브젝트로 등록한다
 			pObject->GetChildernVector().push_back(pGameObject);	//더욱이 부모 벡터에는 자식을 넣는다.
-			pGameObject->SetObjectLevel(pObject->GetLevel() + 1);		//부모의 계층보다 1높을것이다.
+			pGameObject->SetObjectLevel(pObject->GetLevel() + 1);	//부모의 계층보다 1높을것이다.
 		}															//아니라면 그냥 넘어간다.
 																	//==========================================================================================================	
 
@@ -444,6 +450,7 @@ HRESULT CObjectMgr::LoadObject(const wstring & filePath)
 			pBoxCollider->Initialize(pGameObject);					//박스 콜라이더 컴포넌트 오브젝트 지정.
 			pBoxCollider->SetBoxSize(boxcolInfo._BoxWidth, boxcolInfo._BoxHeight);	//박스콜라이더 너비,높이지정.
 			pBoxCollider->SetBoxOffset(boxcolInfo._BoxOffsetX, boxcolInfo._BoxOffsetY);	//박스콜라이더 오프셋지정.
+			pBoxCollider->SetCollideType(boxcolInfo._colType);							//콜라이더 타입지정
 
 			pGameObject->AddComponent(pBoxCollider);				//박스 콜라이더 지정.
 		}
@@ -647,6 +654,7 @@ CGameObject* CObjectMgr::MakeObjectFromCopy(const OBJ_COPY * copy, const wstring
 		pBoxCollider->Initialize(pGameObject);
 		pBoxCollider->SetBoxSize(copy->boxcolInfo._BoxWidth, copy->boxcolInfo._BoxHeight);
 		pBoxCollider->SetBoxOffset(copy->boxcolInfo._BoxOffsetX, copy->boxcolInfo._BoxOffsetY);
+		pBoxCollider->SetCollideType(copy->boxcolInfo._colType);
 
 		pGameObject->AddComponent(pBoxCollider);
 	}

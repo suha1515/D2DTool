@@ -74,7 +74,7 @@ void CMiniView::OnDraw(CDC* pDC)
 	CDocument* pDoc = GetDocument();
 	
 	
-	//cout << "카메라 위치 : "<<m_Cam->GetPosition().x << " , " << m_Cam->GetPosition().y << endl;
+	//cout << "카메라 위치 : "<<m_Cam->GetLocalPosition().x << " , " << m_Cam->GetLocalPosition().y << endl;
 	// TODO: 여기에 그리기 코드를 추가합니다.
 	m_pDeviceMgr->Render_Begin();
 	if (m_texInfo != nullptr)

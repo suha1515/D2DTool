@@ -33,7 +33,7 @@ public:
 public:
 	CTreeCtrl m_Hierarchy;
 	virtual BOOL OnInitDialog();
-
+	void RecursivelyDelete(HTREEITEM childItem);
 	//list<std::pair<CGameObject*, HTREEITEM>> m_objectlist;
 
 	map<HTREEITEM, CGameObject*>	m_objectlist;

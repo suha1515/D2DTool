@@ -66,7 +66,6 @@ void CGameObject::Render()
 	if (m_bIsClicked)
 	{
 		
-		m_bIsClicked = false;
 	}
 }
 
@@ -77,7 +76,12 @@ void CGameObject::DebugRender()
 		if (pComponent != nullptr)
 			pComponent->DrawCollide();
 
-		DrawBox();	
+		if (m_bIsClicked)
+		{
+			DrawBox();
+			m_bIsClicked = false;
+		}
+			
 }
 
 void CGameObject::LateUpdate()
@@ -153,7 +157,7 @@ void CGameObject::DrawBox()
 	//트랜스폼 컴포넌트가 있을경우 위치값을 가져온다.
 	if (GetComponent<CTransform>() != nullptr)
 	{
-		m_Pos = GetComponent<CTransform>()->GetPosition();
+		m_Pos = GetComponent<CTransform>()->GetLocalPosition();
 	}
 	else
 		m_Pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);

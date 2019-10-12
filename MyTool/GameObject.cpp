@@ -44,18 +44,6 @@ int CGameObject::Update()
 			continue;
 		i.second->Action();
 	}
-	//for (auto& i : m_Components)
-	//{
-	//	//텍스처 렌더 컴포넌트만 Render에서 진행한다.
-	//	if (typeid(*i).name() == typeid(CTextureRenderer).name())
-	//		continue;
-	//	i->Action();
-	//}	
-	
-	//클릭시 박스렌더.
-	if (m_bIsClicked)
-		DrawBox();
-
 	return NO_EVENT;
 }
 
@@ -66,9 +54,7 @@ void CGameObject::Render()
 	if (m_Components.end() != iter_find)
 		iter_find->second->Action();
 
-	//클릭시 박스렌더.
-	if (m_bIsClicked)
-		DrawBox();
+
 }
 
 void CGameObject::DebugRender()
@@ -79,6 +65,9 @@ void CGameObject::DebugRender()
 		{
 			pComponent->DrawCollider();
 		}
+		//클릭시 박스렌더.
+		if (m_bIsClicked)
+			DrawBox();
 }
 
 void CGameObject::LateUpdate()
@@ -154,7 +143,7 @@ void CGameObject::DrawBox()
 	//트랜스폼 컴포넌트가 있을경우 위치값을 가져온다.
 	if (GetComponent<CTransform>() != nullptr)
 	{
-		m_Pos = GetComponent<CTransform>()->GetPosition();
+		m_Pos = GetComponent<CTransform>()->GetLocalPosition();
 	}
 	else
 		m_Pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);

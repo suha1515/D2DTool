@@ -21,7 +21,7 @@ public:
 	void					SetPosisiton(const D3DXVECTOR3& pos);
 	void					SetScale(const float& _x, const float& _y);
 	void					SetScale(const XMFLOAT3& _scale);
-	const	D3DXVECTOR3&	GetPosition()	const;
+	const	D3DXVECTOR3&	GetLocalPosition()	const;
 public:
 	D3DXMATRIX*				GetViewMatrix();
 	D3DXMATRIX*				GetProjectMatrix();

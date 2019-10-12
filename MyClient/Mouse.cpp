@@ -50,7 +50,7 @@ void CMouse::Update()
 	m_Point.x /= scaleFactor.x;
 	m_Point.y /= scaleFactor.y;
 
-	D3DXVECTOR3& m_MousePos = m_pTransform->GetPosition();
+	D3DXVECTOR3& m_MousePos = m_pTransform->GetLocalPosition();
 	m_MousePos.x = m_Point.x;
 	m_MousePos.y = m_Point.y;
 }
@@ -62,6 +62,6 @@ void CMouse::SetMouse(CGameObject * pMouse)
 
 D3DXVECTOR3 CMouse::GetMousePos()
 {
-	return m_pTransform->GetPosition();
+	return m_pTransform->GetLocalPosition();
 }
 

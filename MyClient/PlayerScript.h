@@ -28,6 +28,7 @@ public:
 private:
 	CTransform* pTransform;
 	CAnimator*	pAnimator;
+	CBoxCollider* pBoxCollider;
 	CKeyMgr*	pKeyMgr;
 
 public:

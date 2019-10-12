@@ -22,7 +22,7 @@ void CBoxCollider::Initialize(CGameObject * pObject)
 	NULL_CHECK_MSG_RETURN(m_pTransform, Alert.c_str());
 
 	m_GameObject = pObject;
-	m_ObjectPos = m_pTransform->GetPosition();
+	m_ObjectPos = m_pTransform->GetLocalPosition();
 
 	m_width = 16.0f, m_height = 16.0f;
 	m_PosX = 0.0f, m_PosY = 0.0f;
@@ -153,10 +153,10 @@ void CBoxCollider::SetBoxCollider()
 	wstring Alert = m_GameObject->GetObjectName() + L" 오브젝트는 트랜스폼 컴포넌트가 없습니다";
 	NULL_CHECK_MSG_RETURN(m_pTransform, Alert.c_str());
 
-	m_ObjectPos = m_pTransform->GetPosition();
+	m_ObjectPos = m_pTransform->GetLocalPosition();
 	if (m_GameObject->GetParentObject() != nullptr)
 	{
-		D3DXVECTOR3 parentPos = m_GameObject->GetParentObject()->GetComponent<CTransform>()->GetPosition();
+		D3DXVECTOR3 parentPos = m_GameObject->GetParentObject()->GetComponent<CTransform>()->GetLocalPosition();
 		m_ObjectPos += parentPos;
 	}
 

@@ -436,7 +436,7 @@ BOOL CMapTool::OnInitDialog()
 	m_pDeviceMgr->GetDevice()->CreateVertexBuffer(4 * sizeof(Vertex), D3DUSAGE_WRITEONLY, FVF_VERTEX, D3DPOOL_MANAGED, &m_pVB, 0);
 	m_pDeviceMgr->GetDevice()->CreateIndexBuffer(6 * sizeof(WORD), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_pIB, 0);
 
-
+	m_Layer.AddString(L"LAYER_Ground");
 	m_Layer.AddString(L"LAYER_0");
 	m_Layer.AddString(L"LAYER_1");
 	m_Layer.AddString(L"LAYER_2");

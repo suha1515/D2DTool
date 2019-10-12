@@ -80,3 +80,130 @@ bool CCollisionMgr::CheckAABB(CBoxCollider * pSource, CBoxCollider * pDest)
 	return true;
 	return false;
 }
+
+bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest)
+{
+	const D3DXVECTOR3* destBox = pDest->GetBox();
+	const D3DXVECTOR3* srcBox = pSource->GetBox();
+	COLLIDE_TYPE coltype = pDest->GetCollideType();
+	bool left;
+	bool right;
+	bool top;
+	bool bottom;
+
+	LINE line1, line2;
+	//콜라이더 타입이 왼쪽상단 삼각형일경우 
+	if (coltype == LEFT_TOP)
+	{
+		//대각선
+		line1.startPoint = destBox[1];
+		line1.endPoint = destBox[2];
+		if (LineRect(line1, srcBox))
+			return true;
+		//좌측선
+		line1.startPoint = destBox[0];
+		line1.endPoint = destBox[1];
+		if (LineRect(line1, srcBox))
+			return true;
+
+		//상단 선.
+		line1.startPoint = destBox[0];
+		line1.endPoint = destBox[2];
+		if (LineRect(line1, srcBox))
+			return true;
+	}
+	//좌측하단삼각형
+	else if (coltype == LEFT_BOTTOM)
+	{
+		//대각선
+		line1.startPoint = destBox[0];
+		line1.endPoint = destBox[3];
+		if (LineRect(line1, srcBox))
+			return true;
+
+		//좌측선
+		line1.startPoint = destBox[0];
+		line1.endPoint = destBox[1];
+		if (LineRect(line1, srcBox))
+			return true;
+
+		//하단선
+		line1.startPoint = destBox[1];
+		line1.endPoint = destBox[3];
+		if (LineRect(line1, srcBox))
+			return true;
+	}
+	//우측상단삼각형
+	else if (coltype == RIGHT_TOP)
+	{
+
+		//대각선
+		line1.startPoint = destBox[0];
+		line1.endPoint = destBox[3];
+		if (LineRect(line1, srcBox))
+			return true;
+		//상단선
+		line1.startPoint = destBox[0];
+		line1.endPoint = destBox[2];
+		if (LineRect(line1, srcBox))
+			return true;
+
+		//우측선
+		line1.startPoint = destBox[2];
+		line1.endPoint = destBox[3];
+		if (LineRect(line1, srcBox))
+			return true;
+	}
+	else if (coltype == RIGHT_BOTTOM)
+	{
+		//대각선
+		line1.startPoint = destBox[2];
+		line1.endPoint = destBox[1];
+		if (LineRect(line1, srcBox))
+			return true;
+
+		//우측선
+		line1.startPoint = destBox[2];
+		line1.endPoint = destBox[3];
+		if (LineRect(line1, srcBox))
+			return true;
+
+		//하단선
+		line1.startPoint = destBox[1];
+		line1.endPoint = destBox[3];
+		if (LineRect(line1, srcBox))
+			return true;
+	}
+}
+
+D3DXVECTOR3 CCollisionMgr::GetNormalBox(const D3DXVECTOR3 * pSrcPos, CBoxCollider * pDestBox)
+{
+	 const D3DXVECTOR3* destBox = pDestBox->GetBox();
+	 const D3DXVECTOR3* boxPos = pDestBox->GetBoxPosition();
+	 D3DXVECTOR3 normal = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	 //박스의 좌측에 있는경우
+	if (pSrcPos->x < boxPos->x&&(pSrcPos->y<destBox[0].y&&pSrcPos->y>destBox[1].y))
+	{
+		normal = D3DXVECTOR3(-1.0f, 0.0f, 0.0f);
+		return normal;
+	}
+	//박스의 우측에 있는경우.
+	else if (pSrcPos->x > boxPos->x && (pSrcPos->y<destBox[0].y&&pSrcPos->y>destBox[1].y))
+	{
+		normal = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
+		return normal;
+	}
+	//박스의 상단에 있는경우
+	else if (pSrcPos->y > boxPos->y && (pSrcPos->x > destBox[0].x&&pSrcPos->x < destBox[2].x))
+	{
+		normal = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+		return normal;
+	}
+	//박스의 하단에 있는경우
+	else if (pSrcPos->y < boxPos->y && (pSrcPos->x > destBox[0].x&&pSrcPos->x < destBox[2].x))
+	{
+		normal = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
+		return normal;
+	}
+	return normal;
+}

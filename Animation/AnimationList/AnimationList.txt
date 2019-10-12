@@ -1,2 +1,3 @@
 ../Animation/Player.anim
+../Animation/Player_Attack_Effect.anim
 ../Animation/Player_bullet.anim

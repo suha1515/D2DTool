@@ -26,7 +26,7 @@ void CPlayerScript::OnInit()
 	pKeyMgr = CKeyMgr::GetInstance();
 	pAnimator = m_pGameObject->GetComponent<CAnimator>();
 	pTransform = m_pGameObject->GetComponent<CTransform>();
-
+	pBoxCollider = m_pGameObject->GetComponent<CBoxCollider>();
 	//초기 방향설정
 	m_CurDir = DOWN;
 	m_PreDir = m_CurDir;
@@ -59,7 +59,7 @@ void CPlayerScript::OnInit()
 	m_Down = true;
 	m_Up = false;
 
-	playerPos = &pTransform->GetPosition();
+	playerPos = &pTransform->GetLocalPosition();
 }
 
 void CPlayerScript::OnEnable()
@@ -168,7 +168,6 @@ void CPlayerScript::MoveInput()
 		else if (m_CurState == RUN_END && !pAnimator->IsPlaying())
 			m_CurState = IDLE;
 	}
-	cout << m_fVelocity << endl;
 	//근접공격중에는 움직이지 않는다
 	if (m_CurState != MEELE)
 	{
@@ -714,10 +713,9 @@ void CPlayerScript::AtkState()
 void CPlayerScript::AttackBullet()
 {
 	CGameObject* pBullet = CObjectMgr::GetInstance()->AddCopy(L"Small_Ball", L"my_Bullet");
-	pBullet->GetComponent<CTransform>()->SetPosition(pTransform->GetPosition());
+	pBullet->GetComponent<CTransform>()->SetPosition(*pTransform->GetWorldPos());
 
 	pBullet->AddScripts(CBulletScript::Create(m_BulletAngle, 400.f, pBullet));
-	cout << m_MouseAngle << endl;
 }
 
 void CPlayerScript::CheckTiles()
@@ -727,6 +725,7 @@ void CPlayerScript::CheckTiles()
 	int mapSizex = CObjectMgr::GetInstance()->m_MapSizeX;
 	int mapSizey = CObjectMgr::GetInstance()->m_MapSizeY;
 
+	D3DXVECTOR3 pos = *pTransform->GetWorldPos();
 	int indexX = ((( mapSizex / 2)+ playerPos->x)/ 16);
 	int indexY = ((( mapSizey / 2)- playerPos->y)/ 16);
 	int index = indexX + indexY*mapSizex;
@@ -740,29 +739,39 @@ void CPlayerScript::CheckTiles()
 	m_NearTiles.push_back(tiles[(indexX-1) + (indexY+1)*mapSizex]);
 	m_NearTiles.push_back(tiles[indexX + (indexY+1)*mapSizex]);
 	m_NearTiles.push_back(tiles[(indexX+1) + (indexY+1)*mapSizex]);
+
 }
 
 bool CPlayerScript::CollideTiles()
 {
-	D3DXVECTOR3& playerPos = pTransform->GetPosition();
+	D3DXVECTOR3& playerPos = pTransform->GetLocalPosition();
 	for (auto& i : m_NearTiles)
 	{
 		if (i != nullptr)
 		{
-			if (m_bIsDebug)
+			CBoxCollider* pDestBoxCollider = i->GetComponent<CBoxCollider>();
+			D3DXVECTOR3	  destPos = *i->GetComponent<CTransform>()->GetWorldPos();
+			//타일컬링되는 오브젝트들 확인. ( 충돌체 있는녀석만)
+			i->SetObjectCliked(true, D3DCOLOR_XRGB(255, 0, 0));
+			if (pDestBoxCollider != nullptr)
 			{
-				//타일컬링되는 오브젝트들 확인.
-				i->SetObjectCliked(true, D3DCOLOR_XRGB(255, 0, 0));		
-			}
-			CBoxCollider* pBoxCollider = i->GetComponent<CBoxCollider>();
-			D3DXVECTOR3	  destPos = i->GetComponent<CTransform>()->GetPosition();
-			if (pBoxCollider != nullptr)
-			{
-				float x = 0, y = 0;
-				if (CCollisionMgr::GetInstance()->CheckAABB(m_pGameObject->GetComponent<CBoxCollider>(), pBoxCollider))
+				COLLIDE_TYPE coltype = pDestBoxCollider->GetCollideType();
+				//사각형충돌과 삼각형충돌이 있다
+				//사각형 충돌시
+				if (coltype == NORMAL)
 				{
-					return true;
+					if (CCollisionMgr::GetInstance()->CheckAABB(pBoxCollider, pDestBoxCollider))
+					{
+						cout << "사각형충돌" << endl;
+						return true;
+					}
 				}
+				//삼각형 충돌시. 그외 삼각형 충돌
+				else if(coltype!=NORMAL)
+				{
+					if (CCollisionMgr::GetInstance()->CheckLineBox(pBoxCollider, pDestBoxCollider))
+						return true;					
+				}		
 			}
 		}
 	}
