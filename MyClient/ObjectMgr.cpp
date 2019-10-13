@@ -41,9 +41,9 @@ void CObjectMgr::AddObject(CGameObject * object)
 		int index;
 		if (pTransform != nullptr)
 		{
-			D3DXVECTOR3 pos = *pTransform->GetWorldPos();
-			int indexX = ((m_MapSizeX / 2) + pos.x)/16;
-			int indexY = ((m_MapSizeY / 2) - pos.y)/16;
+			D3DXVECTOR3* pos = pTransform->GetWorldPos();
+			int indexX = ((m_MapSizeX / 2) + pos->x)/16;
+			int indexY = ((m_MapSizeY / 2) - pos->y)/16;
 
 			m_index.push_back({ indexX,indexY });
 			index = indexX + (indexY*m_MapSizeX);
@@ -52,10 +52,19 @@ void CObjectMgr::AddObject(CGameObject * object)
 				m_Tiles[index] = object;
 			}	
 		}
-		m_RenderTiles.push_back(object);
-	}
 
-	m_Objects[object->GetLevel()].push_back(object);
+			m_RenderTiles.push_back(object);
+	}
+	if (object->GetObjectTag() == L"step")
+	{
+		m_Stairs[object->GetObjectLayer()].push_back(object);
+	}
+		m_Objects[object->GetLevel()].push_back(object);
+}
+
+void CObjectMgr::AddScriptObject(CScripts * script)
+{
+	m_Scripts.push_back(script);
 }
 
 void CObjectMgr::Initialize()
@@ -122,14 +131,7 @@ void CObjectMgr::Update()
 				//렌더 컴포넌트가 nullptr이 아닐경우. 레이어에따라 렌더할 오브젝트를 넣는다.
 				if ((*iter_begin)->GetComponent<CTextureRenderer>() != nullptr)
 				{
-					//인스턴스 태그를 가지고 있을경우 (바꿈.. 레이어0으로 해야할듯하다)
-				/*	if ((*iter_begin)->GetObjectLayer()==LAYER_0)
-					{
-						CInstanceMgr::GetInstance()->AddObject((*iter_begin));
-					}*/
-					//아닐경우
-				/*	else*/
-						m_RenderObjects[(*iter_begin)->GetObjectLayer()].push_back((*iter_begin));
+					m_RenderObjects[(*iter_begin)->GetObjectLayer()].push_back((*iter_begin));
 				}
 				//오브젝트가 스크립트 를가지고있으면 따로 스크립트 처리하기위해 컨테이너에 넣는다.
 				if ((*iter_begin)->GetScripts().size() > 0)
@@ -163,7 +165,7 @@ void CObjectMgr::Update()
 void CObjectMgr::Render()
 {
 	//인스턴스 오브젝트는 가장 먼저그린다.(가장 밑바닥의 경우만가능할것같은데..
-	//CInstanceMgr::GetInstance()->InstanceRender();
+	CInstanceMgr::GetInstance()->InstanceRender();
 	for (int i = 0; i < LAYER_END; ++i)
 	{
 		//Y축 소팅. 
@@ -172,18 +174,26 @@ void CObjectMgr::Render()
 		for (auto& object : m_RenderObjects[i])
 		{
 			//활성화 상태만 렌더함.
-			if(object->GetComponent<CTextureRenderer>()->GetOn())
+			if (object->GetComponent<CTextureRenderer>()->GetOn())
+			{
 				object->Render();
+			}
 		}
 		m_RenderObjects[i].clear();
 	}
 	
+	//일단 스크립트 오브젝트 렌더를 앞에다 두겠음
+	for (auto&i : m_SciptObject)
+	{
+		for (auto&j : i->GetScripts())
+			j.second->OnRender();
+	}
+
 	if (m_bIsDebug)
 	{
 		DebugRender();
 	}
 		
-
 	m_SciptObject.clear();
 	m_CollideObj.clear();
 	m_CollideTile.clear();
@@ -197,13 +207,17 @@ void CObjectMgr::DebugRender()
 	}
 	for (auto&i : m_CollideTile)
 	{
-		i->DebugRender();
+		//i->DebugRender();
 	}
 	for (auto&i : m_RenderTiles)
 	{
-		i->DebugRender();
+		//i->DebugRender();
 	}
-
+	/*for (auto&i : m_Stairs)
+	{
+		for (auto&j : i.second)
+			j->SetObjectCliked(true, D3DCOLOR_XRGB(247, 49, 211));
+	}*/
 }
 
 int CObjectMgr::GetObjectCount()
@@ -345,6 +359,11 @@ const map<int, vector<CGameObject*>>& CObjectMgr::GetObjects()
 const vector<CGameObject*>& CObjectMgr::GetTiles()
 {
 	return m_Tiles;
+}
+
+const map<Layer, vector<CGameObject*>>& CObjectMgr::GetStairs()
+{
+	return m_Stairs;
 }
 
 HRESULT CObjectMgr::LoadObject(const wstring & filePath)

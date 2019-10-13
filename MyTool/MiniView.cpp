@@ -77,10 +77,12 @@ void CMiniView::OnDraw(CDC* pDC)
 	//cout << "카메라 위치 : "<<m_Cam->GetLocalPosition().x << " , " << m_Cam->GetLocalPosition().y << endl;
 	// TODO: 여기에 그리기 코드를 추가합니다.
 	m_pDeviceMgr->Render_Begin();
+	m_Cam->Update();
+	m_Cam->SetTransform();
 	if (m_texInfo != nullptr)
 	{
-		m_Cam->Update();
-		m_Cam->SetTransform();
+		
+
 		m_pDeviceMgr->GetDevice()->SetStreamSource(0, m_pVB, 0, sizeof(Vertex));
 		m_pDeviceMgr->GetDevice()->SetIndices(m_pIB);
 		m_pDeviceMgr->GetDevice()->SetFVF(FVF_VERTEX);
@@ -97,8 +99,11 @@ void CMiniView::OnDraw(CDC* pDC)
 		);
 		m_pDeviceMgr->GetDevice()->SetRenderState(D3DRS_ALPHABLENDENABLE, false);
 
+		
 	}
-	m_pDeviceMgr->GetLine()->End();
+	DrawLine();
+	
+
 	m_pDeviceMgr->Render_End(m_hWnd);
 }
 
@@ -241,6 +246,47 @@ void CMiniView::SetTileSize(int sizeX,int sizeY)
 	fGapY = (float)itileSizeY / imgHeight;
 }
 
+void CMiniView::DrawLine()
+{
+	D3DXMATRIX* mat = m_Cam->GetViewProjMatrix();
+	CDeviceMgr::GetInstance()->GetLine()->SetWidth(3.f);
+	CDeviceMgr::GetInstance()->GetLine()->Begin();
+	{
+		/*D3DXVECTOR3 temp_Line[4];
+		temp_Line[0] = m_Line[0];
+		temp_Line[1] = m_Line[1];
+		m_pDeviceMgr->GetLine()->DrawTransform(temp_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 0));
+		temp_Line[1] = m_Line[1];
+		temp_Line[3] = m_Line[3];
+		m_pDeviceMgr->GetLine()->DrawTransform(temp_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 0));
+
+		temp_Line[3] = m_Line[3];
+		temp_Line[2] = m_Line[2];
+		m_pDeviceMgr->GetLine()->DrawTransform(temp_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 0));
+
+		temp_Line[2] = m_Line[2];
+		temp_Line[0] = m_Line[0];
+		m_pDeviceMgr->GetLine()->DrawTransform(temp_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 0));*/
+		D3DXVECTOR3 temp_Line[4];
+		temp_Line[0] = { (-150.f),  -150.f,0.0f };
+		temp_Line[1] = { (-150.f),  -134.f,0.0f };
+		m_pDeviceMgr->GetLine()->DrawTransform(temp_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 0));
+		/*temp_Line[1] = { (-150.f),  -134.f,0.0f };
+		  temp_Line[3] = { (-134.f),  -134.f,0.0f };
+		m_pDeviceMgr->GetLine()->DrawTransform(temp_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 0));
+
+		temp_Line[3] = { (-134.f),  -134.f,0.0f };
+		temp_Line[2] = { (-134.f),  -150.f,0.0f };
+		m_pDeviceMgr->GetLine()->DrawTransform(temp_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 0));
+
+		temp_Line[2] = { (-134.f),  -150.f,0.0f };
+		temp_Line[0] = { (-150.f),  -150.f,0.0f };
+		m_pDeviceMgr->GetLine()->DrawTransform(temp_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 0));*/
+	}
+	CDeviceMgr::GetInstance()->GetLine()->End();
+
+}
+
 
 // CMiniView 메시지 처리기입니다.
 
@@ -299,9 +345,21 @@ void CMiniView::OnLButtonDown(UINT nFlags, CPoint point)
 			m_MousePos.x = vMouse.x;
 			m_MousePos.y = vMouse.y;
 
+			RECT rect;
+			this->GetClientRect(&rect);
+
+			float winX = (rect.right - rect.left);
+			float winY = (rect.bottom - rect.top);
+
 			cout << int(vMouse.x) / itileSizeX << " , " << int(vMouse.y) / itileSizeY << endl;
 			int indexX = int(vMouse.x) / itileSizeX;
 			int indexY = int(vMouse.y) / itileSizeY;
+
+			m_Line[0] = D3DXVECTOR3(-winX*0.5f +	indexX*itileSizeX,   -winY*0.5f+indexY*itileSizeY,0.0f);
+			m_Line[1] = D3DXVECTOR3(-winX*0.5f +	indexX*itileSizeX,   -winY*0.5f+(indexY+1)*itileSizeY, 0.0f);
+			m_Line[2] = D3DXVECTOR3(-winX*0.5f +  (indexX+1)*itileSizeX, -winY*0.5f+indexY*itileSizeY, 0.0f);
+			m_Line[3] = D3DXVECTOR3(-winX*0.5f +  (indexX+1)*itileSizeX, -winY*0.5f+ (indexY+1)*itileSizeY, 0.0f);
+
 
 			tex[0].x = indexX*fGapX, tex[0].y = indexY*fGapY;
 			tex[1].x = indexX*fGapX, tex[1].y = (indexY + 1)*fGapY;
@@ -350,7 +408,8 @@ void CMiniView::OnLButtonDown(UINT nFlags, CPoint point)
 			{
 				pMyForm->GetAnimTool()->m_AnimMaker.SetTexture(m_texInfo->textureName.c_str(), tex,&XMFLOAT2(itileSizeX,itileSizeY));
 				cout << "애니메이션 툴에 전달됨" << endl;
-			}			
+			}	
+			Invalidate(FALSE);
 		}
 	
 	}

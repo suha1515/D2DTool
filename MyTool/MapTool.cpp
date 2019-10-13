@@ -28,6 +28,7 @@ CMapTool::CMapTool(CWnd* pParent /*=NULL*/)
 	, m_TileSetSize(_T(""))
 	, m_iTileSizeX(0)
 	, m_iTileSizeY(0)
+	, m_Tag(_T(""))
 {
 
 }
@@ -67,6 +68,9 @@ void CMapTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK4, m_Collide);
 	DDX_Control(pDX, IDC_COMBO1, m_Layer);
 	DDX_Control(pDX, IDC_CHECK3, m_InvertY);
+	DDX_Control(pDX, IDC_CHECK5, m_Empty);
+	DDX_Text(pDX, IDC_EDIT3, m_Tag);
+	DDX_Control(pDX, IDC_EDIT3, m_TagEdit);
 }
 
 void CMapTool::Renew(XMFLOAT2 * tex)

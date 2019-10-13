@@ -33,6 +33,7 @@ public:
 	void CheckTiles();
 public:
 	bool CollideTiles();
+	bool CollideTilesLine();
 public:
 	static CBulletScript* Create(const float & angle, const float & speed, CGameObject* pGameObject);
 

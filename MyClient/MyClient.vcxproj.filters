@@ -106,6 +106,9 @@
     <Filter Include="95.Component\04.Scripts\01.BulletScript">
       <UniqueIdentifier>{ca1e4925-7722-44ea-9c17-279b1f9d9f2f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="94.Math">
+      <UniqueIdentifier>{693320a7-ffde-45e9-a35b-d7bda1cd65cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -212,6 +215,9 @@
     </ClInclude>
     <ClInclude Include="Mouse.h">
       <Filter>01.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>94.Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

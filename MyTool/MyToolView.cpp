@@ -294,22 +294,31 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 			//레이어지정
 			if (m_pMyForm->m_MapTool.m_Layer.GetCurSel() != -1)
 				pGameObject->SetObjectLayer((Layer)m_pMyForm->m_MapTool.m_Layer.GetCurSel());
+			//태그지정
+			CString tag;
+			m_pMyForm->m_MapTool.m_TagEdit.GetWindowTextW(tag);
+			if (tag != L"")
+				pGameObject->SetObjectTag(tag.operator LPCWSTR());
+		
+			
+				//트랜스폼 컴포넌트
+				CTransform* pTransform = new CTransform;
+				pTransform->Initialize(pGameObject);
+				D3DXVECTOR3 pos = D3DXVECTOR3((float)mousePos.x, (float)mousePos.y, 0.0f);
+				pTransform->SetPosition(pos);
 
-			//트랜스폼 컴포넌트
-			CTransform* pTransform = new CTransform;
-			pTransform->Initialize(pGameObject);
-			D3DXVECTOR3 pos = D3DXVECTOR3((float)mousePos.x, (float)mousePos.y, 0.0f);
-			pTransform->SetPosition(pos);
+				pGameObject->AddComponent(pTransform);
 
-			pGameObject->AddComponent(pTransform);
+				
+				
+				// 렌더 컴포넌트 넣기.
+				CTextureRenderer* pRender = new CTextureRenderer;
+				pRender->Initialize(pGameObject);
+				pRender->SetTexture((LPCTSTR)tileName);
+				pRender->SetVertex(size, tex);
 
-			// 렌더 컴포넌트 넣기.
-			CTextureRenderer* pRender = new CTextureRenderer;
-			pRender->Initialize(pGameObject);
-			pRender->SetTexture((LPCTSTR)tileName);
-			pRender->SetVertex(size, tex);
-
-			pGameObject->AddComponent(pRender);
+				pGameObject->AddComponent(pRender);
+			
 
 			//충돌하는경우.
 			if (m_pMyForm->m_MapTool.m_Collide.GetCheck() == 1)
@@ -324,6 +333,49 @@ void CMyToolView::OnLButtonDown(UINT nFlags, CPoint point)
 			m_pInspect->m_HierarchyView.AddObject(pGameObject);
 			m_pObjectMgr->AddObject(pGameObject);
 			Invalidate(FALSE);
+		}
+		else
+		{
+			if (m_pMyForm->m_MapTool.m_Empty.GetCheck() == 1)
+			{
+				wstring name = L"GameObject" + to_wstring(m_pObjectMgr->GetObjectCount());
+
+				CGameObject* pGameObject = new CGameObject;
+				pGameObject->Initialize();
+				pGameObject->SetObjectName(name);
+			
+				//레이어지정
+				if (m_pMyForm->m_MapTool.m_Layer.GetCurSel() != -1)
+					pGameObject->SetObjectLayer((Layer)m_pMyForm->m_MapTool.m_Layer.GetCurSel());
+				//태그지정
+				CString tag;
+				m_pMyForm->m_MapTool.m_TagEdit.GetWindowTextW(tag);
+				if (tag != L"")
+					pGameObject->SetObjectTag(tag.operator LPCWSTR());
+
+
+				//트랜스폼 컴포넌트
+				CTransform* pTransform = new CTransform;
+				pTransform->Initialize(pGameObject);
+				D3DXVECTOR3 pos = D3DXVECTOR3((float)mousePos.x, (float)mousePos.y, 0.0f);
+				pTransform->SetPosition(pos);
+
+				pGameObject->AddComponent(pTransform);
+
+				//충돌하는경우.
+			if (m_pMyForm->m_MapTool.m_Collide.GetCheck() == 1)
+			{
+				CBoxCollider*	pBoxCollider = new CBoxCollider;
+				pBoxCollider->Initialize(pGameObject);
+				pBoxCollider->SetCollideType(NORMAL);
+				pGameObject->AddComponent(pBoxCollider);
+			}
+
+			//0을 반환한 경우는 부모로생성하는것
+			m_pInspect->m_HierarchyView.AddObject(pGameObject);
+			m_pObjectMgr->AddObject(pGameObject);
+			Invalidate(FALSE);
+			}
 		}
 	}
 

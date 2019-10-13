@@ -16,6 +16,7 @@ CPlayerScript::CPlayerScript()
 
 CPlayerScript::~CPlayerScript()
 {
+	delete m_playerFoot;
 }
 
 //라이프 사이클.
@@ -40,8 +41,8 @@ void CPlayerScript::OnInit()
 
 	//애니메이터가 없을경우 경고
 	if (nullptr == pAnimator)
-		MessageBox(0,L"애니메이터 없음", L"Error",0);
-	
+		MessageBox(0, L"애니메이터 없음", L"Error", 0);
+
 	//카메라가 플레이어를 따라오도록
 	CCameraMgr::GetInstance()->GetMainCamera()->Follow(m_pGameObject);
 
@@ -60,7 +61,23 @@ void CPlayerScript::OnInit()
 	m_Up = false;
 
 	playerPos = &pTransform->GetLocalPosition();
+
+	//초기층 설정
+	int layer = m_pGameObject->GetObjectLayer() - 1;
+
+	m_CurLayer = (Layer)layer;
+	m_PreLayer = m_CurLayer;
+
+	m_playerFoot = new CBoxCollider;
+	m_playerFoot->Initialize(m_pGameObject);
+	m_playerFoot->SetBoxOffset( 0.0f, - 16.f);
+	m_playerFoot->SetBoxSize(7.f, 5.f);
+	m_playerFoot->SetBoxCollider();
+
+	playerUpBox = pBoxCollider;
+	playerDownBox = m_playerFoot;
 }
+
 
 void CPlayerScript::OnEnable()
 {
@@ -70,7 +87,7 @@ void CPlayerScript::OnCollision(CGameObject * pGameObject, XMFLOAT2* move)
 {
 	if (nullptr != pGameObject)
 	{
-		
+
 	}
 }
 
@@ -88,6 +105,8 @@ void CPlayerScript::OnUpdate()
 		m_PrePos = *playerPos;
 		//타일확인
 		CheckTiles();
+		//레이어 확인
+		CheckLayer();
 		//방향키 입력
 		MoveInput();
 		//마우스 입력
@@ -100,6 +119,7 @@ void CPlayerScript::OnUpdate()
 		AtkState();
 		//이동 애니메이션 상태변화
 		AnimState();
+
 		//이동
 		Moving();
 	}
@@ -111,6 +131,8 @@ void CPlayerScript::OnUpdate()
 
 	//타일제거
 	m_NearTiles.clear();
+
+	m_playerFoot->SetBoxCollider();
 	
 }
 
@@ -120,6 +142,8 @@ void CPlayerScript::OnLateUpdate()
 
 void CPlayerScript::OnRender()
 {
+	if (m_bIsDebug)
+		m_playerFoot->DrawCollide();
 }
 
 void CPlayerScript::OnDisable()
@@ -151,7 +175,7 @@ void CPlayerScript::MoveInput()
 				if (m_CurState != THROW_END && !pAnimator->IsPlaying())
 					m_CurState = RUN;
 			}
-		}	
+		}
 	}
 	//방향 키를 놨경우 (방향키) 모두!
 	if (!pKeyMgr->KeyPressing(KEY_LEFT) && !pKeyMgr->KeyPressing(KEY_RIGHT)
@@ -226,7 +250,7 @@ void CPlayerScript::MoveInput()
 	}
 	else
 		m_fVelocity = 0.0f;
-	
+
 	//디버그모드
 	if (pKeyMgr->KeyDown(KEY_P))
 	{
@@ -252,9 +276,9 @@ void CPlayerScript::MouseInput()
 	if (pKeyMgr->KeyDown(KEY_LBUTTON))
 	{
 		cout << "던지기!" << endl;
-	
+
 		D3DXVECTOR3 mousePos = pKeyMgr->GetMouse()->GetMousePos();
-		
+
 
 		m_BulletAngle = GetAngle(*playerPos, mousePos);
 
@@ -302,73 +326,94 @@ void CPlayerScript::MeeleAttack()
 	if (pKeyMgr->GetInstance()->KeyDown(KEY_V))
 	{
 		m_CurState = MEELE;
+		m_bIsJump = true;
+		m_JumpStartPos = *playerPos;
+		m_JumpEndPos = D3DXVECTOR3(playerPos->x-32.f, playerPos->y+32.f, 0.0f);
+		m_fJumpEndTime = 1.0f;
+		m_JumpControlPos = D3DXVECTOR3(playerPos->x-10.f, playerPos->y+60.f, 0.0f);
+		
+
+
 	}
 }
 
 void CPlayerScript::Moving()
 {
-	float m_fSpeed=0.5f;
+	float m_fSpeed = 0.5f;
 	float m_moveX = 0.0f;
 	float m_moveY = 0.0f;
-	if (m_CurState == THROW|| m_CurState == THROW_END)
-	{
-		m_fSpeed = 0.2f;
-	}
-	switch (m_CurMoveDir)
-	{
-	case UP:
-		m_moveY = m_fSpeed*m_fVelocity;
-		break;
-	case DOWN:
-		m_moveY = -1*(m_fSpeed*m_fVelocity);
-		break;
-	case LEFT_UP_45:
-		m_moveX = -1 * (m_fSpeed*m_fVelocity);
-		m_moveY = m_fSpeed*m_fVelocity;
-		break;
-	case RIGHT_UP_45:
-		m_moveX = m_fSpeed*m_fVelocity;
-		m_moveY = m_fSpeed*m_fVelocity;
-		break;
-	case LEFT:
-		m_moveX = -1 * (m_fSpeed*m_fVelocity);
-		break;
-	case RIGHT:
-		m_moveX = m_fSpeed*m_fVelocity;
-		break;
-	case LEFT_DOWN_45:
-		m_moveX = -1 * (m_fSpeed*m_fVelocity);
-		m_moveY = -1 * (m_fSpeed*m_fVelocity);
-		break;
-	case RIGHT_DOWN_45:
-		m_moveX = m_fSpeed*m_fVelocity;
-		m_moveY = -1 * (m_fSpeed*m_fVelocity);
-		break;
-	}
-	playerPos->x += m_moveX;
-	m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
-	if (CollideTiles())
-	{
-		*playerPos = m_PrePos;
-		m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
-		cout << "x충돌중" << endl;
-	}
-	m_PrePos = *playerPos;
-	playerPos->y += m_moveY;
-	m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
-	if (CollideTiles())
-	{
-		*playerPos = m_PrePos;
-		m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
-		cout << "y충돌중" << endl;
-	}
 	
+		if (m_CurState == THROW || m_CurState == THROW_END)
+		{
+			m_fSpeed = 0.2f;
+		}
+		switch (m_CurMoveDir)
+		{
+		case UP:
+			m_moveY = m_fSpeed*m_fVelocity;
+			break;
+		case DOWN:
+			m_moveY = -1 * (m_fSpeed*m_fVelocity);
+			break;
+		case LEFT_UP_45:
+			m_moveX = -1 * (m_fSpeed*m_fVelocity);
+			m_moveY = m_fSpeed*m_fVelocity;
+			break;
+		case RIGHT_UP_45:
+			m_moveX = m_fSpeed*m_fVelocity;
+			m_moveY = m_fSpeed*m_fVelocity;
+			break;
+		case LEFT:
+			m_moveX = -1 * (m_fSpeed*m_fVelocity);
+			break;
+		case RIGHT:
+			m_moveX = m_fSpeed*m_fVelocity;
+			break;
+		case LEFT_DOWN_45:
+			m_moveX = -1 * (m_fSpeed*m_fVelocity);
+			m_moveY = -1 * (m_fSpeed*m_fVelocity);
+			break;
+		case RIGHT_DOWN_45:
+			m_moveX = m_fSpeed*m_fVelocity;
+			m_moveY = -1 * (m_fSpeed*m_fVelocity);
+			break;
+		}
+
+		playerPos->x += m_moveX;
+		m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
+		if (StepStair())
+			return;
+		if (CollideTiles())
+		{
+			*playerPos = m_PrePos;
+			m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
+			cout << "x충돌중" << endl;
+		}
+		m_PrePos = *playerPos;
+		playerPos->y += m_moveY;
+		m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
+		//계단 확인
+		if (StepStair())
+			return;
+		if (CollideTiles())
+		{
+			*playerPos = m_PrePos;
+			m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
+			cout << "y충돌중" << endl;
+		}
+	if (!m_bIsJump)
+	{
+	}
+	else
+	{
+		Jump();
+	}
 
 }
 
 void CPlayerScript::AnimState()
 {
-	if (m_CurState != m_PreState||m_CurDir != m_PreDir)
+	if (m_CurState != m_PreState || m_CurDir != m_PreDir)
 	{
 		switch (m_CurState)
 		{
@@ -526,7 +571,7 @@ void CPlayerScript::AnimState()
 					pAnimator->Play(L"Player_Throw_Right2_Down", ANIMATION_TYPE::ANIMATION_ONCE);
 					break;
 				}
-			}	
+			}
 			break;
 		case THROW_END:
 			//cout << "원거리 공격 중단." << endl;
@@ -646,33 +691,41 @@ void CPlayerScript::DirState()
 		{
 		case UP:
 			cout << "윗방향" << endl;
+			m_JumpControlPos = D3DXVECTOR3(playerPos->x, playerPos->y, 0.0f);
 			break;
 		case DOWN:
 			cout << "아랫방향" << endl;
+			m_JumpControlPos = D3DXVECTOR3(playerPos->x, playerPos->y, 0.0f);
 			break;
 		case LEFT_UP_45:
 			cout << "왼쪽위" << endl;
 			pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
+			m_JumpControlPos = D3DXVECTOR3(playerPos->x-10.f, playerPos->y + 40.f, 0.0f);
 			break;
 		case RIGHT_UP_45:
 			cout << "오른위" << endl;
 			pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+			m_JumpControlPos = D3DXVECTOR3((playerPos->x+10.f), playerPos->y + 40.f, 0.0f);
 			break;
 		case LEFT:
 			cout << "왼쪽" << endl;
 			pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
+			m_JumpControlPos = D3DXVECTOR3((playerPos->x - 10.f), playerPos->y + 20.f, 0.0f);
 			break;
 		case RIGHT:
 			cout << "오른쪽" << endl;
 			pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+			m_JumpControlPos = D3DXVECTOR3((playerPos->x +10.f), playerPos->y + 20.f, 0.0f);
 			break;
 		case LEFT_DOWN_45:
 			cout << "왼쪽아래" << endl;
 			pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
+			m_JumpControlPos = D3DXVECTOR3((playerPos->x - 10.f), playerPos->y +10.f, 0.0f);
 			break;
 		case RIGHT_DOWN_45:
-			cout << "오른아래." << endl;	
+			cout << "오른아래." << endl;
 			pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+			m_JumpControlPos = D3DXVECTOR3((playerPos->x +10.f), playerPos->y + 10.f, 0.0f);
 			break;
 		}
 	}
@@ -681,7 +734,7 @@ void CPlayerScript::DirState()
 void CPlayerScript::AtkState()
 {
 	//공격이 끝난경우.
-	if ((m_CurState == THROW && !pAnimator->IsPlaying())|| (m_CurState == MEELE && !pAnimator->IsPlaying()))
+	if ((m_CurState == THROW && !pAnimator->IsPlaying()) || (m_CurState == MEELE && !pAnimator->IsPlaying()))
 	{
 		//공격방향이 오른쪽일경우
 		if (m_AtkDir == RIGHT_ATK)
@@ -707,13 +760,14 @@ void CPlayerScript::AtkState()
 		m_bIsThrow = false;
 	}
 
-	
+
 }
 
 void CPlayerScript::AttackBullet()
 {
 	CGameObject* pBullet = CObjectMgr::GetInstance()->AddCopy(L"Small_Ball", L"my_Bullet");
 	pBullet->GetComponent<CTransform>()->SetPosition(*pTransform->GetWorldPos());
+	pBullet->SetObjectLayer(m_pGameObject->GetObjectLayer());
 
 	pBullet->AddScripts(CBulletScript::Create(m_BulletAngle, 400.f, pBullet));
 }
@@ -726,55 +780,299 @@ void CPlayerScript::CheckTiles()
 	int mapSizey = CObjectMgr::GetInstance()->m_MapSizeY;
 
 	D3DXVECTOR3 pos = *pTransform->GetWorldPos();
-	int indexX = ((( mapSizex / 2)+ playerPos->x)/ 16);
-	int indexY = ((( mapSizey / 2)- playerPos->y)/ 16);
+	int indexX = (((mapSizex / 2) + playerPos->x) / 16);
+	int indexY = (((mapSizey / 2) - playerPos->y) / 16);
 	int index = indexX + indexY*mapSizex;
 
-	m_NearTiles.push_back(tiles[(indexX-1)+ (indexY-1)*mapSizex]);
-	m_NearTiles.push_back(tiles[ indexX + (indexY-1)*mapSizex]);
-	m_NearTiles.push_back(tiles[(indexX+1) + (indexY-1)*mapSizex]);
-	m_NearTiles.push_back(tiles[(indexX-1) + indexY*mapSizex]);
+	m_NearTiles.push_back(tiles[(indexX - 1) + (indexY - 1)*mapSizex]);
+	m_NearTiles.push_back(tiles[indexX + (indexY - 1)*mapSizex]);
+	m_NearTiles.push_back(tiles[(indexX + 1) + (indexY - 1)*mapSizex]);
+	m_NearTiles.push_back(tiles[(indexX - 1) + indexY*mapSizex]);
 	m_NearTiles.push_back(tiles[indexX + indexY*mapSizex]);
-	m_NearTiles.push_back(tiles[(indexX+1) + indexY*mapSizex]);
-	m_NearTiles.push_back(tiles[(indexX-1) + (indexY+1)*mapSizex]);
-	m_NearTiles.push_back(tiles[indexX + (indexY+1)*mapSizex]);
-	m_NearTiles.push_back(tiles[(indexX+1) + (indexY+1)*mapSizex]);
+	m_NearTiles.push_back(tiles[(indexX + 1) + indexY*mapSizex]);
+	m_NearTiles.push_back(tiles[(indexX - 1) + (indexY + 1)*mapSizex]);
+	m_NearTiles.push_back(tiles[indexX + (indexY + 1)*mapSizex]);
+	m_NearTiles.push_back(tiles[(indexX + 1) + (indexY + 1)*mapSizex]);
 
 }
 
 bool CPlayerScript::CollideTiles()
 {
-	D3DXVECTOR3& playerPos = pTransform->GetLocalPosition();
-	for (auto& i : m_NearTiles)
+	if (!m_bIsJump)
 	{
-		if (i != nullptr)
+		D3DXVECTOR3& playerPos = pTransform->GetLocalPosition();
+		for (auto& i : m_NearTiles)
 		{
-			CBoxCollider* pDestBoxCollider = i->GetComponent<CBoxCollider>();
-			D3DXVECTOR3	  destPos = *i->GetComponent<CTransform>()->GetWorldPos();
-			//타일컬링되는 오브젝트들 확인. ( 충돌체 있는녀석만)
-			i->SetObjectCliked(true, D3DCOLOR_XRGB(255, 0, 0));
-			if (pDestBoxCollider != nullptr)
+			//플레이어는 한층아래에있는 오브젝트하고는 충돌하지 않는다. Layer1이면 Layer1이상으로만 충돌. Layer2로 올라갈시 2이상의 것만.
+			//같은레이어가되면 더이상 Y소팅을 할 필요가 없다.
+			if (i != nullptr&&(m_pGameObject->GetObjectLayer() <= i->GetObjectLayer()||i->GetObjectLayer()==LAYER_GROUND))
 			{
-				COLLIDE_TYPE coltype = pDestBoxCollider->GetCollideType();
-				//사각형충돌과 삼각형충돌이 있다
-				//사각형 충돌시
-				if (coltype == NORMAL)
+				CBoxCollider* pDestBoxCollider = i->GetComponent<CBoxCollider>();
+				D3DXVECTOR3	  destPos = *i->GetComponent<CTransform>()->GetWorldPos();
+				//타일컬링되는 오브젝트들 확인. ( 충돌체 있는녀석만)
+				if (m_bIsDebug)
+					i->SetObjectCliked(true, D3DCOLOR_XRGB(255, 0, 0));
+				if (pDestBoxCollider != nullptr)
 				{
-					if (CCollisionMgr::GetInstance()->CheckAABB(pBoxCollider, pDestBoxCollider))
+					COLLIDE_TYPE coltype = pDestBoxCollider->GetCollideType();
+					//사각형충돌과 삼각형충돌이 있다
+					//사각형 충돌시
+					if (coltype == NORMAL)
 					{
-						cout << "사각형충돌" << endl;
-						return true;
+						if (CCollisionMgr::GetInstance()->CheckAABB(pBoxCollider, pDestBoxCollider))
+						{
+							cout << "사각형충돌" << endl;
+							return true;
+						}
+					}
+					//삼각형 충돌시. 그외 삼각형 충돌
+					else if (coltype != NORMAL)
+					{
+						if (CCollisionMgr::GetInstance()->CheckLineBox(pBoxCollider, pDestBoxCollider))
+							return true;
 					}
 				}
-				//삼각형 충돌시. 그외 삼각형 충돌
-				else if(coltype!=NORMAL)
-				{
-					if (CCollisionMgr::GetInstance()->CheckLineBox(pBoxCollider, pDestBoxCollider))
-						return true;					
-				}		
 			}
 		}
 	}
 	return false;
+}
+
+bool CPlayerScript::StepStair()
+{
+	if (!m_bIsJump)
+	{
+		const map<Layer, vector<CGameObject*>>& stairs = CObjectMgr::GetInstance()->GetStairs();
+		Layer playerLayer = m_pGameObject->GetObjectLayer();
+
+		for (auto& j : stairs)
+		{
+			for (auto&i : j.second)
+			{
+				//점프 계단도 같은레이어에는 작동하지않는다 땅으로 작용한다. 다만 아래 레이어로 내려가야하므로 같은경우만 충돌확인하지 않는다.
+				int Uplayer = m_CurLayer + 1;
+				Layer layer = Layer(Uplayer);
+				if (i != nullptr)
+				{
+					CBoxCollider* pDestBoxCollider = i->GetComponent<CBoxCollider>();
+					D3DXVECTOR3	  destPos = *i->GetComponent<CTransform>()->GetWorldPos();
+					D3DXVECTOR3  jumpPos;
+					if (pDestBoxCollider != nullptr)
+					{
+						int current;
+						Layer currentLayer;
+						switch (playerLayer)
+						{
+						case LAYER_1:
+							//같은 경우는 발판이되어 그단계로 올라간다.
+							if (layer == i->GetObjectLayer())
+							{
+								if (CCollisionMgr::GetInstance()->CheckAABB(playerUpBox, pDestBoxCollider))
+								{
+									COLLIDE_TYPE coltype = pDestBoxCollider->GetCollideType();
+									//사각형충돌과 삼각형충돌이 있다
+									//사각형 충돌시
+									if (coltype == NORMAL)
+									{
+										cout << " 윗 발판 충돌" << endl;
+										current = m_pGameObject->GetObjectLayer() + 1;
+										currentLayer = (Layer)current;
+										m_pGameObject->SetObjectLayer(currentLayer);
+										m_ChangeLayer = currentLayer;
+										m_CurLayer = layer;
+										JumpSetUp(*playerPos, destPos, 1.0f);
+										return true;
+									}
+								}
+							} 
+							break;
+						case LAYER_2:
+							//같은 경우는 발판이되어 그단계로 올라간다.
+							if (layer == i->GetObjectLayer())
+							{
+								if (CCollisionMgr::GetInstance()->CheckAABB(playerUpBox, pDestBoxCollider))
+								{
+									COLLIDE_TYPE coltype = pDestBoxCollider->GetCollideType();
+									//사각형충돌과 삼각형충돌이 있다
+									//사각형 충돌시
+									if (coltype == NORMAL)
+									{
+										cout << " 윗 발판 충돌" << endl;
+										current = m_pGameObject->GetObjectLayer() + 1;
+										currentLayer = (Layer)current;
+										m_pGameObject->SetObjectLayer(currentLayer);
+										m_ChangeLayer = currentLayer;
+										m_CurLayer = layer;
+										JumpSetUp(*playerPos, destPos, 1.0f);
+										return true;
+									}
+								}
+							} //플레이어보다 낮은레이어의 발판을 만날경우.
+							else if (m_CurLayer > i->GetObjectLayer())
+							{
+								if (CCollisionMgr::GetInstance()->CheckAABB(playerDownBox, pDestBoxCollider))
+								{
+									COLLIDE_TYPE coltype = pDestBoxCollider->GetCollideType();
+									//사각형충돌과 삼각형충돌이 있다
+									//사각형 충돌시
+									if (coltype == NORMAL)
+									{
+										cout << " 아래 발판 충돌" << endl;
+										if (i->GetObjectLayer() == LAYER_0)
+										{
+											current = m_pGameObject->GetObjectLayer() - 1;
+											if (m_CurDir == DOWN)
+												destPos.y -= 20.f;
+											else
+												destPos.y -= 20.f;
+										}
+										m_pGameObject->SetObjectLayer(LAYER_3);
+										currentLayer = (Layer)current;		
+										m_ChangeLayer = currentLayer;
+										m_CurLayer = (Layer)(current - 1);
+										JumpSetUp(*playerPos, destPos, 1.0f);
+										return true;
+									}
+								}
+							}
+							break;
+						case LAYER_3:
+							//플레이어보다 낮은레이어의 발판을 만날경우.
+						if (m_CurLayer > i->GetObjectLayer())
+							{
+								if (CCollisionMgr::GetInstance()->CheckAABB(playerDownBox, pDestBoxCollider))
+								{
+									COLLIDE_TYPE coltype = pDestBoxCollider->GetCollideType();
+									//사각형충돌과 삼각형충돌이 있다
+									//사각형 충돌시
+									if (coltype == NORMAL)
+									{
+										cout << " 아래 발판 충돌" << endl;
+										if (i->GetObjectLayer() == LAYER_0)
+										{
+											current = m_pGameObject->GetObjectLayer() - 2;
+											if(m_CurDir == DOWN)
+												destPos.y -= 40.f;
+											else
+												destPos.y -= 20.f;
+										}	
+										else
+										{
+											current = m_pGameObject->GetObjectLayer() - 1;
+											if (m_CurDir == DOWN)
+												destPos.y -= 20.f;
+											else
+												destPos.y -= 20.f;
+										}
+											
+										currentLayer = (Layer)current;
+										m_ChangeLayer = currentLayer;
+										m_CurLayer = (Layer)(current - 1);
+										JumpSetUp(*playerPos, destPos, 1.0f);
+										return true;
+									}
+								}
+							}
+							break;
+						}
+		
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
+void CPlayerScript::Jump()
+{
+
+	if (m_fJumpTime <= m_fJumpEndTime)
+	{
+		DIR dir = m_CurDir;
+		D3DXVECTOR3 newPos = BezierCurve(m_JumpStartPos, m_JumpEndPos, m_JumpControlPos, (m_fJumpTime / m_fJumpEndTime));
+		newPos.y += 16.f;
+		pTransform->SetPosition(newPos);
+	}
+	else
+	{
+		m_pGameObject->SetObjectLayer(m_ChangeLayer);
+		m_bIsJump = false;
+		m_fJumpTime -= m_fJumpTime;
+		cout << "점프끝" << endl;
+	}
+	m_fJumpTime += CTimeMgr::GetInstance()->GetDeltaTime();
+
+}
+
+void CPlayerScript::JumpSetUp(const D3DXVECTOR3 & startPos, const D3DXVECTOR3 & endPos, const float & endTime)
+{
+	switch (m_CurDir)
+	{
+	case UP:
+		m_JumpControlPos = D3DXVECTOR3(playerPos->x, playerPos->y, 0.0f);
+		break;
+	case DOWN:
+		m_JumpControlPos = D3DXVECTOR3(playerPos->x, playerPos->y-20.f, 0.0f);
+		break;
+	case LEFT_UP_45:
+		m_JumpControlPos = D3DXVECTOR3(playerPos->x - 10.f, playerPos->y + 40.f, 0.0f);
+		break;
+	case RIGHT_UP_45:
+		m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 40.f, 0.0f);
+		break;
+	case LEFT:
+		m_JumpControlPos = D3DXVECTOR3((playerPos->x - 10.f), playerPos->y + 20.f, 0.0f);
+		break;
+	case RIGHT:
+		pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+		m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 20.f, 0.0f);
+		break;
+	case LEFT_DOWN_45:
+		m_JumpControlPos = D3DXVECTOR3((playerPos->x - 10.f), playerPos->y + 10.f, 0.0f);
+		break;
+	case RIGHT_DOWN_45:
+		m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 10.f, 0.0f);
+		break;
+	}
+	m_JumpStartPos = startPos;
+	m_JumpEndPos = endPos;
+	m_fJumpEndTime = endTime;
+	m_bIsJump = true;
+}
+
+void CPlayerScript::CheckLayer()
+{
+	if (m_CurLayer != m_PreLayer)
+	{
+		switch (m_CurLayer)
+		{
+		case LAYER_0:
+			cout << "1층" << endl;
+			playerUpBox = pBoxCollider;
+			playerDownBox = pBoxCollider;
+			break;
+		case LAYER_1:
+			cout << "1.5층" << endl;
+			playerUpBox = pBoxCollider;
+			playerDownBox = m_playerFoot;
+			break;
+		case LAYER_2:
+			cout << "2층" << endl;
+			playerUpBox = m_playerFoot;
+			playerDownBox = m_playerFoot;
+			break;
+		case LAYER_3:
+			cout << "2.5층" << endl;
+			break;
+		case LAYER_4:
+			cout << "3층" << endl;
+			break;
+		case LAYER_5:
+			cout << "여긴 올라오면안되" << endl;
+			break;
+		}
+		m_PreLayer = m_CurLayer;
+	}
 }
 

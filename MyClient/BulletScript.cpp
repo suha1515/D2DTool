@@ -80,26 +80,34 @@ void CBulletScript::OnDestroy()
 
 void CBulletScript::Move()
 {
-	D3DXVECTOR3& pos = pTransform->GetLocalPosition();
-	m_PrePos = pos;
+
+	m_PrePos = (*m_BulletPos);
 	// (*m_BulletPos) = m_DirVec*m_fVelocity*CTimeMgr::GetInstance()->GetDeltaTime();
 	/*pos.x += m_DirVec.x*m_fVelocity*CTimeMgr::GetInstance()->GetDeltaTime();
 	pos.y += m_DirVec.y*m_fVelocity*CTimeMgr::GetInstance()->GetDeltaTime();*/
-	pos.x  += m_DirVec.x*m_fVelocity*CTimeMgr::GetInstance()->GetDeltaTime();
-	pBoxCollider->SetBoxCollider();
-	if (CollideTiles())
+	//(*m_BulletPos).x  += m_DirVec.x*m_fVelocity*CTimeMgr::GetInstance()->GetDeltaTime();
+	for (int i = 0; i < 3; ++i)
 	{
-		pos = m_PrePos;
+		(*m_BulletPos).x += m_DirVec.x*m_fVelocity*CTimeMgr::GetInstance()->GetDeltaTime()/3.0f;
 		pBoxCollider->SetBoxCollider();
+		if (CollideTiles())
+		{
+			(*m_BulletPos) = m_PrePos;
+			pBoxCollider->SetBoxCollider();
+		}
 	}
-	m_PrePos = pos;
-	pos.y+= m_DirVec.y*m_fVelocity*CTimeMgr::GetInstance()->GetDeltaTime();
-	pBoxCollider->SetBoxCollider();
-	if (CollideTiles())
+	m_PrePos = (*m_BulletPos);
+	for (int i = 0; i < 3; ++i)
 	{
-		pos = m_PrePos;
+		(*m_BulletPos).y += m_DirVec.y*m_fVelocity*CTimeMgr::GetInstance()->GetDeltaTime()/3.0f;
 		pBoxCollider->SetBoxCollider();
+		if (CollideTiles())
+		{
+			(*m_BulletPos) = m_PrePos;
+			pBoxCollider->SetBoxCollider();
+		}
 	}
+
 }
 
 void CBulletScript::SetAngle(const float & angle)
@@ -152,21 +160,19 @@ bool CBulletScript::CollideTiles()
 		{
 			CBoxCollider* pDestBox= i->GetComponent<CBoxCollider>();
 			D3DXVECTOR3	  destPos = *i->GetComponent<CTransform>()->GetWorldPos();
-			if (pDestBox != nullptr)
+			if (pDestBox != nullptr&&(m_pGameObject->GetObjectLayer() <= i->GetObjectLayer() || i->GetObjectLayer() == LAYER_GROUND))
 			{
 				//타일컬링되는 오브젝트들 확인. ( 충돌체 있는녀석만)
 				i->SetObjectCliked(true, D3DCOLOR_XRGB(255, 0, 0));
 				COLLIDE_TYPE coltype = pDestBox->GetCollideType();
 				//사각형충돌과 삼각형충돌이 있다
 				//사각형 충돌시
+				D3DXVECTOR3 normal;
 				if (coltype == NORMAL)
 				{
 					if (CCollisionMgr::GetInstance()->CheckAABB(pBoxCollider, pDestBox))
 					{
-						cout << "총알 사각형충돌" << endl;
-						D3DXVECTOR3 Upvec = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-						
-						D3DXVECTOR3 normal = CCollisionMgr::GetInstance()->GetNormalBox(m_BulletPos,pDestBox);
+						normal = CCollisionMgr::GetInstance()->GetNormalBox(m_BulletPos,pDestBox);
 						D3DXVECTOR3 reflect = GetReflectVector(&m_DirVec, &normal);
 						SetDirection(reflect);
 						return true;
@@ -175,8 +181,10 @@ bool CBulletScript::CollideTiles()
 				//삼각형 충돌시. 그외 삼각형 충돌
 				else if (coltype != NORMAL)
 				{
-					if (CCollisionMgr::GetInstance()->CheckLineBox(pBoxCollider, pDestBox))
+					if (CCollisionMgr::GetInstance()->CheckLineBox(pBoxCollider, pDestBox,&normal))
 					{
+						D3DXVECTOR3 reflect = GetReflectVector(&m_DirVec, &normal);
+						SetDirection(reflect);
 						return true;
 					}
 				}
@@ -185,6 +193,15 @@ bool CBulletScript::CollideTiles()
 	}
 	return false;
 
+}
+
+bool CBulletScript::CollideTilesLine()
+{
+	m_PrePos = (*m_BulletPos);
+	LINE l1;
+	l1.endPoint = m_PrePos;
+
+	return false;
 }
 
 CBulletScript * CBulletScript::Create(const float & angle, const float & speed,CGameObject* pGameObject)

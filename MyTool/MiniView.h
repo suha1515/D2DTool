@@ -40,6 +40,10 @@ public:
 	CCamera*				m_Cam;
 	const TEX_INFO*			m_texInfo;
 
+	D3DXVECTOR3				m_Line[4];
+
+	void DrawLine();
+
 private:
 	int imgWidth, imgHeight;
 	int itileSizeX;

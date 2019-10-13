@@ -106,17 +106,16 @@ void CTransform::SetWorld()
 {
 	return m_Pos;
 }
- D3DXVECTOR3 CTransform::GetWorldPos()
+ D3DXVECTOR3* CTransform::GetWorldPos()
  {
-	 D3DXVECTOR3 m_RealPos;
 	 if (m_GameObject->GetParentObject() != nullptr)
 	 {
-		 D3DXVECTOR3 pos = m_GameObject->GetParentObject()->GetComponent<CTransform>()->GetWorldPos();
-		 m_RealPos = m_Pos + pos;
+		 D3DXVECTOR3 pos = *m_GameObject->GetParentObject()->GetComponent<CTransform>()->GetWorldPos();
+		 m_WorldPos = m_Pos + pos;
 	 }
 	 else
-		 m_RealPos = m_Pos;
-	 return m_RealPos;
+		 m_WorldPos = m_Pos;
+	 return &m_WorldPos;
  }
 
 

@@ -11,6 +11,9 @@ public:
 	//오브젝트 추가
 public:
 	void AddObject(CGameObject* object);
+
+	//스크립트 오브젝트 추가
+	void AddScriptObject(CScripts* script);
 public:
 	//오브젝트 초기화
 	void Initialize();
@@ -50,6 +53,8 @@ public:
 	const map<wstring, OBJ_COPY>&		  GetCopyObject();		//카피맵 접근
 
 	const vector<CGameObject*>&			  GetTiles();			//타일들 접근
+
+	const map<Layer, vector<CGameObject*>>& GetStairs();			//계단들 접근
 public:
 	HRESULT  LoadObject(const wstring& filePath);
 	OBJ_COPY ReadCopyObject(HANDLE* hFile, DWORD* dwBytes);
@@ -65,7 +70,8 @@ public:
 
 private:
 	list<CGameObject*>				m_CollideObj;	//충돌체들
-	list<CGameObject*>				m_SciptObject;	//스크립트 오브젝트들
+	list<CGameObject*>				m_SciptObject;	//스크립트 오브젝트들 
+	list<CScripts*>					m_Scripts;		//스크립트들
 	map<int, vector<CGameObject*>>	m_Objects;		//모든오브젝트들
 	map<wstring, OBJ_COPY>			m_CopyObjects;	//복사본
 	list<CGameObject*>				m_RenderObjects[LAYER_END];		//렌더할녀석들
@@ -73,6 +79,8 @@ private:
 	vector<CGameObject*>			m_Tiles;		//타일들
 	vector<CGameObject*>			m_RenderTiles;	//렌더할 타일들
 	vector<CGameObject*>			m_CollideTile;  //충돌 타일들
+
+	map<Layer,vector<CGameObject*>>	m_Stairs;		//계단들;
 	vector<pair<int, int>>			m_index;		//인덱스확인용;
 
 

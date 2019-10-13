@@ -89,4 +89,9 @@ public:
 	CComboBox m_Layer;
 	// y축반전
 	CButton m_InvertY;
+	// 빈게임오브젝트
+	CButton m_Empty;
+	// 태그가들어감
+	CString m_Tag;
+	CEdit m_TagEdit;
 };
