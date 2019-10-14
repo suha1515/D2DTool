@@ -141,7 +141,8 @@ int CPlayerScript::OnUpdate()
 	m_Left = false;
 	m_Down = false;
 	m_Up = false;
-	CheckRangeCollide();
+
+	
 	//타일제거
 	m_NearTiles.clear();
 
@@ -316,36 +317,65 @@ void CPlayerScript::MouseInput()
 		MouseDir();
 
 		m_CurState = THROW;
-		m_bIsThrow = true;
+		m_bIsThrow = true;	
 	}
 	if (pKeyMgr->KeyPressing(KEY_LBUTTON))
 	{
-		m_ChargeCancle = 0.0f;
-		m_bIsCharging = true;
 		if (m_bIsCharged)
 		{
+			cout << "차지됨" << endl;
 			//m_CurState = AIM_WALK;
-			CheckRange(m_GuideLineEndPoint, &m_MidPointCollide);
 			MouseDir();
-		}	
-		if (m_ChargeTime > 1.3f)
-		{
-			m_bIsCharged = true;
+			D3DXVECTOR3 otherPoints;
+			D3DXVECTOR3 normal;
+			D3DXVECTOR3 reflect;
+			D3DXVECTOR3 dirVec;
+			if (CheckRangeCollide(*playerPos, m_GuideLineEndPoint, &m_GuideRange, &otherPoints, &normal))
+			{
+				float leftLength = 200.f - m_GuideRange;
+				dirVec = otherPoints - *playerPos;
+				D3DXVec3Normalize(&dirVec, &dirVec);
+				reflect = GetReflectVector(&dirVec, &normal);
+				reflect = reflect* leftLength;
+
+				m_ChargeLine.push_back({ otherPoints,reflect });
+				while (CheckRangeCollide(otherPoints, reflect, &leftLength, &otherPoints, &normal))
+				{
+					if (otherPoints == nullptr)
+						break;
+				}
+			}
 		}
 		else
 		{
-			m_ChargeTime += CTimeMgr::GetInstance()->GetDeltaTime();
-			m_LeftGuideAngle += (LerpFloat(m_LefttempAngle, m_GuideAngle, m_ChargeTime / 1.3f)- m_LeftGuideAngle);
-			if (m_GuideAngle -30.f<0.0f)
-				m_RightGuideAngle += ( LerpFloat(m_RighttempAngle, m_GuideAngle + 360.f, m_ChargeTime / 1.3f)- m_RightGuideAngle);
+			m_ChargeCancle = 0.0f;
+			m_bIsCharging = true;
+			CheckRangeCollide(*playerPos,m_GuideLineLeftEndPoint, &m_LeftGuideRange);
+			CheckRangeCollide(*playerPos,m_GuideLineRightEndPoint, &m_RightGuideRange);
+
+			if (m_ChargeTime > 1.3f)
+			{
+				m_bIsCharged = true;
+			}
 			else
-				m_RightGuideAngle += (LerpFloat(m_RighttempAngle, m_GuideAngle, m_ChargeTime / 1.3f) - m_RightGuideAngle);
+			{
+				m_ChargeTime += CTimeMgr::GetInstance()->GetDeltaTime();
+				m_LeftGuideAngle += (LerpFloat(m_LefttempAngle, m_GuideAngle, m_ChargeTime / 1.3f) - m_LeftGuideAngle);
+				if (m_GuideAngle - 30.f<0.0f)
+					m_RightGuideAngle += (LerpFloat(m_RighttempAngle, m_GuideAngle + 360.f, m_ChargeTime / 1.3f) - m_RightGuideAngle);
+				else
+					m_RightGuideAngle += (LerpFloat(m_RighttempAngle, m_GuideAngle, m_ChargeTime / 1.3f) - m_RightGuideAngle);
+			}
 		}
 	}
 	else
 	{
-		if(m_bIsCharged)
+		if (m_bIsCharged)
+		{
 			m_bIsCharged = false;
+			cout << "차지 풀림" << endl;
+		}
+			
 		if (m_bIsCharging)
 		{
 			if (m_ChargeCancle > 0.7f)
@@ -886,15 +916,14 @@ void CPlayerScript::MouseDir()
 void CPlayerScript::CheckRange(D3DXVECTOR3 point,list<CGameObject*>* objlist)
 {
 	const vector<CGameObject*>& tiles = CObjectMgr::GetInstance()->GetTiles();
+	int mapSizex = (CObjectMgr::GetInstance()->m_MapSizeX);
+	int mapSizey = (CObjectMgr::GetInstance()->m_MapSizeY);
 
-	int mapSizex = (CObjectMgr::GetInstance()->m_MapSizeX/2);
-	int mapSizey = (CObjectMgr::GetInstance()->m_MapSizeY/2);
+	int playerIndexX = ((mapSizex/2)+ playerPos->x) / 16;
+	int playerIndexY = ((mapSizey/2) -playerPos->y) / 16;
 
-	int playerIndexX = (mapSizex + playerPos->x) / 16;
-	int playerIndexY = (mapSizey - playerPos->y) / 16;
-
-		int pointIndexX = (mapSizex + point.x) / 16;
-		int pointIndexY = (mapSizey - point.y) / 16;
+		int pointIndexX = ((mapSizex/2) + point.x) / 16;
+		int pointIndexY = ((mapSizey/2) - point.y) / 16;
 		int pointGapX = playerIndexX - pointIndexX;
 		int pointGapY = playerIndexY - pointIndexY;
 
@@ -985,95 +1014,125 @@ void CPlayerScript::CheckRange(D3DXVECTOR3 point,list<CGameObject*>* objlist)
 
 }
 
-void CPlayerScript::CheckRangeCollide()
+bool CPlayerScript::CheckRangeCollide(D3DXVECTOR3& originPos, D3DXVECTOR3& guideLine, float * range, D3DXVECTOR3* points, D3DXVECTOR3* normal)
 {
 	LINE leftLine;
-	leftLine.startPoint = *playerPos;
-	leftLine.endPoint = m_GuideLineLeftEndPoint;
+	leftLine.startPoint = originPos;
+	leftLine.endPoint = guideLine;
 
-	int mapSizex = (CObjectMgr::GetInstance()->m_MapSizeX / 2);
-	int mapSizey = (CObjectMgr::GetInstance()->m_MapSizeY / 2);
+	int mapSizex = (CObjectMgr::GetInstance()->m_MapSizeX );
+	int mapSizey = (CObjectMgr::GetInstance()->m_MapSizeY );
 
-	int playerIndexX = (mapSizex + playerPos->x) / 16;
-	int playerIndexY = (mapSizey - playerPos->y) / 16;
+	int originIndexX = ((mapSizex / 2) + originPos.x) / 16;
+	int originIndexY = ((mapSizey / 2) - originPos.y) / 16;
 
-	int pointIndexX = (mapSizex + m_GuideLineLeftEndPoint.x) / 16;
-	int pointIndexY = (mapSizey - m_GuideLineLeftEndPoint.y) / 16;
-	int pointGapX = playerIndexX - pointIndexX;
-	int pointGapY = playerIndexY - pointIndexY;
+	int pointIndexX = ((mapSizex / 2) + guideLine.x) / 16;
+	int pointIndexY = ((mapSizey / 2) - guideLine.y) / 16;
 
-	D3DXVECTOR3 points;
-	if (!m_bIsCharged)
-	{
+	int pointGapX = originIndexX - pointIndexX;
+	int pointGapY = originIndexY - pointIndexY;
+
+
 		const vector<CGameObject*>& tiles = CObjectMgr::GetInstance()->GetTiles();
 			//플레이어위치와 해당 점까지의 기울기
-		float dx = pointIndexX - playerIndexX;
-		float dy = pointIndexY - playerIndexY;
+		float dx = pointIndexX - originIndexX;
+		float dy = pointIndexY - originIndexY;
 		float slope = dy / dx;
 
 		int indexX, indexY;
-		if (slope > 0.0f)
+		if (originIndexX < pointIndexX)
 		{
-			if (playerIndexX < pointIndexX)
+			for (int i = originIndexX; i <= pointIndexX; ++i)
 			{
-				int size = pointIndexX - playerIndexX;
-				for (int i = 1; i <= size; ++i)
-				{
-					indexX = playerIndexX + i;
-					indexY = playerIndexX +slope*i;
-					int index = indexX + indexY*mapSizex;
-					if (CheckLineRange(&leftLine, tiles[index], &m_GuideLineLeftEndPoint))
-						return;
-				}
-			}
-			else if (playerIndexX > pointIndexX)
-			{
-				int size = playerIndexX- pointIndexX;
-				for (int i = 1; i <= size; ++i)
-				{
-					indexX = playerIndexX + i;
-					indexY = playerIndexX + slope*i;
-					int index = indexX + indexY*mapSizex;
-					if (CheckLineRange(&leftLine, tiles[index], &m_GuideLineLeftEndPoint))
-						return;
-				}
+				indexX = i;
+				indexY = slope*i - slope*originIndexX + originIndexY;
+				int index = indexX + indexY*mapSizex;
+				if (tiles[index] != nullptr)
+					tiles[index]->SetObjectCliked(true, D3DCOLOR_XRGB(0, 0, 255));
+				if (CheckLineRange(&leftLine, tiles[index], &guideLine, range, points, normal))
+					return true;				
 			}
 		}
-		else
+		else if(originIndexX >pointIndexX)
 		{
-			if (playerIndexX < pointIndexX)
+			for (int i = originIndexX; i >= pointIndexX; --i)
 			{
-				int size = pointIndexX - playerIndexX;
-				for (int i = 1; i <= size; ++i)
+				indexX = i;
+				indexY = slope*i - slope*originIndexX +originIndexY;
+				int index = indexX + indexY*mapSizex;
+				if (tiles[index] != nullptr)
+					tiles[index]->SetObjectCliked(true, D3DCOLOR_XRGB(0, 0, 255));
+				if (CheckLineRange(&leftLine, tiles[index], &guideLine, range, points, normal))
+					return true;
+			}
+		}
+		else if (originIndexY == pointIndexY)
+		{
+			if (originIndexX < pointIndexX)
+			{
+				for (int i = originIndexX; i <= pointIndexX; ++i)
 				{
-					indexX = playerIndexX+i;
-					indexY = playerIndexX + slope*i;
+					indexX = i;
+					indexY = originIndexY;
 					int index = indexX + indexY*mapSizex;
-					if (CheckLineRange(&leftLine, tiles[index], &m_GuideLineLeftEndPoint))
-						return;
+					if (tiles[index] != nullptr)
+						tiles[index]->SetObjectCliked(true, D3DCOLOR_XRGB(0, 0, 255));
+					if (CheckLineRange(&leftLine, tiles[index], &guideLine, range, points, normal))
+						return true;
 				}
 			}
-			else if (playerIndexX > pointIndexX)
+			else
 			{
-				int size = playerIndexX - pointIndexX;
-				for (int i = 1; i <= size; ++i)
+				for (int i = originIndexX; i >= pointIndexX; --i)
 				{
-					indexX = playerIndexX + i;
-					indexY = playerIndexX + slope*i;
+					indexX = i;
+					indexY = originIndexY;
 					int index = indexX + indexY*mapSizex;
-					if (CheckLineRange(&leftLine, tiles[index], &m_GuideLineLeftEndPoint))
-						return;
+					if (tiles[index] != nullptr)
+						tiles[index]->SetObjectCliked(true, D3DCOLOR_XRGB(0, 0, 255));
+					if (CheckLineRange(&leftLine, tiles[index], &guideLine, range, points, normal))
+						return true;
+				}
+			}
+			
+		}
+		else if (originIndexX == pointIndexX)
+		{
+			if (originIndexY < pointIndexY)
+			{
+				for (int i = originIndexY; i <= pointIndexY; ++i)
+				{
+					indexX =originIndexX;
+					indexY = i;
+					int index = indexX + indexY*mapSizex;
+					if (tiles[index] != nullptr)
+						tiles[index]->SetObjectCliked(true, D3DCOLOR_XRGB(0, 0, 255));
+					if (CheckLineRange(&leftLine, tiles[index], &guideLine, range, points, normal))
+						return true;
+				}
+			}
+			else
+			{
+				for (int i = originIndexY; i >= pointIndexY; --i)
+				{
+					indexX = originIndexX;
+					indexY = i;
+					int index = indexX + indexY*mapSizex;
+					if (tiles[index] != nullptr)
+						tiles[index]->SetObjectCliked(true, D3DCOLOR_XRGB(0, 0, 255));
+					if (CheckLineRange(&leftLine, tiles[index], &guideLine, range, points, normal))
+						return true;
 				}
 			}
 		}
-		}
+		return false;
 }
 
-bool CPlayerScript::CheckLineRange(LINE* line,CGameObject* pobject,D3DXVECTOR3* points)
+bool CPlayerScript::CheckLineRange(LINE* line,CGameObject* pobject,D3DXVECTOR3* points,float* range,D3DXVECTOR3* _point,D3DXVECTOR3* normal)
 {
 	if (pobject != nullptr )
 	{
-		if ((m_pGameObject->GetObjectLayer() <= pobject->GetObjectLayer() || pobject->GetObjectLayer() == LAYER_GROUND))
+		if (true)
 		{
 			CBoxCollider* pDestBoxCollider = pobject->GetComponent<CBoxCollider>();
 			D3DXVECTOR3	  destPos = *pobject->GetComponent<CTransform>()->GetWorldPos();
@@ -1082,19 +1141,25 @@ bool CPlayerScript::CheckLineRange(LINE* line,CGameObject* pobject,D3DXVECTOR3* 
 			{
 				COLLIDE_TYPE coltype = pDestBoxCollider->GetCollideType();
 				D3DXVECTOR3 point;
-				if (CCollisionMgr::GetInstance()->CheckLineBox2(line, pDestBoxCollider, &point))
+				if (CCollisionMgr::GetInstance()->CheckLineBox2(line, pDestBoxCollider, &point,normal))
 				{
-					cout << "좌측 레이저 충돌" << endl;
+					cout << "레이저 충돌" << endl;
 					cout << point.x << " , " << point.y << endl;
+					if(_point!=nullptr)
+					*_point = point;
+
 					float length = sqrtf((playerPos->x - point.x)*(playerPos->x - point.x) + (playerPos->y - point.y)*(playerPos->y - point.y));
-					m_GuideRange = length;
+					
+					*range = length;
 
 					return true;
 				}
 			}
-			m_GuideRange = 200.f;
 		}	
 	}
+	_point = nullptr;
+	normal = nullptr;
+	*range =  200.f;
 	return false;
 }
 
@@ -1409,8 +1474,12 @@ void CPlayerScript::DrawGuideLine()
 
 	m_GuideLineEndPoint = D3DXVECTOR3(playerPos->x + m_GuideRange*cosf(D3DXToRadian(m_GuideAngle)), playerPos->y + m_GuideRange*sinf(D3DXToRadian(m_GuideAngle)), 0.0f);
 	
-	m_GuideLineLeftEndPoint = D3DXVECTOR3(playerPos->x + m_GuideRange*cosf(D3DXToRadian(m_LeftGuideAngle)), playerPos->y + m_GuideRange*sinf(D3DXToRadian(m_LeftGuideAngle)), 0.0f);
-	m_GuideLineRightEndPoint = D3DXVECTOR3(playerPos->x + m_GuideRange*cosf(D3DXToRadian(m_RightGuideAngle)), playerPos->y + m_GuideRange*sinf(D3DXToRadian(m_RightGuideAngle)), 0.0f);
+	if (!m_bIsHitSomething)
+	{
+		m_GuideLineLeftEndPoint = D3DXVECTOR3(playerPos->x + m_LeftGuideRange*cosf(D3DXToRadian(m_LeftGuideAngle)), playerPos->y + m_LeftGuideRange*sinf(D3DXToRadian(m_LeftGuideAngle)), 0.0f);
+		m_GuideLineRightEndPoint = D3DXVECTOR3(playerPos->x + m_RightGuideRange*cosf(D3DXToRadian(m_RightGuideAngle)), playerPos->y + m_RightGuideRange*sinf(D3DXToRadian(m_RightGuideAngle)), 0.0f);
+	}
+	
 	CDeviceMgr::GetInstance()->GetLine()->SetWidth(2.f);
 	CDeviceMgr::GetInstance()->GetLine()->Begin();
 	{

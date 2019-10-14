@@ -49,8 +49,8 @@ public:
 	void MouseDir();
 	//사정거리 타일체크
 	void CheckRange(D3DXVECTOR3 point, list<CGameObject*>* objlist);
-	void CheckRangeCollide();
-	bool CheckLineRange(LINE* line,CGameObject* pobject, D3DXVECTOR3* points);
+	bool CheckRangeCollide(D3DXVECTOR3& originPos,D3DXVECTOR3& guideLine,float * range, D3DXVECTOR3* points=nullptr, D3DXVECTOR3* normal=nullptr);
+	bool CheckLineRange(LINE* line, CGameObject* pobject, D3DXVECTOR3* points, float* range, D3DXVECTOR3* _point, D3DXVECTOR3* normal);
 
 	//타일 체크.
 	void CheckTiles();
@@ -117,12 +117,18 @@ private:
 	D3DXVECTOR3 m_GuideLineLeftEndPoint;	//유도선 좌측끝점
 	D3DXVECTOR3 m_GuideLineRightEndPoint;	//유도선 우측끝점
 	D3DXVECTOR3	m_GuideLineEndPoint;		//유도선 끝점.
+
+	float		m_LeftGuideRange;			//좌측선 사정거리
+	float		m_RightGuideRange;			//우측선 사정거리
 	float		m_GuideRange;				//유도선 사정거리
 	float		m_GuideAngle;				//메인 유도선 각도
 	float		m_LeftGuideAngle;			//좌측 사이드 유도선 각도
 	float		m_LefttempAngle;
 	float		m_RightGuideAngle;			//우측 사이드 유도선 각도
 	float		m_RighttempAngle;
+	bool		m_bIsHitSomething = false;
+
+	vector< pair<D3DXVECTOR3, D3DXVECTOR3>>	m_ChargeLine;
 
 	list<CGameObject*>m_MidPointCollide;	//가운데 포인트 충돌체 검사 컨테이너
 	list<CGameObject*>m_LeftPointCollide;	//좌측 포인트 충돌체검사 컨테이너

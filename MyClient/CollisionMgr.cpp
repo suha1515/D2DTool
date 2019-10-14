@@ -487,7 +487,7 @@ bool CCollisionMgr::CheckLineBox2(LINE * pSource, CBoxCollider * pDest,D3DXVECTO
 	if (left || right || top || bottom || diagnol)
 	{
 		sort(interPoints.begin(), interPoints.end(),
-			[&](D3DXVECTOR3 points, D3DXVECTOR3 points2)
+			[&](const D3DXVECTOR3& points, const D3DXVECTOR3& points2)
 		{
 			return points< points2;
 		}
