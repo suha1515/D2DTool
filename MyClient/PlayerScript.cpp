@@ -29,6 +29,8 @@ void CPlayerScript::OnInit()
 	pTransform = m_pGameObject->GetComponent<CTransform>();
 	pBoxCollider = m_pGameObject->GetComponent<CBoxCollider>();
 	pBoxCollider->SetCollideColor(D3DCOLOR_XRGB(164, 73, 164));
+
+	
 	//초기 방향설정
 	m_CurDir = DOWN;
 	m_PreDir = m_CurDir;
@@ -82,6 +84,7 @@ void CPlayerScript::OnInit()
 
 	//유도선설정
 	m_GuideRange = 200.f;
+
 }
 
 
@@ -101,7 +104,7 @@ void CPlayerScript::OnInput()
 {
 }
 
-void CPlayerScript::OnUpdate()
+int CPlayerScript::OnUpdate()
 {
 	if (!bIsInit)
 		OnInit();
@@ -113,6 +116,7 @@ void CPlayerScript::OnUpdate()
 		CheckTiles();
 		//레이어 확인
 		CheckLayer();
+		
 		if (!m_bIsJump)
 		{
 			//방향키 입력
@@ -137,12 +141,17 @@ void CPlayerScript::OnUpdate()
 	m_Left = false;
 	m_Down = false;
 	m_Up = false;
-
+	CheckRangeCollide();
 	//타일제거
 	m_NearTiles.clear();
 
 	m_playerFoot->SetBoxCollider();
-	
+
+	m_LeftPointCollide.clear();
+	m_RightPointCollide.clear();
+	m_MidPointCollide.clear();
+
+	return NO_EVENT;
 }
 
 void CPlayerScript::OnLateUpdate()
@@ -313,12 +322,6 @@ void CPlayerScript::MouseInput()
 	{
 		m_ChargeCancle = 0.0f;
 		m_bIsCharging = true;
-
-		//좌측 점 충돌체 인덱싱
-		CheckRange(m_GuideLineLeftEndPoint, &m_LeftPointCollide);
-		//우측 점 충돌체 인덱싱
-		CheckRange(m_GuideLineRightEndPoint, &m_RightPointCollide);
-
 		if (m_bIsCharged)
 		{
 			//m_CurState = AIM_WALK;
@@ -333,7 +336,7 @@ void CPlayerScript::MouseInput()
 		{
 			m_ChargeTime += CTimeMgr::GetInstance()->GetDeltaTime();
 			m_LeftGuideAngle += (LerpFloat(m_LefttempAngle, m_GuideAngle, m_ChargeTime / 1.3f)- m_LeftGuideAngle);
-			if (m_GuideAngle == 0)
+			if (m_GuideAngle -30.f<0.0f)
 				m_RightGuideAngle += ( LerpFloat(m_RighttempAngle, m_GuideAngle + 360.f, m_ChargeTime / 1.3f)- m_RightGuideAngle);
 			else
 				m_RightGuideAngle += (LerpFloat(m_RighttempAngle, m_GuideAngle, m_ChargeTime / 1.3f) - m_RightGuideAngle);
@@ -365,12 +368,6 @@ void CPlayerScript::MeeleAttack()
 	if (pKeyMgr->GetInstance()->KeyDown(KEY_V))
 	{
 		m_CurState = MEELE;
-		m_bIsJump = true;
-		m_JumpStartPos = *playerPos;
-		m_JumpEndPos = D3DXVECTOR3(playerPos->x-32.f, playerPos->y+32.f, 0.0f);
-		m_fJumpEndTime = 1.0f;
-		m_JumpControlPos = D3DXVECTOR3(playerPos->x-10.f, playerPos->y+60.f, 0.0f);
-	
 	}
 }
 
@@ -754,96 +751,41 @@ void CPlayerScript::DirState()
 			case UP:
 				cout << "윗방향" << endl;
 				m_JumpControlPos = D3DXVECTOR3(playerPos->x, playerPos->y, 0.0f);
-				m_GuideAngle = 90.f;
-
-					m_LeftGuideAngle = 120.f;
-					m_RightGuideAngle = 60.f;
-					m_LefttempAngle = m_LeftGuideAngle;
-					m_RighttempAngle = m_RightGuideAngle;
-
 				break;
 			case DOWN:
 				cout << "아랫방향" << endl;
 				m_JumpControlPos = D3DXVECTOR3(playerPos->x, playerPos->y, 0.0f);
-				m_GuideAngle = 270.f;
-
-					m_LeftGuideAngle = 300.f;
-					m_RightGuideAngle = 240.f;
-					m_LefttempAngle = m_LeftGuideAngle;
-					m_RighttempAngle = m_RightGuideAngle;
 				
 				break;
 			case LEFT_UP_45:
 				cout << "왼쪽위" << endl;
 				pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3(playerPos->x - 10.f, playerPos->y + 40.f, 0.0f);
-				m_GuideAngle = 135.f;
-
-					m_LeftGuideAngle = 165.f;
-					m_RightGuideAngle = 105.f;
-					m_LefttempAngle = m_LeftGuideAngle;
-					m_RighttempAngle = m_RightGuideAngle;
-				
 				break;
 			case RIGHT_UP_45:
 				cout << "오른위" << endl;
 				pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 40.f, 0.0f);
-				m_GuideAngle = 45.f;
-
-					m_LeftGuideAngle = 75.f;
-					m_RightGuideAngle = 15.f;
-					m_LefttempAngle = m_LeftGuideAngle;
-					m_RighttempAngle = m_RightGuideAngle;
-				
 				break;
 			case LEFT:
 				cout << "왼쪽" << endl;
 				pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x - 10.f), playerPos->y + 20.f, 0.0f);
-				m_GuideAngle = 180.f;
-
-					m_LeftGuideAngle = 210.f;
-					m_RightGuideAngle = 150.f;
-					m_LefttempAngle = m_LeftGuideAngle;
-					m_RighttempAngle = m_RightGuideAngle;
-				
 				break;
 			case RIGHT:
 				cout << "오른쪽" << endl;
 				pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 20.f, 0.0f);
-				m_GuideAngle = 0.f;
-
-					m_LeftGuideAngle = 30.f;
-					m_RightGuideAngle = 330.f;
-					m_LefttempAngle = m_LeftGuideAngle;
-					m_RighttempAngle = m_RightGuideAngle;
-				
 				break;
 			case LEFT_DOWN_45:
 				cout << "왼쪽아래" << endl;
 				pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x - 10.f), playerPos->y + 10.f, 0.0f);
-				m_GuideAngle = 225.f;
-
-					m_LeftGuideAngle = 195.f;
-					m_RightGuideAngle = 255.f;
-					m_LefttempAngle = m_LeftGuideAngle;
-					m_RighttempAngle = m_RightGuideAngle;
-				
 				break;
 			case RIGHT_DOWN_45:
 				cout << "오른아래." << endl;
 				pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 10.f, 0.0f);
-				m_GuideAngle = 315.f;
-
-					m_LeftGuideAngle = 345.f;
-					m_RightGuideAngle = 285.f;
-					m_LefttempAngle = m_LeftGuideAngle;
-					m_RighttempAngle = m_RightGuideAngle;
-				
 				break;
 			}
 		}
@@ -926,6 +868,19 @@ void CPlayerScript::MouseDir()
 	//우측하단
 	else if (m_MouseAngle > 292.5f&&m_MouseAngle < 337.5f)
 		m_CurDir = RIGHT_DOWN_45;
+
+	m_GuideAngle = m_MouseAngle;
+	m_LeftGuideAngle = m_MouseAngle + 30.f;
+	m_LefttempAngle = m_LeftGuideAngle;
+	if (m_GuideAngle - 30.f < 0.f)
+	{
+		m_RightGuideAngle = 330.f + m_GuideAngle;;
+	}
+	else
+		m_RightGuideAngle = m_MouseAngle - 30.f;
+
+	m_RighttempAngle = m_RightGuideAngle;
+	
 }
 
 void CPlayerScript::CheckRange(D3DXVECTOR3 point,list<CGameObject*>* objlist)
@@ -936,151 +891,211 @@ void CPlayerScript::CheckRange(D3DXVECTOR3 point,list<CGameObject*>* objlist)
 	int mapSizey = (CObjectMgr::GetInstance()->m_MapSizeY/2);
 
 	int playerIndexX = (mapSizex + playerPos->x) / 16;
-	int playerIndexY = (mapSizey + playerPos->y) / 16;
-	if (!m_bIsCharged)
-	{
+	int playerIndexY = (mapSizey - playerPos->y) / 16;
+
 		int pointIndexX = (mapSizex + point.x) / 16;
-		int pointIndexY = (mapSizey + point.y) / 16;
+		int pointIndexY = (mapSizey - point.y) / 16;
 		int pointGapX = playerIndexX - pointIndexX;
 		int pointGapY = playerIndexY - pointIndexY;
 
 		//인덱스가 양수라는것은 왼쪽점의 인덱스가 플레이어 인덱스 보다 작은것이므로.(좌측 상단 대각선)
-		if (pointGapX > 0&& pointGapX>0)
+		if (pointGapX > 0&& pointGapY>0)
 		{
 			for (int i = pointIndexX; i < playerIndexX; ++i)
 			{
 				for (int j = pointIndexY; j < playerIndexY; ++j)
 				{
 					int index = i + j*mapSizex;
-					m_LeftPointCollide.push_back(tiles[index]);
+					objlist->push_back(tiles[index]);
 				}
 			}
 		}
 		//인덱스x가 음수 Y가 양수는 점이 X로는 플레이어보다 앞이지만.Y로는 작다 (우측 상단 대각선)
-		else if (pointGapX < 0 && pointGapX>0)
+		else if (pointGapX < 0 && pointGapY>0)
 		{
 			for (int i = playerIndexX; i <pointIndexX; ++i)
 			{
 				for (int j = pointIndexY; j < playerIndexY; ++j)
 				{
 					int index = i + j*mapSizex;
-					m_LeftPointCollide.push_back(tiles[index]);
+					objlist->push_back(tiles[index]);
 				}
 			}
 		}
 		//인덱스 X가 크고 Y가 작은것은 플레이어보다 뒤지만 Y가 크다(좌측 하단 대각선)
-		else if (pointGapX > 0 && pointGapX < 0) 
+		else if (pointGapX > 0 && pointGapY < 0) 
 		{
 			for (int i = pointIndexX; i < playerIndexX; ++i)
 			{
 				for (int j = playerIndexY; j <pointIndexY; ++j)
 				{
 					int index = i + j*mapSizex;
-					m_LeftPointCollide.push_back(tiles[index]);
+					objlist->push_back(tiles[index]);
 				}
 			}
 		}
 		//인덱스 X가 음수 Y가 음수라는것은 둘다 플레이어 인덱스보다 높은것 (우측 하단 대각선)
-		else if (pointGapX < 0 && pointGapX < 0)
+		else if (pointGapX < 0 && pointGapY < 0)
 		{
 			for (int i = playerIndexX; i < pointIndexX; ++i)
 			{
 				for (int j = playerIndexY; j < pointIndexY; ++j)
 				{
 					int index = i + j*mapSizex;
-					m_LeftPointCollide.push_back(tiles[index]);
+					objlist->push_back(tiles[index]);
 				}
 			}
 		}
 		//x인덱스는 같은데 Y인덱스가 음수 플레이어보다  (하단)
-		else if (pointGapX == 0 && pointGapX < 0)
+		else if (pointGapX == 0 && pointGapY < 0)
 		{
 				for (int j = playerIndexY; j <pointIndexY; ++j)
 				{
 					int index = playerIndexX + j*mapSizex;
-					m_LeftPointCollide.push_back(tiles[index]);
+					objlist->push_back(tiles[index]);
 				}
 		}
 		// (상단)
-		else if (pointGapX == 0 && pointGapX > 0) 
+		else if (pointGapX == 0 && pointGapY > 0) 
 		{
 				for (int j = pointIndexY; j < playerIndexY; ++j)
 				{
 					int index = playerIndexX + j*mapSizex;
-					m_LeftPointCollide.push_back(tiles[index]);
+					objlist->push_back(tiles[index]);
 				}
 		}
 		//(좌측)
-		else if (pointGapX > 0 && pointGapX == 0)
+		else if (pointGapX > 0 && pointGapY == 0)
 		{
 			for (int i = pointIndexX; i < playerIndexX; ++i)
 			{
 					int index = i + playerIndexY*mapSizex;
-					m_LeftPointCollide.push_back(tiles[index]);	
+					objlist->push_back(tiles[index]);
 			}
 		}
 		//(우측)
-		else if (pointGapX < 0 && pointGapX == 0)
+		else if (pointGapX < 0 && pointGapY == 0)
 		{
 			for (int i = playerIndexX; i < pointIndexX; ++i)
 			{
 					int index = i + playerIndexY*mapSizex;
-					m_LeftPointCollide.push_back(tiles[index]);
+					objlist->push_back(tiles[index]);
 			}
 		}
 
-	}
 }
 
 void CPlayerScript::CheckRangeCollide()
 {
+	LINE leftLine;
+	leftLine.startPoint = *playerPos;
+	leftLine.endPoint = m_GuideLineLeftEndPoint;
+
+	int mapSizex = (CObjectMgr::GetInstance()->m_MapSizeX / 2);
+	int mapSizey = (CObjectMgr::GetInstance()->m_MapSizeY / 2);
+
+	int playerIndexX = (mapSizex + playerPos->x) / 16;
+	int playerIndexY = (mapSizey - playerPos->y) / 16;
+
+	int pointIndexX = (mapSizex + m_GuideLineLeftEndPoint.x) / 16;
+	int pointIndexY = (mapSizey - m_GuideLineLeftEndPoint.y) / 16;
+	int pointGapX = playerIndexX - pointIndexX;
+	int pointGapY = playerIndexY - pointIndexY;
+
+	D3DXVECTOR3 points;
 	if (!m_bIsCharged)
 	{
-		if (!m_LeftPointCollide.empty())
+		const vector<CGameObject*>& tiles = CObjectMgr::GetInstance()->GetTiles();
+			//플레이어위치와 해당 점까지의 기울기
+		float dx = pointIndexX - playerIndexX;
+		float dy = pointIndexY - playerIndexY;
+		float slope = dy / dx;
+
+		int indexX, indexY;
+		if (slope > 0.0f)
 		{
-			for (auto&i : m_LeftPointCollide)
+			if (playerIndexX < pointIndexX)
 			{
-				if (i != nullptr && (m_pGameObject->GetObjectLayer() <= i->GetObjectLayer() || i->GetObjectLayer() == LAYER_GROUND))
+				int size = pointIndexX - playerIndexX;
+				for (int i = 1; i <= size; ++i)
 				{
-					CBoxCollider* pDestBoxCollider = i->GetComponent<CBoxCollider>();
-					D3DXVECTOR3	  destPos = *i->GetComponent<CTransform>()->GetWorldPos();
-					if (m_bIsDebug)
-						i->DebugRender(true, false);
-					if (pDestBoxCollider != nullptr)
-					{
-						COLLIDE_TYPE coltype = pDestBoxCollider->GetCollideType();
-						//사각형충돌과 삼각형충돌이 있다
-						//사각형 충돌시
-						if (coltype == NORMAL)
-						{
-							if (CCollisionMgr::GetInstance()->CheckAABB(pBoxCollider, pDestBoxCollider))
-							{
-								cout << "사각형충돌" << endl;
-								return true;
-							}
-						}
-						//삼각형 충돌시. 그외 삼각형 충돌
-						else if (coltype != NORMAL)
-						{
-							if (CCollisionMgr::GetInstance()->CheckLineBox(pBoxCollider, pDestBoxCollider))
-								return true;
-						}
-					}
+					indexX = playerIndexX + i;
+					indexY = playerIndexX +slope*i;
+					int index = indexX + indexY*mapSizex;
+					if (CheckLineRange(&leftLine, tiles[index], &m_GuideLineLeftEndPoint))
+						return;
+				}
+			}
+			else if (playerIndexX > pointIndexX)
+			{
+				int size = playerIndexX- pointIndexX;
+				for (int i = 1; i <= size; ++i)
+				{
+					indexX = playerIndexX + i;
+					indexY = playerIndexX + slope*i;
+					int index = indexX + indexY*mapSizex;
+					if (CheckLineRange(&leftLine, tiles[index], &m_GuideLineLeftEndPoint))
+						return;
 				}
 			}
 		}
-		if (!m_RightPointCollide.empty())
+		else
 		{
-
+			if (playerIndexX < pointIndexX)
+			{
+				int size = pointIndexX - playerIndexX;
+				for (int i = 1; i <= size; ++i)
+				{
+					indexX = playerIndexX+i;
+					indexY = playerIndexX + slope*i;
+					int index = indexX + indexY*mapSizex;
+					if (CheckLineRange(&leftLine, tiles[index], &m_GuideLineLeftEndPoint))
+						return;
+				}
+			}
+			else if (playerIndexX > pointIndexX)
+			{
+				int size = playerIndexX - pointIndexX;
+				for (int i = 1; i <= size; ++i)
+				{
+					indexX = playerIndexX + i;
+					indexY = playerIndexX + slope*i;
+					int index = indexX + indexY*mapSizex;
+					if (CheckLineRange(&leftLine, tiles[index], &m_GuideLineLeftEndPoint))
+						return;
+				}
+			}
 		}
-	}
-	else
+		}
+}
+
+bool CPlayerScript::CheckLineRange(LINE* line,CGameObject* pobject,D3DXVECTOR3* points)
+{
+	if (pobject != nullptr )
 	{
-		if (!m_MidPointCollide.empty())
+		if ((m_pGameObject->GetObjectLayer() <= pobject->GetObjectLayer() || pobject->GetObjectLayer() == LAYER_GROUND))
 		{
+			CBoxCollider* pDestBoxCollider = pobject->GetComponent<CBoxCollider>();
+			D3DXVECTOR3	  destPos = *pobject->GetComponent<CTransform>()->GetWorldPos();
 
-		}
+			if (pDestBoxCollider != nullptr)
+			{
+				COLLIDE_TYPE coltype = pDestBoxCollider->GetCollideType();
+				D3DXVECTOR3 point;
+				if (CCollisionMgr::GetInstance()->CheckLineBox2(line, pDestBoxCollider, &point))
+				{
+					cout << "좌측 레이저 충돌" << endl;
+					cout << point.x << " , " << point.y << endl;
+					float length = sqrtf((playerPos->x - point.x)*(playerPos->x - point.x) + (playerPos->y - point.y)*(playerPos->y - point.y));
+					m_GuideRange = length;
+
+					return true;
+				}
+			}
+			m_GuideRange = 200.f;
+		}	
 	}
+	return false;
 }
 
 void CPlayerScript::CheckTiles()
@@ -1095,16 +1110,15 @@ void CPlayerScript::CheckTiles()
 	int indexY = (((mapSizey / 2) - playerPos->y) / 16);
 	int index = indexX + indexY*mapSizex;
 
-	m_NearTiles.push_back(tiles[(indexX - 1) + (indexY - 1)*mapSizex]);
-	m_NearTiles.push_back(tiles[indexX + (indexY - 1)*mapSizex]);
-	m_NearTiles.push_back(tiles[(indexX + 1) + (indexY - 1)*mapSizex]);
-	m_NearTiles.push_back(tiles[(indexX - 1) + indexY*mapSizex]);
-	m_NearTiles.push_back(tiles[indexX + indexY*mapSizex]);
-	m_NearTiles.push_back(tiles[(indexX + 1) + indexY*mapSizex]);
-	m_NearTiles.push_back(tiles[(indexX - 1) + (indexY + 1)*mapSizex]);
-	m_NearTiles.push_back(tiles[indexX + (indexY + 1)*mapSizex]);
-	m_NearTiles.push_back(tiles[(indexX + 1) + (indexY + 1)*mapSizex]);
 
+	for (int i = -2; i < 2; ++i)
+	{
+		for (int j = -2; j < 2; ++j)
+		{
+			m_NearTiles.push_back(tiles[indexX + i + (indexY + j)*mapSizex]);
+		}
+
+	}
 }
 
 bool CPlayerScript::CollideTiles()
@@ -1122,7 +1136,7 @@ bool CPlayerScript::CollideTiles()
 				D3DXVECTOR3	  destPos = *i->GetComponent<CTransform>()->GetWorldPos();
 				//타일컬링되는 오브젝트들 확인. ( 충돌체 있는녀석만)
 				if (m_bIsDebug)
-					i->DebugRender(true,false);
+					i->SetObjectCliked(true, D3DCOLOR_XRGB(255, 0, 0));
 				if (pDestBoxCollider != nullptr)
 				{
 					COLLIDE_TYPE coltype = pDestBoxCollider->GetCollideType();
@@ -1297,11 +1311,11 @@ bool CPlayerScript::StepStair()
 void CPlayerScript::Jump()
 {
 
-	if (m_fJumpTime <= m_fJumpEndTime)
+	if (m_fJumpTime <= 0.5f)
 	{
 		m_CurState = JUMP;
 		DIR dir = m_CurDir;
-		D3DXVECTOR3 newPos = BezierCurve(m_JumpStartPos, m_JumpEndPos, m_JumpControlPos, (m_fJumpTime / m_fJumpEndTime));
+		D3DXVECTOR3 newPos = BezierCurve(m_JumpStartPos, m_JumpEndPos, m_JumpControlPos, (m_fJumpTime / 0.5f));
 		newPos.y += 16.f;
 		pTransform->SetPosition(newPos);
 	}
@@ -1390,6 +1404,7 @@ void CPlayerScript::CheckLayer()
 
 void CPlayerScript::DrawGuideLine()
 {
+	
 	D3DXMATRIX*	mat = CCameraMgr::GetInstance()->GetViewProjMatrix();
 
 	m_GuideLineEndPoint = D3DXVECTOR3(playerPos->x + m_GuideRange*cosf(D3DXToRadian(m_GuideAngle)), playerPos->y + m_GuideRange*sinf(D3DXToRadian(m_GuideAngle)), 0.0f);

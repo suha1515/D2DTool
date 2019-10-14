@@ -19,7 +19,7 @@ public:
 	virtual void OnEnable() override;
 	virtual void OnCollision(CGameObject * pGameObject = nullptr, XMFLOAT2* move = nullptr) override;
 	virtual void OnInput() override;
-	virtual void OnUpdate() override;
+	virtual int OnUpdate() override;
 	virtual void OnLateUpdate() override;
 	virtual void OnRender() override;
 	virtual void OnDisable() override;
@@ -50,6 +50,7 @@ public:
 	//사정거리 타일체크
 	void CheckRange(D3DXVECTOR3 point, list<CGameObject*>* objlist);
 	void CheckRangeCollide();
+	bool CheckLineRange(LINE* line,CGameObject* pobject, D3DXVECTOR3* points);
 
 	//타일 체크.
 	void CheckTiles();
@@ -147,7 +148,7 @@ private:
 	int			m_HeightLevel = 0;			//플레이어 높이.
 
 
-	vector<CGameObject*>		m_NearTiles;
+	list<CGameObject*>		m_NearTiles;
 	vector<CGameObject*>		m_CollideTiles;
 	vector<COL_DEPTH>			m_Depths;
 };

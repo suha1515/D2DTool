@@ -43,7 +43,7 @@ void CBulletScript::OnInput()
 {
 }
 
-void CBulletScript::OnUpdate()
+int CBulletScript::OnUpdate()
 {
 	if (!bIsInit)
 		OnInit();
@@ -60,6 +60,7 @@ void CBulletScript::OnUpdate()
 
 		m_NearTiles.clear();
 	}
+	return NO_EVENT;
 }
 
 void CBulletScript::OnLateUpdate()

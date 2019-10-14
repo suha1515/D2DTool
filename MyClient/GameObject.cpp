@@ -65,7 +65,8 @@ void CGameObject::Render()
 	//클릭시 박스렌더.
 	if (m_bIsClicked)
 	{
-		
+		DrawBox();
+		m_bIsClicked = false;
 	}
 }
 

@@ -47,6 +47,9 @@ void CTextureRenderer::Render(const D3DXMATRIX& world)
 		D3DXMATRIX   projMat;
 		D3DXVECTOR4  animTex;  //텍스처 애니메이션을 위한 변수
 		D3DXVECTOR2  texSize;	//텍스쳐 사이즈
+		Layer objLayer = m_GameObject->GetObjectLayer();
+		float		 zValue;
+			zValue = (float)(LAYER_END-objLayer) / LAYER_END ;	//레이어에따른 z값
 
 		m_pDeviceMgr->GetDevice()->GetTransform(D3DTS_VIEW, &viewMat);
 		m_pDeviceMgr->GetDevice()->GetTransform(D3DTS_PROJECTION, &projMat);
@@ -64,6 +67,7 @@ void CTextureRenderer::Render(const D3DXMATRIX& world)
 		pEffect->SetMatrix("projMat", &projMat);
 		pEffect->SetFloatArray("animTex", animTex, 4);
 		pEffect->SetFloatArray("texSize", texSize, 2);
+		pEffect->SetFloat("zValue", zValue);
 
 		pEffect->SetTexture("tex0", m_texInfo->pTexture);
 		//이 밑에 두함수 조사.
@@ -102,6 +106,7 @@ void CTextureRenderer::SetVertex(const XMFLOAT2& size, const XMFLOAT2 * tex)
 	m_Tex[1] = tex[1];
 	m_Tex[2] = tex[2];
 	m_Tex[3] = tex[3];
+
 
 	m_Vertex[0] = Vertex(-1.f,  1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 	m_Vertex[1] = Vertex(-1.f, -1.f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);

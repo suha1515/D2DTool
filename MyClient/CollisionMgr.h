@@ -13,6 +13,7 @@ public:
 	//static bool CheckRectY()
 	static bool CheckAABB(CBoxCollider* pSource, CBoxCollider* pDest);
 	static bool CheckLineBox(CBoxCollider* pSource, CBoxCollider* pDest, D3DXVECTOR3* normal=nullptr);
+	static bool CheckLineBox2(LINE* pSource, CBoxCollider* pDest, D3DXVECTOR3* points=nullptr, D3DXVECTOR3* normal = nullptr);
 	static D3DXVECTOR3 GetNormalBox(const D3DXVECTOR3* pSrcPos,CBoxCollider* pDestBox);
 	
 };

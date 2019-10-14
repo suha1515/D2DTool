@@ -75,6 +75,7 @@ void CObjectMgr::AddObject(CGameObject * object)
 			m_Stairs[object->GetObjectLayer()].push_back(object);
 		}
 	}
+	
 		m_Objects[object->GetLevel()].push_back(object);
 }
 
@@ -147,6 +148,11 @@ void CObjectMgr::Update()
 				//렌더 컴포넌트가 nullptr이 아닐경우. 레이어에따라 렌더할 오브젝트를 넣는다.
 				if ((*iter_begin)->GetComponent<CTextureRenderer>() != nullptr)
 				{
+					if ((*iter_begin)->GetObjectLayer() == LAYER_GROUND)
+					{
+						CInstanceMgr::GetInstance()->AddObject((*iter_begin));
+					}
+					else
 						m_RenderObjects[(*iter_begin)->GetObjectLayer()].push_back((*iter_begin));
 				}
 				//오브젝트가 스크립트 를가지고있으면 따로 스크립트 처리하기위해 컨테이너에 넣는다.
@@ -183,7 +189,7 @@ void CObjectMgr::Update()
 void CObjectMgr::Render()
 {
 	//인스턴스 오브젝트는 가장 먼저그린다.(가장 밑바닥의 경우만가능할것같은데..
-	//CInstanceMgr::GetInstance()->InstanceRender();
+	CInstanceMgr::GetInstance()->InstanceRender();
 	for (int i = 0; i < LAYER_END; ++i)
 	{
 		//Y축 소팅. 

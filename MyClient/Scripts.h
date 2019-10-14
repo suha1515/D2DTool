@@ -12,7 +12,7 @@ public:
 	virtual void OnEnable()=0;
 	virtual void OnCollision(CGameObject * pGameObject=nullptr, XMFLOAT2* move=nullptr) = 0;
 	virtual void OnInput() = 0;
-	virtual void OnUpdate() = 0;
+	virtual int  OnUpdate() = 0;
 	virtual void OnLateUpdate() = 0;
 	virtual void OnRender() = 0;
 	virtual void OnDisable() = 0;

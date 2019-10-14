@@ -99,7 +99,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//대각선
 		line1.startPoint = destBox[1];
 		line1.endPoint = destBox[2];
-		if (LineRect(line1, srcBox,coltype))
+		if (LineRect(line1, srcBox))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(1.0f, -1.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -111,7 +111,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//좌측선
 		line1.startPoint = destBox[0];
 		line1.endPoint = destBox[1];
-		if (LineRect(line1, srcBox, coltype))
+		if (LineRect(line1, srcBox))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(-1.0f, 0.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -123,7 +123,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//상단 선.
 		line1.startPoint = destBox[0];
 		line1.endPoint = destBox[2];
-		if (LineRect(line1, srcBox, coltype))
+		if (LineRect(line1, srcBox))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -138,7 +138,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//대각선
 		line1.startPoint = destBox[0];
 		line1.endPoint = destBox[3];
-		if (LineRect(line1, srcBox, coltype))
+		if (LineRect(line1, srcBox))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(1.0f, 1.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -149,7 +149,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//좌측선
 		line1.startPoint = destBox[0];
 		line1.endPoint = destBox[1];
-		if (LineRect(line1, srcBox, coltype))
+		if (LineRect(line1, srcBox))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(-1.0f, 0.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -161,7 +161,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//하단선
 		line1.startPoint = destBox[1];
 		line1.endPoint = destBox[3];
-		if (LineRect(line1, srcBox, coltype))
+		if (LineRect(line1, srcBox))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -177,7 +177,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//대각선
 		line1.startPoint = destBox[0];
 		line1.endPoint = destBox[3];
-		if (LineRect(line1, srcBox, coltype))
+		if (LineRect(line1, srcBox))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(-1.0f, -1.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -188,7 +188,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//상단선
 		line1.startPoint = destBox[0];
 		line1.endPoint = destBox[2];
-		if (LineRect(line1, srcBox, coltype))
+		if (LineRect(line1, srcBox))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -200,7 +200,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//우측선
 		line1.startPoint = destBox[2];
 		line1.endPoint = destBox[3];
-		if (LineRect(line1, srcBox, coltype))
+		if (LineRect(line1, srcBox))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -214,7 +214,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//대각선
 		line1.startPoint = destBox[2];
 		line1.endPoint = destBox[1];
-		if (LineRect(line1, srcBox, coltype))
+		if (LineRect(line1, srcBox))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(-1.0f, 1.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -226,7 +226,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//우측선
 		line1.startPoint = destBox[2];
 		line1.endPoint = destBox[3];
-		if (LineRect(line1, srcBox, coltype))
+		if (LineRect(line1, srcBox))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -238,7 +238,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//하단선
 		line1.startPoint = destBox[1];
 		line1.endPoint = destBox[3];
-		if (LineRect(line1, srcBox, coltype))
+		if (LineRect(line1, srcBox))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -247,6 +247,257 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 			return true;
 		}
 	}
+}
+
+bool CCollisionMgr::CheckLineBox2(LINE * pSource, CBoxCollider * pDest,D3DXVECTOR3* points, D3DXVECTOR3 * normal)
+{
+	const D3DXVECTOR3*  destBox = pDest->GetBox();
+	const LINE*			srcLine = pSource;
+	COLLIDE_TYPE coltype = pDest->GetCollideType();
+	bool left=false;
+	bool right=false;
+	bool top=false;
+	bool bottom=false;
+	bool diagnol=false;
+
+	LINE line1, line2;
+
+	vector<D3DXVECTOR3> interPoints;
+	float interSectionX;
+	float interSectionY;
+	//콜라이더 타입이 왼쪽상단 삼각형일경우 
+	if (coltype == NORMAL)
+	{
+		//우측선
+		line1.startPoint = destBox[2];
+		line1.endPoint = destBox[3];
+		if (LineDection(line1, *srcLine, &interSectionX, &interSectionY))
+		{
+			D3DXVECTOR3 temp = D3DXVECTOR3(1.0f, -1.0f, 0.0f);
+			D3DXVec3Normalize(&temp, &temp);
+			if (normal != nullptr)
+				*normal = temp;
+			interPoints.push_back(D3DXVECTOR3(interSectionX, interSectionY, 0.0f));
+			right = true;
+		}
+
+		//좌측선
+		line1.startPoint = destBox[0];
+		line1.endPoint = destBox[1];
+		if (LineDection(line1, *srcLine, &interSectionX, &interSectionY))
+		{
+			D3DXVECTOR3 temp = D3DXVECTOR3(-1.0f, 0.0f, 0.0f);
+			D3DXVec3Normalize(&temp, &temp);
+			if (normal != nullptr)
+				*normal = temp;
+			interPoints.push_back(D3DXVECTOR3(interSectionX, interSectionY, 0.0f));
+			left = true;
+		}
+
+		//상단 선.
+		line1.startPoint = destBox[0];
+		line1.endPoint = destBox[2];
+		if (LineDection(line1, *srcLine, &interSectionX, &interSectionY))
+		{
+			D3DXVECTOR3 temp = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
+			D3DXVec3Normalize(&temp, &temp);
+			if (normal != nullptr)
+				*normal = temp;
+			interPoints.push_back(D3DXVECTOR3(interSectionX, interSectionY, 0.0f));
+			top = true;
+		}
+		//하단 선.
+		line1.startPoint = destBox[1];
+		line1.endPoint = destBox[3];
+		if (LineDection(line1, *srcLine, &interSectionX, &interSectionY))
+		{
+			D3DXVECTOR3 temp = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
+			D3DXVec3Normalize(&temp, &temp);
+			if (normal != nullptr)
+				*normal = temp;
+			interPoints.push_back(D3DXVECTOR3(interSectionX, interSectionY, 0.0f));
+			bottom = true;
+		}
+	}
+	else if (coltype == LEFT_TOP)
+	{
+		//대각선
+		line1.startPoint = destBox[1];
+		line1.endPoint = destBox[2];
+		if (LineDection(line1, *srcLine,&interSectionX,&interSectionY))
+		{
+			D3DXVECTOR3 temp = D3DXVECTOR3(1.0f, -1.0f, 0.0f);
+			D3DXVec3Normalize(&temp, &temp);
+			if (normal != nullptr)
+				*normal = temp;
+			interPoints.push_back(D3DXVECTOR3(interSectionX, interSectionY,0.0f));
+			diagnol = true;
+		}
+
+		//좌측선
+		line1.startPoint = destBox[0];
+		line1.endPoint = destBox[1];
+		if (LineDection(line1, *srcLine, &interSectionX, &interSectionY))
+		{
+			D3DXVECTOR3 temp = D3DXVECTOR3(-1.0f, 0.0f, 0.0f);
+			D3DXVec3Normalize(&temp, &temp);
+			if (normal != nullptr)
+				*normal = temp;
+			interPoints.push_back(D3DXVECTOR3(interSectionX, interSectionY, 0.0f));
+			left = true;
+		}
+
+		//상단 선.
+		line1.startPoint = destBox[0];
+		line1.endPoint = destBox[2];
+		if (LineDection(line1, *srcLine, &interSectionX, &interSectionY))
+		{
+			D3DXVECTOR3 temp = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
+			D3DXVec3Normalize(&temp, &temp);
+			if (normal != nullptr)
+				*normal = temp;
+			interPoints.push_back(D3DXVECTOR3(interSectionX, interSectionY, 0.0f));
+			top = true;
+		}
+	}
+	//좌측하단삼각형
+	else if (coltype == LEFT_BOTTOM)
+	{
+		//대각선
+		line1.startPoint = destBox[0];
+		line1.endPoint = destBox[3];
+		if (LineDection(line1, *srcLine, &interSectionX, &interSectionY))
+		{
+			D3DXVECTOR3 temp = D3DXVECTOR3(1.0f, 1.0f, 0.0f);
+			D3DXVec3Normalize(&temp, &temp);
+			if (normal != nullptr)
+				*normal = temp;
+			interPoints.push_back(D3DXVECTOR3(interSectionX, interSectionY, 0.0f));
+			diagnol = true;
+		}
+		//좌측선
+		line1.startPoint = destBox[0];
+		line1.endPoint = destBox[1];
+		if (LineDection(line1, *srcLine, &interSectionX, &interSectionY))
+		{
+			D3DXVECTOR3 temp = D3DXVECTOR3(-1.0f, 0.0f, 0.0f);
+			D3DXVec3Normalize(&temp, &temp);
+			if (normal != nullptr)
+				*normal = temp;
+			interPoints.push_back(D3DXVECTOR3(interSectionX, interSectionY, 0.0f));
+			left = true;
+		}
+
+		//하단선
+		line1.startPoint = destBox[1];
+		line1.endPoint = destBox[3];
+		if (LineDection(line1, *srcLine, &interSectionX, &interSectionY))
+		{
+			D3DXVECTOR3 temp = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
+			D3DXVec3Normalize(&temp, &temp);
+			if (normal != nullptr)
+				*normal = temp;
+			interPoints.push_back(D3DXVECTOR3(interSectionX, interSectionY, 0.0f));
+			bottom = true;
+		}
+	}
+	//우측상단삼각형
+	else if (coltype == RIGHT_TOP)
+	{
+
+		//대각선
+		line1.startPoint = destBox[0];
+		line1.endPoint = destBox[3];
+		if (LineDection(line1, *srcLine, &interSectionX, &interSectionY))
+		{
+			D3DXVECTOR3 temp = D3DXVECTOR3(-1.0f, -1.0f, 0.0f);
+			D3DXVec3Normalize(&temp, &temp);
+			if (normal != nullptr)
+				*normal = temp;
+			interPoints.push_back(D3DXVECTOR3(interSectionX, interSectionY, 0.0f));
+			diagnol = true;
+		}
+		//상단선
+		line1.startPoint = destBox[0];
+		line1.endPoint = destBox[2];
+		if (LineDection(line1, *srcLine, &interSectionX, &interSectionY))
+		{
+			D3DXVECTOR3 temp = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
+			D3DXVec3Normalize(&temp, &temp);
+			if (normal != nullptr)
+				*normal = temp;
+			interPoints.push_back(D3DXVECTOR3(interSectionX, interSectionY, 0.0f));
+			top = true;
+		}
+
+		//우측선
+		line1.startPoint = destBox[2];
+		line1.endPoint = destBox[3];
+		if (LineDection(line1, *srcLine, &interSectionX, &interSectionY))
+		{
+			D3DXVECTOR3 temp = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
+			D3DXVec3Normalize(&temp, &temp);
+			if (normal != nullptr)
+				*normal = temp;
+			interPoints.push_back(D3DXVECTOR3(interSectionX, interSectionY, 0.0f));
+			right = true;
+		}
+	}
+	else if (coltype == RIGHT_BOTTOM)
+	{
+		//대각선
+		line1.startPoint = destBox[2];
+		line1.endPoint = destBox[1];
+		if (LineDection(line1, *srcLine, &interSectionX, &interSectionY))
+		{
+			D3DXVECTOR3 temp = D3DXVECTOR3(-1.0f, 1.0f, 0.0f);
+			D3DXVec3Normalize(&temp, &temp);
+			if (normal != nullptr)
+				*normal = temp;
+			interPoints.push_back(D3DXVECTOR3(interSectionX, interSectionY, 0.0f));
+			diagnol = true;
+		}
+
+		//우측선
+		line1.startPoint = destBox[2];
+		line1.endPoint = destBox[3];
+		if (LineDection(line1, *srcLine, &interSectionX, &interSectionY))
+		{
+			D3DXVECTOR3 temp = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
+			D3DXVec3Normalize(&temp, &temp);
+			if (normal != nullptr)
+				*normal = temp;
+			interPoints.push_back(D3DXVECTOR3(interSectionX, interSectionY, 0.0f));
+			right = true;
+		}
+
+		//하단선
+		line1.startPoint = destBox[1];
+		line1.endPoint = destBox[3];
+		if (LineDection(line1, *srcLine, &interSectionX, &interSectionY))
+		{
+			D3DXVECTOR3 temp = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
+			D3DXVec3Normalize(&temp, &temp);
+			if (normal != nullptr)
+				*normal = temp;
+			interPoints.push_back(D3DXVECTOR3(interSectionX, interSectionY, 0.0f));
+			bottom = true;
+		}
+	}
+	if (left || right || top || bottom || diagnol)
+	{
+		sort(interPoints.begin(), interPoints.end(),
+			[&](D3DXVECTOR3 points, D3DXVECTOR3 points2)
+		{
+			return points< points2;
+		}
+		);
+		if (points != nullptr && !interPoints.empty())
+			*points = interPoints.back();
+
+		return true;
+	}
+return false;
 }
 
 D3DXVECTOR3 CCollisionMgr::GetNormalBox(const D3DXVECTOR3 * pSrcPos, CBoxCollider * pDestBox)

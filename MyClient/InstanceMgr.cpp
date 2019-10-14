@@ -56,10 +56,10 @@ void CInstanceMgr::Initialize()
 
 	Vertex* v;
 	m_pVB->Lock(0, 0, (void**)&v, 0);
-	v[0] = Vertex(-8.0f, 8.0f, 0, 0, 0, 0, 0.f, 0.f);
-	v[1] = Vertex(-8.0f, -8.0f, 0, 0, 0,0, 0.f, 1.f);
-	v[2] = Vertex( 8.0f, 8.0f, 0, 0, 0, 0, 1.f, 0.f);
-	v[3] = Vertex( 8.0f,-8.0f, 0, 0, 0, 0, 1.f, 1.f);
+	v[0] = Vertex(-8.0f, 8.0f, 1.0f, 0, 0, 0, 0.f, 0.f);
+	v[1] = Vertex(-8.0f, -8.0f,1.0f, 0, 0, 0, 0.f, 1.f);
+	v[2] = Vertex( 8.0f, 8.0f, 1.0f, 0, 0, 0, 1.f, 0.f);
+	v[3] = Vertex( 8.0f,-8.0f, 1.0f, 0, 0, 0, 1.f, 1.f);
 	m_pVB->Unlock();
 	
 	WORD* i = 0;

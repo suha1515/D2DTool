@@ -71,108 +71,28 @@ inline bool LineDection(const LINE& _L1, const LINE& _L2, float* x=nullptr, floa
 	return false;
 }
 
-inline bool LineRect(const LINE& _L1, const D3DXVECTOR3* pSquare,COLLIDE_TYPE coltype ,float* interX=nullptr,float* interY=nullptr)
+inline bool LineRect(const LINE& _L1, const D3DXVECTOR3* pSquare, float* interX=nullptr,float* interY=nullptr)
 {
 	LINE line1 = _L1;
 	LINE line2;
-	bool left;
-	bool right;
-	bool top;
-	bool bottom;
 
-	bool leftDiagnol;
-	bool rightDiagnol;
-	if (coltype == NORMAL)
-	{
-		line2.startPoint = pSquare[0];
-		line2.endPoint = pSquare[1];
-		bool left = LineDection(line1, line2, interX, interY);
+	line2.startPoint = pSquare[0];
+	line2.endPoint = pSquare[1];
+	bool left = LineDection(line1, line2,interX,interY);
 
-		line2.startPoint = pSquare[2];
-		line2.endPoint = pSquare[3];
-		bool right = LineDection(line1, line2, interX, interY);
+	line2.startPoint = pSquare[2];
+	line2.endPoint = pSquare[3];
+	bool right = LineDection(line1, line2, interX, interY);
 
-		line2.startPoint = pSquare[0];
-		line2.endPoint = pSquare[2];
-		bool top = LineDection(line1, line2, interX, interY);
+	line2.startPoint = pSquare[0];
+	line2.endPoint = pSquare[2];
+	bool top = LineDection(line1, line2, interX, interY);
 
-		line2.startPoint = pSquare[1];
-		line2.endPoint = pSquare[3];
-		bool bottom = LineDection(line1, line2, interX, interY);
+	line2.startPoint = pSquare[1];
+	line2.endPoint = pSquare[3];
+	bool bottom = LineDection(line1, line2, interX, interY);
 
-	}
-	else if (coltype == LEFT_TOP)
-	{
-		//좌측선
-		line2.startPoint = pSquare[0];
-		line2.endPoint = pSquare[1];
-		bool left = LineDection(line1, line2, interX, interY);
-
-		//상단선
-		line2.startPoint = pSquare[0];
-		line2.endPoint = pSquare[2];
-		bool right = LineDection(line1, line2, interX, interY);
-
-		//좌측상단 대각선
-		line2.startPoint = pSquare[2];
-		line2.endPoint = pSquare[1];
-		bool leftDiagnol = LineDection(line1, line2, interX, interY);
-
-	}
-	//좌측하단 대각선
-	else if (coltype == LEFT_BOTTOM)
-	{
-		//좌측선
-		line2.startPoint = pSquare[0];
-		line2.endPoint = pSquare[1];
-		bool left = LineDection(line1, line2, interX, interY);
-
-		//상단선
-		line2.startPoint = pSquare[0];
-		line2.endPoint = pSquare[2];
-		bool right = LineDection(line1, line2, interX, interY);
-
-		//좌측상단 대각선
-		line2.startPoint = pSquare[0];
-		line2.endPoint = pSquare[3];
-		bool leftDiagnol = LineDection(line1, line2, interX, interY);
-	}
-	else if (coltype == RIGHT_TOP)
-	{
-		//우측선
-		line2.startPoint = pSquare[2];
-		line2.endPoint = pSquare[3];
-		bool left = LineDection(line1, line2, interX, interY);
-
-		//상단선
-		line2.startPoint = pSquare[0];
-		line2.endPoint = pSquare[2];
-		bool right = LineDection(line1, line2, interX, interY);
-
-		//우측상단 대각선
-		line2.startPoint = pSquare[0];
-		line2.endPoint = pSquare[3];
-		bool rightDiagnol = LineDection(line1, line2, interX, interY);
-	}
-	else if (coltype == RIGHT_BOTTOM)
-	{
-		//우측선
-		line2.startPoint = pSquare[2];
-		line2.endPoint = pSquare[3];
-		bool left = LineDection(line1, line2, interX, interY);
-
-		//하단선
-		line2.startPoint = pSquare[0];
-		line2.endPoint = pSquare[3];
-		bool right = LineDection(line1, line2, interX, interY);
-
-		//좌측상단 대각선
-		line2.startPoint = pSquare[1];
-		line2.endPoint = pSquare[2];
-		bool rightDiagnol = LineDection(line1, line2, interX, interY);
-	}
-	
-	if (left || right || top || bottom||leftDiagnol||rightDiagnol)
+	if (left || right || top || bottom)
 		return true;
 	
 	return false;
