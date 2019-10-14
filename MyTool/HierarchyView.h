@@ -23,6 +23,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	int AddObject(CGameObject* object);
+	int AddCopyObject(const OBJ_COPY* copy, const wstring& name);
+	void AddList(HTREEITEM * item, const OBJ_COPY * copy, const wstring& name, CGameObject* parent);
 public:
 	void LoadObject();
 	void Clear();
@@ -31,7 +33,7 @@ public:
 public:
 	CTreeCtrl m_Hierarchy;
 	virtual BOOL OnInitDialog();
-
+	void RecursivelyDelete(HTREEITEM childItem);
 	//list<std::pair<CGameObject*, HTREEITEM>> m_objectlist;
 
 	map<HTREEITEM, CGameObject*>	m_objectlist;

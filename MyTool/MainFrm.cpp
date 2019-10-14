@@ -146,7 +146,7 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	m_SecondSplitter.CreateView(0, 0, RUNTIME_CLASS(CMiniView), CSize(300, 300), pContext);
 	m_SecondSplitter.CreateView(1, 0, RUNTIME_CLASS(CMyForm), CSize(300, 300), pContext);
 
-	
+	cout << "awda" << endl;
 	//m_ThirdSplitter.CreateView(0, 0, RUNTIME_CLASS(CInspectView), CSize(300, 300), pContext);
 	//m_ThirdSplitter.CreateView(1, 0, RUNTIME_CLASS(CInspectView), CSize(300, 300), pContext);
 

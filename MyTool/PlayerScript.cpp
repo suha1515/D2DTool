@@ -41,8 +41,8 @@ void CPlayerScript::OnCollision(CGameObject * pGameObject,XMFLOAT2* move)
 		//wcout << text << endl;
 		//cout << "충돌중" << endl;
 		////밀어내기
-		//D3DXVECTOR3 playerPos = pTransform->GetPosition();
-		//D3DXVECTOR3 destPos =   pGameObject->GetComponent<CTransform>()->GetPosition();
+		//D3DXVECTOR3 playerPos = pTransform->GetLocalPosition();
+		//D3DXVECTOR3 destPos =   pGameObject->GetComponent<CTransform>()->GetLocalPosition();
 		////파고든 깊이가 짧은쪽으로 밀어내기
 		//if (move->x > move->y)
 		//{
@@ -76,22 +76,22 @@ void CPlayerScript::OnUpdate()
 	{
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 		{
-			D3DXVECTOR3& playerPos = pTransform->GetPosition();
+			D3DXVECTOR3& playerPos = pTransform->GetLocalPosition();
 			playerPos.x -= 0.5f;
 		}
 		if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
 		{
-			D3DXVECTOR3& playerPos = pTransform->GetPosition();
+			D3DXVECTOR3& playerPos = pTransform->GetLocalPosition();
 			playerPos.x += 0.5f;
 		}
 		if (GetAsyncKeyState(VK_UP) & 0x8000)
 		{
-			D3DXVECTOR3& playerPos = pTransform->GetPosition();
+			D3DXVECTOR3& playerPos = pTransform->GetLocalPosition();
 			playerPos.y += 0.5f;
 		}
 		if (GetAsyncKeyState(VK_DOWN) & 0x8000)
 		{
-			D3DXVECTOR3& playerPos = pTransform->GetPosition();
+			D3DXVECTOR3& playerPos = pTransform->GetLocalPosition();
 			playerPos.y -= 0.5f;
 		}
 	}

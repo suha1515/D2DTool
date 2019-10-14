@@ -51,6 +51,7 @@ using namespace DirectX;
 #include "Function.h"
 #include "Functor.h"
 #include "Vertex.h"
+#include "Math.h"
 
 
 // Managers

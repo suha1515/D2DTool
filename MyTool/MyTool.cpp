@@ -206,12 +206,14 @@ BOOL CMyToolApp::OnIdle(LONG lCount)
 		if (m_pFrameMgr->LockFrame(60.f))
 		{
 			CTimeMgr::GetInstance()->UpdateTime();
-			
+			//CKeyMgr::GetInstance()->Update();
 			if (m_pToolView->GetIsPlaying())
-			{		
+			{
+				
 				//MainGame
 				m_pToolView->Update();
 				m_pToolView->Render();
+				
 			}
 			if (m_pAnimFrame->IsPlaying())
 			{

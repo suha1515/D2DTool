@@ -52,10 +52,6 @@ int CGameObject::Update()
 	//	i->Action();
 	//}	
 	
-	//클릭시 박스렌더.
-	if (m_bIsClicked)
-		DrawBox();
-
 	return NO_EVENT;
 }
 
@@ -68,15 +64,24 @@ void CGameObject::Render()
 
 	//클릭시 박스렌더.
 	if (m_bIsClicked)
-		DrawBox();
+	{
+		
+	}
 }
 
-void CGameObject::DebugRender()
+void CGameObject::DebugRender(bool collide,bool other)
 {
 	//디버그시 박스콜라이더 그리기.
+	if (collide)
+	{
 		CBoxCollider* pComponent = GetComponent<CBoxCollider>();
 		if (pComponent != nullptr)
-			pComponent->DrawBox();
+			pComponent->DrawCollide();
+	}
+	if (other)
+	{
+		DrawBox();
+	}
 }
 
 void CGameObject::LateUpdate()
@@ -152,11 +157,10 @@ void CGameObject::DrawBox()
 	//트랜스폼 컴포넌트가 있을경우 위치값을 가져온다.
 	if (GetComponent<CTransform>() != nullptr)
 	{
-		m_Pos = GetComponent<CTransform>()->GetPosition();
+		m_Pos = GetComponent<CTransform>()->GetLocalPosition();
 	}
 	else
 		m_Pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-
 	//기본 오브젝트 박스 렌더링.
 	D3DXMATRIX* mat = CCameraMgr::GetInstance()->GetViewProjMatrix();
 	D3DXMATRIX worldMat = GetComponent<CTransform>()->GetWorldMat();

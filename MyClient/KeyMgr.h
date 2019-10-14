@@ -16,6 +16,11 @@ const DWORD KEY_A = 0x00000200;
 const DWORD KEY_S = 0x00000400;
 const DWORD KEY_D = 0x00000800;
 
+const DWORD KEY_P = 0x00001000;
+const DWORD KEY_V = 0x00002000;
+const DWORD KEY_O = 0x00004000;
+
+class CMouse;
 class CKeyMgr
 {
 	DECLARE_SINGLETON(CKeyMgr)
@@ -32,8 +37,15 @@ public:
 	bool KeyDown(DWORD dwKey);
 	bool KeyUp(DWORD dwKey);
 
+public:
+	void SetMouse(CMouse* pMouse);
+public:
+	CMouse*	GetMouse();
+
 private:
 	DWORD m_dwKey;
 	DWORD m_dwKeyDown;
 	DWORD m_dwKeyUp;
+
+	CMouse*		m_Mouse;
 };

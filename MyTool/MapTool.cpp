@@ -28,6 +28,7 @@ CMapTool::CMapTool(CWnd* pParent /*=NULL*/)
 	, m_TileSetSize(_T(""))
 	, m_iTileSizeX(0)
 	, m_iTileSizeY(0)
+	, m_Tag(_T(""))
 {
 
 }
@@ -66,6 +67,10 @@ void CMapTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK1, m_Instacne);
 	DDX_Control(pDX, IDC_CHECK4, m_Collide);
 	DDX_Control(pDX, IDC_COMBO1, m_Layer);
+	DDX_Control(pDX, IDC_CHECK3, m_InvertY);
+	DDX_Control(pDX, IDC_CHECK5, m_Empty);
+	DDX_Text(pDX, IDC_EDIT3, m_Tag);
+	DDX_Control(pDX, IDC_EDIT3, m_TagEdit);
 }
 
 void CMapTool::Renew(XMFLOAT2 * tex)
@@ -435,7 +440,7 @@ BOOL CMapTool::OnInitDialog()
 	m_pDeviceMgr->GetDevice()->CreateVertexBuffer(4 * sizeof(Vertex), D3DUSAGE_WRITEONLY, FVF_VERTEX, D3DPOOL_MANAGED, &m_pVB, 0);
 	m_pDeviceMgr->GetDevice()->CreateIndexBuffer(6 * sizeof(WORD), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_pIB, 0);
 
-
+	m_Layer.AddString(L"LAYER_Ground");
 	m_Layer.AddString(L"LAYER_0");
 	m_Layer.AddString(L"LAYER_1");
 	m_Layer.AddString(L"LAYER_2");

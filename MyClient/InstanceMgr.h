@@ -13,6 +13,7 @@ public:
 	void		InstanceRender();
 public:
 	void		AddObject(CGameObject* pObject);
+
 private:
 	CDeviceMgr*						m_pDeviceMgr;
 	map<string, list<CGameObject*>> m_mapInstance;

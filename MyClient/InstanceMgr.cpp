@@ -83,7 +83,6 @@ void CInstanceMgr::Initialize()
 }
 void CInstanceMgr::InstanceRender()
 {
-	
 	for (auto &i : m_mapInstance)
 	{
 		int index = 0;
@@ -98,6 +97,7 @@ void CInstanceMgr::InstanceRender()
 			//tex[0].x, tex[0].y
 			//tex[3].x-tex[0].x,tex[3].y-tex[0].y
 			index++;
+			
 		}
 		m_pInsVB->Unlock();
 
@@ -149,6 +149,8 @@ void CInstanceMgr::InstanceRender()
 void CInstanceMgr::AddObject( CGameObject * pObject)
 {
 	CTextureRenderer* pTexture = pObject->GetComponent<CTextureRenderer>();
+	if (pTexture == nullptr)
+		return;
 	wstring texName = pTexture->GetTexName();
 	string name;
 	name.assign(texName.begin(), texName.end());

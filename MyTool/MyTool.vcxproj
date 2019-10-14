@@ -95,10 +95,11 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions);TOOL</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\JBS\Source\Repos\D2DTool\Headers;C:\Users\JBS\Documents\Visual Studio 2015\Projects\MyTool\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -146,12 +147,13 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions);TOOL</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\JBS\Source\Repos\D2DTool\Headers;C:\Users\JBS\Documents\Visual Studio 2015\Projects\MyTool\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Headers/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -218,6 +220,7 @@
     <ClInclude Include="HierarchyView.h" />
     <ClInclude Include="InspectView.h" />
     <ClInclude Include="InstanceMgr.h" />
+    <ClInclude Include="KeyMgr.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MapSaveTool.h" />
     <ClInclude Include="MapTool.h" />
@@ -268,6 +271,7 @@
     <ClCompile Include="HierarchyView.cpp" />
     <ClCompile Include="InspectView.cpp" />
     <ClCompile Include="InstanceMgr.cpp" />
+    <ClCompile Include="KeyMgr.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MapSaveTool.cpp" />
     <ClCompile Include="MapTool.cpp" />

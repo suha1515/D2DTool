@@ -161,7 +161,7 @@ void CMapSaveTool::OnBnClickedMapSave()
 					//트랜스폼 컴포넌트 정보 쓰기
 					if (nullptr != pTransform)										//null이 아니면 정보를 쓴다.
 					{
-						transInfo._ObjectPos = pTransform->GetPosition();			//위치
+						transInfo._ObjectPos = pTransform->GetLocalPosition();			//위치
 						transInfo._ObjectRotation = pTransform->GetRotation();		//회전
 						transInfo._ObjectScale = pTransform->GetScale();			//크기
 						file.Write(&transInfo, sizeof(TRANSFORM_INFO));
@@ -184,6 +184,7 @@ void CMapSaveTool::OnBnClickedMapSave()
 						boxcolInfo._BoxWidth = pBoxCollider->GetBoxWidth();					//박스너비
 						boxcolInfo._BoxOffsetX = pBoxCollider->GetBoxOffsetX();				//오프셋X
 						boxcolInfo._BoxOffsetY = pBoxCollider->GetBoxoffsetY();				//오프셋Y
+						boxcolInfo._colType = pBoxCollider->GetCollideType();				//박스타입.
 						file.Write(&boxcolInfo, sizeof(BOXCOL_INFO));
 					}
 					//애니메이터 정보 쓰기
@@ -278,7 +279,7 @@ void CMapSaveTool::OnBnClickedMapSave()
 					//트랜스폼 컴포넌트 정보 쓰기
 					if (nullptr != pTransform)										//null이 아니면 정보를 쓴다.
 					{
-						transInfo._ObjectPos = pTransform->GetPosition();			//위치
+						transInfo._ObjectPos = pTransform->GetLocalPosition();			//위치
 						transInfo._ObjectRotation = pTransform->GetRotation();		//회전
 						transInfo._ObjectScale = pTransform->GetScale();			//크기
 						file.Write(&transInfo, sizeof(TRANSFORM_INFO));
@@ -301,6 +302,7 @@ void CMapSaveTool::OnBnClickedMapSave()
 						boxcolInfo._BoxWidth = pBoxCollider->GetBoxWidth();					//박스너비
 						boxcolInfo._BoxOffsetX = pBoxCollider->GetBoxOffsetX();				//오프셋X
 						boxcolInfo._BoxOffsetY = pBoxCollider->GetBoxoffsetY();				//오프셋Y
+						boxcolInfo._colType = pBoxCollider->GetCollideType();				//박스타입.
 						file.Write(&boxcolInfo, sizeof(BOXCOL_INFO));
 					}
 					//애니메이터 정보 쓰기

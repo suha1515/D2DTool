@@ -21,12 +21,12 @@ public:
 	void					SetPosisiton(const D3DXVECTOR3& pos);
 	void					SetScale(const float& _x, const float& _y);
 	void					SetScale(const XMFLOAT3& _scale);
-	const	D3DXVECTOR3&	GetPosition()	const;
+	const	D3DXVECTOR3&	GetLocalPosition()	const;
 public:
 	D3DXMATRIX*				GetViewMatrix();
 	D3DXMATRIX*				GetProjectMatrix();
 	D3DXMATRIX*				GetViewProjMatrix();
-
+	XMFLOAT3				GetScaleFactor();
 public:
 	void					Scaling(const float&_x = 0.0f, const float& _y = 0.0f);
 	void					MoveCamera(const D3DXVECTOR3& pos);

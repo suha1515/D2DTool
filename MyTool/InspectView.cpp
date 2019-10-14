@@ -122,7 +122,7 @@ void CInspectView::OnInitialUpdate()
 	m_pComponentSheet->ModifyStyle(0, WS_TABSTOP);
 	m_pComponentSheet->SetActivePage(0);
 
-
+	m_ObjectLayer.AddString(L"LAYER_Ground");
 	m_ObjectLayer.AddString(L"LAYER_0");
 	m_ObjectLayer.AddString(L"LAYER_1");
 	m_ObjectLayer.AddString(L"LAYER_2");
@@ -162,9 +162,9 @@ void CInspectView::UpdateInfo()
 		NULL_CHECK_MSG_RETURN(pTransform, L"Inspect View GameObject Transform is null");
 
 		//위치 값 갱신
-		m_PosX = pTransform->GetPosition().x;
-		m_PosY = pTransform->GetPosition().y;
-		m_PosZ = pTransform->GetPosition().z;
+		m_PosX = pTransform->GetLocalPosition().x;
+		m_PosY = pTransform->GetLocalPosition().y;
+		m_PosZ = pTransform->GetLocalPosition().z;
 
 		//회전 값 갱신
 		m_RotX = pTransform->GetRotation().x;

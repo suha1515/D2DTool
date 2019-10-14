@@ -7,7 +7,7 @@ class CLess
 public:
 	bool operator()(T pObjectA, T pObjectB)
 	{
-		return pObjectA->GetComponent<T2>()->GetPosition().y < pObjectB->GetComponent<T2>()->GetPosition().y;
+		return pObjectA->GetComponent<T2>()->GetWorldPos()->y > pObjectB->GetComponent<T2>()->GetWorldPos()->y;
 	}
 };
 

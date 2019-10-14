@@ -85,6 +85,7 @@
 #define IDC_TILESETSIZE                 1091
 #define IDC_CHECK2                      1093
 #define IDC_CLIP_POS_X                  1094
+#define IDC_CHECK5                      1094
 #define IDC_CHECK3                      1095
 #define IDC_CLIP_POS_Y                  1095
 #define IDC_PLAY_TIME                   1096

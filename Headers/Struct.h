@@ -116,6 +116,7 @@ typedef struct BoxColliderInfo
 {
 	float			  _BoxWidth, _BoxHeight;
 	float			  _BoxOffsetX, _BoxOffsetY;
+	COLLIDE_TYPE	  _colType;
 }BOXCOL_INFO;
 
 typedef struct AnimatorInfo
@@ -135,5 +136,30 @@ typedef struct ComponentCount
 	int			_BoxCol=0;
 	int			_Animator=0;
 }COMP_INFO;
+
+typedef struct CopyObject
+{
+	OBJ_INFO objInfo;
+	TRANSFORM_INFO transformInfo;
+	TEXTURE_INFO   textureInfo;
+	BOXCOL_INFO		boxcolInfo;
+	ANIM_INFO		animInfo;
+	vector<SCRIPT_INFO>		scriptInfo;
+	COMP_INFO		compInfo;
+	vector<CopyObject>	childInfo;
+}OBJ_COPY;
+
+typedef struct CollideDepth
+{
+	float depthX;
+	float depthY;
+}COL_DEPTH;
+
+typedef struct Line
+{
+	D3DXVECTOR3 startPoint;
+	D3DXVECTOR3 endPoint;
+}LINE;
+
 #define __STRUCT_H__
 #endif

@@ -44,6 +44,7 @@ void CBoxColliderPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT2, m_height);
 	DDX_Text(pDX, IDC_EDIT3, m_PosX);
 	DDX_Text(pDX, IDC_EDIT12, m_PosY);
+	DDX_Control(pDX, IDC_COMBO1, m_CollideList);
 }
 
 
@@ -52,6 +53,7 @@ BEGIN_MESSAGE_MAP(CBoxColliderPage, CPropertyPage)
 	ON_BN_CLICKED(IDC_BUTTON2, &CBoxColliderPage::OnBnClickedRemoveComp)
 	ON_BN_CLICKED(IDC_BUTTON3, &CBoxColliderPage::OnBnClickedSetCollide)
 	ON_BN_CLICKED(IDC_CHECK1, &CBoxColliderPage::OnBnClickedCompCheck)
+	ON_CBN_SELCHANGE(IDC_COMBO1, &CBoxColliderPage::OnCbnSelchangeCombo1)
 END_MESSAGE_MAP()
 
 
@@ -107,6 +109,28 @@ void CBoxColliderPage::OnBnClickedSetCollide()
 
 		pComponent->SetBoxOffset(m_PosX, m_PosY);
 		pComponent->SetBoxSize(m_width, m_height);
+		int index = m_CollideList.GetCurSel();
+		COLLIDE_TYPE type = RIGHT_TOP;
+		if (index != -1)
+		{
+			CString coltype;
+			m_CollideList.GetLBText(index, coltype);
+			if (coltype == L"오른쪽위삼각형")
+				type = RIGHT_TOP;
+			else if (coltype == L"오른쪽아래삼각형")
+				type = RIGHT_BOTTOM;
+			else if (coltype == L"왼쪽위삼각형")
+				type = LEFT_TOP;
+			else if (coltype == L"왼쪽아래삼각형")
+				type = LEFT_BOTTOM;
+			else
+				type = NORMAL;
+			//m_CollideList.AddString(L"오른쪽위삼각형");
+			////m_CollideList.AddString(L"오른쪽아래삼각형");
+			//m_CollideList.AddString(L"왼쪽위삼각형");
+			//m_CollideList.AddString(L"왼쪽아래삼각형");
+		}
+		pComponent->SetCollideType(type);
 		pComponent->SetBoxCollider();
 
 		UpdateData(FALSE);
@@ -222,4 +246,24 @@ void CBoxColliderPage::Update()
 	}
 
 }
+
+
+
+void CBoxColliderPage::OnCbnSelchangeCombo1()
+{
+}
+
+
+BOOL CBoxColliderPage::OnInitDialog()
+{
+	CPropertyPage::OnInitDialog();
+	m_CollideList.AddString(L"사각형");
+	m_CollideList.AddString(L"오른쪽위삼각형");			// 1
+	m_CollideList.AddString(L"오른쪽아래삼각형");			// 2
+	m_CollideList.AddString(L"왼쪽위삼각형");				// 3
+	m_CollideList.AddString(L"왼쪽아래삼각형");			// 4
+
+	return TRUE;
+}
+
 

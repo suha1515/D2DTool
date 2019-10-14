@@ -13,7 +13,7 @@ public:
 	//업데이트 ,렌더링, 늦은 업데이트
 	virtual int Update();
 	virtual void Render();
-	virtual void DebugRender();
+	virtual void DebugRender(bool collide, bool other);
 	virtual void LateUpdate();
 
 	//매개변수 있을시 부모 가된다.

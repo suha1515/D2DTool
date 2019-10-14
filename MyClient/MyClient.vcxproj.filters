@@ -103,6 +103,12 @@
     <Filter Include="99.Managers\12.KeyMgr">
       <UniqueIdentifier>{833e2e7b-953c-4dd7-889b-818f00769c5b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="95.Component\04.Scripts\01.BulletScript">
+      <UniqueIdentifier>{ca1e4925-7722-44ea-9c17-279b1f9d9f2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="94.Math">
+      <UniqueIdentifier>{693320a7-ffde-45e9-a35b-d7bda1cd65cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -204,6 +210,15 @@
     <ClInclude Include="KeyMgr.h">
       <Filter>99.Managers\12.KeyMgr</Filter>
     </ClInclude>
+    <ClInclude Include="BulletScript.h">
+      <Filter>95.Component\04.Scripts\01.BulletScript</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>01.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>94.Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -295,6 +310,12 @@
     </ClCompile>
     <ClCompile Include="KeyMgr.cpp">
       <Filter>99.Managers\12.KeyMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletScript.cpp">
+      <Filter>95.Component\04.Scripts\01.BulletScript</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>01.GameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

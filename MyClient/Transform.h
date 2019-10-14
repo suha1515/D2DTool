@@ -26,7 +26,9 @@ public:
 
 public:
 	//위치값 리턴하는 함수.
-	D3DXVECTOR3&  GetPosition();
+	D3DXVECTOR3&  GetLocalPosition();
+	//부모위치도 고려하여 반환
+	D3DXVECTOR3*  GetWorldPos();
 
 	//회전값 리턴하는 함수.
 	const XMFLOAT3&		GetRotation()	 const;
@@ -58,8 +60,12 @@ private:
 
 	//오브젝트 위치,회전,크기
 	D3DXVECTOR3				m_Pos;
+	D3DXVECTOR3				m_WorldPos;
 	XMFLOAT3				m_Rotaion;
 	D3DXVECTOR3				m_Scale;
+
+	//부모오브젝트까지 고려한 위치
+	D3DXVECTOR3				m_RealPos;
 
 	//오브젝트 박스 컬러.
 	D3DXCOLOR				m_ColorBox;

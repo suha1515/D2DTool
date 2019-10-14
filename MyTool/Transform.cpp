@@ -102,10 +102,22 @@ void CTransform::SetWorld()
 	m_WorldMat = m_ScaleMat*m_RotateMat* m_TransMat*m_ParentMat;
 }
 
- D3DXVECTOR3 & CTransform::GetPosition()
+ D3DXVECTOR3 & CTransform::GetLocalPosition()
 {
 	return m_Pos;
 }
+ D3DXVECTOR3* CTransform::GetWorldPos()
+ {
+	 if (m_GameObject->GetParentObject() != nullptr)
+	 {
+		 D3DXVECTOR3 pos = *m_GameObject->GetParentObject()->GetComponent<CTransform>()->GetWorldPos();
+		 m_WorldPos = m_Pos + pos;
+	 }
+	 else
+		 m_WorldPos = m_Pos;
+	 return &m_WorldPos;
+ }
+
 
 const XMFLOAT3 & CTransform::GetRotation() const
 {

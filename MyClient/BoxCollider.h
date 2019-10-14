@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 class CTransform;
-class CBoxCollider :
+class CBoxCollider:
 	public CComponent
 {
 public:
@@ -13,7 +13,9 @@ public:
 	virtual void Action() override;
 
 public:
+	void    DrawCollide();
 	void	DrawBox();
+	void	DrawTriangle();
 public:
 	//	콜라이더 박스 크기지정
 	void	SetBoxSize(float width,float height);
@@ -21,6 +23,10 @@ public:
 	void	SetBoxOffset(float x, float y);
 	//  콜라이더 박스 만들기.
 	void	SetBoxCollider();
+	//  콜라이더 종류 지정
+	void	SetCollideType(COLLIDE_TYPE type);
+	//  콜라이더 박스 색깔지정
+	void	SetCollideColor(D3DCOLOR color);
 
 public:
 	// 콜라이더 박스 받기
@@ -36,9 +42,14 @@ public:
 	const float		GetBoxOffsetX();
 	const float		GetBoxoffsetY();
 
+	//콜라이더 종류받기
+	COLLIDE_TYPE	GetCollideType();
+
 private:
 	//박스의 각점들
 	D3DXVECTOR3			m_BoxPos[4];
+	//박스 그림
+	D3DXVECTOR3			m_BoxDrawPos[4];
 	//박스 가로,세로
 	float				m_width,m_height;
 	//오브젝트 기준 박스 위치
@@ -51,6 +62,12 @@ private:
 	//콜라이더 박스 위치
 	D3DXVECTOR3			m_BoxPosition;
 
+	//콜라이더 종류 -박스, 삼각형 (삼각형vs박스충돌)
+	COLLIDE_TYPE		m_CollideType;
+
+	D3DXVECTOR3			m_ReflectVec[3];
+
+	D3DXCOLOR			m_BoxColor;
 
 };
 

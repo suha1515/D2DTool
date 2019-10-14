@@ -185,7 +185,7 @@ void CTextureRenderer::Action()
 		D3DXMATRIX worldMat = pTransform->GetWorldMat();
 		Render(worldMat);
 
-		//D3DXVECTOR3 objectPos = m_GameObject->GetComponent<CTransform>()->GetPosition();
+		//D3DXVECTOR3 objectPos = m_GameObject->GetComponent<CTransform>()->GetLocalPosition();
 		//cout << "현재 오브젝트 위치" << objectPos.x << " , " << objectPos.y << endl;
 	}
 }

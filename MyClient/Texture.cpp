@@ -15,6 +15,9 @@ CTexture::~CTexture()
 
 TEX_INFO * CTexture::GetTexInfo(const wstring & wstrStateKey)
 {	
+	auto iter = m_mapTexInfo.find(wstrStateKey);
+	if (m_mapTexInfo.end() == iter)
+		return nullptr;
 	return m_mapTexInfo[wstrStateKey];
 }
 
