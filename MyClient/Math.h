@@ -34,6 +34,15 @@ inline D3DXVECTOR3 Lerp(const D3DXVECTOR3& begin, const D3DXVECTOR3& end,const f
 	return temp;
 }
 
+inline float LerpFloat(const float& begin, const float& end, const float& _ratio)
+{
+	float ratio = __min(1.f, __max(0.f, _ratio));
+	float temp;
+
+	temp = begin + (end - begin)*ratio;
+	return temp;
+}
+
 inline D3DXVECTOR3 BezierCurve(const D3DXVECTOR3& begin,const D3DXVECTOR3& end,const D3DXVECTOR3& control,const float& _ratio)
 {
 	D3DXVECTOR3 mid1 = Lerp(begin, control, _ratio);

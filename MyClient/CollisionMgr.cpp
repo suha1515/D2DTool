@@ -99,7 +99,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//대각선
 		line1.startPoint = destBox[1];
 		line1.endPoint = destBox[2];
-		if (LineRect(line1, srcBox))
+		if (LineRect(line1, srcBox,coltype))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(1.0f, -1.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -111,7 +111,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//좌측선
 		line1.startPoint = destBox[0];
 		line1.endPoint = destBox[1];
-		if (LineRect(line1, srcBox))
+		if (LineRect(line1, srcBox, coltype))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(-1.0f, 0.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -123,7 +123,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//상단 선.
 		line1.startPoint = destBox[0];
 		line1.endPoint = destBox[2];
-		if (LineRect(line1, srcBox))
+		if (LineRect(line1, srcBox, coltype))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -138,7 +138,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//대각선
 		line1.startPoint = destBox[0];
 		line1.endPoint = destBox[3];
-		if (LineRect(line1, srcBox))
+		if (LineRect(line1, srcBox, coltype))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(1.0f, 1.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -149,7 +149,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//좌측선
 		line1.startPoint = destBox[0];
 		line1.endPoint = destBox[1];
-		if (LineRect(line1, srcBox))
+		if (LineRect(line1, srcBox, coltype))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(-1.0f, 0.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -161,7 +161,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//하단선
 		line1.startPoint = destBox[1];
 		line1.endPoint = destBox[3];
-		if (LineRect(line1, srcBox))
+		if (LineRect(line1, srcBox, coltype))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -177,7 +177,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//대각선
 		line1.startPoint = destBox[0];
 		line1.endPoint = destBox[3];
-		if (LineRect(line1, srcBox))
+		if (LineRect(line1, srcBox, coltype))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(-1.0f, -1.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -188,7 +188,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//상단선
 		line1.startPoint = destBox[0];
 		line1.endPoint = destBox[2];
-		if (LineRect(line1, srcBox))
+		if (LineRect(line1, srcBox, coltype))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -200,7 +200,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//우측선
 		line1.startPoint = destBox[2];
 		line1.endPoint = destBox[3];
-		if (LineRect(line1, srcBox))
+		if (LineRect(line1, srcBox, coltype))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -214,7 +214,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//대각선
 		line1.startPoint = destBox[2];
 		line1.endPoint = destBox[1];
-		if (LineRect(line1, srcBox))
+		if (LineRect(line1, srcBox, coltype))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(-1.0f, 1.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -226,7 +226,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//우측선
 		line1.startPoint = destBox[2];
 		line1.endPoint = destBox[3];
-		if (LineRect(line1, srcBox))
+		if (LineRect(line1, srcBox, coltype))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);
@@ -238,7 +238,7 @@ bool CCollisionMgr::CheckLineBox(CBoxCollider * pSource, CBoxCollider * pDest, D
 		//하단선
 		line1.startPoint = destBox[1];
 		line1.endPoint = destBox[3];
-		if (LineRect(line1, srcBox))
+		if (LineRect(line1, srcBox, coltype))
 		{
 			D3DXVECTOR3 temp = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
 			D3DXVec3Normalize(&temp, &temp);

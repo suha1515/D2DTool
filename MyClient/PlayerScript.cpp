@@ -298,52 +298,66 @@ void CPlayerScript::MoveInput()
 
 void CPlayerScript::MouseInput()
 {
+	D3DXVECTOR3 mousePos = pKeyMgr->GetMouse()->GetMousePos();
+	m_BulletAngle = GetAngle(*playerPos, mousePos);
 	if (pKeyMgr->KeyDown(KEY_LBUTTON))
 	{
 		cout << "던지기!" << endl;
-
-		D3DXVECTOR3 mousePos = pKeyMgr->GetMouse()->GetMousePos();
-
-
-		m_BulletAngle = GetAngle(*playerPos, mousePos);
-
-		//360도로 변환하기 위한것
-		if (m_BulletAngle < 0.0f)
-			m_MouseAngle = m_BulletAngle + 360.f;
-		else
-			m_MouseAngle = m_BulletAngle;
-
-		//우측 
-		if (m_MouseAngle > 0.0f&&m_MouseAngle < 22.5f)
-			m_CurDir = RIGHT;
-		//우측 나머지
-		else if (m_MouseAngle > 337.5f&&m_MouseAngle < 360.f)
-			m_CurDir = RIGHT;
-		//우측 상단
-		else if (m_MouseAngle > 22.5f&&m_MouseAngle < 67.5f)
-			m_CurDir = RIGHT_UP_45;
-		//상단
-		else if (m_MouseAngle > 67.5f&&m_MouseAngle < 112.5f)
-			m_CurDir = UP;
-		//좌측 상단
-		else if (m_MouseAngle > 112.5f&&m_MouseAngle < 157.5f)
-			m_CurDir = LEFT_UP_45;
-		//좌측
-		else if (m_MouseAngle > 157.5f&&m_MouseAngle < 202.5f)
-			m_CurDir = LEFT;
-		//좌측 하단
-		else if (m_MouseAngle > 202.5f&&m_MouseAngle < 247.5f)
-			m_CurDir = LEFT_DOWN_45;
-		//하단
-		else if (m_MouseAngle > 247.5f&&m_MouseAngle < 292.5f)
-			m_CurDir = DOWN;
-		//우측하단
-		else if (m_MouseAngle > 292.5f&&m_MouseAngle < 337.5f)
-			m_CurDir = RIGHT_DOWN_45;
+		
+		MouseDir();
 
 		m_CurState = THROW;
 		m_bIsThrow = true;
 	}
+	if (pKeyMgr->KeyPressing(KEY_LBUTTON))
+	{
+		m_ChargeCancle = 0.0f;
+		m_bIsCharging = true;
+
+		//좌측 점 충돌체 인덱싱
+		CheckRange(m_GuideLineLeftEndPoint, &m_LeftPointCollide);
+		//우측 점 충돌체 인덱싱
+		CheckRange(m_GuideLineRightEndPoint, &m_RightPointCollide);
+
+		if (m_bIsCharged)
+		{
+			//m_CurState = AIM_WALK;
+			CheckRange(m_GuideLineEndPoint, &m_MidPointCollide);
+			MouseDir();
+		}	
+		if (m_ChargeTime > 1.3f)
+		{
+			m_bIsCharged = true;
+		}
+		else
+		{
+			m_ChargeTime += CTimeMgr::GetInstance()->GetDeltaTime();
+			m_LeftGuideAngle += (LerpFloat(m_LefttempAngle, m_GuideAngle, m_ChargeTime / 1.3f)- m_LeftGuideAngle);
+			if (m_GuideAngle == 0)
+				m_RightGuideAngle += ( LerpFloat(m_RighttempAngle, m_GuideAngle + 360.f, m_ChargeTime / 1.3f)- m_RightGuideAngle);
+			else
+				m_RightGuideAngle += (LerpFloat(m_RighttempAngle, m_GuideAngle, m_ChargeTime / 1.3f) - m_RightGuideAngle);
+		}
+	}
+	else
+	{
+		if(m_bIsCharged)
+			m_bIsCharged = false;
+		if (m_bIsCharging)
+		{
+			if (m_ChargeCancle > 0.7f)
+			{
+				m_bIsCharging = false;
+				m_ChargeTime -= m_ChargeTime;
+				m_LeftGuideAngle = m_LefttempAngle;
+				m_RightGuideAngle = m_RighttempAngle;
+				m_ChargeCancle -= m_ChargeCancle;
+			}
+			else
+				m_ChargeCancle += CTimeMgr::GetInstance()->GetDeltaTime();	
+		}
+	}
+	
 }
 
 void CPlayerScript::MeeleAttack()
@@ -741,63 +755,95 @@ void CPlayerScript::DirState()
 				cout << "윗방향" << endl;
 				m_JumpControlPos = D3DXVECTOR3(playerPos->x, playerPos->y, 0.0f);
 				m_GuideAngle = 90.f;
-				m_LeftGuideAngle = 120.f;
-				m_RightGuideAngle = 60.f;
+
+					m_LeftGuideAngle = 120.f;
+					m_RightGuideAngle = 60.f;
+					m_LefttempAngle = m_LeftGuideAngle;
+					m_RighttempAngle = m_RightGuideAngle;
+
 				break;
 			case DOWN:
 				cout << "아랫방향" << endl;
 				m_JumpControlPos = D3DXVECTOR3(playerPos->x, playerPos->y, 0.0f);
 				m_GuideAngle = 270.f;
-				m_LeftGuideAngle = 300.f;
-				m_RightGuideAngle = 240.f;
+
+					m_LeftGuideAngle = 300.f;
+					m_RightGuideAngle = 240.f;
+					m_LefttempAngle = m_LeftGuideAngle;
+					m_RighttempAngle = m_RightGuideAngle;
+				
 				break;
 			case LEFT_UP_45:
 				cout << "왼쪽위" << endl;
 				pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3(playerPos->x - 10.f, playerPos->y + 40.f, 0.0f);
 				m_GuideAngle = 135.f;
-				m_LeftGuideAngle = 165.f;
-				m_RightGuideAngle = 105.f;
+
+					m_LeftGuideAngle = 165.f;
+					m_RightGuideAngle = 105.f;
+					m_LefttempAngle = m_LeftGuideAngle;
+					m_RighttempAngle = m_RightGuideAngle;
+				
 				break;
 			case RIGHT_UP_45:
 				cout << "오른위" << endl;
 				pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 40.f, 0.0f);
 				m_GuideAngle = 45.f;
-				m_LeftGuideAngle = 75.f;
-				m_RightGuideAngle = 15.f;
+
+					m_LeftGuideAngle = 75.f;
+					m_RightGuideAngle = 15.f;
+					m_LefttempAngle = m_LeftGuideAngle;
+					m_RighttempAngle = m_RightGuideAngle;
+				
 				break;
 			case LEFT:
 				cout << "왼쪽" << endl;
 				pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x - 10.f), playerPos->y + 20.f, 0.0f);
 				m_GuideAngle = 180.f;
-				m_LeftGuideAngle = 210.f;
-				m_RightGuideAngle = 150.f;
+
+					m_LeftGuideAngle = 210.f;
+					m_RightGuideAngle = 150.f;
+					m_LefttempAngle = m_LeftGuideAngle;
+					m_RighttempAngle = m_RightGuideAngle;
+				
 				break;
 			case RIGHT:
 				cout << "오른쪽" << endl;
 				pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 20.f, 0.0f);
 				m_GuideAngle = 0.f;
-				m_LeftGuideAngle = 30.f;
-				m_RightGuideAngle = 330.f;
+
+					m_LeftGuideAngle = 30.f;
+					m_RightGuideAngle = 330.f;
+					m_LefttempAngle = m_LeftGuideAngle;
+					m_RighttempAngle = m_RightGuideAngle;
+				
 				break;
 			case LEFT_DOWN_45:
 				cout << "왼쪽아래" << endl;
 				pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x - 10.f), playerPos->y + 10.f, 0.0f);
 				m_GuideAngle = 225.f;
-				m_LeftGuideAngle = 195.f;
-				m_RightGuideAngle = 255.f;
+
+					m_LeftGuideAngle = 195.f;
+					m_RightGuideAngle = 255.f;
+					m_LefttempAngle = m_LeftGuideAngle;
+					m_RighttempAngle = m_RightGuideAngle;
+				
 				break;
 			case RIGHT_DOWN_45:
 				cout << "오른아래." << endl;
 				pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 10.f, 0.0f);
 				m_GuideAngle = 315.f;
-				m_LeftGuideAngle = 345.f;
-				m_RightGuideAngle = 285.f;
+
+					m_LeftGuideAngle = 345.f;
+					m_RightGuideAngle = 285.f;
+					m_LefttempAngle = m_LeftGuideAngle;
+					m_RighttempAngle = m_RightGuideAngle;
+				
 				break;
 			}
 		}
@@ -845,6 +891,198 @@ void CPlayerScript::AttackBullet()
 	pBullet->AddScripts(CBulletScript::Create(m_BulletAngle, 400.f, pBullet));
 }
 
+void CPlayerScript::MouseDir()
+{
+	//360도로 변환하기 위한것
+	if (m_BulletAngle < 0.0f)
+		m_MouseAngle = m_BulletAngle + 360.f;
+	else
+		m_MouseAngle = m_BulletAngle;
+
+	//우측 
+	if (m_MouseAngle > 0.0f&&m_MouseAngle < 22.5f)
+		m_CurDir = RIGHT;
+	//우측 나머지
+	else if (m_MouseAngle > 337.5f&&m_MouseAngle < 360.f)
+		m_CurDir = RIGHT;
+	//우측 상단
+	else if (m_MouseAngle > 22.5f&&m_MouseAngle < 67.5f)
+		m_CurDir = RIGHT_UP_45;
+	//상단
+	else if (m_MouseAngle > 67.5f&&m_MouseAngle < 112.5f)
+		m_CurDir = UP;
+	//좌측 상단
+	else if (m_MouseAngle > 112.5f&&m_MouseAngle < 157.5f)
+		m_CurDir = LEFT_UP_45;
+	//좌측
+	else if (m_MouseAngle > 157.5f&&m_MouseAngle < 202.5f)
+		m_CurDir = LEFT;
+	//좌측 하단
+	else if (m_MouseAngle > 202.5f&&m_MouseAngle < 247.5f)
+		m_CurDir = LEFT_DOWN_45;
+	//하단
+	else if (m_MouseAngle > 247.5f&&m_MouseAngle < 292.5f)
+		m_CurDir = DOWN;
+	//우측하단
+	else if (m_MouseAngle > 292.5f&&m_MouseAngle < 337.5f)
+		m_CurDir = RIGHT_DOWN_45;
+}
+
+void CPlayerScript::CheckRange(D3DXVECTOR3 point,list<CGameObject*>* objlist)
+{
+	const vector<CGameObject*>& tiles = CObjectMgr::GetInstance()->GetTiles();
+
+	int mapSizex = (CObjectMgr::GetInstance()->m_MapSizeX/2);
+	int mapSizey = (CObjectMgr::GetInstance()->m_MapSizeY/2);
+
+	int playerIndexX = (mapSizex + playerPos->x) / 16;
+	int playerIndexY = (mapSizey + playerPos->y) / 16;
+	if (!m_bIsCharged)
+	{
+		int pointIndexX = (mapSizex + point.x) / 16;
+		int pointIndexY = (mapSizey + point.y) / 16;
+		int pointGapX = playerIndexX - pointIndexX;
+		int pointGapY = playerIndexY - pointIndexY;
+
+		//인덱스가 양수라는것은 왼쪽점의 인덱스가 플레이어 인덱스 보다 작은것이므로.(좌측 상단 대각선)
+		if (pointGapX > 0&& pointGapX>0)
+		{
+			for (int i = pointIndexX; i < playerIndexX; ++i)
+			{
+				for (int j = pointIndexY; j < playerIndexY; ++j)
+				{
+					int index = i + j*mapSizex;
+					m_LeftPointCollide.push_back(tiles[index]);
+				}
+			}
+		}
+		//인덱스x가 음수 Y가 양수는 점이 X로는 플레이어보다 앞이지만.Y로는 작다 (우측 상단 대각선)
+		else if (pointGapX < 0 && pointGapX>0)
+		{
+			for (int i = playerIndexX; i <pointIndexX; ++i)
+			{
+				for (int j = pointIndexY; j < playerIndexY; ++j)
+				{
+					int index = i + j*mapSizex;
+					m_LeftPointCollide.push_back(tiles[index]);
+				}
+			}
+		}
+		//인덱스 X가 크고 Y가 작은것은 플레이어보다 뒤지만 Y가 크다(좌측 하단 대각선)
+		else if (pointGapX > 0 && pointGapX < 0) 
+		{
+			for (int i = pointIndexX; i < playerIndexX; ++i)
+			{
+				for (int j = playerIndexY; j <pointIndexY; ++j)
+				{
+					int index = i + j*mapSizex;
+					m_LeftPointCollide.push_back(tiles[index]);
+				}
+			}
+		}
+		//인덱스 X가 음수 Y가 음수라는것은 둘다 플레이어 인덱스보다 높은것 (우측 하단 대각선)
+		else if (pointGapX < 0 && pointGapX < 0)
+		{
+			for (int i = playerIndexX; i < pointIndexX; ++i)
+			{
+				for (int j = playerIndexY; j < pointIndexY; ++j)
+				{
+					int index = i + j*mapSizex;
+					m_LeftPointCollide.push_back(tiles[index]);
+				}
+			}
+		}
+		//x인덱스는 같은데 Y인덱스가 음수 플레이어보다  (하단)
+		else if (pointGapX == 0 && pointGapX < 0)
+		{
+				for (int j = playerIndexY; j <pointIndexY; ++j)
+				{
+					int index = playerIndexX + j*mapSizex;
+					m_LeftPointCollide.push_back(tiles[index]);
+				}
+		}
+		// (상단)
+		else if (pointGapX == 0 && pointGapX > 0) 
+		{
+				for (int j = pointIndexY; j < playerIndexY; ++j)
+				{
+					int index = playerIndexX + j*mapSizex;
+					m_LeftPointCollide.push_back(tiles[index]);
+				}
+		}
+		//(좌측)
+		else if (pointGapX > 0 && pointGapX == 0)
+		{
+			for (int i = pointIndexX; i < playerIndexX; ++i)
+			{
+					int index = i + playerIndexY*mapSizex;
+					m_LeftPointCollide.push_back(tiles[index]);	
+			}
+		}
+		//(우측)
+		else if (pointGapX < 0 && pointGapX == 0)
+		{
+			for (int i = playerIndexX; i < pointIndexX; ++i)
+			{
+					int index = i + playerIndexY*mapSizex;
+					m_LeftPointCollide.push_back(tiles[index]);
+			}
+		}
+
+	}
+}
+
+void CPlayerScript::CheckRangeCollide()
+{
+	if (!m_bIsCharged)
+	{
+		if (!m_LeftPointCollide.empty())
+		{
+			for (auto&i : m_LeftPointCollide)
+			{
+				if (i != nullptr && (m_pGameObject->GetObjectLayer() <= i->GetObjectLayer() || i->GetObjectLayer() == LAYER_GROUND))
+				{
+					CBoxCollider* pDestBoxCollider = i->GetComponent<CBoxCollider>();
+					D3DXVECTOR3	  destPos = *i->GetComponent<CTransform>()->GetWorldPos();
+					if (m_bIsDebug)
+						i->DebugRender(true, false);
+					if (pDestBoxCollider != nullptr)
+					{
+						COLLIDE_TYPE coltype = pDestBoxCollider->GetCollideType();
+						//사각형충돌과 삼각형충돌이 있다
+						//사각형 충돌시
+						if (coltype == NORMAL)
+						{
+							if (CCollisionMgr::GetInstance()->CheckAABB(pBoxCollider, pDestBoxCollider))
+							{
+								cout << "사각형충돌" << endl;
+								return true;
+							}
+						}
+						//삼각형 충돌시. 그외 삼각형 충돌
+						else if (coltype != NORMAL)
+						{
+							if (CCollisionMgr::GetInstance()->CheckLineBox(pBoxCollider, pDestBoxCollider))
+								return true;
+						}
+					}
+				}
+			}
+		}
+		if (!m_RightPointCollide.empty())
+		{
+
+		}
+	}
+	else
+	{
+		if (!m_MidPointCollide.empty())
+		{
+
+		}
+	}
+}
+
 void CPlayerScript::CheckTiles()
 {
 	const vector<CGameObject*>& tiles = CObjectMgr::GetInstance()->GetTiles();
@@ -884,7 +1122,7 @@ bool CPlayerScript::CollideTiles()
 				D3DXVECTOR3	  destPos = *i->GetComponent<CTransform>()->GetWorldPos();
 				//타일컬링되는 오브젝트들 확인. ( 충돌체 있는녀석만)
 				if (m_bIsDebug)
-					i->SetObjectCliked(true, D3DCOLOR_XRGB(255, 0, 0));
+					i->DebugRender(true,false);
 				if (pDestBoxCollider != nullptr)
 				{
 					COLLIDE_TYPE coltype = pDestBoxCollider->GetCollideType();
@@ -1155,6 +1393,7 @@ void CPlayerScript::DrawGuideLine()
 	D3DXMATRIX*	mat = CCameraMgr::GetInstance()->GetViewProjMatrix();
 
 	m_GuideLineEndPoint = D3DXVECTOR3(playerPos->x + m_GuideRange*cosf(D3DXToRadian(m_GuideAngle)), playerPos->y + m_GuideRange*sinf(D3DXToRadian(m_GuideAngle)), 0.0f);
+	
 	m_GuideLineLeftEndPoint = D3DXVECTOR3(playerPos->x + m_GuideRange*cosf(D3DXToRadian(m_LeftGuideAngle)), playerPos->y + m_GuideRange*sinf(D3DXToRadian(m_LeftGuideAngle)), 0.0f);
 	m_GuideLineRightEndPoint = D3DXVECTOR3(playerPos->x + m_GuideRange*cosf(D3DXToRadian(m_RightGuideAngle)), playerPos->y + m_GuideRange*sinf(D3DXToRadian(m_RightGuideAngle)), 0.0f);
 	CDeviceMgr::GetInstance()->GetLine()->SetWidth(2.f);
@@ -1164,15 +1403,17 @@ void CPlayerScript::DrawGuideLine()
 		m_Line[0] = *playerPos;
 		m_Line[1] = m_GuideLineEndPoint;
 		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0,0,255));
+		if (!m_bIsCharged)
+		{
+			m_Line[0] = *playerPos;
+			m_Line[1] = m_GuideLineLeftEndPoint;
+			CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 255));
 
-		m_Line[0] = *playerPos;
-		m_Line[1] = m_GuideLineLeftEndPoint;
-		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 255));
+			m_Line[0] = *playerPos;
+			m_Line[1] = m_GuideLineRightEndPoint;
+			CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 255));
 
-		m_Line[0] = *playerPos;
-		m_Line[1] = m_GuideLineRightEndPoint;
-		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 255));
-
+		}		
 	}
 	CDeviceMgr::GetInstance()->GetLine()->End();
 }
