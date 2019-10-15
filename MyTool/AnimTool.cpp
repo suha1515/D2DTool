@@ -413,9 +413,9 @@ void CAnimTool::AnimationLoad(const wstring & filePath)
 
 	m_AnimList.AddString(m_FileName);						//AnimTool 의 애니메이션 리스트박스에 추가
 	file.Close();
-	CString name;
-	name.Format(L"%s %s", m_FileName, L"애니메이션 성공적으로 불러옴");
-	MessageBox(name, L"Success");
+	//CString name;
+	//name.Format(L"%s %s", m_FileName, L"애니메이션 성공적으로 불러옴");
+	//MessageBox(name, L"Success");
 
 }
 

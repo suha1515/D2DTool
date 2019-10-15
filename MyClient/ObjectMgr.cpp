@@ -75,7 +75,6 @@ void CObjectMgr::AddObject(CGameObject * object)
 			m_Stairs[object->GetObjectLayer()].push_back(object);
 		}
 	}
-	
 		m_Objects[object->GetLevel()].push_back(object);
 }
 

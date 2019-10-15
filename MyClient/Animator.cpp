@@ -28,8 +28,6 @@ CAnimator::~CAnimator()
 
 void CAnimator::Initialize(CGameObject * pObject)
 {
-
-
 	m_GameObject = pObject;
 
 	m_pAnimation = new CAnimation;

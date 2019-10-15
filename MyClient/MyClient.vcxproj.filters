@@ -112,6 +112,15 @@
     <Filter Include="95.Component\04.Scripts\02.GuideLineScripts">
       <UniqueIdentifier>{17cbaa1e-d6dd-4fc8-84c9-c6e075a64e19}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.GameObject\00.Effect">
+      <UniqueIdentifier>{2e438ca8-ff3b-4684-b641-f4f704ac9d59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95.Component\04.Scripts\02.EffectScript">
+      <UniqueIdentifier>{2bd17dfe-502c-42c9-bff9-a92d46b52be8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\0.1Enemy">
+      <UniqueIdentifier>{aaea580a-1a0f-42cd-a2aa-f4e53f843913}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -225,6 +234,12 @@
     <ClInclude Include="GuideLineScript.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Effect.h">
+      <Filter>01.GameObject\00.Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectScript.h">
+      <Filter>95.Component\04.Scripts\02.EffectScript</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -325,6 +340,12 @@
     </ClCompile>
     <ClCompile Include="GuideLineScript.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect.cpp">
+      <Filter>01.GameObject\00.Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectScript.cpp">
+      <Filter>95.Component\04.Scripts\02.EffectScript</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

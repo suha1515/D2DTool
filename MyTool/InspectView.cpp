@@ -239,6 +239,7 @@ void CInspectView::UpdateObject()
 
 	}
 	UpdateData(FALSE);
+
 }
 
 BOOL CInspectView::PreTranslateMessage(MSG* pMsg)

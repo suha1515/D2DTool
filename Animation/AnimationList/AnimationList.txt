@@ -1,6 +1,9 @@
+../Animation/Bullet_Effect.anim
 ../Animation/Clear_Way.anim
 ../Animation/CrossHair.anim
 ../Animation/GuideLine.anim
+../Animation/Mouse_Bot.anim
+../Animation/Normal_Bot.anim
 ../Animation/Player.anim
 ../Animation/Player_Attack_Effect.anim
 ../Animation/Player_bullet.anim
@@ -8,3 +11,5 @@
 ../Animation/Puzzle_Point.anim
 ../Animation/Puzzle_Wall.anim
 ../Animation/Puzzle_bar.anim
+../Animation/Turret.anim
+../Animation/Turret_Effect.anim

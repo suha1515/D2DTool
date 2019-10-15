@@ -5,6 +5,7 @@
 #include "Animator.h"
 #include "Transform.h"
 #include "BoxCollider.h"
+#include "Effect.h"
 
 CBulletScript::CBulletScript()
 {
@@ -87,9 +88,9 @@ void CBulletScript::Move()
 	/*pos.x += m_DirVec.x*m_fVelocity*CTimeMgr::GetInstance()->GetDeltaTime();
 	pos.y += m_DirVec.y*m_fVelocity*CTimeMgr::GetInstance()->GetDeltaTime();*/
 	//(*m_BulletPos).x  += m_DirVec.x*m_fVelocity*CTimeMgr::GetInstance()->GetDeltaTime();
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
-		(*m_BulletPos).x += m_DirVec.x*m_fVelocity*CTimeMgr::GetInstance()->GetDeltaTime()/3.0f;
+		(*m_BulletPos).x += m_DirVec.x*m_fVelocity*CTimeMgr::GetInstance()->GetDeltaTime()/5.0f;
 		pBoxCollider->SetBoxCollider();
 		if (CollideTiles())
 		{
@@ -98,9 +99,9 @@ void CBulletScript::Move()
 		}
 	}
 	m_PrePos = (*m_BulletPos);
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
-		(*m_BulletPos).y += m_DirVec.y*m_fVelocity*CTimeMgr::GetInstance()->GetDeltaTime()/3.0f;
+		(*m_BulletPos).y += m_DirVec.y*m_fVelocity*CTimeMgr::GetInstance()->GetDeltaTime()/5.0f;
 		pBoxCollider->SetBoxCollider();
 		if (CollideTiles())
 		{
@@ -185,8 +186,26 @@ bool CBulletScript::CollideTiles()
 							SetDirection(reflect);
 						}
 						else
+						{
 							m_pGameObject->SetObjectDestroy(true);
-						
+							D3DXVECTOR3* pos = pTransform->GetWorldPos();
+							normal = CCollisionMgr::GetInstance()->GetNormalBox(m_BulletPos, pDestBox);
+							float angle;
+							if (normal == D3DXVECTOR3(-1.0f, 0.0f, 0.0f))
+								angle = -90.f;
+							else if (normal == D3DXVECTOR3(1.0f, 0.0f, 0.0f))
+								angle = 90.f;
+							else if (normal == D3DXVECTOR3(0.0f, -1.0f, 0.0f))
+								angle = 0.f;
+							else if (normal == D3DXVECTOR3(0.0f, 1.0f, 0.0f))
+								angle = 180.f;
+							
+							cout << angle << endl;
+							XMFLOAT3& rot = XMFLOAT3(0, 0, angle);
+							D3DXVECTOR3 scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+							CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Fragile", ANIMATION_ONCE);
+						}
+							
 						return true;
 					}
 				}
@@ -199,9 +218,22 @@ bool CBulletScript::CollideTiles()
 						{
 							D3DXVECTOR3 reflect = GetReflectVector(&m_DirVec, &normal);
 							SetDirection(reflect);
+
 						}
 						else
+						{
 							m_pGameObject->SetObjectDestroy(true);
+							
+							float angle = GetAngle(normal , D3DXVECTOR3(0.0f,-1.0f,0.0f));
+
+							D3DXVECTOR3* pos = pTransform->GetWorldPos();
+							XMFLOAT3& rot =XMFLOAT3(0,0, -angle);
+							D3DXVECTOR3 scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+							CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Fragile", ANIMATION_ONCE);
+
+						}
+							
+
 						return true;
 					}
 				}

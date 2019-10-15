@@ -169,6 +169,8 @@
     <ClInclude Include="CollisionMgr.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="DeviceMgr.h" />
+    <ClInclude Include="Effect.h" />
+    <ClInclude Include="EffectScript.h" />
     <ClInclude Include="FrameMgr.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GuideLineScript.h" />
@@ -207,6 +209,8 @@
     <ClCompile Include="CollisionMgr.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="DeviceMgr.cpp" />
+    <ClCompile Include="Effect.cpp" />
+    <ClCompile Include="EffectScript.cpp" />
     <ClCompile Include="FrameMgr.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GuideLineScript.cpp" />

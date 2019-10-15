@@ -24,6 +24,7 @@ public:
 protected:
 		string				m_ScriptName;
 		CGameObject*		m_pGameObject;
+		bool				m_bIsInit = false;;
 };
 
 //스크립트 클래스는 게임오브젝트마다 추가할 수 있는 컴포넌트로써
