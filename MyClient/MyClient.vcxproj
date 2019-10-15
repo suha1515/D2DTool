@@ -171,6 +171,7 @@
     <ClInclude Include="DeviceMgr.h" />
     <ClInclude Include="FrameMgr.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GuideLineScript.h" />
     <ClInclude Include="InstanceMgr.h" />
     <ClInclude Include="KeyMgr.h" />
     <ClInclude Include="MainGame.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="DeviceMgr.cpp" />
     <ClCompile Include="FrameMgr.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GuideLineScript.cpp" />
     <ClCompile Include="InstanceMgr.cpp" />
     <ClCompile Include="KeyMgr.cpp" />
     <ClCompile Include="MainGame.cpp" />

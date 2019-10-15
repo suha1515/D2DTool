@@ -130,6 +130,11 @@ void CBulletScript::SetSpeed(const float & speed)
 	m_fVelocity = speed;
 }
 
+void CBulletScript::SetBulletType(BULLET_TYPE type)
+{
+	m_BulletType = type;
+}
+
 void CBulletScript::CheckTiles()
 {
 	const vector<CGameObject*>& tiles = CObjectMgr::GetInstance()->GetTiles();
@@ -173,9 +178,15 @@ bool CBulletScript::CollideTiles()
 				{
 					if (CCollisionMgr::GetInstance()->CheckAABB(pBoxCollider, pDestBox))
 					{
-						normal = CCollisionMgr::GetInstance()->GetNormalBox(m_BulletPos,pDestBox);
-						D3DXVECTOR3 reflect = GetReflectVector(&m_DirVec, &normal);
-						SetDirection(reflect);
+						if (m_BulletType == CHARGED)
+						{
+							normal = CCollisionMgr::GetInstance()->GetNormalBox(m_BulletPos, pDestBox);
+							D3DXVECTOR3 reflect = GetReflectVector(&m_DirVec, &normal);
+							SetDirection(reflect);
+						}
+						else
+							m_pGameObject->SetObjectDestroy(true);
+						
 						return true;
 					}
 				}
@@ -184,8 +195,13 @@ bool CBulletScript::CollideTiles()
 				{
 					if (CCollisionMgr::GetInstance()->CheckLineBox(pBoxCollider, pDestBox,&normal))
 					{
-						D3DXVECTOR3 reflect = GetReflectVector(&m_DirVec, &normal);
-						SetDirection(reflect);
+						if (m_BulletType == CHARGED)
+						{
+							D3DXVECTOR3 reflect = GetReflectVector(&m_DirVec, &normal);
+							SetDirection(reflect);
+						}
+						else
+							m_pGameObject->SetObjectDestroy(true);
 						return true;
 					}
 				}
@@ -205,11 +221,12 @@ bool CBulletScript::CollideTilesLine()
 	return false;
 }
 
-CBulletScript * CBulletScript::Create(const float & angle, const float & speed,CGameObject* pGameObject)
+CBulletScript * CBulletScript::Create(const float & angle, const float & speed,CGameObject* pGameObject,BULLET_TYPE type)
 {
 	CBulletScript* pBulletScript = new CBulletScript;
 	pBulletScript->SetGameObject(pGameObject);
 	pBulletScript->SetAngle(angle);
 	pBulletScript->SetSpeed(speed);
+	pBulletScript->SetBulletType(type);
 	return pBulletScript;
 }

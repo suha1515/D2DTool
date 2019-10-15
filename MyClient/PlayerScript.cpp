@@ -119,10 +119,10 @@ int CPlayerScript::OnUpdate()
 		
 		if (!m_bIsJump)
 		{
-			//방향키 입력
-			MoveInput();
 			//마우스 입력
 			MouseInput();
+			//방향키 입력
+			MoveInput();
 			//근접공격 입력
 			MeeleAttack();
 			//방향 변화.
@@ -151,7 +151,6 @@ int CPlayerScript::OnUpdate()
 	m_LeftPointCollide.clear();
 	m_RightPointCollide.clear();
 	m_MidPointCollide.clear();
-
 	return NO_EVENT;
 }
 
@@ -166,6 +165,7 @@ void CPlayerScript::OnRender()
 		m_playerFoot->DrawCollide();
 		DrawGuideLine();
 	}
+	m_ChargeLine.clear();
 }
 
 void CPlayerScript::OnDisable()
@@ -185,11 +185,11 @@ void CPlayerScript::MoveInput()
 			|| pKeyMgr->KeyPressing(KEY_UP) || pKeyMgr->KeyPressing(KEY_DOWN))
 		{
 			//cout << "키눌렀다" << endl;
-			m_fVelocity += (3.0f*powf(m_fAcc, 2.0f));						//가속도 공식 조절할 필요가있음
+			m_fVelocity += (1.5f*powf(m_fAcc, 2.0f));						//가속도 공식 조절할 필요가있음
 			m_fAcc += CTimeMgr::GetInstance()->GetDeltaTime();
 
-			m_fAcc = __min(2.0f, m_fAcc);
-			m_fVelocity = __min(10.f, m_fVelocity);
+			m_fAcc = __min(3.0f, m_fAcc);
+			m_fVelocity = __min(7.f, m_fVelocity);
 			if (m_CurState == IDLE || m_CurState == RUN_END)
 				m_CurState = RUN_START;
 			else if (m_CurState == RUN_START && !pAnimator->IsPlaying())
@@ -197,6 +197,8 @@ void CPlayerScript::MoveInput()
 				if (m_CurState != THROW_END && !pAnimator->IsPlaying())
 					m_CurState = RUN;
 			}
+			else if (m_CurState == AIM)
+				m_CurState = AIM_WALK;
 		}
 	}
 	//방향 키를 놨경우 (방향키) 모두!
@@ -213,6 +215,8 @@ void CPlayerScript::MoveInput()
 			m_CurState = RUN_END;
 		else if (m_CurState == RUN_END && !pAnimator->IsPlaying())
 			m_CurState = IDLE;
+		else if (m_CurState == AIM_WALK)
+			m_CurState = AIM;
 	}
 	//근접공격중에는 움직이지 않는다
 	if (m_CurState != MEELE)
@@ -234,7 +238,7 @@ void CPlayerScript::MoveInput()
 			m_Down = true;
 		}
 		//던지기 모션중에는 방향을 바꾸지 않는다.
-		if (!m_bIsThrow)
+		if (!m_bIsThrow&&!m_bIsCharged)
 		{
 			if (m_Right)
 				m_CurDir = RIGHT;
@@ -317,7 +321,7 @@ void CPlayerScript::MouseInput()
 		MouseDir();
 
 		m_CurState = THROW;
-		m_bIsThrow = true;	
+		m_bIsThrow = true;
 	}
 	if (pKeyMgr->KeyPressing(KEY_LBUTTON))
 	{
@@ -326,25 +330,37 @@ void CPlayerScript::MouseInput()
 			cout << "차지됨" << endl;
 			//m_CurState = AIM_WALK;
 			MouseDir();
-			D3DXVECTOR3 otherPoints;
-			D3DXVECTOR3 normal;
-			D3DXVECTOR3 reflect;
-			D3DXVECTOR3 dirVec;
-			if (CheckRangeCollide(*playerPos, m_GuideLineEndPoint, &m_GuideRange, &otherPoints, &normal))
-			{
-				float leftLength = 200.f - m_GuideRange;
-				dirVec = otherPoints - *playerPos;
-				D3DXVec3Normalize(&dirVec, &dirVec);
-				reflect = GetReflectVector(&dirVec, &normal);
-				reflect = reflect* leftLength;
 
-				m_ChargeLine.push_back({ otherPoints,reflect });
-				while (CheckRangeCollide(otherPoints, reflect, &leftLength, &otherPoints, &normal))
-				{
-					if (otherPoints == nullptr)
-						break;
-				}
-			}
+			m_CurState = AIM;
+
+			////남은거리만큼 다시 라인을 체크한다 다만 반사벡터를 고려한다.
+			//D3DXVECTOR3 originPos = *playerPos;
+			//D3DXVECTOR3 otherPoints = m_GuideLineEndPoint;				//충돌면에 찍힌 점.
+			//D3DXVECTOR3 resultPoint;
+			//D3DXVECTOR3 normalVec;										//해당충돌면의 노말벡터
+			//float		range;
+			//float leftRange = 200.0f;
+			//while (CheckRangeCollide(originPos, otherPoints, &range, &resultPoint, &normalVec))
+			//{
+			//	m_ChargeLine.push_back({ originPos, resultPoint });   //해당 점들을 벡터에 넣어서 따로 출력준비를한다.
+			//	D3DXVECTOR3 reflect;										//새로만들어진 반사벡터
+			//	D3DXVECTOR3 dirVec;											//반사된 방향 벡터
+			//	leftRange -= range;
+			//	//남은 거리가 있을경우 (차지샷의 경우 가이드라인을 보여줘야한다)
+			//	if (leftRange > 0.0f)
+			//	{
+			//		dirVec = resultPoint - originPos;					//처음시작한 점으로부터 충돌면 점까지의 방향을구한다.
+			//		D3DXVec3Normalize(&dirVec, &dirVec);				//정규화하여 방향만 남긴다
+			//		reflect = GetReflectVector(&dirVec, &normalVec);	//해당방향과 노말벡터를이용하여 반사벡터를 구한다.
+			//		reflect = reflect* leftRange;						//해당 방향으로 x,y축으로의 남은 거리만큼 곱해주면 남은 벡터완성.
+			//		originPos = resultPoint;							//처음 포지션은 남은방향이있다면 부딪힌 지점의 점이되고
+			//		otherPoints = reflect;								//다른방향의 점은 반사된 벡터가 된다.
+			//	}
+			//	else
+			//	{//남은 거리가없다면 루프를 종료한다.
+			//		break;
+			//	}
+			//}
 		}
 		else
 		{
@@ -356,6 +372,7 @@ void CPlayerScript::MouseInput()
 			if (m_ChargeTime > 1.3f)
 			{
 				m_bIsCharged = true;
+				m_ChargeTime -= m_ChargeTime;
 			}
 			else
 			{
@@ -372,8 +389,9 @@ void CPlayerScript::MouseInput()
 	{
 		if (m_bIsCharged)
 		{
-			m_bIsCharged = false;
 			cout << "차지 풀림" << endl;
+			m_CurState = THROW;
+			m_bIsThrow = true;
 		}
 			
 		if (m_bIsCharging)
@@ -409,7 +427,7 @@ void CPlayerScript::Moving()
 	
 	if (!m_bIsJump)
 	{
-		if (m_CurState == THROW || m_CurState == THROW_END)
+		if (m_CurState == THROW || m_CurState == THROW_END||m_CurState==AIM|| m_CurState == AIM_WALK)
 		{
 			m_fSpeed = 0.2f;
 		}
@@ -762,7 +780,55 @@ void CPlayerScript::AnimState()
 				break;
 			}
 			break;
+
+		case AIM:
+			switch (m_CurDir)
+			{
+			case UP:
+				pAnimator->Play(L"Player_Aim_Up", ANIMATION_TYPE::ANIMATION_LOOP);
+				break;
+			case DOWN:
+				pAnimator->Play(L"Player_Aim_Down", ANIMATION_TYPE::ANIMATION_LOOP);
+				break;
+			case LEFT_UP_45:
+			case RIGHT_UP_45:
+				pAnimator->Play(L"Player_Aim_Right_Up", ANIMATION_TYPE::ANIMATION_LOOP);
+				break;
+			case LEFT:
+			case RIGHT:
+				pAnimator->Play(L"Player_Aim_Right", ANIMATION_TYPE::ANIMATION_LOOP);
+				break;
+			case LEFT_DOWN_45:
+			case RIGHT_DOWN_45:
+				pAnimator->Play(L"Player_Aim_Right_Down", ANIMATION_TYPE::ANIMATION_LOOP);
+				break;
+			}
+			break;
+		case AIM_WALK:
+			switch (m_CurDir)
+			{
+			case UP:
+				pAnimator->Play(L"Player_Aim_Walk_Up", ANIMATION_TYPE::ANIMATION_LOOP);
+				break;
+			case DOWN:
+				pAnimator->Play(L"Player_Aim_Walk_Down", ANIMATION_TYPE::ANIMATION_LOOP);
+				break;
+			case LEFT_UP_45:
+			case RIGHT_UP_45:
+				pAnimator->Play(L"Player_Aim_Walk_Right_Up", ANIMATION_TYPE::ANIMATION_LOOP);
+				break;
+			case LEFT:
+			case RIGHT:
+				pAnimator->Play(L"Player_Aim_Walk_Right", ANIMATION_TYPE::ANIMATION_LOOP);
+				break;
+			case LEFT_DOWN_45:
+			case RIGHT_DOWN_45:
+				pAnimator->Play(L"Player_Aim_Walk_Right_Down", ANIMATION_TYPE::ANIMATION_LOOP);
+				break;
+			}
+			break;
 		}
+		
 		m_PreState = m_CurState;
 		m_PreDir = m_CurDir;
 	}
@@ -838,6 +904,8 @@ void CPlayerScript::AtkState()
 		{
 			m_CurState = THROW_END;
 			AttackBullet();
+			if(m_bIsCharged)
+				m_bIsCharged = false;
 		}
 		//근접 공격이 끝난경우.
 		if (m_CurState == MEELE)
@@ -856,11 +924,20 @@ void CPlayerScript::AtkState()
 
 void CPlayerScript::AttackBullet()
 {
-	CGameObject* pBullet = CObjectMgr::GetInstance()->AddCopy(L"Small_Ball", L"my_Bullet");
+	CGameObject* pBullet;
+	if (!m_bIsCharged)
+	{
+		pBullet = CObjectMgr::GetInstance()->AddCopy(L"Small_Ball", L"my_Bullet");
+		pBullet->AddScripts(CBulletScript::Create(m_BulletAngle, 400.f, pBullet, CBulletScript::BULLET_TYPE::SMALL));
+	}
+	else
+	{
+		pBullet = CObjectMgr::GetInstance()->AddCopy(L"Basic_Ball", L"my_Bullet");
+		pBullet->AddScripts(CBulletScript::Create(m_BulletAngle, 400.f, pBullet, CBulletScript::BULLET_TYPE::CHARGED));
+	}
 	pBullet->GetComponent<CTransform>()->SetPosition(*pTransform->GetWorldPos());
 	pBullet->SetObjectLayer(m_pGameObject->GetObjectLayer());
 
-	pBullet->AddScripts(CBulletScript::Create(m_BulletAngle, 400.f, pBullet));
 }
 
 void CPlayerScript::MouseDir()
@@ -913,107 +990,6 @@ void CPlayerScript::MouseDir()
 	
 }
 
-void CPlayerScript::CheckRange(D3DXVECTOR3 point,list<CGameObject*>* objlist)
-{
-	const vector<CGameObject*>& tiles = CObjectMgr::GetInstance()->GetTiles();
-	int mapSizex = (CObjectMgr::GetInstance()->m_MapSizeX);
-	int mapSizey = (CObjectMgr::GetInstance()->m_MapSizeY);
-
-	int playerIndexX = ((mapSizex/2)+ playerPos->x) / 16;
-	int playerIndexY = ((mapSizey/2) -playerPos->y) / 16;
-
-		int pointIndexX = ((mapSizex/2) + point.x) / 16;
-		int pointIndexY = ((mapSizey/2) - point.y) / 16;
-		int pointGapX = playerIndexX - pointIndexX;
-		int pointGapY = playerIndexY - pointIndexY;
-
-		//인덱스가 양수라는것은 왼쪽점의 인덱스가 플레이어 인덱스 보다 작은것이므로.(좌측 상단 대각선)
-		if (pointGapX > 0&& pointGapY>0)
-		{
-			for (int i = pointIndexX; i < playerIndexX; ++i)
-			{
-				for (int j = pointIndexY; j < playerIndexY; ++j)
-				{
-					int index = i + j*mapSizex;
-					objlist->push_back(tiles[index]);
-				}
-			}
-		}
-		//인덱스x가 음수 Y가 양수는 점이 X로는 플레이어보다 앞이지만.Y로는 작다 (우측 상단 대각선)
-		else if (pointGapX < 0 && pointGapY>0)
-		{
-			for (int i = playerIndexX; i <pointIndexX; ++i)
-			{
-				for (int j = pointIndexY; j < playerIndexY; ++j)
-				{
-					int index = i + j*mapSizex;
-					objlist->push_back(tiles[index]);
-				}
-			}
-		}
-		//인덱스 X가 크고 Y가 작은것은 플레이어보다 뒤지만 Y가 크다(좌측 하단 대각선)
-		else if (pointGapX > 0 && pointGapY < 0) 
-		{
-			for (int i = pointIndexX; i < playerIndexX; ++i)
-			{
-				for (int j = playerIndexY; j <pointIndexY; ++j)
-				{
-					int index = i + j*mapSizex;
-					objlist->push_back(tiles[index]);
-				}
-			}
-		}
-		//인덱스 X가 음수 Y가 음수라는것은 둘다 플레이어 인덱스보다 높은것 (우측 하단 대각선)
-		else if (pointGapX < 0 && pointGapY < 0)
-		{
-			for (int i = playerIndexX; i < pointIndexX; ++i)
-			{
-				for (int j = playerIndexY; j < pointIndexY; ++j)
-				{
-					int index = i + j*mapSizex;
-					objlist->push_back(tiles[index]);
-				}
-			}
-		}
-		//x인덱스는 같은데 Y인덱스가 음수 플레이어보다  (하단)
-		else if (pointGapX == 0 && pointGapY < 0)
-		{
-				for (int j = playerIndexY; j <pointIndexY; ++j)
-				{
-					int index = playerIndexX + j*mapSizex;
-					objlist->push_back(tiles[index]);
-				}
-		}
-		// (상단)
-		else if (pointGapX == 0 && pointGapY > 0) 
-		{
-				for (int j = pointIndexY; j < playerIndexY; ++j)
-				{
-					int index = playerIndexX + j*mapSizex;
-					objlist->push_back(tiles[index]);
-				}
-		}
-		//(좌측)
-		else if (pointGapX > 0 && pointGapY == 0)
-		{
-			for (int i = pointIndexX; i < playerIndexX; ++i)
-			{
-					int index = i + playerIndexY*mapSizex;
-					objlist->push_back(tiles[index]);
-			}
-		}
-		//(우측)
-		else if (pointGapX < 0 && pointGapY == 0)
-		{
-			for (int i = playerIndexX; i < pointIndexX; ++i)
-			{
-					int index = i + playerIndexY*mapSizex;
-					objlist->push_back(tiles[index]);
-			}
-		}
-
-}
-
 bool CPlayerScript::CheckRangeCollide(D3DXVECTOR3& originPos, D3DXVECTOR3& guideLine, float * range, D3DXVECTOR3* points, D3DXVECTOR3* normal)
 {
 	LINE leftLine;
@@ -1031,8 +1007,6 @@ bool CPlayerScript::CheckRangeCollide(D3DXVECTOR3& originPos, D3DXVECTOR3& guide
 
 	int pointGapX = originIndexX - pointIndexX;
 	int pointGapY = originIndexY - pointIndexY;
-
-
 		const vector<CGameObject*>& tiles = CObjectMgr::GetInstance()->GetTiles();
 			//플레이어위치와 해당 점까지의 기울기
 		float dx = pointIndexX - originIndexX;
@@ -1040,40 +1014,12 @@ bool CPlayerScript::CheckRangeCollide(D3DXVECTOR3& originPos, D3DXVECTOR3& guide
 		float slope = dy / dx;
 
 		int indexX, indexY;
-		if (originIndexX < pointIndexX)
-		{
-			for (int i = originIndexX; i <= pointIndexX; ++i)
-			{
-				indexX = i;
-				indexY = slope*i - slope*originIndexX + originIndexY;
-				int index = indexX + indexY*mapSizex;
-				if (tiles[index] != nullptr)
-					tiles[index]->SetObjectCliked(true, D3DCOLOR_XRGB(0, 0, 255));
-				if (CheckLineRange(&leftLine, tiles[index], &guideLine, range, points, normal))
-					return true;				
-			}
-		}
-		else if(originIndexX >pointIndexX)
-		{
-			for (int i = originIndexX; i >= pointIndexX; --i)
-			{
-				indexX = i;
-				indexY = slope*i - slope*originIndexX +originIndexY;
-				int index = indexX + indexY*mapSizex;
-				if (tiles[index] != nullptr)
-					tiles[index]->SetObjectCliked(true, D3DCOLOR_XRGB(0, 0, 255));
-				if (CheckLineRange(&leftLine, tiles[index], &guideLine, range, points, normal))
-					return true;
-			}
-		}
-		else if (originIndexY == pointIndexY)
-		{
 			if (originIndexX < pointIndexX)
 			{
-				for (int i = originIndexX; i <= pointIndexX; ++i)
+				for (int i = originIndexX; i < pointIndexX; ++i)
 				{
 					indexX = i;
-					indexY = originIndexY;
+					indexY = slope*i - slope*originIndexX + originIndexY;
 					int index = indexX + indexY*mapSizex;
 					if (tiles[index] != nullptr)
 						tiles[index]->SetObjectCliked(true, D3DCOLOR_XRGB(0, 0, 255));
@@ -1081,12 +1027,12 @@ bool CPlayerScript::CheckRangeCollide(D3DXVECTOR3& originPos, D3DXVECTOR3& guide
 						return true;
 				}
 			}
-			else
+			else if (originIndexX >pointIndexX)
 			{
-				for (int i = originIndexX; i >= pointIndexX; --i)
+				for (int i = originIndexX; i > pointIndexX; --i)
 				{
 					indexX = i;
-					indexY = originIndexY;
+					indexY = slope*i - slope*originIndexX + originIndexY;
 					int index = indexX + indexY*mapSizex;
 					if (tiles[index] != nullptr)
 						tiles[index]->SetObjectCliked(true, D3DCOLOR_XRGB(0, 0, 255));
@@ -1094,37 +1040,66 @@ bool CPlayerScript::CheckRangeCollide(D3DXVECTOR3& originPos, D3DXVECTOR3& guide
 						return true;
 				}
 			}
-			
-		}
-		else if (originIndexX == pointIndexX)
-		{
-			if (originIndexY < pointIndexY)
+			else if (originIndexY == pointIndexY)
 			{
-				for (int i = originIndexY; i <= pointIndexY; ++i)
+				if (originIndexX < pointIndexX)
 				{
-					indexX =originIndexX;
-					indexY = i;
-					int index = indexX + indexY*mapSizex;
-					if (tiles[index] != nullptr)
-						tiles[index]->SetObjectCliked(true, D3DCOLOR_XRGB(0, 0, 255));
-					if (CheckLineRange(&leftLine, tiles[index], &guideLine, range, points, normal))
-						return true;
+					for (int i = originIndexX; i < pointIndexX; ++i)
+					{
+						indexX = i;
+						indexY = originIndexY;
+						int index = indexX + indexY*mapSizex;
+						if (tiles[index] != nullptr)
+							tiles[index]->SetObjectCliked(true, D3DCOLOR_XRGB(0, 0, 255));
+						if (CheckLineRange(&leftLine, tiles[index], &guideLine, range, points, normal))
+							return true;
+					}
 				}
+				else
+				{
+					for (int i = originIndexX; i >= pointIndexX; --i)
+					{
+						indexX = i;
+						indexY = originIndexY;
+						int index = indexX + indexY*mapSizex;
+						if (tiles[index] != nullptr)
+							tiles[index]->SetObjectCliked(true, D3DCOLOR_XRGB(0, 0, 255));
+						if (CheckLineRange(&leftLine, tiles[index], &guideLine, range, points, normal))
+							return true;
+					}
+
+				}
+
 			}
-			else
+			else if (originIndexX == pointIndexX)
 			{
-				for (int i = originIndexY; i >= pointIndexY; --i)
+				if (originIndexY < pointIndexY)
 				{
-					indexX = originIndexX;
-					indexY = i;
-					int index = indexX + indexY*mapSizex;
-					if (tiles[index] != nullptr)
-						tiles[index]->SetObjectCliked(true, D3DCOLOR_XRGB(0, 0, 255));
-					if (CheckLineRange(&leftLine, tiles[index], &guideLine, range, points, normal))
-						return true;
+					for (int i = originIndexY; i < pointIndexY; ++i)
+					{
+						indexX = originIndexX;
+						indexY = i;
+						int index = indexX + indexY*mapSizex;
+						if (tiles[index] != nullptr)
+							tiles[index]->SetObjectCliked(true, D3DCOLOR_XRGB(0, 0, 255));
+						if (CheckLineRange(&leftLine, tiles[index], &guideLine, range, points, normal))
+							return true;
+					}
+				}
+				else
+				{
+					for (int i = originIndexY; i >= pointIndexY; --i)
+					{
+						indexX = originIndexX;
+						indexY = i;
+						int index = indexX + indexY*mapSizex;
+						if (tiles[index] != nullptr)
+							tiles[index]->SetObjectCliked(true, D3DCOLOR_XRGB(0, 0, 255));
+						if (CheckLineRange(&leftLine, tiles[index], &guideLine, range, points, normal))
+							return true;
+					}
 				}
 			}
-		}
 		return false;
 }
 
@@ -1484,9 +1459,9 @@ void CPlayerScript::DrawGuideLine()
 	CDeviceMgr::GetInstance()->GetLine()->Begin();
 	{
 		D3DXVECTOR3 m_Line[2];
-		m_Line[0] = *playerPos;
-		m_Line[1] = m_GuideLineEndPoint;
-		CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0,0,255));
+		//m_Line[0] = *playerPos;
+		//m_Line[1] = m_GuideLineEndPoint;
+		//CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0,0,255));
 		if (!m_bIsCharged)
 		{
 			m_Line[0] = *playerPos;
@@ -1497,7 +1472,19 @@ void CPlayerScript::DrawGuideLine()
 			m_Line[1] = m_GuideLineRightEndPoint;
 			CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(255, 0, 255));
 
-		}		
+		}
+		else
+		{
+			if (!m_ChargeLine.empty())
+			{
+				for (auto&i : m_ChargeLine)
+				{
+					m_Line[0] = i.first;
+					m_Line[1] = i.second;
+					CDeviceMgr::GetInstance()->GetLine()->DrawTransform(m_Line, 2, mat, D3DCOLOR_XRGB(0, 0, 255));
+				}
+			}
+		}
 	}
 	CDeviceMgr::GetInstance()->GetLine()->End();
 }

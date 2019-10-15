@@ -67,7 +67,7 @@ public:
 	afx_msg void OnLbnDblclkTileList();
 	afx_msg void OnDropFiles(HDROP hDropInfo);
 	afx_msg void OnStnClickedTilesetsize();
-
+	afx_msg void RadioCtrl(UINT ID);
 
 	// //타일셋 이름
 	CEdit m_TileSetName;
@@ -94,4 +94,8 @@ public:
 	// 태그가들어감
 	CString m_Tag;
 	CEdit m_TagEdit;
+
+	UINT m_RadioMode;
+
+	COLLIDE_TYPE type;
 };

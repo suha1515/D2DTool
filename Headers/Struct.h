@@ -161,5 +161,6 @@ typedef struct Line
 	D3DXVECTOR3 endPoint;
 }LINE;
 
+
 #define __STRUCT_H__
 #endif

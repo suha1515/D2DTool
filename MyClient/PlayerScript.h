@@ -5,7 +5,7 @@ class CAnimator;
 class CPlayerScript :
 	public CScripts
 {
-	enum STATE { IDLE, RUN_START, RUN, RUN_END,THROW,THROW_END,MEELE,JUMP,AIM_WALK };
+	enum STATE { IDLE, RUN_START, RUN, RUN_END,THROW,THROW_END,MEELE,JUMP,AIM,AIM_WALK };
 	enum DIR {
 		UP, RIGHT_UP_45, RIGHT, RIGHT_DOWN_45, DOWN,
 		LEFT_UP_45, LEFT, LEFT_DOWN_45
@@ -32,8 +32,8 @@ private:
 	CKeyMgr*	pKeyMgr;
 
 public:
-	void	MoveInput();			//이동 입력키
 	void	MouseInput();			//마우스 입력키
+	void	MoveInput();			//이동 입력키
 	void	MeeleAttack();			//근접 공격
 	void	Moving();				//이동
 
@@ -127,6 +127,7 @@ private:
 	float		m_RightGuideAngle;			//우측 사이드 유도선 각도
 	float		m_RighttempAngle;
 	bool		m_bIsHitSomething = false;
+
 
 	vector< pair<D3DXVECTOR3, D3DXVECTOR3>>	m_ChargeLine;
 

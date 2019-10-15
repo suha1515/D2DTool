@@ -6,10 +6,11 @@ class CBoxCollider;
 class CBulletScript :
 	public CScripts
 {
+	
 public:
 	CBulletScript();
 	~CBulletScript();
-
+	static enum BULLET_TYPE { SMALL, CHARGED };
 	// CScripts을(를) 통해 상속됨
 	virtual void OnInit() override;
 	virtual void OnEnable() override;
@@ -29,13 +30,14 @@ public:
 	void SetDirection(const D3DXVECTOR3& dir);
 public:
 	void SetSpeed(const float& speed);
+	void SetBulletType(BULLET_TYPE type);
 public:
 	void CheckTiles();
 public:
 	bool CollideTiles();
 	bool CollideTilesLine();
 public:
-	static CBulletScript* Create(const float & angle, const float & speed, CGameObject* pGameObject);
+	static CBulletScript* Create(const float & angle, const float & speed, CGameObject* pGameObject,BULLET_TYPE type);
 
 private:
 	CAnimator* pAnimator;
@@ -45,6 +47,9 @@ private:
 	float m_fVelocity;
 
 	bool		bIsInit = false;
+	
+
+	BULLET_TYPE m_BulletType;
 
 	float	m_fLifeTime;
 	float	m_fAngle;

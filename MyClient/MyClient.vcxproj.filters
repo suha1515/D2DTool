@@ -109,6 +109,9 @@
     <Filter Include="94.Math">
       <UniqueIdentifier>{693320a7-ffde-45e9-a35b-d7bda1cd65cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="95.Component\04.Scripts\02.GuideLineScripts">
+      <UniqueIdentifier>{17cbaa1e-d6dd-4fc8-84c9-c6e075a64e19}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -219,6 +222,9 @@
     <ClInclude Include="Math.h">
       <Filter>94.Math</Filter>
     </ClInclude>
+    <ClInclude Include="GuideLineScript.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -316,6 +322,9 @@
     </ClCompile>
     <ClCompile Include="Mouse.cpp">
       <Filter>01.GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="GuideLineScript.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

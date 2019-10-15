@@ -1,4 +1,4 @@
-// MapTool.cpp : 구현 파일입니다.
+	// MapTool.cpp : 구현 파일입니다.
 //
 
 #include "stdafx.h"
@@ -28,7 +28,7 @@ CMapTool::CMapTool(CWnd* pParent /*=NULL*/)
 	, m_TileSetSize(_T(""))
 	, m_iTileSizeX(0)
 	, m_iTileSizeY(0)
-	, m_Tag(_T(""))
+	, m_Tag(_T("")),m_RadioMode(0)
 {
 
 }
@@ -71,6 +71,7 @@ void CMapTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK5, m_Empty);
 	DDX_Text(pDX, IDC_EDIT3, m_Tag);
 	DDX_Control(pDX, IDC_EDIT3, m_TagEdit);
+	DDX_Radio(pDX, IDC_RADIO1, (int&)m_RadioMode);
 }
 
 void CMapTool::Renew(XMFLOAT2 * tex)
@@ -168,6 +169,7 @@ BEGIN_MESSAGE_MAP(CMapTool, CDialogEx)
 	ON_STN_CLICKED(IDC_TILESETSIZE, &CMapTool::OnStnClickedTilesetsize)
 	ON_WM_ACTIVATE()
 	ON_BN_CLICKED(IDC_CHECK1, &CMapTool::OnBnClickedInstance)
+	ON_CONTROL_RANGE(BN_CLICKED, IDC_RADIO1, IDC_RADIO5, RadioCtrl)
 END_MESSAGE_MAP()
 
 
@@ -600,6 +602,34 @@ void CMapTool::OnDropFiles(HDROP hDropInfo)
 void CMapTool::OnStnClickedTilesetsize()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+}
+
+void CMapTool::RadioCtrl(UINT ID)
+{
+	UpdateData(TRUE);
+
+
+	switch (m_RadioMode)
+	{
+	case 0:
+		type = NORMAL;
+		break;
+	case 1:
+		type = LEFT_TOP;
+		break;
+	case 2:
+		type = LEFT_BOTTOM;
+		break;
+	case 3:
+		type = RIGHT_TOP;
+		break;
+	case 4:
+		type = RIGHT_BOTTOM;
+		break;
+	}
+
+	UpdateData(FALSE);
+	//AfxMessageBox(currentMode);
 }
 
 
