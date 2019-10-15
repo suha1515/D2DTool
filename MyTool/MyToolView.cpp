@@ -118,6 +118,7 @@ void CMyToolView::OnDraw(CDC* /*pDC*/)
 		m_Cam->SetTransform();
 
 		m_pDeviceMgr->Render_Begin();
+	
 
 		D3DXMATRIX* mat = m_Cam->GetViewProjMatrix();
 		m_pDeviceMgr->GetLine()->SetWidth(1.f);
@@ -260,6 +261,7 @@ void CMyToolView::OnSize(UINT nType, int cx, int cy)
 	if (m_Cam == nullptr)
 		m_Cam = new CCamera;
 	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(2.0f, 2.0f, 1.0f));
+	CCameraMgr::GetInstance()->SetMainCamera(m_Cam);
 
 }
 

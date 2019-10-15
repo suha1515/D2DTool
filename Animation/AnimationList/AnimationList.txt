@@ -1,5 +1,10 @@
+../Animation/Clear_Way.anim
 ../Animation/CrossHair.anim
 ../Animation/GuideLine.anim
 ../Animation/Player.anim
 ../Animation/Player_Attack_Effect.anim
 ../Animation/Player_bullet.anim
+../Animation/Puzzle_Pad.anim
+../Animation/Puzzle_Point.anim
+../Animation/Puzzle_Wall.anim
+../Animation/Puzzle_bar.anim
