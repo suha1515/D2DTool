@@ -17,7 +17,7 @@ CMouse::~CMouse()
 
 void CMouse::Initialize()
 {
-	m_pMouse = CObjectMgr::GetInstance()->AddCopy(L"CrossHair_Normal");
+	m_pMouse = CObjectMgr::GetInstance()->AddCopy(L"CrossHair");
 	NULL_CHECK_MSG_RETURN(m_pMouse, L"마우스가 널포인트입니다");
 	m_pTransform = m_pMouse->GetComponent<CTransform>();
 

@@ -47,6 +47,7 @@
 #define IDC_POSY                        1025
 #define IDC_HierarchyTree               1025
 #define IDC_POSZ                        1026
+#define IDC_POSX2                       1027
 #define IDC_ROTX                        1030
 #define IDC_ROTY                        1031
 #define IDC_ROTZ                        1032

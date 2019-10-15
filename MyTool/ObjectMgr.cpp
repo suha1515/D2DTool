@@ -111,13 +111,11 @@ void CObjectMgr::Update()
 				if ((*iter_begin)->GetComponent<CTextureRenderer>() != nullptr)
 				{
 					//인스턴스 태그를 가지고 있을경우
-					//if ((*iter_begin)->GetObjectTag() == L"Instance")
-					//{
-					//	CInstanceMgr::GetInstance()->AddObject((*iter_begin));
-					//	m_CollideTile.push_back((*iter_begin));
-					//}
-					////아닐경우
-					//else
+					if ((*iter_begin)->GetObjectLayer() == LAYER_GROUND)
+					{
+						CInstanceMgr::GetInstance()->AddObject((*iter_begin));
+					}
+					else
 						m_RenderObjects[(*iter_begin)->GetObjectLayer()].push_back((*iter_begin));
 				}
 				//오브젝트가 스크립트 를가지고있으면 따로 스크립트 처리하기위해 컨테이너에 넣는다.
@@ -146,7 +144,7 @@ void CObjectMgr::Update()
 void CObjectMgr::Render()
 {
 	//인스턴스 오브젝트는 가장 먼저그린다.
-	//CInstanceMgr::GetInstance()->InstanceRender();
+	CInstanceMgr::GetInstance()->InstanceRender();
 	for (int i = 0; i < LAYER_END; ++i)
 	{
 		//Y축 소팅. 

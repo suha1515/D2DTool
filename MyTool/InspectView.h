@@ -71,6 +71,7 @@ public:
 	// //디버그 모드
 	CButton m_Debug;
 	afx_msg void OnBnClickedCheck1();
+	CEdit m_EditPosX;
 };
 
 

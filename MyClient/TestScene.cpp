@@ -38,7 +38,7 @@ void CTestScene::Render()
 HRESULT CTestScene::Initialize()
 {
 	m_pObjectMgr->SetTileSize(2048, 2048);
-	m_pObjectMgr->LoadObject(L"../Map/MapList/newTest2.map");
+	m_pObjectMgr->LoadObject(L"../Map/MapList/good.map");
 	
 	m_Cam = new CCamera;
 
@@ -56,7 +56,7 @@ HRESULT CTestScene::Initialize()
 
 	m_pKeyMgr->SetMouse(m_Mouse);
 
-	CGameObject* pBullet= m_pObjectMgr->AddCopy(L"CrossHair_Normal", L"my_Bullet");
+	CGameObject* pBullet= m_pObjectMgr->AddCopy(L"CrossHair", L"my_Bullet");
 	if (pBullet == nullptr)
 		MessageBox(0, L"총알 널포인트입니다", L"ERROR", 0);
 

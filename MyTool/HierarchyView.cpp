@@ -346,8 +346,6 @@ void CHierarchyView::OnTvnSelchangedHierarchytree(NMHDR *pNMHDR, LRESULT *pResul
 		m_PreClicked = m_CurClicked;	
 		pMyToolView->Invalidate(FALSE);	
 	}
-
-	wcout << m_Hierarchy.GetItemText(hTreeItem).GetString() << endl;
 }
 
 

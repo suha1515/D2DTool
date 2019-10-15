@@ -29,8 +29,12 @@ CInspectView::CInspectView()
 	, m_ScaleZ(0)
 	, m_ObjectTag(_T(""))
 {
-	ZeroMemory(&m_ScaleY, sizeof(FILETIME));
-
+	ZeroMemory(&m_PosX, sizeof(FILETIME));
+	ZeroMemory(&m_PosY, sizeof(FILETIME));
+	ZeroMemory(&m_PosZ, sizeof(FILETIME));
+	ZeroMemory(&m_RotX, sizeof(FILETIME));
+	ZeroMemory(&m_RotY, sizeof(FILETIME));
+	ZeroMemory(&m_RotZ, sizeof(FILETIME));
 	m_ClickedObject = nullptr;
 
 }
@@ -56,6 +60,7 @@ void CInspectView::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT1, m_ObjectTag);
 	DDX_Control(pDX, IDC_LAYER, m_ObjectLayer);
 	DDX_Control(pDX, IDC_CHECK1, m_Debug);
+	DDX_Control(pDX, IDC_POSX, m_EditPosX);
 }
 
 BEGIN_MESSAGE_MAP(CInspectView, CFormView)
@@ -162,14 +167,16 @@ void CInspectView::UpdateInfo()
 		NULL_CHECK_MSG_RETURN(pTransform, L"Inspect View GameObject Transform is null");
 
 		//위치 값 갱신
-		m_PosX = pTransform->GetLocalPosition().x;
-		m_PosY = pTransform->GetLocalPosition().y;
-		m_PosZ = pTransform->GetLocalPosition().z;
+		D3DXVECTOR3 pos = pTransform->GetLocalPosition();
+		m_PosX = pos.x;
+		m_PosY = pos.y;
+		m_PosZ = pos.z;
 
+		XMFLOAT3 rot = pTransform->GetRotation();
 		//회전 값 갱신
-		m_RotX = pTransform->GetRotation().x;
-		m_RotY = pTransform->GetRotation().y;
-		m_RotZ = pTransform->GetRotation().z;
+		m_RotX = rot.x;
+		m_RotY = rot.y;
+		m_RotZ = rot.z;
 
 		//크기 값 갱신.
 		m_ScaleX = pTransform->GetScale().x;
@@ -180,7 +187,6 @@ void CInspectView::UpdateInfo()
 	}
 	else
 	{
-
 		m_ObjectName.SetWindowTextW(L"");
 		m_ObjectTag = L"";
 		m_ObjectLayer.SetCurSel(-1);
@@ -252,11 +258,11 @@ BOOL CInspectView::PreTranslateMessage(MSG* pMsg)
 
 			UpdateObject();
 			UpdateInfo();
+			
 			m_HierarchyView.Update();
 			pMyToolView->Invalidate(FALSE);
 		}
 	}
-
 
 
 	return CFormView::PreTranslateMessage(pMsg);
