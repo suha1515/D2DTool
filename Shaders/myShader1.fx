@@ -7,6 +7,8 @@ float4	animTex;			//애니메이션을 위한 전역변수.
 float2  texSize;			//텍스쳐 크기.
 float	zValue;				//z값
 texture tex0;
+
+float	gFloat;				//페이드아웃인전용
 sampler s_2D = sampler_state
 {
 	Texture = (tex0);
@@ -75,7 +77,7 @@ PS_OUT PS_MAIN(VS_OUT In)
 
 	//tex2D 함수 - 텍스처에서 uv값에 맞춰 픽셀을 가져오는 함수.
 	p_out.v_color = tex2D(s_2D,In.uv);
-	//p_out.v_color.r = g_float;
+	p_out.v_color =p_out.v_color*gFloat;
 
 	return p_out;
 }

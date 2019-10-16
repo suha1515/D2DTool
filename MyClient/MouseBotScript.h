@@ -30,7 +30,7 @@ public:
 
 public:
 	void				RandomMove();
-
+	
 private:
 	D3DXVECTOR3			m_DirVec;			//πÊ«‚∫§≈Õ
 
@@ -47,6 +47,7 @@ private:
 private:
 	D3DXVECTOR3*		m_Pos;
 	float				m_fRaidus;
+	float				m_fAngle;
 	
 
 

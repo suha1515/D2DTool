@@ -31,6 +31,10 @@ CObjectMgr::~CObjectMgr()
 
 void CObjectMgr::AddObject(CGameObject * object)
 {
+	if (object->GetObjectTag() == L"Player")
+	{
+		m_pPlayer = object;
+	}
 	//타일일경우 (인스턴싱객체) , 타일충돌체 인스턴싱은.. 안해도될듯.. 
 	if (object->GetObjectTag() == L"Instance")
 	{

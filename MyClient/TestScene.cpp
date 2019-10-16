@@ -1,4 +1,4 @@
-		#include "stdafx.h"
+#include "stdafx.h"
 #include "TestScene.h"
 
 #include "Camera.h"
@@ -69,7 +69,11 @@ HRESULT CTestScene::Initialize()
 	{
 		i->AddScripts(CEnemyScripts::Create(i,ENEMY_TYPE::MOUSE));
 	}
+	CGameObject* enemy = CObjectMgr::GetInstance()->FindObjectWithName(L"Åé´Ï·Îº¿").front();
+	enemy->AddScripts(CEnemyScripts::Create(enemy, ENEMY_TYPE::BOT));
 
+	enemy = CObjectMgr::GetInstance()->FindObjectWithName(L"ÅÍ·¿").front();
+	enemy->AddScripts(CEnemyScripts::Create(enemy, ENEMY_TYPE::TURRET));
 
 
 	m_EventChecker = new CSTage1Event;

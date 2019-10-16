@@ -103,5 +103,10 @@ inline D3DXVECTOR3 GetReflectVector(const D3DXVECTOR3* srcDir, const D3DXVECTOR3
 	D3DXVECTOR3 reflect = (*srcDir) - (2*D3DXVec3Dot(srcDir, normal))*(*normal);
 	return reflect;
 }
+
+inline float	GetDistance(const D3DXVECTOR3* srcPos, const D3DXVECTOR3* destPos)
+{
+	return sqrtf((srcPos->x - destPos->x)*(srcPos->x - destPos->x) + (srcPos->y - destPos->y)*(srcPos->y - destPos->y));
+}
 #define __FUNCTION_H__
 #endif

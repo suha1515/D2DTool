@@ -10,6 +10,7 @@ CTextureRenderer::CTextureRenderer()
 	m_pTextureMgr(CTextureMgr::GetInstance()),
 	m_texInfo(nullptr),m_pVB(nullptr),m_pIB(nullptr),m_pShader(nullptr)
 {
+	m_Alpha = 1.0f;
 }
 CTextureRenderer::~CTextureRenderer()
 {
@@ -64,6 +65,7 @@ void CTextureRenderer::Render(const D3DXMATRIX& world)
 		pEffect->SetMatrix("projMat", &projMat);
 		pEffect->SetFloatArray("animTex", animTex, 4);
 		pEffect->SetFloatArray("texSize", texSize, 2);
+		pEffect->SetFloat("gFloat", m_Alpha);
 
 		pEffect->SetTexture("tex0", m_texInfo->pTexture);
 		//이 밑에 두함수 조사.

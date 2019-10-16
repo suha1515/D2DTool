@@ -61,6 +61,7 @@ private:
 	//텍스처 이름
 	wstring						m_TexName;
 
+	float						m_Alpha;
 	
 };
 

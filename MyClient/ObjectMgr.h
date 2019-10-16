@@ -90,5 +90,7 @@ private:
 public:
 	int								m_MapSizeX;
 	int								m_MapSizeY;
+
+	CGameObject*					m_pPlayer;
 };
 

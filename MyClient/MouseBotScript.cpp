@@ -8,7 +8,7 @@
 
 CMouseBotScript::CMouseBotScript()
 {
-
+	m_fAngle = 0.0f;
 }
 
 
@@ -97,59 +97,58 @@ void CMouseBotScript::OnDestroy()
 
 void CMouseBotScript::DirState()
 {
+
+		//360도로 변환하기 위한것
+		if (m_fAngle < 0.0f)
+			m_fAngle = m_fAngle + 360.f;
+
+		//우측 
+		if (m_fAngle > 0.0f&&m_fAngle < 22.5f)
+			m_CurDir = RIGHT;
+		//우측 나머지
+		else if (m_fAngle > 337.5f&&m_fAngle < 360.f)
+			m_CurDir = RIGHT;
+		//우측 상단
+		else if (m_fAngle > 22.5f&&m_fAngle < 67.5f)
+			m_CurDir = RIGHT_UP_45;
+		//상단
+		else if (m_fAngle > 67.5f&&m_fAngle < 112.5f)
+			m_CurDir = UP;
+		//좌측 상단
+		else if (m_fAngle > 112.5f&&m_fAngle < 157.5f)
+			m_CurDir = LEFT_UP_45;
+		//좌측
+		else if (m_fAngle > 157.5f&&m_fAngle < 202.5f)
+			m_CurDir = LEFT;
+		//좌측 하단
+		else if (m_fAngle > 202.5f&&m_fAngle < 247.5f)
+			m_CurDir = LEFT_DOWN_45;
+		//하단
+		else if (m_fAngle > 247.5f&&m_fAngle < 292.5f)
+			m_CurDir = DOWN;
+		//우측하단
+		else if (m_fAngle > 292.5f&&m_fAngle < 337.5f)
+			m_CurDir = RIGHT_DOWN_45;
+
 	if (m_CurDir != m_PreDir&&m_CurState!=HIT)
 	{
 		switch (m_CurDir)
 		{
 		case UP:
-			cout << "윗방향" << endl;
-			m_DirVec = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 			break;
 		case DOWN:
-			cout << "아랫방향" << endl;
-			m_DirVec = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
 			break;
 		case LEFT_UP_45:
-			cout << "왼쪽위" << endl;
-			m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
-			m_DirVec = D3DXVECTOR3(-1.0f, 1.0f, 0.0f);
-			D3DXVec3Normalize(&m_DirVec, &m_DirVec);
-			//m_JumpControlPos = D3DXVECTOR3(playerPos->x - 10.f, playerPos->y + 40.f, 0.0f);
 			break;
 		case RIGHT_UP_45:
-			cout << "오른위" << endl;
-			m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
-			m_DirVec = D3DXVECTOR3(1.0f, 1.0f, 0.0f);
-			D3DXVec3Normalize(&m_DirVec, &m_DirVec);
-			//m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 40.f, 0.0f);
 			break;
 		case LEFT:
-			cout << "왼쪽" << endl;
-			m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
-			m_DirVec = D3DXVECTOR3(-1.0f, 0.0f, 0.0f);
-			
-			//m_JumpControlPos = D3DXVECTOR3((playerPos->x - 10.f), playerPos->y + 20.f, 0.0f);
 			break;
 		case RIGHT:
-			cout << "오른쪽" << endl;
-			m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 0.0f, 1.0f));
-			m_DirVec = D3DXVECTOR3(1.0f, 1.0f, 0.0f);
-			
-			//m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 20.f, 0.0f);
 			break;
 		case LEFT_DOWN_45:
-			cout << "왼쪽아래" << endl;
-			m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
-			m_DirVec = D3DXVECTOR3(-1.0f, -1.0f, 0.0f);
-			D3DXVec3Normalize(&m_DirVec, &m_DirVec);
-			//m_JumpControlPos = D3DXVECTOR3((playerPos->x - 10.f), playerPos->y + 10.f, 0.0f);
 			break;
 		case RIGHT_DOWN_45:
-			cout << "오른아래." << endl;
-			m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
-			m_DirVec = D3DXVECTOR3(1.0f, -1.0f, 0.0f);
-			D3DXVec3Normalize(&m_DirVec, &m_DirVec);
-			//m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 10.f, 0.0f);
 			break;
 		}
 		m_PreDir = m_CurDir;
@@ -240,6 +239,7 @@ void CMouseBotScript::Move()
 	m_pBoxCollider->SetBoxCollider();
 	if (CollideTiles())
 	{
+		RandomMove();
 		*m_Pos = m_PrePos;
 		m_pBoxCollider->SetBoxCollider();
 	}
@@ -248,13 +248,14 @@ void CMouseBotScript::Move()
 	m_pBoxCollider->SetBoxCollider();
 	if (CollideTiles())
 	{
+		RandomMove();
 		*m_Pos = m_PrePos ;
 		m_pBoxCollider->SetBoxCollider();
 	}
 
 	if (m_CurState == MOVE)
 	{
-		/*if (m_fTime > m_fRandomMoveTime)
+		if (m_fTime > m_fRandomMoveTime)
 		{
 			m_fTime -= m_fTime;
 			m_CurState = IDLE;
@@ -264,11 +265,11 @@ void CMouseBotScript::Move()
 			m_fVelocity += (1.5f*powf(m_fAcc, 2.0f));
 			m_fAcc += CTimeMgr::GetInstance()->GetDeltaTime();
 
-			m_fAcc = __max(2.0f, m_fAcc);
-			m_fVelocity = __max(5.f, m_fVelocity);
+			m_fAcc = __min(2.0f, m_fAcc);
+			m_fVelocity = __min(40.f, m_fVelocity);
 
 			m_fTime += CTimeMgr::GetInstance()->GetDeltaTime();
-		}*/
+		}
 	}
 	else
 	{
@@ -292,31 +293,29 @@ void CMouseBotScript::Move()
 
 void CMouseBotScript::RandomMove()
 {
-	//random_device		rn;
-	//mt19937_64 rnd(rn());
+	random_device		rn;
+	mt19937_64 rnd(rn());
 
-	//uniform_real_distribution<float> nTime(2.0f, 5.f);
-	//float randTime = nTime(rnd);
+	uniform_real_distribution<float> nTime(2.0f, 5.f);
+	float randTime = nTime(rnd);
 
-	//m_fRandomMoveTime = randTime;
+	m_fRandomMoveTime = randTime;
 
-	//m_fWaitTime = nTime(rnd);
-	////랜덤의 범위 0~360.0f;
-	//uniform_real_distribution<float> ndist(0.0f, 360.f);
-	//float degree = ndist(rnd);
+	m_fWaitTime = nTime(rnd);
+	//랜덤의 범위 0~360.0f;
+	uniform_real_distribution<float> ndist(0.0f, 360.f);
+	float degree = ndist(rnd);
+	m_fAngle = degree;
+	D3DXMATRIX rotMat;
+	D3DXMatrixIdentity(&rotMat);
+	D3DXMatrixRotationZ(&rotMat, D3DXToRadian(degree));
 
-	//D3DXMATRIX rotMat;
-	//D3DXMatrixIdentity(&rotMat);
-	//D3DXMatrixRotationZ(&rotMat, D3DXToRadian(degree));
 
-	//D3DXVECTOR4 newDir;
-	//D3DXVec3Transform(&newDir, &m_DirVec, &rotMat);
+	m_DirVec = D3DXVECTOR3(cosf(degree), sinf(degree), 0.0f);
 
-	//m_DirVec = D3DXVECTOR3(newDir.x, newDir.y, 0.0f);
-
-	//D3DXVec3Normalize(&m_DirVec, &m_DirVec);
-	///*uniform_real_distribution<float> fDist(0.0f, 360.f);
-	//float radius = fDist(rnd);*/
+	D3DXVec3Normalize(&m_DirVec, &m_DirVec);
+	/*uniform_real_distribution<float> fDist(0.0f, 360.f);
+	float radius = fDist(rnd);*/
 
 	m_CurState = MOVE;
 }

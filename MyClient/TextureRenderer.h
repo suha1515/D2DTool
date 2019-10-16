@@ -17,7 +17,7 @@ public:
 	void SetVertex(const XMFLOAT2& size, const XMFLOAT2* tex);
 	void SetTexPos(const XMFLOAT2* tex);
 	void SetTexSize(const XMFLOAT2& size);
-
+	void SetAlpha(const float& alhpa);
 public:
 	//텍스처 위치 가져오기
 	const XMFLOAT2&		GetTexPos(const int& index);
@@ -61,6 +61,7 @@ private:
 	//텍스처 이름
 	wstring						m_TexName;
 
+	float						m_Alpha;
 	
 };
 

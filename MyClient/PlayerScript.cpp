@@ -831,41 +831,33 @@ void CPlayerScript::DirState()
 			switch (m_CurDir)
 			{
 			case UP:
-				cout << "윗방향" << endl;
 				m_JumpControlPos = D3DXVECTOR3(playerPos->x, playerPos->y, 0.0f);
 				break;
 			case DOWN:
-				cout << "아랫방향" << endl;
 				m_JumpControlPos = D3DXVECTOR3(playerPos->x, playerPos->y, 0.0f);
 
 				break;
 			case LEFT_UP_45:
-				cout << "왼쪽위" << endl;
 				pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3(playerPos->x - 10.f, playerPos->y + 40.f, 0.0f);
 				break;
 			case RIGHT_UP_45:
-				cout << "오른위" << endl;
 				pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 40.f, 0.0f);
 				break;
 			case LEFT:
-				cout << "왼쪽" << endl;
 				pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x - 10.f), playerPos->y + 20.f, 0.0f);
 				break;
 			case RIGHT:
-				cout << "오른쪽" << endl;
 				pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 20.f, 0.0f);
 				break;
 			case LEFT_DOWN_45:
-				cout << "왼쪽아래" << endl;
 				pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x - 10.f), playerPos->y + 10.f, 0.0f);
 				break;
 			case RIGHT_DOWN_45:
-				cout << "오른아래." << endl;
 				pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 10.f, 0.0f);
 				break;
@@ -1104,8 +1096,6 @@ bool CPlayerScript::CheckLineRange(LINE* line,CGameObject* pobject,D3DXVECTOR3* 
 				D3DXVECTOR3 point;
 				if (CCollisionMgr::GetInstance()->CheckLineBox2(line, pDestBoxCollider, &point,normal))
 				{
-					cout << "레이저 충돌" << endl;
-					cout << point.x << " , " << point.y << endl;
 					if(_point!=nullptr)
 					*_point = point;
 
@@ -1223,7 +1213,6 @@ bool CPlayerScript::StepStair()
 									//사각형 충돌시
 									if (coltype == NORMAL)
 									{
-										cout << " 윗 발판 충돌" << endl;
 										current = m_pGameObject->GetObjectLayer() + 1;
 										currentLayer = (Layer)current;
 										m_pGameObject->SetObjectLayer(currentLayer);
@@ -1246,7 +1235,6 @@ bool CPlayerScript::StepStair()
 									//사각형 충돌시
 									if (coltype == NORMAL)
 									{
-										cout << " 윗 발판 충돌" << endl;
 										current = m_pGameObject->GetObjectLayer() + 1;
 										currentLayer = (Layer)current;
 										m_pGameObject->SetObjectLayer(currentLayer);
@@ -1266,7 +1254,6 @@ bool CPlayerScript::StepStair()
 									//사각형 충돌시
 									if (coltype == NORMAL)
 									{
-										cout << " 아래 발판 충돌" << endl;
 										if (i->GetObjectLayer() == LAYER_0)
 										{
 											current = m_pGameObject->GetObjectLayer() - 1;
@@ -1296,7 +1283,6 @@ bool CPlayerScript::StepStair()
 									//사각형 충돌시
 									if (coltype == NORMAL)
 									{
-										cout << " 아래 발판 충돌" << endl;
 										if (i->GetObjectLayer() == LAYER_0)
 										{
 											current = m_pGameObject->GetObjectLayer() - 2;

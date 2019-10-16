@@ -4,6 +4,7 @@
 #include "PuzzleScripts.h"
 #include "Animator.h"
 #include "Transform.h"
+#include "TextureRenderer.h"
 #include "Camera.h"
 #include "BoxCollider.h"
 
@@ -13,6 +14,11 @@
 CSTage1Event::CSTage1Event()
 {
 	m_Puzzle1 = false;
+	m_Puzzle1ObjFade = false;
+	m_fAlphaValue = 1.0f;
+
+	m_CurState = NONE;
+	m_PreState = m_CurState;
 }
 
 
@@ -68,20 +74,69 @@ void CSTage1Event::Update()
 			bool isOn = i->GetPuzzleOn();
 			if (isOn)
 			{
-				puzzle1Active++;		
+				puzzle1Active++;
 			}
 		}
 		if (puzzle1Active == m_mapPuzzle["ÆÛÁñ1"].size())
 		{
 			m_PuzzlesObject["ÆÛÁñ1"]["ÆÛÁñÆÐµå_1"]->GetComponent<CAnimator>()->Play(L"Pad_On", ANIMATION_ONCE);
-			m_PuzzlesObject["ÆÛÁñ1"]["¹æ¾îº®_1"]->SetObjectDestroy(true);
-			/*for (auto&i : m_PuzzlesObject["ÆÛÁñ1"]["¹æ¾îº®_1"]->GetChildernVector())
-			{
-				i->SetObjectDestroy(true);
-			}*/
+			m_Puzzle1ObjFade = true;
 			m_Puzzle1 = true;
-			cout << "adaw" << endl;
 		}
 	}
+	if (m_Puzzle1ObjFade)
+	{
+		if (m_fAlphaValue >= 0.0f)
+		{
+			m_PuzzlesObject["ÆÛÁñ1"]["¹æ¾îº®_1"]->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlphaValue);
+			for (auto&i : m_PuzzlesObject["ÆÛÁñ1"]["¹æ¾îº®_1"]->GetChildernVector())
+			{
+				i->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlphaValue);
+			}
+			m_fAlphaValue -= CTimeMgr::GetInstance()->GetDeltaTime()*0.5f;
+			cout << m_fAlphaValue << endl;
+		}
+		else
+		{
+			m_PuzzlesObject["ÆÛÁñ1"]["¹æ¾îº®_1"]->SetObjectDestroy(true);
+			m_Puzzle1ObjFade = false;
+			m_fAlphaValue = 1.f;
+		}	
+	}
 	
+}
+
+void CSTage1Event::EventState()
+{
+	if (m_CurState != m_PreState)
+	{
+		switch (m_CurState)
+		{
+		case PUZZLE1:
+			if (!m_Puzzle1)
+			{
+				int puzzle1Active = 0;
+				for (auto&i : m_mapPuzzle["ÆÛÁñ1"])
+				{
+					bool isOn = i->GetPuzzleOn();
+					if (isOn)
+					{
+						puzzle1Active++;
+					}
+				}
+				if (puzzle1Active == m_mapPuzzle["ÆÛÁñ1"].size())
+				{
+					m_PuzzlesObject["ÆÛÁñ1"]["ÆÛÁñÆÐµå_1"]->GetComponent<CAnimator>()->Play(L"Pad_On", ANIMATION_ONCE);
+					m_Puzzle1ObjFade = true;
+					m_Puzzle1 = true;
+				}
+			}
+			break;
+		case PUZZLE2:
+			break;
+
+		default:
+			break;
+		}
+	}
 }

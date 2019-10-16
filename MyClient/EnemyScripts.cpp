@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "EnemyScripts.h"
 #include "MouseBotScript.h"
+#include "NormalBotScript.h"
+#include "TurretScript.h"
 #include "Transform.h"
 #include "BoxCollider.h"
 #include "GameObject.h"
@@ -91,8 +93,14 @@ CEnemyScripts * CEnemyScripts::Create(CGameObject * pGameObject,ENEMY_TYPE type)
 		enemyScripts->m_Type = type;
 		break;
 	case BOT:
+		enemyScripts = new CNormalBotScript;
+		enemyScripts->SetGameObject(pGameObject);
+		enemyScripts->m_Type = type;
 		break;
 	case TURRET:
+		enemyScripts = new CTurretScript;
+		enemyScripts->SetGameObject(pGameObject);
+		enemyScripts->m_Type = type;
 		break;
 	}
 	

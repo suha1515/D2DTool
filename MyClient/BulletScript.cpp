@@ -72,6 +72,31 @@ void CBulletScript::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move)
 				m_pGameObject->SetObjectDestroy(true);
 			}
 		}
+		else if ((m_BulletType == TURRET || m_BulletType == TURRET_CHARGE) && pGameObject->GetObjectTag() == L"Player")
+		{
+			cout << "플레이어를때렸다" << endl;
+			D3DXVECTOR3* pos = pTransform->GetWorldPos();
+			XMFLOAT3& rot = XMFLOAT3(0, 0, 0.0f);
+			D3DXVECTOR3 scale;
+			float power = 0.0f;
+			if (m_BulletType == TURRET_CHARGE)
+			{
+				scale = D3DXVECTOR3(2.0f, 2.0f, 1.0f);
+				power = 40.f;
+			}
+			else
+			{
+				scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+				power = 20.f;
+			}
+			CEffect::Create(*pos, rot, scale, L"Turret_Effect", L"Turret_Bullet_Hit", ANIMATION_ONCE);
+
+			CScripts* pscripts = pGameObject->GetScript("CEnemyScripts");
+			if (pscripts != nullptr)
+				dynamic_cast<CEnemyScripts*>(pscripts)->GetHit(m_DirVec, power, 0.0f);
+
+			m_pGameObject->SetObjectDestroy(true);
+		}
 	}
 }
 
