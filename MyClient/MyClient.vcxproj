@@ -172,6 +172,7 @@
     <ClInclude Include="Effect.h" />
     <ClInclude Include="EffectScript.h" />
     <ClInclude Include="EnemyScripts.h" />
+    <ClInclude Include="EventMgr.h" />
     <ClInclude Include="FrameMgr.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GuideLineScript.h" />
@@ -184,7 +185,9 @@
     <ClInclude Include="MyClient.h" />
     <ClInclude Include="ObjectMgr.h" />
     <ClInclude Include="PlayerScript.h" />
+    <ClInclude Include="PuzzlePoint.h" />
     <ClInclude Include="PuzzleScripts.h" />
+    <ClInclude Include="PuzzleStack.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneMgr.h" />
@@ -192,6 +195,7 @@
     <ClInclude Include="Scripts.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderMgr.h" />
+    <ClInclude Include="STage1Event.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TestScene.h" />
@@ -215,6 +219,7 @@
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="EffectScript.cpp" />
     <ClCompile Include="EnemyScripts.cpp" />
+    <ClCompile Include="EventMgr.cpp" />
     <ClCompile Include="FrameMgr.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GuideLineScript.cpp" />
@@ -226,13 +231,16 @@
     <ClCompile Include="MyClient.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
     <ClCompile Include="PlayerScript.cpp" />
+    <ClCompile Include="PuzzlePoint.cpp" />
     <ClCompile Include="PuzzleScripts.cpp" />
+    <ClCompile Include="PuzzleStack.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneMgr.cpp" />
     <ClCompile Include="ScriptMgr.cpp" />
     <ClCompile Include="Scripts.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderMgr.cpp" />
+    <ClCompile Include="STage1Event.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

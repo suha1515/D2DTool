@@ -18,6 +18,7 @@ IMPLEMENT_DYNCREATE(CInspectView, CFormView)
 
 CInspectView::CInspectView()
 	: CFormView(IDD_INSPECTOR)
+	, m_ObjectTag(_T(""))
 	, m_PosX(0)
 	, m_PosY(0)
 	, m_PosZ(0)
@@ -27,14 +28,7 @@ CInspectView::CInspectView()
 	, m_ScaleX(0)
 	, m_ScaleY(0)
 	, m_ScaleZ(0)
-	, m_ObjectTag(_T(""))
 {
-	ZeroMemory(&m_PosX, sizeof(FILETIME));
-	ZeroMemory(&m_PosY, sizeof(FILETIME));
-	ZeroMemory(&m_PosZ, sizeof(FILETIME));
-	ZeroMemory(&m_RotX, sizeof(FILETIME));
-	ZeroMemory(&m_RotY, sizeof(FILETIME));
-	ZeroMemory(&m_RotZ, sizeof(FILETIME));
 	m_ClickedObject = nullptr;
 
 }
@@ -47,20 +41,18 @@ void CInspectView::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_OBJNAME, m_ObjectName);
-	DDX_Text(pDX, IDC_POSX, m_PosX);
-	DDX_Text(pDX, IDC_POSY, m_PosY);
-	DDX_Text(pDX, IDC_POSZ, m_PosZ);
-	DDX_Text(pDX, IDC_ROTX, m_RotX);
-	DDX_Text(pDX, IDC_ROTY, m_RotY);
-	DDX_Text(pDX, IDC_ROTZ, m_RotZ);
-	DDX_Text(pDX, IDC_SCALEX, m_ScaleX);
-	DDX_Text(pDX, IDC_SCALEY, m_ScaleY);
-	DDX_Text(pDX, IDC_SCALEY, m_ScaleY);
-	DDX_Text(pDX, IDC_SACLEZ, m_ScaleZ);
 	DDX_Text(pDX, IDC_EDIT1, m_ObjectTag);
 	DDX_Control(pDX, IDC_LAYER, m_ObjectLayer);
 	DDX_Control(pDX, IDC_CHECK1, m_Debug);
-	DDX_Control(pDX, IDC_POSX, m_EditPosX);
+	DDX_Text(pDX, IDC_EDIT2, m_PosX);
+	DDX_Text(pDX, IDC_EDIT3, m_PosY);
+	DDX_Text(pDX, IDC_EDIT12, m_PosZ);
+	DDX_Text(pDX, IDC_EDIT13, m_RotX);
+	DDX_Text(pDX, IDC_EDIT14, m_RotY);
+	DDX_Text(pDX, IDC_EDIT15, m_RotZ);
+	DDX_Text(pDX, IDC_EDIT16, m_ScaleX);
+	DDX_Text(pDX, IDC_EDIT17, m_ScaleY);
+	DDX_Text(pDX, IDC_EDIT18, m_ScaleZ);
 }
 
 BEGIN_MESSAGE_MAP(CInspectView, CFormView)
@@ -292,3 +284,4 @@ void CInspectView::OnBnClickedChangeValue()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }
+

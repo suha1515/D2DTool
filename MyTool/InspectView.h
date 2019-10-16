@@ -48,12 +48,6 @@ public:
 	virtual void OnInitialUpdate();
 	// 인스펙터 오브젝트 이름
 	CEdit m_ObjectName;
-	// 인스펙터 포지션 x,y,z 값
-	float m_PosX, m_PosY, m_PosZ;
-	// 인스펙터 로테이션 x,y,z값
-	float m_RotX, m_RotY, m_RotZ;
-	// 인스펙터 스케일 x,y,z 값
-	float m_ScaleX, m_ScaleY, m_ScaleZ;
 
 private:
 	CGameObject*		m_ClickedObject;
@@ -71,8 +65,17 @@ public:
 	// //디버그 모드
 	CButton m_Debug;
 	afx_msg void OnBnClickedCheck1();
-	CEdit m_EditPosX;
 	afx_msg void OnBnClickedChangeValue();
+	int m_PosX;
+	int m_PosY;
+	int m_PosZ;
+	int m_RotX;
+	int m_RotY;
+	int m_RotZ;
+
+	float m_ScaleX;
+	float m_ScaleY;
+	float m_ScaleZ;
 };
 
 

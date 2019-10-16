@@ -5,46 +5,36 @@ class CAnimator;
 class CPuzzleScripts :
 	public CScripts
 {
-	enum STATE{IDLE,HIT,WAY,LIGHT,OPEN};
 public:
+	static enum PUZZLE_TYPE{POINT,STACK,SPAWN};
 	CPuzzleScripts();
 	~CPuzzleScripts();
 
 	// CScripts을(를) 통해 상속됨
-	virtual void OnInit() override;
-	virtual void OnEnable() override;
-	virtual void OnCollision(CGameObject * pGameObject = nullptr, XMFLOAT2 * move = nullptr) override;
-	virtual void OnInput() override;
-	virtual int OnUpdate() override;
-	virtual void OnLateUpdate() override;
-	virtual void OnRender() override;
-	virtual void OnDisable() override;
-	virtual void OnDestroy() override;
+	virtual void OnInit()=0;
+	virtual void OnEnable()=0;
+	virtual void OnCollision(CGameObject * pGameObject = nullptr, XMFLOAT2 * move = nullptr)=0;
+	virtual void OnInput()=0;
+	virtual int OnUpdate()=0;
+	virtual void OnLateUpdate() =0;
+	virtual void OnRender() =0;
+	virtual void OnDisable() =0;
+	virtual void OnDestroy() =0;
 public:
-	void AnimState();
-	void SetOnObject(CGameObject* pGameObject);
-	void SetWallObject(CGameObject* pGameObject);
-	void SetPuzzleWay(CGameObject* pGameObject);
+	virtual void Action()=0;
+	void		SetClearWay(CGameObject* pClearWay);
+	bool		GetPuzzleOn();
 
-	bool GetPuzzleOn();
-private:
+protected:
 	CAnimator*			m_pAnimator;
 	CTransform*			m_pTransform;
 
-	CGameObject*		m_pPuzzlePad;
-	vector<CGameObject*> m_pPuzzleWall;
 	list<CGameObject*> m_pPuzzleWay;
-
-	STATE				m_CurState;
-	STATE				m_PreState;
-
-	float			  m_fTime;
+	float				 m_fTime;
 
 	bool				m_PuzzleOn;
-	bool				m_PuzzleLight;
-	bool				m_PuzzleOpen;
-
+	PUZZLE_TYPE			m_PuzzleType;
 public:
-	static CPuzzleScripts* Create(CGameObject* pGameObject);
+	static CPuzzleScripts* Create(CGameObject* pGameObject,PUZZLE_TYPE type);
 };
 

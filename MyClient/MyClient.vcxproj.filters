@@ -115,9 +115,6 @@
     <Filter Include="01.GameObject\00.Effect">
       <UniqueIdentifier>{2e438ca8-ff3b-4684-b641-f4f704ac9d59}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.GameObject\02.">
-      <UniqueIdentifier>{10450885-a2c0-4baa-95ec-4dff1c3b0b0c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.GameObject\01.Enemy">
       <UniqueIdentifier>{aaea580a-1a0f-42cd-a2aa-f4e53f843913}</UniqueIdentifier>
     </Filter>
@@ -132,6 +129,24 @@
     </Filter>
     <Filter Include="95.Component\04.Scripts\05.PuzzleScripts">
       <UniqueIdentifier>{c41e24ac-a170-4c43-a1d9-c86b1ccd4ba2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Managers\13.PuzzleMgr">
+      <UniqueIdentifier>{8e3203c5-9f74-4e23-a596-4f4b2cfdc4e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Event">
+      <UniqueIdentifier>{4f7a4457-e9b0-4bef-8fe3-1dc9a8a20943}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.GameObject\02.Puzzle">
+      <UniqueIdentifier>{10450885-a2c0-4baa-95ec-4dff1c3b0b0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95.Component\04.Scripts\05.PuzzleScripts\00.PuzzlePoint">
+      <UniqueIdentifier>{912f7834-9bca-42c0-8db1-60279766c963}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95.Component\04.Scripts\05.PuzzleScripts\01.PuzzleStack">
+      <UniqueIdentifier>{2e5e2807-9e11-47f2-b328-ba905835e76a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95.Component\04.Scripts\05.PuzzleScripts\02.PuzzleSpawn">
+      <UniqueIdentifier>{b86805a5-0799-4c3f-93a7-e56d4c827a42}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -258,7 +273,19 @@
     <ClInclude Include="EnemyScripts.h">
       <Filter>95.Component\04.Scripts\04.EnemyScripts</Filter>
     </ClInclude>
+    <ClInclude Include="EventMgr.h">
+      <Filter>99.Managers\13.PuzzleMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="STage1Event.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="PuzzleScripts.h">
+      <Filter>95.Component\04.Scripts\05.PuzzleScripts</Filter>
+    </ClInclude>
+    <ClInclude Include="PuzzlePoint.h">
+      <Filter>95.Component\04.Scripts\05.PuzzleScripts\00.PuzzlePoint</Filter>
+    </ClInclude>
+    <ClInclude Include="PuzzleStack.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -374,7 +401,19 @@
     <ClCompile Include="EnemyScripts.cpp">
       <Filter>95.Component\04.Scripts\04.EnemyScripts</Filter>
     </ClCompile>
+    <ClCompile Include="EventMgr.cpp">
+      <Filter>99.Managers\13.PuzzleMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="STage1Event.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="PuzzleScripts.cpp">
+      <Filter>95.Component\04.Scripts\05.PuzzleScripts</Filter>
+    </ClCompile>
+    <ClCompile Include="PuzzlePoint.cpp">
+      <Filter>95.Component\04.Scripts\05.PuzzleScripts\00.PuzzlePoint</Filter>
+    </ClCompile>
+    <ClCompile Include="PuzzleStack.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

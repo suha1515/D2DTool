@@ -64,8 +64,14 @@
 #define IDC_EDIT3                       1072
 #define IDC_CLIP_POS_Z                  1072
 #define IDC_EDIT12                      1073
+#define IDC_EDIT13                      1074
+#define IDC_EDIT14                      1075
+#define IDC_EDIT15                      1076
+#define IDC_EDIT16                      1077
+#define IDC_EDIT17                      1078
 #define IDC_EDIT4                       1079
 #define IDC_CLIP_ROT_X                  1079
+#define IDC_EDIT18                      1079
 #define IDC_EDIT5                       1080
 #define IDC_CLIP_ROT_Y                  1080
 #define IDC_EDIT6                       1081

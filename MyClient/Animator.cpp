@@ -71,19 +71,19 @@ void CAnimator::Loop()
 	NULL_CHECK_MSG_RETURN(m_pAnimation, alert.c_str());
 
 	//루프가 아니어도 즉 애니메이션 실행 아닐때는 첫클립의 장면으로
-	if (!m_bIsPlaying)
-	{
-		if (m_pAnimation->SetClip())
-		{
-			auto vec = (*m_pAnimation)[0];
-			XMFLOAT2 size = XMFLOAT2(vec->_texSizeX, vec->_texSizeY);
-			m_pTexture->SetTexture(vec->_texName);
-			m_pTexture->SetTexPos(vec->_Tex);
-			m_pTexture->SetTexSize(size);
-		}
-		else
-			return;
-	}
+	//if (!m_bIsPlaying)
+	//{
+	//	if (m_pAnimation->SetClip())
+	//	{
+	//		auto vec = (*m_pAnimation)[0];
+	//		XMFLOAT2 size = XMFLOAT2(vec->_texSizeX, vec->_texSizeY);
+	//		m_pTexture->SetTexture(vec->_texName);
+	//		m_pTexture->SetTexPos(vec->_Tex);
+	//		m_pTexture->SetTexSize(size);
+	//	}
+	//	else
+	//		return;
+	//}
 	//애니메이션 루프
 	if (m_bIsPlaying)
 	{

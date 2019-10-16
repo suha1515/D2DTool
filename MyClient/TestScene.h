@@ -1,8 +1,9 @@
 #pragma once
 #include "Scene.h"
+
 class CCamera;
 class CMouse;
-class CPuzzleScripts;
+class CSTage1Event;
 class CTestScene :
 	public CScene
 {
@@ -23,7 +24,7 @@ public:
 private:
 	CCamera*		m_Cam;
 	CMouse*			m_Mouse;
-	CPuzzleScripts* m_Puzzles;
-
+	
+	CSTage1Event*    m_EventChecker;
 };
 

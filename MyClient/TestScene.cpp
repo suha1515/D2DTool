@@ -5,8 +5,8 @@
 #include "Mouse.h"
 #include "GameObject.h"
 #include "MouseBotScript.h"
-#include "Animator.h"
-#include "PuzzleScripts.h"
+#include "STage1Event.h"
+
 
 CTestScene::CTestScene()
 {
@@ -23,6 +23,7 @@ void CTestScene::Update()
 	m_Cam->Update();
 	m_Cam->SetTransform();
 	m_Mouse->Update();
+	m_EventChecker->Update();
 	m_pObjectMgr->Update();
 
 }
@@ -34,6 +35,7 @@ void CTestScene::LateUpdate()
 void CTestScene::Render()
 {
 	m_pObjectMgr->Render();
+
 }
 
 HRESULT CTestScene::Initialize()
@@ -68,23 +70,10 @@ HRESULT CTestScene::Initialize()
 		i->AddScripts(CEnemyScripts::Create(i,ENEMY_TYPE::MOUSE));
 	}
 
-	//퍼즐 요소 찾기
-	CGameObject* puzzle1 = CObjectMgr::GetInstance()->FindObjectWithName(L"퍼즐포인트_1").front();
-	m_Puzzles = CPuzzleScripts::Create(puzzle1);
-	puzzle1->AddScripts(m_Puzzles);
-	for (auto&i : puzzle1->GetChildernVector())
-	{
-		CAnimator *pScripts = CAnimator::Create(i, L"Clear_Idle", L"Clear_Way");
-		i->AddComponent(pScripts);
-		m_Puzzles->SetPuzzleWay(i);
-	}
-	
-	CGameObject* puzzlePad = CObjectMgr::GetInstance()->FindObjectWithName(L"퍼즐패드_1").front();
-	m_Puzzles->SetOnObject(puzzlePad);
-	CGameObject* puzzleWall = CObjectMgr::GetInstance()->FindObjectWithName(L"방어벽_1").front();
-	m_Puzzles->SetWallObject(puzzleWall);
 
 
+	m_EventChecker = new CSTage1Event;
+	m_EventChecker->Initialize();
 	
 	return S_OK;
 }
@@ -93,6 +82,7 @@ void CTestScene::Release()
 {
 	delete m_Mouse;
 	delete m_Cam;
+	delete m_EventChecker;
 }
 
 CTestScene * CTestScene::Create()
