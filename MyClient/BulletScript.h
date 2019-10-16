@@ -31,13 +31,14 @@ public:
 public:
 	void SetSpeed(const float& speed);
 	void SetBulletType(BULLET_TYPE type);
+	void SetBulletDmg(const float& dmg);
 public:
 	void CheckTiles();
 public:
 	bool CollideTiles();
 	bool CollideTilesLine();
 public:
-	static CBulletScript* Create(const float & angle, const float & speed, CGameObject* pGameObject,BULLET_TYPE type);
+	static CBulletScript* Create(const float & angle,const float& damage,const float & speed, CGameObject* pGameObject,BULLET_TYPE type);
 
 private:
 	CAnimator* pAnimator;
@@ -53,6 +54,7 @@ private:
 
 	float	m_fLifeTime;
 	float	m_fAngle;
+	float	m_Damage;
 
 	list <CGameObject*> m_NearTiles;
 

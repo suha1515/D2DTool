@@ -1,4 +1,4 @@
-#pragma once
+
 #include "Component.h"
 class CTextureRenderer;
 class CTransform;
@@ -42,6 +42,7 @@ private:
 	bool								m_bIsPlaying;			//플레이 불 변수.
 
 	wstring								m_AnimationName;		//애니메이션이름
-	
+public:
+	static CAnimator*	Create(CGameObject*pGameObject, const wstring& _clipName, const wstring& _animName);
 };
 

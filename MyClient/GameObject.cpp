@@ -27,6 +27,9 @@ CGameObject::~CGameObject()
 		SafeDelete(i.second);
 	m_Components.clear();
 
+	for (auto&i : m_Scripts)
+		SafeDelete(i.second);
+	m_Scripts.clear();
 	//자식 오브젝트 벡터 모두 제거 (해제는 오브젝트 매니저에서)
 	m_ChildrenObj.clear();
 }

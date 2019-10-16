@@ -6,6 +6,8 @@
 #include "Transform.h"
 #include "BoxCollider.h"
 #include "Effect.h"
+#include "Scripts.h"
+#include "EnemyScripts.h"
 
 CBulletScript::CBulletScript()
 {
@@ -29,7 +31,7 @@ void CBulletScript::OnInit()
 	if(pAnimator!=nullptr)
 	pAnimator->Play(L"Basic_Big_Bullet", ANIMATION_LOOP);
 
-	bIsInit = true;
+	m_bIsInit = true;
 }
 
 void CBulletScript::OnEnable()
@@ -38,6 +40,39 @@ void CBulletScript::OnEnable()
 
 void CBulletScript::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move)
 {
+	if (m_bIsInit)
+	{
+		if ((m_BulletType == SMALL || m_BulletType == CHARGED) && pGameObject->GetObjectTag() == L"Enemy")
+		{
+			if (pGameObject->GetObjectLayer() == m_pGameObject->GetObjectLayer())
+			{
+				cout << "ÀûÀ»¶§·È´Ù" << endl;
+				D3DXVECTOR3* pos = pTransform->GetWorldPos();
+				XMFLOAT3& rot = XMFLOAT3(0, 0, 0.0f);
+				D3DXVECTOR3 scale;
+				float power = 0.0f;
+				if (m_BulletType == CHARGED)
+				{
+					scale = D3DXVECTOR3(2.0f, 2.0f, 1.0f);
+					power = 40.f;
+				}
+				else
+				{
+					scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+					power = 20.f;
+				}
+
+
+				CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Hit", ANIMATION_ONCE);
+
+				CScripts* pscripts = pGameObject->GetScript("CEnemyScripts");
+				if (pscripts != nullptr)
+					dynamic_cast<CEnemyScripts*>(pscripts)->GetHit(m_DirVec, power, 0.0f);
+
+				m_pGameObject->SetObjectDestroy(true);
+			}
+		}
+	}
 }
 
 void CBulletScript::OnInput()
@@ -46,7 +81,7 @@ void CBulletScript::OnInput()
 
 int CBulletScript::OnUpdate()
 {
-	if (!bIsInit)
+	if (!m_bIsInit)
 		OnInit();
 	else
 	{
@@ -134,6 +169,11 @@ void CBulletScript::SetSpeed(const float & speed)
 void CBulletScript::SetBulletType(BULLET_TYPE type)
 {
 	m_BulletType = type;
+}
+
+void CBulletScript::SetBulletDmg(const float & dmg)
+{
+	m_Damage = dmg;
 }
 
 void CBulletScript::CheckTiles()
@@ -253,9 +293,10 @@ bool CBulletScript::CollideTilesLine()
 	return false;
 }
 
-CBulletScript * CBulletScript::Create(const float & angle, const float & speed,CGameObject* pGameObject,BULLET_TYPE type)
+CBulletScript * CBulletScript::Create(const float & angle,const float& damage, const float & speed,CGameObject* pGameObject,BULLET_TYPE type)
 {
 	CBulletScript* pBulletScript = new CBulletScript;
+	pBulletScript->SetBulletDmg(damage);
 	pBulletScript->SetGameObject(pGameObject);
 	pBulletScript->SetAngle(angle);
 	pBulletScript->SetSpeed(speed);

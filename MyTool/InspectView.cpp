@@ -66,6 +66,7 @@ void CInspectView::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CInspectView, CFormView)
 	ON_BN_CLICKED(IDC_BUTTON1, &CInspectView::OnBnClickedHierarchy)
 	ON_BN_CLICKED(IDC_CHECK1, &CInspectView::OnBnClickedCheck1)
+	ON_BN_CLICKED(IDC_BUTTON2, &CInspectView::OnBnClickedChangeValue)
 END_MESSAGE_MAP()
 
 
@@ -284,4 +285,10 @@ void CInspectView::OnBnClickedCheck1()
 		cout << "디버그 켜기" << endl;
 		CObjectMgr::GetInstance()->SetDebug(true);
 	}
+}
+
+
+void CInspectView::OnBnClickedChangeValue()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 }

@@ -315,9 +315,7 @@ void CPlayerScript::MouseInput()
 	D3DXVECTOR3 mousePos = pKeyMgr->GetMouse()->GetMousePos();
 	m_BulletAngle = GetAngle(*playerPos, mousePos);
 	if (pKeyMgr->KeyDown(KEY_LBUTTON))
-	{
-		cout << "던지기!" << endl;
-		
+	{	
 		MouseDir();
 
 		m_CurState = THROW;
@@ -327,7 +325,6 @@ void CPlayerScript::MouseInput()
 	{
 		if (m_bIsCharged)
 		{
-			cout << "차지됨" << endl;
 			//m_CurState = AIM_WALK;
 			MouseDir();
 
@@ -389,7 +386,6 @@ void CPlayerScript::MouseInput()
 	{
 		if (m_bIsCharged)
 		{
-			cout << "차지 풀림" << endl;
 			m_CurState = THROW;
 			m_bIsThrow = true;
 		}
@@ -471,7 +467,6 @@ void CPlayerScript::Moving()
 		{
 			*playerPos = m_PrePos;
 			m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
-			cout << "x충돌중" << endl;
 		}
 		m_PrePos = *playerPos;
 		playerPos->y += m_moveY;
@@ -483,7 +478,6 @@ void CPlayerScript::Moving()
 		{
 			*playerPos = m_PrePos;
 			m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
-			cout << "y충돌중" << endl;
 		}
 	}
 	else
@@ -552,29 +546,21 @@ void CPlayerScript::AnimState()
 			switch (m_CurDir)
 			{
 			case UP:
-				cout << "윗방향 뛰기" << endl;
 				pAnimator->Play(L"Player_Run_Up", ANIMATION_TYPE::ANIMATION_LOOP);
 				break;
 			case DOWN:
-				cout << "아랫방향 뛰기" << endl;
 				pAnimator->Play(L"Player_Run_Down", ANIMATION_TYPE::ANIMATION_LOOP);
 				break;
 			case LEFT_UP_45:
-				cout << "왼쪽위방향 뛰기" << endl;
 			case RIGHT_UP_45:
-				cout << "오른쪽위방향 뛰기" << endl;
 				pAnimator->Play(L"Player_Run_Right_Up", ANIMATION_TYPE::ANIMATION_LOOP);
 				break;
 			case LEFT:
-				cout << "왼쪽방향 뛰기" << endl;
 			case RIGHT:
-				cout << "오른쪽방향 뛰기" << endl;
 				pAnimator->Play(L"Player_Run_Right", ANIMATION_TYPE::ANIMATION_LOOP);
 				break;
 			case LEFT_DOWN_45:
-				cout << "왼쪽아래방향 뛰기" << endl;
 			case RIGHT_DOWN_45:
-				cout << "오른쪽아래방향 뛰기" << endl;
 				pAnimator->Play(L"Player_Run_Right_Down", ANIMATION_TYPE::ANIMATION_LOOP);
 				break;
 			}
@@ -851,7 +837,7 @@ void CPlayerScript::DirState()
 			case DOWN:
 				cout << "아랫방향" << endl;
 				m_JumpControlPos = D3DXVECTOR3(playerPos->x, playerPos->y, 0.0f);
-				
+
 				break;
 			case LEFT_UP_45:
 				cout << "왼쪽위" << endl;
@@ -927,13 +913,13 @@ void CPlayerScript::AttackBullet()
 	CGameObject* pBullet;
 	if (!m_bIsCharged)
 	{
-		pBullet = CObjectMgr::GetInstance()->AddCopy(L"Small_Ball", L"my_Bullet");
-		pBullet->AddScripts(CBulletScript::Create(m_BulletAngle, 400.f, pBullet, CBulletScript::BULLET_TYPE::SMALL));
+		pBullet = CObjectMgr::GetInstance()->AddCopy(L"Small_Ball", L"Player_Bullet");
+		pBullet->AddScripts(CBulletScript::Create(m_BulletAngle,20.f, 400.f, pBullet, CBulletScript::BULLET_TYPE::SMALL));
 	}
 	else
 	{
-		pBullet = CObjectMgr::GetInstance()->AddCopy(L"Basic_Ball", L"my_Bullet");
-		pBullet->AddScripts(CBulletScript::Create(m_BulletAngle, 400.f, pBullet, CBulletScript::BULLET_TYPE::CHARGED));
+		pBullet = CObjectMgr::GetInstance()->AddCopy(L"Basic_Ball", L"Player_Bullet");
+		pBullet->AddScripts(CBulletScript::Create(m_BulletAngle, 40.f, 400.f ,pBullet, CBulletScript::BULLET_TYPE::CHARGED));
 	}
 	pBullet->GetComponent<CTransform>()->SetPosition(*pTransform->GetWorldPos());
 	pBullet->SetObjectLayer(m_pGameObject->GetObjectLayer());
@@ -1157,7 +1143,6 @@ void CPlayerScript::CheckTiles()
 		{
 			m_NearTiles.push_back(tiles[indexX + i + (indexY + j)*mapSizex]);
 		}
-
 	}
 }
 
@@ -1186,7 +1171,6 @@ bool CPlayerScript::CollideTiles()
 					{
 						if (CCollisionMgr::GetInstance()->CheckAABB(pBoxCollider, pDestBoxCollider))
 						{
-							cout << "사각형충돌" << endl;
 							return true;
 						}
 					}
@@ -1316,10 +1300,37 @@ bool CPlayerScript::StepStair()
 										if (i->GetObjectLayer() == LAYER_0)
 										{
 											current = m_pGameObject->GetObjectLayer() - 2;
-											if(m_CurDir == DOWN)
-												destPos.y -= 40.f;
+											if (i->GetObjectTag() == L"step_mid")
+											{
+												switch (m_CurDir)
+												{
+												case LEFT_UP_45:
+												case  LEFT_DOWN_45:
+												case LEFT:
+													destPos.x -= 40.f;
+													destPos.y -= 40.f;
+													break;
+												case RIGHT_UP_45:
+												case RIGHT_DOWN_45 :
+												case RIGHT:
+													destPos.x += 40.f;
+													destPos.y -= 40.f;
+													break;
+												case DOWN:
+													destPos.y -= 50.f;
+													break;
+												case UP:
+													destPos.y += 40.f;
+													break;
+												}
+											}
 											else
-												destPos.y -= 20.f;
+											{
+												if (m_CurDir == DOWN)
+													destPos.y -= 40.f;
+												else
+													destPos.y -= 20.f;
+											}
 										}	
 										else
 										{
@@ -1364,7 +1375,6 @@ void CPlayerScript::Jump()
 		m_pGameObject->SetObjectLayer(m_ChangeLayer);
 		m_bIsJump = false;
 		m_fJumpTime -= m_fJumpTime;
-		cout << "점프끝" << endl;
 		m_CurState = IDLE;
 	}
 	m_fJumpTime += CTimeMgr::GetInstance()->GetDeltaTime();

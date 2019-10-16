@@ -29,9 +29,9 @@ public:
 	//오브젝트 갯수 반환.
 	int GetObjectCount();
 	//이름으로 오브젝트 찾기
-	CGameObject* FindObjectWithName(const wstring& name);
+	vector<CGameObject*> FindObjectWithName(const wstring& name);
 	//태그로 오브젝트 찾기
-	CGameObject* FindObjectWithTag(const wstring& tag);
+	vector<CGameObject*> FindObjectWithTag(const wstring& tag);
 
 public:
 	//오브젝트 스크립트 라이프 사이클

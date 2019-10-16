@@ -94,7 +94,8 @@ void CTextureRenderer::SetTexture(const wstring & tileName)
 {
 	m_TexName = tileName;
 	m_texInfo = m_pTextureMgr->GetTexInfo(L"TILE_MAP", m_TexName);
-	NULL_CHECK_RETURN(m_texInfo);
+	wstring alert = m_TexName + L" 텍스쳐가 없습니다";
+	NULL_CHECK_MSG(m_texInfo, alert.c_str());
 }
 
 void CTextureRenderer::SetVertex(const XMFLOAT2& size, const XMFLOAT2 * tex)

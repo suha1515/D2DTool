@@ -48,7 +48,6 @@ public:
 	//마우스 상태체크
 	void MouseDir();
 	//사정거리 타일체크
-	void CheckRange(D3DXVECTOR3 point, list<CGameObject*>* objlist);
 	bool CheckRangeCollide(D3DXVECTOR3& originPos,D3DXVECTOR3& guideLine,float * range, D3DXVECTOR3* points=nullptr, D3DXVECTOR3* normal=nullptr);
 	bool CheckLineRange(LINE* line, CGameObject* pobject, D3DXVECTOR3* points, float* range, D3DXVECTOR3* _point, D3DXVECTOR3* normal);
 

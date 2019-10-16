@@ -61,7 +61,7 @@ void CObjectMgr::AddObject(CGameObject * object)
 			m_RenderTiles.push_back(object);
 	}
 	//발판의 경우
-	if (object->GetObjectTag() == L"step")
+	if (object->GetObjectTag() == L"step"|| object->GetObjectTag() == L"step_mid")
 	{
 		CBoxCollider* pBoxCollider = object->GetComponent<CBoxCollider>();
 		if (pBoxCollider != nullptr)
@@ -156,7 +156,10 @@ void CObjectMgr::Update()
 				}
 				//오브젝트가 스크립트 를가지고있으면 따로 스크립트 처리하기위해 컨테이너에 넣는다.
 				if ((*iter_begin)->GetScripts().size() > 0)
+				{
+					
 					m_SciptObject.push_back((*iter_begin));
+				}
 
 				//타일일경우 건너뛴다 (콜라이더를 넣지않음)
 				if ((*iter_begin)->GetObjectTag() != L"Instance")
@@ -178,7 +181,7 @@ void CObjectMgr::Update()
 	}
 	//모든 컴포넌트 업데이트가 끝나면 스크립트 라이프 사이클을 진행한다.
 	//위에서 너비조사를 진행했으므로 부모부터 스크립트 오브젝트를 실행할것이다.
-	//OnCollision();			//충돌검사
+	OnCollision();			//충돌검사
 	OnUpdate();				//스크립트 업데이트
 	OnDestroy();			//스크립트 제거
 
@@ -252,32 +255,34 @@ int CObjectMgr::GetObjectCount()
 	return m_Objects[0].size();
 }
 
-CGameObject * CObjectMgr::FindObjectWithName(const wstring & name)
+vector<CGameObject*> CObjectMgr::FindObjectWithName(const wstring & name)
 {
+	vector<CGameObject*> temp;
 	for (auto &i : m_Objects)
 	{
 		for (auto& j : i.second)
 		{
 			wstring objName =j->GetObjectName();
 			if (objName == name)
-				return j;
+				temp.push_back(j);
 		}
 	}
-	return nullptr;
+	return temp;
 }
 
-CGameObject * CObjectMgr::FindObjectWithTag(const wstring & tag)
+vector<CGameObject*> CObjectMgr::FindObjectWithTag(const wstring & tag)
 {
+	vector<CGameObject*> temp;
 	for (auto &i : m_Objects)
 	{
 		for (auto& j : i.second)
 		{
 			wstring objTag = j->GetObjectTag();
 			if (objTag == tag)
-				return j;
+				temp.push_back(j);
 		}
 	}
-	return nullptr;
+	return temp;
 }
 
 void CObjectMgr::OnInit()
@@ -297,7 +302,7 @@ void CObjectMgr::OnCollision()
 	for (; iter_begin != m_CollideObj.end(); iter_begin++)
 	{
 		CBoxCollider* pSource = (*iter_begin)->GetComponent<CBoxCollider>();
-		if (pSource->GetOn())
+		if (pSource->GetOn()&& !(*iter_begin)->GetScripts().empty())
 		{
 			for (list<CGameObject*>::iterator iter_begin2 = m_CollideObj.begin(); iter_begin2 != m_CollideObj.end(); iter_begin2++)
 			{
@@ -311,6 +316,10 @@ void CObjectMgr::OnCollision()
 					XMFLOAT2 move;
 					if (CCollisionMgr::GetInstance()->CheckRect(pSource, pDest,&move.x,&move.y))
 					{
+						if ((*iter_begin)->GetObjectTag() == L"Bullet")
+						{
+							cout << "Awda" << endl;
+						}
 						//스크립트의 OnCollision 실행 충돌대상으로 포인터를 전달한다.
 						for (auto& i : (*iter_begin)->GetScripts())
 							i.second->OnCollision((*iter_begin2),&move);
@@ -452,7 +461,7 @@ HRESULT CObjectMgr::LoadObject(const wstring & filePath)
 
 		if (lstrcmp(objInfo._ParentObject, L""))				//불러온 자료중 부모 오브젝트 이름이 있다면
 		{
-			CGameObject* pObject = CObjectMgr::GetInstance()->FindObjectWithName(objInfo._ParentObject); //부모 오브젝트를 찾아서 넣는다. 0계층인 부모는 무조건 있으므로.. 순서만 바뀌지 않으면 여기서 문제가 없을것이다.
+			CGameObject* pObject = CObjectMgr::GetInstance()->FindObjectWithName(objInfo._ParentObject).front(); //부모 오브젝트를 찾아서 넣는다. 0계층인 부모는 무조건 있으므로.. 순서만 바뀌지 않으면 여기서 문제가 없을것이다.
 			pGameObject->SetParentObject(pObject);					//찾아서 해당 오브젝트의 부모 오브젝트로 등록한다
 			pObject->GetChildernVector().push_back(pGameObject);	//더욱이 부모 벡터에는 자식을 넣는다.
 			pGameObject->SetObjectLevel(pObject->GetLevel() + 1);	//부모의 계층보다 1높을것이다.

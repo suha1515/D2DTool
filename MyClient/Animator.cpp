@@ -175,3 +175,14 @@ wstring CAnimator::GetAnimationName()
 {
 	return m_pAnimation->GetAnimationName();
 }
+
+CAnimator * CAnimator::Create(CGameObject * pGameObject, const wstring & _clipName, const wstring & _animName)
+{
+	CAnimator* pAnimator = new CAnimator;
+	pAnimator->Initialize(pGameObject);
+
+	pAnimator->LoadClips(_animName);
+	pAnimator->SetClips(_clipName);
+
+	return pAnimator;
+}

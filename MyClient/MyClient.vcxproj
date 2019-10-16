@@ -171,6 +171,7 @@
     <ClInclude Include="DeviceMgr.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="EffectScript.h" />
+    <ClInclude Include="EnemyScripts.h" />
     <ClInclude Include="FrameMgr.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GuideLineScript.h" />
@@ -179,9 +180,11 @@
     <ClInclude Include="MainGame.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="MouseBotScript.h" />
     <ClInclude Include="MyClient.h" />
     <ClInclude Include="ObjectMgr.h" />
     <ClInclude Include="PlayerScript.h" />
+    <ClInclude Include="PuzzleScripts.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneMgr.h" />
@@ -211,6 +214,7 @@
     <ClCompile Include="DeviceMgr.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="EffectScript.cpp" />
+    <ClCompile Include="EnemyScripts.cpp" />
     <ClCompile Include="FrameMgr.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GuideLineScript.cpp" />
@@ -218,9 +222,11 @@
     <ClCompile Include="KeyMgr.cpp" />
     <ClCompile Include="MainGame.cpp" />
     <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="MouseBotScript.cpp" />
     <ClCompile Include="MyClient.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
     <ClCompile Include="PlayerScript.cpp" />
+    <ClCompile Include="PuzzleScripts.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneMgr.cpp" />
     <ClCompile Include="ScriptMgr.cpp" />

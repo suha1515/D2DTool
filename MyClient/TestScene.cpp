@@ -3,6 +3,10 @@
 
 #include "Camera.h"
 #include "Mouse.h"
+#include "GameObject.h"
+#include "MouseBotScript.h"
+#include "Animator.h"
+#include "PuzzleScripts.h"
 
 CTestScene::CTestScene()
 {
@@ -21,9 +25,6 @@ void CTestScene::Update()
 	m_Mouse->Update();
 	m_pObjectMgr->Update();
 
-	
-
-	
 }
 
 void CTestScene::LateUpdate()
@@ -57,8 +58,32 @@ HRESULT CTestScene::Initialize()
 	m_pKeyMgr->SetMouse(m_Mouse);
 
 	CGameObject* pBullet= m_pObjectMgr->AddCopy(L"CrossHair", L"my_Bullet");
+	//pBullet->AddScripts(CMouseBotScript::Create(pBullet)
 	if (pBullet == nullptr)
 		MessageBox(0, L"총알 널포인트입니다", L"ERROR", 0);
+
+	vector<CGameObject*> MouseBotobjects = CObjectMgr::GetInstance()->FindObjectWithName(L"쥐로봇");
+	for (auto&i : MouseBotobjects)
+	{
+		i->AddScripts(CEnemyScripts::Create(i,ENEMY_TYPE::MOUSE));
+	}
+
+	//퍼즐 요소 찾기
+	CGameObject* puzzle1 = CObjectMgr::GetInstance()->FindObjectWithName(L"퍼즐포인트_1").front();
+	m_Puzzles = CPuzzleScripts::Create(puzzle1);
+	puzzle1->AddScripts(m_Puzzles);
+	for (auto&i : puzzle1->GetChildernVector())
+	{
+		CAnimator *pScripts = CAnimator::Create(i, L"Clear_Idle", L"Clear_Way");
+		i->AddComponent(pScripts);
+		m_Puzzles->SetPuzzleWay(i);
+	}
+	
+	CGameObject* puzzlePad = CObjectMgr::GetInstance()->FindObjectWithName(L"퍼즐패드_1").front();
+	m_Puzzles->SetOnObject(puzzlePad);
+	CGameObject* puzzleWall = CObjectMgr::GetInstance()->FindObjectWithName(L"방어벽_1").front();
+	m_Puzzles->SetWallObject(puzzleWall);
+
 
 	
 	return S_OK;

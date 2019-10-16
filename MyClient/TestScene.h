@@ -2,6 +2,7 @@
 #include "Scene.h"
 class CCamera;
 class CMouse;
+class CPuzzleScripts;
 class CTestScene :
 	public CScene
 {
@@ -22,6 +23,7 @@ public:
 private:
 	CCamera*		m_Cam;
 	CMouse*			m_Mouse;
+	CPuzzleScripts* m_Puzzles;
 
 };
 
