@@ -47,13 +47,16 @@ void CPuzzlePoint::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move )
 	 {
 		if (pGameObject->GetObjectTag() == L"Bullet")
 		{
-		pGameObject->SetObjectDestroy(true);
-		m_CurState = HIT;
+			if (pGameObject->GetObjectLayer() == m_pGameObject->GetObjectLayer())
+			{
+				pGameObject->SetObjectDestroy(true);
+				m_CurState = HIT;
 
-		D3DXVECTOR3* pos = m_pTransform->GetWorldPos();
-		XMFLOAT3& rot = XMFLOAT3(0, 0, 0.0f);
-		D3DXVECTOR3 scale = D3DXVECTOR3(1.0f,1.0f,1.0f);
-		CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Hit", ANIMATION_ONCE);
+				D3DXVECTOR3* pos = m_pTransform->GetWorldPos();
+				XMFLOAT3& rot = XMFLOAT3(0, 0, 0.0f);
+				D3DXVECTOR3 scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+				CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Hit", ANIMATION_ONCE);
+			}
 		}
 	}
 }
@@ -70,29 +73,32 @@ int CPuzzlePoint::OnUpdate()
 		m_bIsInit = true;
 	}
 
-	AnimState();
-	if (m_CurState==HIT)
+	if (m_bPuzzleActive)
 	{
+		AnimState();
+		if (m_CurState == HIT)
 		{
-			if (m_fTime > 0.3f)
 			{
-				if (!m_pPuzzleWay.empty())
+				if (m_fTime > 0.2f)
 				{
-					CGameObject* pGameObject = m_pPuzzleWay.front();
-					m_pPuzzleWay.pop_front();
-					pGameObject->GetComponent<CAnimator>()->Play(L"Clear_On", ANIMATION_ONCE);
-					m_fTime -= m_fTime;
+					if (!m_pPuzzleWay.empty())
+					{
+						CGameObject* pGameObject = m_pPuzzleWay.front();
+						m_pPuzzleWay.pop_front();
+						pGameObject->GetComponent<CAnimator>()->Play(L"Clear_On", ANIMATION_ONCE);
+						m_fTime -= m_fTime;
+					}
+					else
+					{
+						m_fTime -= m_fTime;
+						m_CurState = CLEAR;
+					}
 				}
-				else
-				{
-					m_fTime -= m_fTime;
-					m_CurState = CLEAR;
-				}
+				m_fTime += CTimeMgr::GetInstance()->GetDeltaTime();
 			}
-			m_fTime += CTimeMgr::GetInstance()->GetDeltaTime();
 		}
-	}
 
+	}	
 	return 0;
 }
 
@@ -126,7 +132,7 @@ void CPuzzlePoint::AnimState()
 			break;
 			case CLEAR:
 				m_PuzzleOn = true;
-				cout << "Å¬¸®¾î 1" << endl;
+				m_bPuzzleActive = false;
 			break;
 		}
 		m_PreState = m_CurState;

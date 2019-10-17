@@ -119,7 +119,7 @@ void CDeviceMgr::Render_Begin()
 
 	// 1. 후면버퍼를 비운다. (clear)
 	m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL,
-		D3DCOLOR_ARGB(255, 0, 0, 255), 1.f, 0);
+		D3DCOLOR_ARGB(255, 0, 0, 0), 1.f, 0);
 
 	// 2. 후면버퍼에 그리기를 시작한다. (begin)
 	m_pDevice->BeginScene();

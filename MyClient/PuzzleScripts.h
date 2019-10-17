@@ -24,6 +24,9 @@ public:
 	virtual void Action()=0;
 	void		SetClearWay(CGameObject* pClearWay);
 	bool		GetPuzzleOn();
+public:
+
+	void		SetPuzzleActive(bool on);
 
 protected:
 	CAnimator*			m_pAnimator;
@@ -34,6 +37,8 @@ protected:
 
 	bool				m_PuzzleOn;
 	PUZZLE_TYPE			m_PuzzleType;
+
+	bool				m_bPuzzleActive;
 public:
 	static CPuzzleScripts* Create(CGameObject* pGameObject,PUZZLE_TYPE type);
 };

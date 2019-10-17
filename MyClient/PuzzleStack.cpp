@@ -67,39 +67,43 @@ int CPuzzleStack::OnUpdate()
 		OnInit();
 		m_bIsInit = true;
 	}
-	AnimState();
-	if (m_CurState != STACK_0&&m_CurState!=FULL_STACK&&m_CurState!=CLEAR)
+	if (m_bPuzzleActive)
 	{
-		if (m_fStackDownTime > 1.0f)
+		AnimState();
+		if (m_CurState != STACK_0&&m_CurState != FULL_STACK&&m_CurState != CLEAR)
 		{
-			int curStack = m_CurState;
-			m_CurState = (STATE)(curStack - 1);
-			m_fStackDownTime -= m_fStackDownTime;
+			if (m_fStackDownTime > 1.0f)
+			{
+				int curStack = m_CurState;
+				m_CurState = (STATE)(curStack - 1);
+				m_fStackDownTime -= m_fStackDownTime;
+			}
+			m_fStackDownTime += CTimeMgr::GetInstance()->GetDeltaTime();
 		}
-		m_fStackDownTime += CTimeMgr::GetInstance()->GetDeltaTime();
+
+		if (m_CurState == FULL_STACK)
+		{
+			{
+				if (m_fTime > 0.3f)
+				{
+					if (!m_pPuzzleWay.empty())
+					{
+						CGameObject* pGameObject = m_pPuzzleWay.front();
+						m_pPuzzleWay.pop_front();
+						pGameObject->GetComponent<CAnimator>()->Play(L"Clear_On", ANIMATION_ONCE);
+						m_fTime -= m_fTime;
+					}
+					else
+					{
+						m_fTime -= m_fTime;
+						m_CurState = CLEAR;
+					}
+				}
+				m_fTime += CTimeMgr::GetInstance()->GetDeltaTime();
+			}
+		}
 	}
 	
-	if (m_CurState==FULL_STACK)
-	{
-		{
-			if (m_fTime > 0.3f)
-			{
-				if (!m_pPuzzleWay.empty())
-				{
-					CGameObject* pGameObject = m_pPuzzleWay.front();
-					m_pPuzzleWay.pop_front();
-					pGameObject->GetComponent<CAnimator>()->Play(L"Clear_On", ANIMATION_ONCE);
-					m_fTime -= m_fTime;
-				}
-				else
-				{
-					m_fTime -= m_fTime;
-					m_CurState = CLEAR;
-				}
-			}
-			m_fTime += CTimeMgr::GetInstance()->GetDeltaTime();
-		}
-	}
 	return 0;
 }
 
@@ -149,7 +153,7 @@ void CPuzzleStack::AnimState()
 			break;
 		case CLEAR:
 			m_PuzzleOn = true;
-			cout << "Å¬¸®¾î2" << endl;
+			m_bPuzzleActive = false;
 			break;
 		}
 		m_PreState = m_CurState;

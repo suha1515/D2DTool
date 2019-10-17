@@ -60,6 +60,30 @@ VS_OUT VS_MAIN(VS_IN In)
 	return v_out;
 }
 
+VS_OUT VS_MAIN2(VS_IN In)
+{
+	VS_OUT v_out = (VS_OUT)0; //초기화 방법.
+
+							  //월드*뷰*투영 행렬 곱하기.
+	float4x4 matWorldView;
+	float4x4 matWorldViewProj;
+
+	float texX = texSize.x*0.5f;
+	float texY = texSize.y*0.5f;
+
+
+	float3 pos = float3(In.pos.x*texX, In.pos.y*texY, zValue);
+
+	matWorldView = mul(worldMat, viewMat);
+	matWorldViewProj = mul(matWorldView, projMat);
+
+	v_out.pos = mul(float4(pos, 1.0f), matWorldViewProj);
+	//v_out.uv  = In.tex;
+	v_out.uv = float2(In.tex.x*animTex.x, In.tex.y*animTex.y) + float2(animTex.z, animTex.w);
+
+	//v_out.uv = float2(1.f - v_out.uv.x, v_out.uv.y);
+	return v_out;
+}
 // ARGB 나중에 멀티타겟을 쓰게되면 ARGB 말고도 그래픽디바이스에 3개까지 들어간다
 // 지금은 백버퍼에만 색깔을 뺴주는데 나중에 그래픽 디바이스에 버퍼를 3개까지 컬러값을 뽑
 // 을 수 있다.
@@ -81,6 +105,19 @@ PS_OUT PS_MAIN(VS_OUT In)
 
 	return p_out;
 }
+PS_OUT PS_MAIN2(VS_OUT In)
+{
+	PS_OUT p_out = (PS_OUT)0;
+
+	//tex2D 함수 - 텍스처에서 uv값에 맞춰 픽셀을 가져오는 함수.
+	p_out.v_color = tex2D(s_2D, In.uv);
+	p_out.v_color = p_out.v_color*gFloat;
+
+	float4 preColor = p_out.v_color;
+	float4 white = float4
+
+	return p_out;
+}
 // 장치성능에 따른 셰이더 선택을 위해 존재.
 technique Default_Device
 {
@@ -96,16 +133,16 @@ technique Default_Device
 		PixelShader = compile ps_3_0 PS_MAIN();
 	}
 	//패스를 통해 쉐이더에서 기능을 적용하고 함수도 달라져야한다.
-	//pass Default_State_None_Alpha
-	//{
-	//	CullMode = NONE;
-	//	AlphaBlendEnable = false;
-	//	SrcBlend = SrcAlpha;
-	//	DestBlend = InvSrcAlpha;
+	pass HitEffect
+	{
+		CullMode = NONE;
+		AlphaBlendEnable = true;
+		SrcBlend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
 
-	//	VertexShader = compile vs_3_0 VS_MAIN2();
-	//	PixelShader = compile ps_3_0 PS_MAIN2();
-	//}
+		VertexShader = compile vs_3_0 VS_MAIN2();
+		PixelShader = compile ps_3_0 PS_MAIN2();
+	}
 }
 
 

@@ -30,5 +30,14 @@ private:
 
 	bool									m_Puzzle2PointOn = false;
 	bool									m_Puzzle2SpawnOn = false;
+	bool									m_Puzzle2Clear = false;
+	bool									m_Puzzle2WallFade = false;
+
+	float									m_fAlpahValue2;
+
+	//퍼즐3에 관한 변수들..
+	bool									m_Puzzle3Clear = false;
+	bool									m_Puzzle3WallFde = false;
+	float									m_fAlphaValue3;
 };
 

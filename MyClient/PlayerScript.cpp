@@ -123,7 +123,6 @@ void CPlayerScript::OnCollision(CGameObject * pGameObject, XMFLOAT2* move)
 			//			playerPos->x = playerPos->x - move->x;
 			//	}
 			//	
-				cout << "바리케이드충돌" << endl;
 		//	m_bIsCollide = true;
 				*playerPos = m_PrePos;
 			}
@@ -142,6 +141,7 @@ int CPlayerScript::OnUpdate()
 	if (!bIsInit)
 		OnInit();
 	CTransform* pTransform = m_pGameObject->GetComponent<CTransform>();
+
 	if (pTransform != nullptr)
 	{
 		//타일확인
@@ -218,7 +218,6 @@ void CPlayerScript::MoveInput()
 		if (pKeyMgr->KeyPressing(KEY_LEFT) || pKeyMgr->KeyPressing(KEY_RIGHT)
 			|| pKeyMgr->KeyPressing(KEY_UP) || pKeyMgr->KeyPressing(KEY_DOWN))
 		{
-			//cout << "키눌렀다" << endl;
 			m_fVelocity += (1.5f*powf(m_fAcc, 2.0f));						//가속도 공식 조절할 필요가있음
 			m_fAcc += CTimeMgr::GetInstance()->GetDeltaTime();
 

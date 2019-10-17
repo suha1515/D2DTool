@@ -23,7 +23,7 @@ void CNormalBotScript::OnInit()
 	m_pAnimator = m_pGameObject->GetComponent<CAnimator>();
 	m_pTransform = m_pGameObject->GetComponent<CTransform>();
 	m_pBoxCollider = m_pGameObject->GetComponent<CBoxCollider>();
-
+	m_pGameObject->SetObjectTag(L"Enemy");
 	if (m_pAnimator != nullptr)
 	{
 		m_pAnimator->LoadClips(L"Normal_Bot");
@@ -65,6 +65,8 @@ int CNormalBotScript::OnUpdate()
 		OnInit();
 		m_bIsInit = true;
 	}
+	CheckTiles();
+	GetDirPlayer();
 	if (m_IsActive)
 	{
 		if (m_Hp < 0.0f)
@@ -73,15 +75,13 @@ int CNormalBotScript::OnUpdate()
 			CEffect::Create(*m_Pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.5f, 1.5f, 1.0f), L"Explosion_Effect", L"Small_Explosion", ANIMATION_ONCE);
 			return 0;
 		}
-		CheckTiles();
+		
 		TrackPlayer();
-		GetDirPlayer();
-		DirState();
 		AttackState();
-		AnimState();
-		Move();
-
 	}
+	DirState();
+	Move();
+	AnimState();
 	m_NearTiles.clear();
 	return 0;
 }
@@ -308,13 +308,16 @@ void CNormalBotScript::Move()
 
 void CNormalBotScript::GetHit(D3DXVECTOR3 dirVec, float power, float dmg)
 {
-	m_CurState = HIT;
-	m_DirVec = dirVec;
-	m_fVelocity = power;
+	if (m_IsActive)
+	{
+		m_CurState = HIT;
+		m_DirVec = dirVec;
+		m_fVelocity = power;
 
-	m_Hp -= dmg;
+		m_Hp -= dmg;
 
-	cout << "맞음" << endl;
+		cout << "맞음" << endl;
+	}
 }
 
 void CNormalBotScript::TrackPlayer()

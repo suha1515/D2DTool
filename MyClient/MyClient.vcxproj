@@ -168,6 +168,7 @@
     <ClInclude Include="CameraMgr.h" />
     <ClInclude Include="CollisionMgr.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="DestructiveObject.h" />
     <ClInclude Include="DeviceMgr.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="EffectScript.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="CameraMgr.cpp" />
     <ClCompile Include="CollisionMgr.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="DestructiveObject.cpp" />
     <ClCompile Include="DeviceMgr.cpp" />
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="EffectScript.cpp" />

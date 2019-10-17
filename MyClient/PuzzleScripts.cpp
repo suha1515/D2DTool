@@ -11,6 +11,7 @@
 #include "Effect.h"
 CPuzzleScripts::CPuzzleScripts()
 {
+	m_bPuzzleActive = false;
 }
 
 
@@ -26,6 +27,11 @@ void CPuzzleScripts::SetClearWay(CGameObject * pClearWay)
 bool CPuzzleScripts::GetPuzzleOn()
 {
 	return m_PuzzleOn;
+}
+
+void CPuzzleScripts::SetPuzzleActive(bool on)
+{
+	m_bPuzzleActive = on;
 }
 
 CPuzzleScripts * CPuzzleScripts::Create(CGameObject * pGameObject ,PUZZLE_TYPE type)

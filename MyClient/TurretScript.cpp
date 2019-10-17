@@ -467,24 +467,28 @@ void CTurretScript::TrackPlayer()
 
 		if (m_CurState != CHARGE&&m_CurState!=CHARGE_SHOOT&&m_CurState!=SHOOT)
 		{
-			if (dist < 140.f&&dist>50.f)
+			if (m_pPlayer->GetObjectLayer() == m_pGameObject->GetObjectLayer())
 			{
-				m_CurState = AIM;
-			}
-			else if (dist < 50.f)
-			{
-			}
-			else if (dist > 150.f&&dist < 300.f)
-			{
-				if (m_fChargeCool > 2.0f)
+				if (dist < 150.f&&dist>50.f)
 				{
-					m_CurState = CHARGE;
-					m_fChargeCool -= m_fChargeCool;
+					m_CurState = AIM;
 				}
-				m_fChargeCool += CTimeMgr::GetInstance()->GetDeltaTime();
+				else if (dist < 50.f)
+				{
+				}
+				else if (dist > 150.f&&dist < 200.f)
+				{
+					if (m_fChargeCool > 2.0f)
+					{
+						m_CurState = CHARGE;
+						m_fChargeCool -= m_fChargeCool;
+					}
+					m_fChargeCool += CTimeMgr::GetInstance()->GetDeltaTime();
+				}
+				else
+					m_CurState = IDLE;
+
 			}
-			else
-				m_CurState = IDLE;
 		}
 	}
 }

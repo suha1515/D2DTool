@@ -20,7 +20,7 @@ CPuzzleSpawn::~CPuzzleSpawn()
 void CPuzzleSpawn::OnInit()
 {
 	m_pTransform = m_pGameObject->GetComponent<CTransform>();
-
+	m_pAnimator = m_pGameObject->GetComponent<CAnimator>();
 	if (m_pAnimator != nullptr)
 	{
 		m_pAnimator->LoadClips(L"Puzzle_Spawner");
@@ -53,11 +53,15 @@ int CPuzzleSpawn::OnUpdate()
 		OnInit();
 		m_bIsInit = true;
 	}
-	AnimState();
-	if (m_CurState == ACTIVE&&!m_bActivate)
-		Spawning();
-	if(m_CurState!=CLEAR&&m_CurState==ACTIVE)
-		CheckMonster();
+	if(m_bPuzzleActive)
+	{
+		AnimState();
+		if (!m_bActivate)
+			Spawning();
+		if (m_CurState != CLEAR&&m_CurState == ACTIVE)
+			CheckMonster();
+	}
+	
 	return 0;
 }
 
@@ -85,7 +89,7 @@ void CPuzzleSpawn::Spawning()
 {
 	if (m_iSpawnMonster < m_SpawnLocation.size())
 	{
-		if (m_fSpawnCoolTime > 2.0f)
+		if (m_fSpawnCoolTime > 1.0f)
 		{
 			SpawnMonster(ENEMY_TYPE::BOT, m_iSpawnMonster);
 			m_iSpawnMonster++;
@@ -98,6 +102,7 @@ void CPuzzleSpawn::Spawning()
 		for (auto&i : m_Monsters)
 			dynamic_cast<CEnemyScripts*>(i->GetScript("CEnemyScripts"))->SetOn(true);
 		m_bActivate = true;
+		m_CurState = ACTIVE;
 	}
 }
 
@@ -128,6 +133,7 @@ void CPuzzleSpawn::AnimState()
 			break;
 		case CLEAR:
 			m_PuzzleOn = true;
+
 			break;
 		}
 	}
@@ -142,9 +148,9 @@ void CPuzzleSpawn::CheckMonster()
 {
 	vector<CGameObject*>& temp = CObjectMgr::GetInstance()->FindObjectWithName(m_PuzzleName);
 
-	if (temp.size <= 0)
+	if (temp.size() <= 0)
 	{
-		m_CurState == CLEAR;
+		m_CurState = CLEAR;
 	}
 }
 

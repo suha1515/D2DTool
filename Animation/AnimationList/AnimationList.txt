@@ -8,6 +8,8 @@
 ../Animation/Player.anim
 ../Animation/Player_Attack_Effect.anim
 ../Animation/Player_bullet.anim
+../Animation/Puzzle_Barrier.anim
+../Animation/Puzzle_Barrier_Vertical.anim
 ../Animation/Puzzle_Pad.anim
 ../Animation/Puzzle_Point.anim
 ../Animation/Puzzle_Spawner.anim
