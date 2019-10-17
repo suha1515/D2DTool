@@ -41,7 +41,7 @@ void CSTage1Event::Initialize()
 		i->AddComponent(pScripts);
 		m_Puzzles->SetClearWay(i);
 	}
-	m_mapPuzzle["∆€¡Ò1"].push_back(m_Puzzles);
+	m_mapPuzzle["∆€¡Ò1"].insert({ "∆€¡Ò∆˜¿Œ∆Æ_1",m_Puzzles });
 	//============================================================================
 	puzzle_1 = CObjectMgr::GetInstance()->FindObjectWithName(L"∆€¡ÒΩ∫≈√_1").front();
 	m_Puzzles = CPuzzleScripts::Create(puzzle_1, CPuzzleScripts::PUZZLE_TYPE::STACK);
@@ -52,7 +52,7 @@ void CSTage1Event::Initialize()
 		i->AddComponent(pScripts);
 		m_Puzzles->SetClearWay(i);
 	}
-	m_mapPuzzle["∆€¡Ò1"].push_back(m_Puzzles);
+	m_mapPuzzle["∆€¡Ò1"].insert({ "∆€¡ÒΩ∫≈√_1",m_Puzzles });
 	//============================================================================
 
 	//∆€¡Ò1 ø¿∫Í¡ß∆Æ
@@ -62,6 +62,34 @@ void CSTage1Event::Initialize()
 	CGameObject* puzzleWall = CObjectMgr::GetInstance()->FindObjectWithName(L"πÊæÓ∫Æ_1").front();
 	m_PuzzlesObject["∆€¡Ò1"].insert({ "πÊæÓ∫Æ_1",puzzleWall });
 	//============================================================================
+
+
+	//∆€¡Ò 2 Ω∫¿ßƒ°µÈ
+	//============================================================================
+	CGameObject* puzzle_2 = CObjectMgr::GetInstance()->FindObjectWithName(L"∆€¡Ò∆˜¿Œ∆Æ_2").front();
+	m_Puzzles = CPuzzleScripts::Create(puzzle_2, CPuzzleScripts::PUZZLE_TYPE::POINT);
+	puzzle_2->AddScripts(m_Puzzles);
+	for (auto&i : puzzle_2->GetChildernVector())
+	{
+		CAnimator *pScripts = CAnimator::Create(i, L"Clear_Idle", L"Clear_Way");
+		i->AddComponent(pScripts);
+		m_Puzzles->SetClearWay(i);
+	}
+	m_mapPuzzle["∆€¡Ò2"].insert({ "∆€¡Ò∆˜¿Œ∆Æ_2",m_Puzzles });
+
+	//============================================================================
+	 puzzle_2 = CObjectMgr::GetInstance()->FindObjectWithName(L"∆€¡ÒΩ∫∆˜≥ _2").front();
+	m_Puzzles = CPuzzleScripts::Create(puzzle_2, CPuzzleScripts::PUZZLE_TYPE::SPAWN);
+	puzzle_2->AddScripts(m_Puzzles);
+	m_mapPuzzle["∆€¡Ò2"].insert({ "∆€¡ÒΩ∫∆˜≥ _2",m_Puzzles });
+	//============================================================================
+	//∆€¡Ò2 ø¿∫Í¡ß∆ÆµÈ
+	CGameObject* Spawn= CObjectMgr::GetInstance()->FindObjectWithName(L"∆€¡Ò2_Ω∫∆˘¿Âº“").front();
+	m_PuzzlesObject["∆€¡Ò2"].insert({ "∆€¡Ò2_Ω∫∆˘¿Âº“",Spawn });
+	CGameObject* puzzleWall2 = CObjectMgr::GetInstance()->FindObjectWithName(L"∆€¡Ò2_πÊ«ÿπ∞").front();
+	m_PuzzlesObject["∆€¡Ò2"].insert({ "∆€¡Ò2_πÊ«ÿπ∞",puzzleWall2 });
+	////============================================================================
+
 }
 
 void CSTage1Event::Update()
@@ -71,7 +99,7 @@ void CSTage1Event::Update()
 		int puzzle1Active = 0;
 		for (auto&i : m_mapPuzzle["∆€¡Ò1"])
 		{
-			bool isOn = i->GetPuzzleOn();
+			bool isOn = i.second->GetPuzzleOn();
 			if (isOn)
 			{
 				puzzle1Active++;
@@ -102,6 +130,13 @@ void CSTage1Event::Update()
 			m_Puzzle1ObjFade = false;
 			m_fAlphaValue = 1.f;
 		}	
+	}
+
+	//∆€¡Ò2=====================================================================
+
+	if (m_Puzzle2PointOn)
+	{
+		
 	}
 	
 }

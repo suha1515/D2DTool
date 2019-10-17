@@ -32,8 +32,9 @@ protected:
 	D3DXVECTOR3			m_PrePos;
 
 	list <CGameObject*> m_NearTiles;		//타일 충돌을 위한것.
+	bool				m_IsActive;
 public:
-
+	void				SetOn(bool on);
 	static CEnemyScripts* Create(CGameObject *pGameObject, ENEMY_TYPE type);
 };
 

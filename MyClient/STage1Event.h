@@ -14,7 +14,7 @@ public:
 	void EventState();
 
 private:
-	map<string, vector<CPuzzleScripts*>>	m_mapPuzzle;
+	map<string, map<string, CPuzzleScripts*>>	m_mapPuzzle;
 	map<string, map<string,CGameObject*>>	m_PuzzlesObject;
 
 	//퍼즐 1에관한변수들
@@ -25,5 +25,10 @@ private:
 
 	STATE									m_CurState;
 	STATE									m_PreState;
+
+	//퍼즐2에관한변수들..
+
+	bool									m_Puzzle2PointOn = false;
+	bool									m_Puzzle2SpawnOn = false;
 };
 

@@ -99,13 +99,38 @@ void CPlayerScript::OnEnable()
 
 void CPlayerScript::OnCollision(CGameObject * pGameObject, XMFLOAT2* move)
 {
-	if (nullptr != pGameObject)
+	if (bIsInit)
 	{
-		if (pGameObject->GetObjectTag() == L"EnemyBullet")
+		if (nullptr != pGameObject)
 		{
-
+			if (pGameObject->GetObjectTag() == L"Barricade")
+			{
+			//	D3DXVECTOR3 destPos = *pGameObject->GetComponent<CTransform>()->GetWorldPos();
+			//	if (move->x > move->y)
+			//	{
+			//		//y축밀기
+			//		if (playerPos->y > destPos.y)
+			//			playerPos->y = playerPos->y + move->y;
+			//		else
+			//			playerPos->y = playerPos->y - move->y;
+			//	}
+			//	else
+			//	{
+			//		//x축밀기
+			//		if (playerPos->x > destPos.x)
+			//			playerPos->x = playerPos->x + move->x;
+			//		else
+			//			playerPos->x = playerPos->x - move->x;
+			//	}
+			//	
+				cout << "바리케이드충돌" << endl;
+		//	m_bIsCollide = true;
+				*playerPos = m_PrePos;
+			}
+			
 		}
 	}
+	
 }
 
 void CPlayerScript::OnInput()
@@ -119,7 +144,6 @@ int CPlayerScript::OnUpdate()
 	CTransform* pTransform = m_pGameObject->GetComponent<CTransform>();
 	if (pTransform != nullptr)
 	{
-		m_PrePos = *playerPos;
 		//타일확인
 		CheckTiles();
 		//레이어 확인
@@ -159,6 +183,8 @@ int CPlayerScript::OnUpdate()
 	m_LeftPointCollide.clear();
 	m_RightPointCollide.clear();
 	m_MidPointCollide.clear();
+
+	m_bIsCollide = false;
 	return NO_EVENT;
 }
 
@@ -467,11 +493,17 @@ void CPlayerScript::Moving()
 			m_PreMoveDir = m_CurMoveDir;
 		}
 	
+	/*	if (m_bIsCollide)
+		{
+			*playerPos= m_PrePos;
+			m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
+		}*/
+		m_PrePos = *playerPos;
 		playerPos->x += m_DirVec.x*m_fVelocity;
 		m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
 		if (StepStair())
 			return;
-		if (CollideTiles())
+		if (CollideTiles()||m_bIsCollide)
 		{
 			*playerPos = m_PrePos;
 			m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
@@ -482,7 +514,7 @@ void CPlayerScript::Moving()
 		//계단 확인
 		if (StepStair())
 			return;
-		if (CollideTiles())
+		if (CollideTiles() || m_bIsCollide)
 		{
 			*playerPos = m_PrePos;
 			m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();

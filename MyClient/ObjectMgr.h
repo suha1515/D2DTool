@@ -36,6 +36,7 @@ public:
 public:
 	//오브젝트 스크립트 라이프 사이클
 	void OnInit();
+	void OnLateUpdate();
 	void OnCollision();
 	void OnUpdate();
 	void OnDestroy();
@@ -49,6 +50,8 @@ public:
 	void ClearCopy();
 
 public:
+	const list<CGameObject*>&			GetBarricades();
+	
 	const map<int, vector<CGameObject*>>& GetObjects();			//오브젝트맵 접근
 
 	const map<wstring, OBJ_COPY>&		  GetCopyObject();		//카피맵 접근
@@ -84,6 +87,7 @@ private:
 	map<Layer,vector<CGameObject*>>	m_Stairs;		//계단들;
 	vector<pair<int, int>>			m_index;		//인덱스확인용;
 
+	list<CGameObject*>				m_Barricade;	//타일이아닌 충돌체 검사용.
 
 	bool							m_bIsDebug;
 	bool							m_bIsLayerDebug;

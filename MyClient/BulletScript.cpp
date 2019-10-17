@@ -105,6 +105,100 @@ void CBulletScript::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move)
 				m_pGameObject->SetObjectDestroy(true);
 			}
 		}
+
+		if (pGameObject->GetObjectTag() == L"Barricade")
+		{
+			CBoxCollider* pDestBox = pGameObject->GetComponent<CBoxCollider>();
+
+			D3DXVECTOR3 normal;
+			COLLIDE_TYPE coltype = pDestBox->GetCollideType();
+			if (coltype == NORMAL)
+			{
+				if (CCollisionMgr::GetInstance()->CheckAABB(pBoxCollider, pDestBox))
+				{
+					if (m_BulletType == CHARGED || m_BulletType == TURRET_CHARGE)
+					{
+						normal = CCollisionMgr::GetInstance()->GetNormalBox(m_BulletPos, pDestBox);
+						D3DXVECTOR3 reflect = GetReflectVector(&m_DirVec, &normal);
+						SetDirection(reflect);
+						D3DXVECTOR3* pos = pTransform->GetWorldPos();
+						normal = CCollisionMgr::GetInstance()->GetNormalBox(m_BulletPos, pDestBox);
+						float angle;
+						if (normal == D3DXVECTOR3(-1.0f, 0.0f, 0.0f))
+							angle = -90.f;
+						else if (normal == D3DXVECTOR3(1.0f, 0.0f, 0.0f))
+							angle = 90.f;
+						else if (normal == D3DXVECTOR3(0.0f, -1.0f, 0.0f))
+							angle = 0.f;
+						else if (normal == D3DXVECTOR3(0.0f, 1.0f, 0.0f))
+							angle = 180.f;
+						XMFLOAT3& rot = XMFLOAT3(0, 0, angle);
+						D3DXVECTOR3 scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+						if (m_BulletType == TURRET_CHARGE)
+							CEffect::Create(*pos, rot, scale, L"Turret_Effect", L"Turrect_Big_Bullet_Bounce", ANIMATION_ONCE);
+						else
+							CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Bounce", ANIMATION_ONCE);
+					}
+					else
+					{
+						m_pGameObject->SetObjectDestroy(true);
+						D3DXVECTOR3* pos = pTransform->GetWorldPos();
+						normal = CCollisionMgr::GetInstance()->GetNormalBox(m_BulletPos, pDestBox);
+						float angle;
+						if (normal == D3DXVECTOR3(-1.0f, 0.0f, 0.0f))
+							angle = -90.f;
+						else if (normal == D3DXVECTOR3(1.0f, 0.0f, 0.0f))
+							angle = 90.f;
+						else if (normal == D3DXVECTOR3(0.0f, -1.0f, 0.0f))
+							angle = 0.f;
+						else if (normal == D3DXVECTOR3(0.0f, 1.0f, 0.0f))
+							angle = 180.f;
+						XMFLOAT3& rot = XMFLOAT3(0, 0, angle);
+						D3DXVECTOR3 scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+						if (m_BulletType == TURRET)
+							CEffect::Create(*pos, rot, scale, L"Turret_Effect", L"Turrect_Bullet_Hit", ANIMATION_ONCE);
+						else
+							CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Fragile", ANIMATION_ONCE);
+					}
+				}
+			}
+			//삼각형 충돌시. 그외 삼각형 충돌
+			else if (coltype != NORMAL)
+			{
+				if (CCollisionMgr::GetInstance()->CheckLineBox(pBoxCollider, pDestBox, &normal))
+				{
+					if (m_BulletType == CHARGED || m_BulletType == TURRET_CHARGE)
+					{
+						D3DXVECTOR3 reflect = GetReflectVector(&m_DirVec, &normal);
+						SetDirection(reflect);
+						float angle = GetAngle(m_DirVec, normal);
+						if (angle < 0.0f)
+							angle = angle + 360.f;
+						D3DXVECTOR3* pos = pTransform->GetWorldPos();
+						XMFLOAT3& rot = XMFLOAT3(0, 0, angle);
+						D3DXVECTOR3 scale = D3DXVECTOR3(1.4f, 1.4f, 1.0f);
+						if (m_BulletType == TURRET_CHARGE)
+							CEffect::Create(*pos, rot, scale, L"Turret_Effect", L"Turrect_Big_Bullet_Bounce", ANIMATION_ONCE);
+						else
+							CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Bounce", ANIMATION_ONCE);
+					}
+					else
+					{
+						m_pGameObject->SetObjectDestroy(true);
+						float angle = GetAngle(m_DirVec, normal);
+						if (angle < 0.0f)
+							angle = angle + 360.f;
+						D3DXVECTOR3* pos = pTransform->GetWorldPos();
+						XMFLOAT3& rot = XMFLOAT3(0, 0, angle + 90.f);
+						D3DXVECTOR3 scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+						if (m_BulletType == TURRET)
+							CEffect::Create(*pos, rot, scale, L"Turret_Effect", L"Turrect_Bullet_Hit", ANIMATION_ONCE);
+						else
+							CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Fragile", ANIMATION_ONCE);
+					}
+				}
+			}
+		}
 	}
 }
 

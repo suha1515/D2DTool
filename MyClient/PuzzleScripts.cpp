@@ -2,6 +2,7 @@
 #include "PuzzleScripts.h"
 #include "PuzzlePoint.h"
 #include "PuzzleStack.h"
+#include "PuzzleSpawn.h"
 
 #include "GameObject.h"
 #include "Animator.h"
@@ -37,6 +38,9 @@ CPuzzleScripts * CPuzzleScripts::Create(CGameObject * pGameObject ,PUZZLE_TYPE t
 		break;
 	case STACK:
 		pScript = new CPuzzleStack;
+		break;
+	case SPAWN:
+		pScript = new CPuzzleSpawn;
 		break;
 	}
 	

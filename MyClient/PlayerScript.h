@@ -94,7 +94,8 @@ private:
 	bool	    m_bIsMove = false;
 	bool		m_bIsDebug=false;			//디버그모드
 	bool		m_bIsLayerDebug = false;
-	bool		m_bIsCollide = false;
+
+	bool		m_bIsCollide=false;				//타일의외 충돌검사를위한 불변수
 
 	D3DXVECTOR3	 m_PreScale;				//이전 값.
 	D3DXVECTOR3*  playerPos;				//플레이어 위치값

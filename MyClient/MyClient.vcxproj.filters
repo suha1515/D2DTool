@@ -291,14 +291,17 @@
     <ClInclude Include="PuzzlePoint.h">
       <Filter>95.Component\04.Scripts\05.PuzzleScripts\00.PuzzlePoint</Filter>
     </ClInclude>
-    <ClInclude Include="PuzzleStack.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="NormalBotScript.h">
       <Filter>95.Component\04.Scripts\04.EnemyScripts\01.NormalBotScript</Filter>
     </ClInclude>
     <ClInclude Include="TurretScript.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PuzzleSpawn.h">
+      <Filter>95.Component\04.Scripts\05.PuzzleScripts\02.PuzzleSpawn</Filter>
+    </ClInclude>
+    <ClInclude Include="PuzzleStack.h">
+      <Filter>95.Component\04.Scripts\05.PuzzleScripts\01.PuzzleStack</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -425,14 +428,17 @@
     <ClCompile Include="PuzzlePoint.cpp">
       <Filter>95.Component\04.Scripts\05.PuzzleScripts\00.PuzzlePoint</Filter>
     </ClCompile>
-    <ClCompile Include="PuzzleStack.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="NormalBotScript.cpp">
       <Filter>95.Component\04.Scripts\04.EnemyScripts\01.NormalBotScript</Filter>
     </ClCompile>
     <ClCompile Include="TurretScript.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PuzzleSpawn.cpp">
+      <Filter>95.Component\04.Scripts\05.PuzzleScripts\02.PuzzleSpawn</Filter>
+    </ClCompile>
+    <ClCompile Include="PuzzleStack.cpp">
+      <Filter>95.Component\04.Scripts\05.PuzzleScripts\01.PuzzleStack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

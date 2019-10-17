@@ -13,6 +13,7 @@ CEnemyScripts::CEnemyScripts()
 	m_fVelocity = 0.0f;
 	m_pTransform = nullptr;
 	m_pAnimator = nullptr;
+	m_IsActive = true;
 
 	m_ScriptName = "CEnemyScripts";
 }
@@ -80,6 +81,11 @@ bool CEnemyScripts::CollideTiles()
 		}
 	}
 	return false;
+}
+
+void CEnemyScripts::SetOn(bool on)
+{
+	m_IsActive = on;
 }
 
 CEnemyScripts * CEnemyScripts::Create(CGameObject * pGameObject,ENEMY_TYPE type)

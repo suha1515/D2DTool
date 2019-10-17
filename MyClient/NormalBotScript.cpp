@@ -6,6 +6,8 @@
 #include "Transform.h"
 #include "BoxCollider.h"
 
+#include "Effect.h"
+
 
 CNormalBotScript::CNormalBotScript()
 {
@@ -63,20 +65,23 @@ int CNormalBotScript::OnUpdate()
 		OnInit();
 		m_bIsInit = true;
 	}
-
-	if (m_Hp < 0.0f)
+	if (m_IsActive)
 	{
-		m_pGameObject->SetObjectDestroy(true);
-		return 0;
-	}
-	CheckTiles();
-	TrackPlayer();
-	GetDirPlayer();
-	DirState();
-	AttackState();
-	AnimState();
-	Move();
+		if (m_Hp < 0.0f)
+		{
+			m_pGameObject->SetObjectDestroy(true);
+			CEffect::Create(*m_Pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.5f, 1.5f, 1.0f), L"Explosion_Effect", L"Small_Explosion", ANIMATION_ONCE);
+			return 0;
+		}
+		CheckTiles();
+		TrackPlayer();
+		GetDirPlayer();
+		DirState();
+		AttackState();
+		AnimState();
+		Move();
 
+	}
 	m_NearTiles.clear();
 	return 0;
 }

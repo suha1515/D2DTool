@@ -72,6 +72,7 @@ int CTurretScript::OnUpdate()
 	if (m_Hp < 0.0f)
 	{
 		m_pGameObject->SetObjectDestroy(true);
+		CEffect::Create(*m_Pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.5f, 1.5f, 1.0f), L"Explosion_Effect", L"Small_Explosion", ANIMATION_ONCE);
 		return 0;
 	}
 
@@ -399,6 +400,7 @@ void CTurretScript::Move()
 
 void CTurretScript::GetHit(D3DXVECTOR3 dirVec, float power, float dmg)
 {
+	m_Hp -= dmg;
 }
 
 void CTurretScript::AttackState()
@@ -441,11 +443,8 @@ void CTurretScript::AttackState()
 			}
 			break;
 		case CHARGE_SHOOT:
-			if (m_CurState == CHARGE && !m_pAnimator->IsPlaying())
-			{
 				Shoot(CHARGED);
-				m_CurState = AIM;
-			}
+				m_CurState = AIM;	
 			break;
 		}
 }
@@ -477,7 +476,12 @@ void CTurretScript::TrackPlayer()
 			}
 			else if (dist > 150.f&&dist < 300.f)
 			{
-				m_CurState = CHARGE;
+				if (m_fChargeCool > 2.0f)
+				{
+					m_CurState = CHARGE;
+					m_fChargeCool -= m_fChargeCool;
+				}
+				m_fChargeCool += CTimeMgr::GetInstance()->GetDeltaTime();
 			}
 			else
 				m_CurState = IDLE;

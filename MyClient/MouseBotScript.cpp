@@ -6,6 +6,8 @@
 #include "Transform.h"
 #include "BoxCollider.h"
 
+#include "Effect.h"
+
 CMouseBotScript::CMouseBotScript()
 {
 	m_fAngle = 0.0f;
@@ -69,6 +71,7 @@ int CMouseBotScript::OnUpdate()
 	if (m_Hp < 0.0f)
 	{
 		m_pGameObject->SetObjectDestroy(true);
+		CEffect::Create(*m_Pos, XMFLOAT3(0.0f,0.0f,0.0f), D3DXVECTOR3(1.5f,1.5f,1.0f), L"Explosion_Effect", L"Small_Explosion", ANIMATION_ONCE);
 		return 0;
 	}
 	CheckTiles();

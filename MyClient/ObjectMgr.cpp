@@ -227,6 +227,7 @@ void CObjectMgr::Render()
 	m_SciptObject.clear();
 	m_CollideObj.clear();
 	m_CollideTile.clear();
+	m_Barricade.clear();
 }
 
 void CObjectMgr::DebugRender()
@@ -243,9 +244,15 @@ void CObjectMgr::DebugRender()
 	{
 		for (auto&i : m_CollideObj)
 		{
+			i->GetComponent<CBoxCollider>()->SetCollideColor(D3DCOLOR_XRGB(255, 0, 0));
 			i->DebugRender(true, false);
 		}
 	}
+	//for (auto&i : m_CollideObj)
+	//{
+	//	i->GetComponent<CBoxCollider>()->SetCollideColor(D3DCOLOR_XRGB(255, 0, 0));
+	//	i->DebugRender(true, false);
+	//}
 	//
 	//for (auto&i : m_RenderTiles)
 	//{
@@ -299,6 +306,17 @@ void CObjectMgr::OnInit()
 		}
 }
 
+void CObjectMgr::OnLateUpdate()
+{
+	//모든 객체 스크립트 OnUpdate
+	for (auto& i : m_SciptObject)
+	{
+		for (auto& j : i->GetScripts())
+			j.second->OnLateUpdate();
+	}
+}
+
+
 void CObjectMgr::OnCollision()
 {
 	list<CGameObject*>::iterator iter_begin = m_CollideObj.begin();
@@ -318,16 +336,26 @@ void CObjectMgr::OnCollision()
 				{
 					float fMoveX = 0.0f, fMoveY = 0.0f;
 					XMFLOAT2 move;
-					if (CCollisionMgr::GetInstance()->CheckRect(pSource, pDest,&move.x,&move.y))
+					COLLIDE_TYPE colType = pDest->GetCollideType();
+					if (colType == NORMAL)
 					{
-						if ((*iter_begin)->GetObjectTag() == L"Bullet")
+						if (CCollisionMgr::GetInstance()->CheckAABB(pSource, pDest))
 						{
-							cout << "Awda" << endl;
+							//스크립트의 OnCollision 실행 충돌대상으로 포인터를 전달한다.
+							for (auto& i : (*iter_begin)->GetScripts())
+								i.second->OnCollision((*iter_begin2), &move);
 						}
-						//스크립트의 OnCollision 실행 충돌대상으로 포인터를 전달한다.
-						for (auto& i : (*iter_begin)->GetScripts())
-							i.second->OnCollision((*iter_begin2),&move);
 					}
+					else
+					{
+						if (CCollisionMgr::GetInstance()->CheckLineBox(pSource, pDest))
+						{
+							//스크립트의 OnCollision 실행 충돌대상으로 포인터를 전달한다.
+							for (auto& i : (*iter_begin)->GetScripts())
+								i.second->OnCollision((*iter_begin2), &move);
+						}
+					}
+					
 				}
 			}
 		}
@@ -395,6 +423,11 @@ void CObjectMgr::ClearCopy()
 	m_CopyObjects.clear();
 }
 
+
+const list<CGameObject*>& CObjectMgr::GetBarricades()
+{
+	return m_Barricade;
+}
 
 const map<int, vector<CGameObject*>>& CObjectMgr::GetObjects()
 {

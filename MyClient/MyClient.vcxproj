@@ -188,6 +188,7 @@
     <ClInclude Include="PlayerScript.h" />
     <ClInclude Include="PuzzlePoint.h" />
     <ClInclude Include="PuzzleScripts.h" />
+    <ClInclude Include="PuzzleSpawn.h" />
     <ClInclude Include="PuzzleStack.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene.h" />
@@ -236,6 +237,7 @@
     <ClCompile Include="PlayerScript.cpp" />
     <ClCompile Include="PuzzlePoint.cpp" />
     <ClCompile Include="PuzzleScripts.cpp" />
+    <ClCompile Include="PuzzleSpawn.cpp" />
     <ClCompile Include="PuzzleStack.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneMgr.cpp" />
