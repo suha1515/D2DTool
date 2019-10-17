@@ -5,6 +5,7 @@
 ../Animation/GuideLine.anim
 ../Animation/Mouse_Bot.anim
 ../Animation/Normal_Bot.anim
+../Animation/Particle_Block.anim
 ../Animation/Player.anim
 ../Animation/Player_Attack_Effect.anim
 ../Animation/Player_bullet.anim

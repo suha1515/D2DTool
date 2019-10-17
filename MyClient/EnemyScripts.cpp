@@ -23,6 +23,10 @@ CEnemyScripts::~CEnemyScripts()
 {
 }
 
+void CEnemyScripts::HitEffect()
+{
+}
+
 void CEnemyScripts::CheckTiles()
 {
 	const vector<CGameObject*>& tiles = CObjectMgr::GetInstance()->GetTiles();
@@ -57,7 +61,7 @@ bool CEnemyScripts::CollideTiles()
 			if (pDestBox != nullptr && (m_pGameObject->GetObjectLayer() <= i->GetObjectLayer() || i->GetObjectLayer() == LAYER_GROUND))
 			{
 				//타일컬링되는 오브젝트들 확인. ( 충돌체 있는녀석만)
-				i->SetObjectCliked(true, D3DCOLOR_XRGB(255, 0, 0));
+				//i->SetObjectCliked(true, D3DCOLOR_XRGB(255, 0, 0));
 				COLLIDE_TYPE coltype = pDestBox->GetCollideType();
 				//사각형충돌과 삼각형충돌이 있다
 				//사각형 충돌시

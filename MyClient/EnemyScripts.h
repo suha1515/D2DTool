@@ -3,6 +3,7 @@
 class CTransform;
 class CAnimator;
 class CBoxCollider;
+class CTextureRenderer;
 class CEnemyScripts :
 	public CScripts
 {
@@ -15,12 +16,14 @@ public:
 	virtual void				Move() = 0;
 public:
 	virtual void				GetHit(D3DXVECTOR3 dirVec,float power,float dmg) = 0;
+	void						HitEffect();
 	void						CheckTiles();		//타일확인
 	bool						CollideTiles();		//타일과 충돌
 protected:
 	CTransform*			m_pTransform;		//트랜스폼
 	CAnimator*			m_pAnimator;		//애니메이션
 	CBoxCollider*		m_pBoxCollider;
+	CTextureRenderer*	m_pTexture;
 
 	ENEMY_TYPE			m_Type;
 
@@ -29,6 +32,7 @@ protected:
 	float				m_Hp;
 	float				m_Atk;
 
+	float				m_fWhiteValue;
 	D3DXVECTOR3			m_PrePos;
 
 	list <CGameObject*> m_NearTiles;		//타일 충돌을 위한것.

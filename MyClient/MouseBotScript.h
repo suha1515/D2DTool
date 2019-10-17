@@ -26,6 +26,7 @@ public:
 	virtual void DirState() override;
 	virtual void AnimState() override;
 	virtual void GetHit(D3DXVECTOR3 dirVec, float power, float dmg) override;
+	void Hit();
 	virtual void Move() override;
 
 public:

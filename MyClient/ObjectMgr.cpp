@@ -170,7 +170,11 @@ void CObjectMgr::Update()
 				{
 					//오브젝트가 콜라이더를 가지고있으면 콜라이더 계산을 위해 리스트에 넣는다.
 					if ((*iter_begin)->GetComponent<CBoxCollider>() != nullptr)
-						m_CollideObj.push_back((*iter_begin));
+					{
+						if((*iter_begin)->GetComponent<CBoxCollider>()->GetOn())
+							m_CollideObj.push_back((*iter_begin));
+					}
+						
 				}
 				else
 				{
@@ -369,7 +373,11 @@ void CObjectMgr::OnUpdate()
 		for (auto& i : m_SciptObject)
 		{
 				for (auto& j : i->GetScripts())
+				{ 
+					
 					j.second->OnUpdate();
+				}
+				
 		}
 }
 void CObjectMgr::OnDestroy()

@@ -23,7 +23,7 @@ public:
 	virtual void AnimState() override;
 	virtual void Move() override;
 	virtual void GetHit(D3DXVECTOR3 dirVec, float power, float dmg) override;
-	
+	void Hit();
 
 private:
 	void				TrackPlayer();

@@ -7,6 +7,8 @@
 #include "BoxCollider.h"
 #include "BulletScript.h"
 
+#include "TextureRenderer.h"
+
 #include "Effect.h"
 
 CTurretScript::CTurretScript()
@@ -25,6 +27,7 @@ void CTurretScript::OnInit()
 	m_pAnimator = m_pGameObject->GetComponent<CAnimator>();
 	m_pTransform = m_pGameObject->GetComponent<CTransform>();
 	m_pBoxCollider = m_pGameObject->GetComponent<CBoxCollider>();
+	m_pTexture = m_pGameObject->GetComponent<CTextureRenderer>();
 
 	if (m_pAnimator != nullptr)
 	{
@@ -227,7 +230,11 @@ void CTurretScript::AnimState()
 	{
 		switch (m_CurState)
 		{
+		case HIT:
+			m_pTexture->SetPass(1);
+			break;
 		case AIM:
+			m_pTexture->SetPass(0);
 		case IDLE:
 			//cout << "대기상태" << endl;
 			switch (m_CurDir)
@@ -389,6 +396,7 @@ void CTurretScript::AnimState()
 			}
 			break;
 		}
+
 		m_PreState = m_CurState;
 		m_PreDir = m_CurDir;
 	}
@@ -400,7 +408,26 @@ void CTurretScript::Move()
 
 void CTurretScript::GetHit(D3DXVECTOR3 dirVec, float power, float dmg)
 {
+	m_CurState = HIT;
+
 	m_Hp -= dmg;
+
+	m_fWhiteValue = 0.0f;
+
+}
+
+void CTurretScript::Hit()
+{
+	if (m_fWhiteValue < 0.5f)
+	{
+		m_pTexture->SetAlpha(m_fWhiteValue*2.f);
+		m_fWhiteValue += CTimeMgr::GetInstance()->GetDeltaTime();
+	}
+	else
+	{
+		m_fWhiteValue -= m_fWhiteValue;
+		m_CurState = AIM;
+	}
 }
 
 void CTurretScript::AttackState()
@@ -445,6 +472,12 @@ void CTurretScript::AttackState()
 		case CHARGE_SHOOT:
 				Shoot(CHARGED);
 				m_CurState = AIM;	
+				break;
+		case HIT:
+			if (m_CurState == HIT)
+			{
+				Hit();
+			}
 			break;
 		}
 }
@@ -465,7 +498,7 @@ void CTurretScript::TrackPlayer()
 		D3DXVECTOR3 dir = playerPos - botPos;
 		D3DXVec3Normalize(&m_DirVec, &dir);
 
-		if (m_CurState != CHARGE&&m_CurState!=CHARGE_SHOOT&&m_CurState!=SHOOT)
+		if (m_CurState != CHARGE&&m_CurState!=CHARGE_SHOOT&&m_CurState!=SHOOT&&m_CurState != HIT)
 		{
 			if (m_pPlayer->GetObjectLayer() == m_pGameObject->GetObjectLayer())
 			{

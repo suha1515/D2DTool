@@ -6,6 +6,8 @@
 #include "Transform.h"
 #include "BoxCollider.h"
 
+#include "TextureRenderer.h"
+
 #include "Effect.h"
 
 
@@ -23,6 +25,7 @@ void CNormalBotScript::OnInit()
 	m_pAnimator = m_pGameObject->GetComponent<CAnimator>();
 	m_pTransform = m_pGameObject->GetComponent<CTransform>();
 	m_pBoxCollider = m_pGameObject->GetComponent<CBoxCollider>();
+	m_pTexture = m_pGameObject->GetComponent<CTextureRenderer>();
 	m_pGameObject->SetObjectTag(L"Enemy");
 	if (m_pAnimator != nullptr)
 	{
@@ -152,9 +155,9 @@ void CNormalBotScript::DirState()
 
 void CNormalBotScript::AnimState()
 {
-	if (m_CurState == HIT && !m_pAnimator->IsPlaying())
+	if (m_CurState == HIT )
 	{
-		m_CurState = IDLE;
+		Hit();
 	}
 
 
@@ -163,7 +166,7 @@ void CNormalBotScript::AnimState()
 		switch (m_CurState)
 		{
 		case IDLE:
-			cout << "대기상태" << endl;
+			m_pTexture->SetPass(0);
 			switch (m_CurDir)
 			{
 			case UP:
@@ -183,7 +186,7 @@ void CNormalBotScript::AnimState()
 			}
 			break;
 		case HIT:
-			cout << "맞음" << endl;
+			m_pTexture->SetPass(1);
 			switch (m_CurDir)
 			{
 			case UP:
@@ -316,7 +319,22 @@ void CNormalBotScript::GetHit(D3DXVECTOR3 dirVec, float power, float dmg)
 
 		m_Hp -= dmg;
 
-		cout << "맞음" << endl;
+		m_fWhiteValue = 0.0f;
+
+	}
+}
+
+void CNormalBotScript::Hit()
+{
+	if (m_fWhiteValue < 0.5f)
+	{
+		m_pTexture->SetAlpha(m_fWhiteValue*2.f);
+		m_fWhiteValue += CTimeMgr::GetInstance()->GetDeltaTime();
+	}
+	else
+	{
+		m_fWhiteValue -= m_fWhiteValue;
+		m_CurState = IDLE;
 	}
 }
 

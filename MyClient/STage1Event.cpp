@@ -12,6 +12,7 @@
 #include "GameObject.h"
 #include "Scripts.h"
 #include "EnemyScripts.h"
+#include "DestructiveObject.h"
 
 CSTage1Event::CSTage1Event()
 {
@@ -170,7 +171,17 @@ void CSTage1Event::Initialize()
 
 	CGameObject* Stone = CObjectMgr::GetInstance()->FindObjectWithName(L"µππ´¥ı±‚").front();
 	m_PuzzlesObject["∆€¡Ò3"].insert({ "µππ´¥ı±‚",Stone });
-
+	
+	CDestructiveObject* pScript = new CDestructiveObject;
+	Stone->AddScripts(pScript);
+	pScript->SetGameObject(Stone);
+	for (auto&i : Stone->GetChildernVector())
+	{
+		CDestructiveObject* pScript = new CDestructiveObject;
+		i->AddScripts(pScript);
+		pScript->SetGameObject(i);
+	}
+		
 
 
 	//=================================================================================
@@ -178,119 +189,119 @@ void CSTage1Event::Initialize()
 
 void CSTage1Event::Update()
 {
-	//if (!m_Puzzle1)
-	//{
-	//	int puzzle1Active = 0;
-	//	for (auto&i : m_mapPuzzle["∆€¡Ò1"])
-	//	{
-	//		bool isOn = i.second->GetPuzzleOn();
-	//		if (isOn)
-	//		{
-	//			puzzle1Active++;
-	//		}
-	//	}
-	//	if (puzzle1Active == m_mapPuzzle["∆€¡Ò1"].size())
-	//	{
-	//		m_PuzzlesObject["∆€¡Ò1"]["∆€¡Ò∆–µÂ_1"]->GetComponent<CAnimator>()->Play(L"Pad_On", ANIMATION_ONCE);
-	//		m_Puzzle1ObjFade = true;
-	//		m_Puzzle1 = true;
-	//	}
-	//}
-	//if (m_Puzzle1ObjFade)
-	//{
-	//	if (m_fAlphaValue >= 0.0f)
-	//	{
-	//		m_PuzzlesObject["∆€¡Ò1"]["πÊæÓ∫Æ_1"]->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlphaValue);
-	//		for (auto&i : m_PuzzlesObject["∆€¡Ò1"]["πÊæÓ∫Æ_1"]->GetChildernVector())
-	//		{
-	//			i->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlphaValue);
-	//		}
-	//		m_fAlphaValue -= CTimeMgr::GetInstance()->GetDeltaTime()*0.5f;
-	//	}
-	//	else
-	//	{
-	//		m_PuzzlesObject["∆€¡Ò1"]["πÊæÓ∫Æ_1"]->SetObjectDestroy(true);
-	//		m_Puzzle1ObjFade = false;
-	//		m_fAlphaValue = 1.f;
-	//	}	
-	//}
+	if (!m_Puzzle1)
+	{
+		int puzzle1Active = 0;
+		for (auto&i : m_mapPuzzle["∆€¡Ò1"])
+		{
+			bool isOn = i.second->GetPuzzleOn();
+			if (isOn)
+			{
+				puzzle1Active++;
+			}
+		}
+		if (puzzle1Active == m_mapPuzzle["∆€¡Ò1"].size())
+		{
+			m_PuzzlesObject["∆€¡Ò1"]["∆€¡Ò∆–µÂ_1"]->GetComponent<CAnimator>()->Play(L"Pad_On", ANIMATION_ONCE);
+			m_Puzzle1ObjFade = true;
+			m_Puzzle1 = true;
+		}
+	}
+	if (m_Puzzle1ObjFade)
+	{
+		if (m_fAlphaValue >= 0.0f)
+		{
+			m_PuzzlesObject["∆€¡Ò1"]["πÊæÓ∫Æ_1"]->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlphaValue);
+			for (auto&i : m_PuzzlesObject["∆€¡Ò1"]["πÊæÓ∫Æ_1"]->GetChildernVector())
+			{
+				i->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlphaValue);
+			}
+			m_fAlphaValue -= CTimeMgr::GetInstance()->GetDeltaTime()*0.5f;
+		}
+		else
+		{
+			m_PuzzlesObject["∆€¡Ò1"]["πÊæÓ∫Æ_1"]->SetObjectDestroy(true);
+			m_Puzzle1ObjFade = false;
+			m_fAlphaValue = 1.f;
+		}	
+	}
 
-	////∆€¡Ò2=====================================================================
-	//if (!m_Puzzle2Clear)
-	//{
-	//	if (m_mapPuzzle["∆€¡Ò2"]["∆€¡Ò∆˜¿Œ∆Æ_2"]->GetPuzzleOn())
-	//	{
-	//		
-	//		if (!m_Puzzle2WallFade)
-	//		{
-	//			CGameObject* wall = m_PuzzlesObject["∆€¡Ò2"]["∆€¡Ò2_πÊ«ÿπ∞"];
-	//			if (m_fAlpahValue2 <= 1.0f)
-	//			{
-	//				wall->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlpahValue2);
-	//				for (auto&i : wall->GetChildernVector())
-	//				{
-	//					i->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlpahValue2);
-	//				}
-	//				m_fAlpahValue2 += CTimeMgr::GetInstance()->GetDeltaTime()*0.7f;
-	//			}
-	//			else
-	//			{
-	//				m_Puzzle2WallFade = true;
-	//				m_fAlpahValue2 = 1.0f;
-	//			}
-	//		}
-	//		else
-	//			m_mapPuzzle["∆€¡Ò2"]["∆€¡ÒΩ∫∆˜≥ _2"]->SetPuzzleActive(true);
-	//	}
-	//	if (m_mapPuzzle["∆€¡Ò2"]["∆€¡ÒΩ∫∆˜≥ _2"]->GetPuzzleOn())
-	//	{
-	//		cout << "∆€¡Ò2 Ω∫∆˜≥  ≈¨∏ÆæÓ" << endl;
-	//		CGameObject* wall = m_PuzzlesObject["∆€¡Ò2"]["∆€¡Ò2_πÊ«ÿπ∞"];
-	//		if (m_fAlpahValue2 >= 0.0f)
-	//		{
-	//			wall->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlpahValue2);
-	//			for (auto&i : wall->GetChildernVector())
-	//			{
-	//				i->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlpahValue2);
-	//			}
-	//			m_fAlpahValue2 -= CTimeMgr::GetInstance()->GetDeltaTime()*0.7f;
-	//		}
-	//		else
-	//		{
-	//			wall->SetObjectDestroy(true);
-	//			m_Puzzle2Clear = true;
-	//			m_fAlpahValue2 =0.0f;
-	//		}
-	//	}
-	//}	
+	//∆€¡Ò2=====================================================================
+	if (!m_Puzzle2Clear)
+	{
+		if (m_mapPuzzle["∆€¡Ò2"]["∆€¡Ò∆˜¿Œ∆Æ_2"]->GetPuzzleOn())
+		{
+			
+			if (!m_Puzzle2WallFade)
+			{
+				CGameObject* wall = m_PuzzlesObject["∆€¡Ò2"]["∆€¡Ò2_πÊ«ÿπ∞"];
+				if (m_fAlpahValue2 <= 1.0f)
+				{
+					wall->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlpahValue2);
+					for (auto&i : wall->GetChildernVector())
+					{
+						i->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlpahValue2);
+					}
+					m_fAlpahValue2 += CTimeMgr::GetInstance()->GetDeltaTime()*0.7f;
+				}
+				else
+				{
+					m_Puzzle2WallFade = true;
+					m_fAlpahValue2 = 1.0f;
+				}
+			}
+			else
+				m_mapPuzzle["∆€¡Ò2"]["∆€¡ÒΩ∫∆˜≥ _2"]->SetPuzzleActive(true);
+		}
+		if (m_mapPuzzle["∆€¡Ò2"]["∆€¡ÒΩ∫∆˜≥ _2"]->GetPuzzleOn())
+		{
+			cout << "∆€¡Ò2 Ω∫∆˜≥  ≈¨∏ÆæÓ" << endl;
+			CGameObject* wall = m_PuzzlesObject["∆€¡Ò2"]["∆€¡Ò2_πÊ«ÿπ∞"];
+			if (m_fAlpahValue2 >= 0.0f)
+			{
+				wall->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlpahValue2);
+				for (auto&i : wall->GetChildernVector())
+				{
+					i->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlpahValue2);
+				}
+				m_fAlpahValue2 -= CTimeMgr::GetInstance()->GetDeltaTime()*0.7f;
+			}
+			else
+			{
+				wall->SetObjectDestroy(true);
+				m_Puzzle2Clear = true;
+				m_fAlpahValue2 =0.0f;
+			}
+		}
+	}	
 
-	////∆€¡Ò3=====================================================================================================
+	//∆€¡Ò3=====================================================================================================
 
-	//if (!m_Puzzle3Clear)
-	//{
-	//	if (m_mapPuzzle["∆€¡Ò3"]["∆€¡Ò3_∆˜¿Œ∆Æ2"]->GetPuzzleOn())
-	//	{
-	//		if (!m_Puzzle3WallFde)
-	//		{
-	//			if (m_fAlphaValue3 >= 0.0f)
-	//			{
-	//				m_PuzzlesObject["∆€¡Ò3"]["∆€¡Ò3_πÊ«ÿπ∞"]->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlphaValue3);
-	//				for (auto&i : m_PuzzlesObject["∆€¡Ò3"]["∆€¡Ò3_πÊ«ÿπ∞"]->GetChildernVector())
-	//				{
-	//					i->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlphaValue3);
-	//				}
-	//				m_fAlphaValue3 -= CTimeMgr::GetInstance()->GetDeltaTime()*0.7f;
-	//			}
-	//			else
-	//			{
-	//				m_PuzzlesObject["∆€¡Ò3"]["∆€¡Ò3_πÊ«ÿπ∞"]->SetObjectDestroy(true);
-	//				m_Puzzle3WallFde = true;
-	//				m_fAlphaValue3 = 1.0f;
-	//			}
-	//		}
-	//	}
-	//}
-	//
+	if (!m_Puzzle3Clear)
+	{
+		if (m_mapPuzzle["∆€¡Ò3"]["∆€¡Ò3_∆˜¿Œ∆Æ2"]->GetPuzzleOn())
+		{
+			if (!m_Puzzle3WallFde)
+			{
+				if (m_fAlphaValue3 >= 0.0f)
+				{
+					m_PuzzlesObject["∆€¡Ò3"]["∆€¡Ò3_πÊ«ÿπ∞"]->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlphaValue3);
+					for (auto&i : m_PuzzlesObject["∆€¡Ò3"]["∆€¡Ò3_πÊ«ÿπ∞"]->GetChildernVector())
+					{
+						i->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlphaValue3);
+					}
+					m_fAlphaValue3 -= CTimeMgr::GetInstance()->GetDeltaTime()*0.7f;
+				}
+				else
+				{
+					m_PuzzlesObject["∆€¡Ò3"]["∆€¡Ò3_πÊ«ÿπ∞"]->SetObjectDestroy(true);
+					m_Puzzle3WallFde = true;
+					m_fAlphaValue3 = 1.0f;
+				}
+			}
+		}
+	}
+	
 
 	//=========================================================================================================
 }

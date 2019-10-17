@@ -11,6 +11,7 @@ CTextureRenderer::CTextureRenderer()
 	m_texInfo(nullptr),m_pVB(nullptr),m_pIB(nullptr),m_pShader(nullptr)
 {
 	m_Alpha =1.f;
+	m_iPassNumber = 0;
 }
 CTextureRenderer::~CTextureRenderer()
 {
@@ -73,8 +74,8 @@ void CTextureRenderer::Render(const D3DXMATRIX& world)
 
 		pEffect->SetTexture("tex0", m_texInfo->pTexture);
 		//이 밑에 두함수 조사.
-		pEffect->Begin(nullptr, 0);	//쉐이더에서 테크닉을 정해준다. 2번째인자가 쉐이더 파일에서 테크닉이 정의된 순서 0이 첫번쨰
-		pEffect->BeginPass(0);		//pass는 말그대로 pass 위와 똑같다.
+		pEffect->Begin(nullptr, m_iPassNumber);	//쉐이더에서 테크닉을 정해준다. 2번째인자가 쉐이더 파일에서 테크닉이 정의된 순서 0이 첫번쨰
+		pEffect->BeginPass(m_iPassNumber);		//pass는 말그대로 pass 위와 똑같다.
 
 		m_pDeviceMgr->GetDevice()->SetStreamSource(0, m_pVB, 0, sizeof(Vertex));
 		m_pDeviceMgr->GetDevice()->SetIndices(m_pIB);
@@ -187,6 +188,11 @@ const XMFLOAT2 & CTextureRenderer::GetTexSize()
 const XMFLOAT2* CTextureRenderer::GetTexPos()
 {
 	return m_Tex;
+}
+
+void CTextureRenderer::SetPass(int pass)
+{
+	m_iPassNumber = pass;
 }
 
 void CTextureRenderer::Action()

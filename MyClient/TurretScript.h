@@ -3,7 +3,7 @@
 class CTurretScript :
 	public CEnemyScripts
 {
-	enum STATE { IDLE, AIM,SHOOT,CHARGE,CHARGE_SHOOT };
+	enum STATE { IDLE, HIT,AIM,SHOOT,CHARGE,CHARGE_SHOOT };
 	enum DIR16 { RIGHT, RIGHT_22, RIGHT_45, RIGHT_67, UP, LEFT_112, LEFT_135,LEFT_157,LEFT, LEFT_202, LEFT_225,LEFT_247,DOWN, RIGHT_292,RIGHT_315,RIGHT_337};
 	enum FIRE_MODE{SINGLE,BRUST,CHARGED,RAPIDLY};
 public:
@@ -24,7 +24,7 @@ public:
 	virtual void AnimState() override;
 	virtual void Move() override;
 	virtual void GetHit(D3DXVECTOR3 dirVec, float power, float dmg) override;
-
+	void Hit();
 private:
 	void				AttackState();
 private:

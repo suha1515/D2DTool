@@ -29,6 +29,9 @@ public:
 	const XMFLOAT2&		GetTexSize();
 	//텍스쳐 좌표값 반환
 	const XMFLOAT2*		GetTexPos();
+
+public:
+	void SetPass(int pass);
 public:
 	// CComponent을(를) 통해 상속됨
 	// 컴포넌트 초기화
@@ -63,5 +66,6 @@ private:
 
 	float						m_Alpha;
 	
+	int							m_iPassNumber;
 };
 

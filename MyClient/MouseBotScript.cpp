@@ -5,6 +5,7 @@
 #include "Animator.h"
 #include "Transform.h"
 #include "BoxCollider.h"
+#include "TextureRenderer.h"
 
 #include "Effect.h"
 
@@ -23,6 +24,7 @@ void CMouseBotScript::OnInit()
 	m_pAnimator = m_pGameObject->GetComponent<CAnimator>();
 	m_pTransform = m_pGameObject->GetComponent<CTransform>();
 	m_pBoxCollider = m_pGameObject->GetComponent<CBoxCollider>();
+	m_pTexture = m_pGameObject->GetComponent<CTextureRenderer>();
 	if (m_pAnimator != nullptr)
 	{
 		m_pAnimator->LoadClips(L"Mouse_Bot");
@@ -162,10 +164,9 @@ void CMouseBotScript::DirState()
 
 void CMouseBotScript::AnimState()
 {
-	if (m_CurState == HIT && !m_pAnimator->IsPlaying())
+	if (m_CurState == HIT)
 	{
-		cout << "맞는 애니메이션 끝" << endl;
-		m_CurState = IDLE;
+		Hit();
 	}
 		
 
@@ -174,7 +175,7 @@ void CMouseBotScript::AnimState()
 		switch (m_CurState)
 		{
 		case IDLE:
-			//cout << "대기상태" << endl;
+			m_pTexture->SetPass(0);
 			switch (m_CurDir)
 			{
 			case UP:
@@ -198,7 +199,7 @@ void CMouseBotScript::AnimState()
 			}
 			break;
 		case HIT:
-			//cout << "대기상태" << endl;
+			m_pTexture->SetPass(1);
 			switch (m_CurDir)
 			{
 			case UP:
@@ -234,7 +235,22 @@ void CMouseBotScript::GetHit(D3DXVECTOR3 dirVec,float power, float dmg)
 
 	m_Hp -= dmg;
 
-	cout << "맞음" << endl;
+	m_fWhiteValue = 0.0f;
+
+}
+
+void CMouseBotScript::Hit()
+{
+	if (m_fWhiteValue < 0.5f)
+	{
+		m_pTexture->SetAlpha(m_fWhiteValue*2.f);
+		m_fWhiteValue += CTimeMgr::GetInstance()->GetDeltaTime();
+	}
+	else
+	{
+		m_fWhiteValue -= m_fWhiteValue;
+		m_CurState = IDLE;
+	}
 }
 
 void CMouseBotScript::Move()

@@ -190,8 +190,7 @@ void CBulletScript::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move)
 		}
 		if (pGameObject->GetObjectTag() == L"Destructive")
 		{
-			if (pGameObject->GetObjectLayer() == m_pGameObject->GetObjectLayer())
-			{
+	
 				D3DXVECTOR3* pos = pTransform->GetWorldPos();
 				XMFLOAT3& rot = XMFLOAT3(0, 0, 0.0f);
 				D3DXVECTOR3 scale;
@@ -210,7 +209,6 @@ void CBulletScript::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move)
 				CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Hit", ANIMATION_ONCE);
 				m_pGameObject->SetObjectDestroy(true);
 			}
-		}
 
 	}
 }

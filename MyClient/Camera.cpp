@@ -39,8 +39,9 @@ void CCamera::Update()
 	{
 		CTransform* pTransform = m_Following->GetComponent<CTransform>();
 		NULL_CHECK_MSG_RETURN(pTransform, L"GameObject Transform is null");
+		float time = CTimeMgr::GetInstance()->GetDeltaTime()*0.5f;
+		m_CamPos = Lerp(*pTransform->GetWorldPos(),m_CamPos, CTimeMgr::GetInstance()->GetDeltaTime());
 
-		m_CamPos = pTransform->GetLocalPosition();
 	}
 	m_ViewMat = D3DXMATRIX(
 		m_ScaleFactors.x * cosf(m_fAngle), m_ScaleFactors.x * sinf(m_fAngle), 0, 0,

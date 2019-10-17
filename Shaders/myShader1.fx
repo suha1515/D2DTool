@@ -113,8 +113,11 @@ PS_OUT PS_MAIN2(VS_OUT In)
 	p_out.v_color = tex2D(s_2D, In.uv);
 	p_out.v_color = p_out.v_color*gFloat;
 
-	float4 preColor = p_out.v_color;
-	float4 white = float4
+	float3 preColor = float3(p_out.v_color.r, p_out.v_color.g, p_out.v_color.b);
+	float3 white = (float3)1;
+	float3 lerpColor = lerp(white, preColor, gFloat);
+	p_out.v_color.rgb = preColor;
+	//p_out.v_color = float4(1.0f, lerpColor);
 
 	return p_out;
 }
