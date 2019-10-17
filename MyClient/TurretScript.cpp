@@ -78,6 +78,7 @@ int CTurretScript::OnUpdate()
 	TrackPlayer();
 	GetDirPlayer();
 	DirState();
+	AttackState();
 	AnimState();
 
 	return 0;
@@ -220,6 +221,7 @@ void CTurretScript::DirState()
 
 void CTurretScript::AnimState()
 {
+
 	if (m_CurState != m_PreState || m_CurDir != m_PreDir)
 	{
 		switch (m_CurState)
@@ -266,7 +268,7 @@ void CTurretScript::AnimState()
 			}
 			break;
 		case SHOOT:
-			//cout << "대기상태" << endl;
+			cout << "발사상태" << endl;
 			switch (m_CurDir)
 			{
 			case UP:
@@ -350,44 +352,44 @@ void CTurretScript::AnimState()
 			switch (m_CurDir)
 			{
 			case UP:
-				m_pAnimator->Play(L"Turret_Charge_Shoot_Up", ANIMATION_TYPE::ANIMATION_LOOP);
+				m_pAnimator->Play(L"Turret_Charge_Shoot_Up", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
 			case DOWN:
-				m_pAnimator->Play(L"Turret_Charge_Shoot_Down", ANIMATION_TYPE::ANIMATION_LOOP);
+				m_pAnimator->Play(L"Turret_Charge_Shoot_Down", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
 			case LEFT_112:
 			case RIGHT_67:
-				m_pAnimator->Play(L"Turret_Charge_Shoot_Right_Up3", ANIMATION_TYPE::ANIMATION_LOOP);
+				m_pAnimator->Play(L"Turret_Charge_Shoot_Right_Up3", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
 			case LEFT_135:
 			case RIGHT_45:
-				m_pAnimator->Play(L"Turret_Charge_Shoot_Right_Up2", ANIMATION_TYPE::ANIMATION_LOOP);
+				m_pAnimator->Play(L"Turret_Charge_Shoot_Right_Up2", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
 			case LEFT_157:
 			case RIGHT_22:
-				m_pAnimator->Play(L"Turret_Charge_Shoot_Right_Up1", ANIMATION_TYPE::ANIMATION_LOOP);
+				m_pAnimator->Play(L"Turret_Charge_Shoot_Right_Up1", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
 			case LEFT:
 			case RIGHT:
-				m_pAnimator->Play(L"Turret_Charge_Shoot_Right", ANIMATION_TYPE::ANIMATION_LOOP);
+				m_pAnimator->Play(L"Turret_Charge_Shoot_Right", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
 			case LEFT_202:
 			case RIGHT_337:
-				m_pAnimator->Play(L"Turret_Charge_Shoot_Right_Down1", ANIMATION_TYPE::ANIMATION_LOOP);
+				m_pAnimator->Play(L"Turret_Charge_Shoot_Right_Down1", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
 			case LEFT_225:
 			case RIGHT_315:
-				m_pAnimator->Play(L"Turret_Charge_Shoot_Right_Down2", ANIMATION_TYPE::ANIMATION_LOOP);
+				m_pAnimator->Play(L"Turret_Charge_Shoot_Right_Down2", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
 			case LEFT_247:
 			case RIGHT_292:
-				m_pAnimator->Play(L"Turret_Charge_Shoot_Right_Down3", ANIMATION_TYPE::ANIMATION_LOOP);
+				m_pAnimator->Play(L"Turret_Charge_Shoot_Right_Down3", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
 			}
 			break;
-
-			m_PreState = m_CurState;
 		}
+		m_PreState = m_CurState;
+		m_PreDir = m_CurDir;
 	}
 }
 
@@ -401,46 +403,51 @@ void CTurretScript::GetHit(D3DXVECTOR3 dirVec, float power, float dmg)
 
 void CTurretScript::AttackState()
 {
-	if (m_CurState != m_PreState)
-	{
 		switch (m_CurState)
 		{
 		case AIM:
-
-			break;
-		case SHOOT:
 			if (m_fCoolTime >= 2.0f)
 			{
-				Shoot(SINGLE);
 				m_fCoolTime -= m_fCoolTime;
-				m_CurState = AIM;
+				m_CurState = SHOOT;
 			}
 			m_fCoolTime += CTimeMgr::GetInstance()->GetDeltaTime();
 			break;
-		case CHARGE:
-			if (m_ChargeEffect == nullptr)
+		case SHOOT:
+			if (m_CurState == SHOOT && !m_pAnimator->IsPlaying())
 			{
-				m_ChargeEffect = CEffect::Create(m_BarrelPos, XMFLOAT3(0.0f,0.0f,0.0f), D3DXVECTOR3(1.0f,1.0f,1.0f), L"Turret_Effect", L"Turrect_Charge", ANIMATION_LOOP,3.0f);
+				Shoot(SINGLE);
+				m_CurState = AIM;
 			}
-			else
-			{
-				m_ChargeEffect->GetComponent<CTransform>()->SetPosition(m_BarrelPos);
-			}
+			break;
+		case CHARGE:			
 			if (m_fChargeCool > 3.0f)
 			{
-				m_CurState == CHARGE_SHOOT;
+				m_CurState = CHARGE_SHOOT;
 				m_fChargeCool -= m_fChargeCool;
 				m_ChargeEffect = nullptr;
 			}
-			m_fChargeCool += CTimeMgr::GetInstance()->GetDeltaTime();
+			else
+			{
+				if (m_ChargeEffect == nullptr)
+				{
+					m_ChargeEffect = CEffect::Create(m_BarrelPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Turret_Effect", L"Turrect_Charge", ANIMATION_LOOP, 3.0f);
+				}
+				else
+				{
+					m_ChargeEffect->GetComponent<CTransform>()->SetPosition(m_BarrelPos);
+				}
+				m_fChargeCool += CTimeMgr::GetInstance()->GetDeltaTime();
+			}
 			break;
 		case CHARGE_SHOOT:
-			Shoot(CHARGED);
-			m_CurState = AIM;
+			if (m_CurState == CHARGE && !m_pAnimator->IsPlaying())
+			{
+				Shoot(CHARGED);
+				m_CurState = AIM;
+			}
 			break;
 		}
-	}
-	
 }
 
 void CTurretScript::GetDirPlayer()
@@ -459,17 +466,22 @@ void CTurretScript::TrackPlayer()
 		D3DXVECTOR3 dir = playerPos - botPos;
 		D3DXVec3Normalize(&m_DirVec, &dir);
 
-			if (dist < 200.f&&dist>50.f)
-			{		
-				m_CurState = SHOOT;
+		if (m_CurState != CHARGE&&m_CurState!=CHARGE_SHOOT&&m_CurState!=SHOOT)
+		{
+			if (dist < 140.f&&dist>50.f)
+			{
+				m_CurState = AIM;
 			}
-			else if (dist<50.f)
+			else if (dist < 50.f)
 			{
 			}
-			else if (dist > 200.f)
+			else if (dist > 150.f&&dist < 300.f)
 			{
 				m_CurState = CHARGE;
 			}
+			else
+				m_CurState = IDLE;
+		}
 	}
 }
 

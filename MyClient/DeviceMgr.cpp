@@ -84,7 +84,7 @@ HRESULT CDeviceMgr::InitDevice(MODE eMode)
 
 	/* FullScreen_RefreshRateInHz must be zero for Windowed mode */
 	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT; // 현재 모니터 주사율에 맞춘다.
-	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE; // 즉시 시연 한다.
+	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT; // 즉시 시연 한다.
 
 	m_pSDK->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, g_hWnd, vp, &d3dpp,
 		&m_pDevice);

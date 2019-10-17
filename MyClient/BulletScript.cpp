@@ -70,7 +70,7 @@ void CBulletScript::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move)
 					CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Hit", ANIMATION_ONCE);
 					CScripts* pscripts = pGameObject->GetScript("CEnemyScripts");
 					if (pscripts != nullptr)
-						dynamic_cast<CEnemyScripts*>(pscripts)->GetHit(m_DirVec, power, 0.0f);
+						dynamic_cast<CEnemyScripts*>(pscripts)->GetHit(m_DirVec, power, m_Damage);
 
 				m_pGameObject->SetObjectDestroy(true);
 			}
@@ -99,7 +99,7 @@ void CBulletScript::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move)
 
 				CScripts* pscripts = pGameObject->GetScript("CPlayerScript");
 				if (pscripts != nullptr)
-					dynamic_cast<CPlayerScript*>(pscripts)->GetHit(m_DirVec, power, 0.0f);
+					dynamic_cast<CPlayerScript*>(pscripts)->GetHit(m_DirVec, power, m_Damage);
 
 
 				m_pGameObject->SetObjectDestroy(true);
