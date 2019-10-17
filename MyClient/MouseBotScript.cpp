@@ -76,6 +76,8 @@ int CMouseBotScript::OnUpdate()
 	DirState();
 	AnimState();
 	Move();
+
+	m_NearTiles.clear();
 	return 0;
 }
 

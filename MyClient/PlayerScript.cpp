@@ -35,6 +35,8 @@ void CPlayerScript::OnInit()
 	m_CurDir = DOWN;
 	m_PreDir = m_CurDir;
 
+	m_CurMoveDir = DOWN;
+	m_PreMoveDir = m_CurMoveDir;
 	//초기 공격방향설정 (플레이어는 왼쪽오른쪽팔을 휘두른다.)
 	m_AtkDir = RIGHT_ATK;
 
@@ -49,6 +51,7 @@ void CPlayerScript::OnInit()
 	//카메라가 플레이어를 따라오도록
 	CCameraMgr::GetInstance()->GetMainCamera()->Follow(m_pGameObject);
 
+	m_fHp = 100.f;
 	//초기속도와 가속도
 	m_fVelocity = 0.0f;
 	m_fAcc = 0.0f;
@@ -85,6 +88,8 @@ void CPlayerScript::OnInit()
 	//유도선설정
 	m_GuideRange = 200.f;
 
+	m_DirVec = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
+
 }
 
 
@@ -96,7 +101,10 @@ void CPlayerScript::OnCollision(CGameObject * pGameObject, XMFLOAT2* move)
 {
 	if (nullptr != pGameObject)
 	{
+		if (pGameObject->GetObjectTag() == L"EnemyBullet")
+		{
 
+		}
 	}
 }
 
@@ -179,7 +187,7 @@ void CPlayerScript::OnDestroy()
 void CPlayerScript::MoveInput()
 {
 	//어떤 키든 눌렀을경우 (방향키)
-	if (m_CurState != MEELE)
+	if (m_CurState != MEELE&&m_CurState!=HIT)
 	{
 		if (pKeyMgr->KeyPressing(KEY_LEFT) || pKeyMgr->KeyPressing(KEY_RIGHT)
 			|| pKeyMgr->KeyPressing(KEY_UP) || pKeyMgr->KeyPressing(KEY_DOWN))
@@ -188,8 +196,8 @@ void CPlayerScript::MoveInput()
 			m_fVelocity += (1.5f*powf(m_fAcc, 2.0f));						//가속도 공식 조절할 필요가있음
 			m_fAcc += CTimeMgr::GetInstance()->GetDeltaTime();
 
-			m_fAcc = __min(3.0f, m_fAcc);
-			m_fVelocity = __min(7.f, m_fVelocity);
+			m_fAcc = __min(1.3f, m_fAcc);
+			m_fVelocity = __min(4.f, m_fVelocity);
 			if (m_CurState == IDLE || m_CurState == RUN_END)
 				m_CurState = RUN_START;
 			else if (m_CurState == RUN_START && !pAnimator->IsPlaying())
@@ -219,7 +227,7 @@ void CPlayerScript::MoveInput()
 			m_CurState = AIM;
 	}
 	//근접공격중에는 움직이지 않는다
-	if (m_CurState != MEELE)
+	if (m_CurState != MEELE&&m_CurState!=HIT)
 	{
 		if (pKeyMgr->KeyPressing(KEY_LEFT))
 		{
@@ -274,7 +282,7 @@ void CPlayerScript::MoveInput()
 		else if (m_Left&&m_Down)
 			m_CurMoveDir = LEFT_DOWN_45;
 	}
-	else
+	else if(m_CurState== MEELE)
 		m_fVelocity = 0.0f;
 
 	//디버그모드
@@ -427,39 +435,39 @@ void CPlayerScript::Moving()
 		{
 			m_fSpeed = 0.2f;
 		}
-		switch (m_CurMoveDir)
+		if (m_PreMoveDir != m_CurMoveDir)
 		{
-		case UP:
-			m_moveY = m_fSpeed*m_fVelocity;
-			break;
-		case DOWN:
-			m_moveY = -1 * (m_fSpeed*m_fVelocity);
-			break;
-		case LEFT_UP_45:
-			m_moveX = -1 * (m_fSpeed*m_fVelocity);
-			m_moveY = m_fSpeed*m_fVelocity;
-			break;
-		case RIGHT_UP_45:
-			m_moveX = m_fSpeed*m_fVelocity;
-			m_moveY = m_fSpeed*m_fVelocity;
-			break;
-		case LEFT:
-			m_moveX = -1 * (m_fSpeed*m_fVelocity);
-			break;
-		case RIGHT:
-			m_moveX = m_fSpeed*m_fVelocity;
-			break;
-		case LEFT_DOWN_45:
-			m_moveX = -1 * (m_fSpeed*m_fVelocity);
-			m_moveY = -1 * (m_fSpeed*m_fVelocity);
-			break;
-		case RIGHT_DOWN_45:
-			m_moveX = m_fSpeed*m_fVelocity;
-			m_moveY = -1 * (m_fSpeed*m_fVelocity);
-			break;
+			switch (m_CurMoveDir)
+			{
+			case UP:
+				m_DirVec = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+				break;
+			case DOWN:
+				m_DirVec = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
+				break;
+			case LEFT_UP_45:
+				m_DirVec = D3DXVECTOR3(-cosf(45.f), sinf(45.f), 0.0f);
+				break;
+			case RIGHT_UP_45:
+				m_DirVec = D3DXVECTOR3(cosf(45.f), sinf(45.f), 0.0f);
+				break;
+			case LEFT:
+				m_DirVec = D3DXVECTOR3(-1.0f, 0.0f, 0.0f);
+				break;
+			case RIGHT:
+				m_DirVec = D3DXVECTOR3(1.0f, 0.0f, 0.0f);
+				break;
+			case LEFT_DOWN_45:
+				m_DirVec = D3DXVECTOR3(-cosf(45.f), -sinf(45.f), 0.0f);
+				break;
+			case RIGHT_DOWN_45:
+				m_DirVec = D3DXVECTOR3(cosf(45.f), -sinf(45.f), 0.0f);
+				break;
+			}
+			m_PreMoveDir = m_CurMoveDir;
 		}
-
-		playerPos->x += m_moveX;
+	
+		playerPos->x += m_DirVec.x*m_fVelocity;
 		m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
 		if (StepStair())
 			return;
@@ -469,7 +477,7 @@ void CPlayerScript::Moving()
 			m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
 		}
 		m_PrePos = *playerPos;
-		playerPos->y += m_moveY;
+		playerPos->y += m_DirVec.y*m_fVelocity;
 		m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
 		//계단 확인
 		if (StepStair())
@@ -489,6 +497,13 @@ void CPlayerScript::Moving()
 
 void CPlayerScript::AnimState()
 {
+	if (m_CurState == HIT && !pAnimator->IsPlaying())
+	{
+		m_CurState = IDLE;
+		m_DirVec = m_PreVec;
+	}
+
+
 	if (m_CurState != m_PreState || m_CurDir != m_PreDir)
 	{
 		switch (m_CurState)
@@ -813,6 +828,29 @@ void CPlayerScript::AnimState()
 				break;
 			}
 			break;
+		case HIT:
+			switch (m_CurDir)
+			{
+			case UP:
+				pAnimator->Play(L"Player_Hit_Up", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			case DOWN:
+				pAnimator->Play(L"Player_Hit_Down", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			case LEFT_UP_45:
+			case RIGHT_UP_45:
+				pAnimator->Play(L"Player_Hit_Right_Up", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			case LEFT:
+			case RIGHT:
+				pAnimator->Play(L"Player_Hit_Right", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			case LEFT_DOWN_45:
+			case RIGHT_DOWN_45:
+				pAnimator->Play(L"Player_Hit_Right_Down", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			}
+			break;
 		}
 		
 		m_PreState = m_CurState;
@@ -835,7 +873,6 @@ void CPlayerScript::DirState()
 				break;
 			case DOWN:
 				m_JumpControlPos = D3DXVECTOR3(playerPos->x, playerPos->y, 0.0f);
-
 				break;
 			case LEFT_UP_45:
 				pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
@@ -898,6 +935,18 @@ void CPlayerScript::AtkState()
 	}
 
 
+}
+
+void CPlayerScript::GetHit(D3DXVECTOR3 dirVec, float power, float dmg)
+{
+	m_CurState = HIT;
+	m_PreVec = m_DirVec;
+	m_DirVec = dirVec;
+	m_fVelocity = power;
+
+	m_fHp -= dmg;
+
+	cout << "맞음" << endl;
 }
 
 void CPlayerScript::AttackBullet()

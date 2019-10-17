@@ -5,7 +5,7 @@ class CAnimator;
 class CPlayerScript :
 	public CScripts
 {
-	enum STATE { IDLE, RUN_START, RUN, RUN_END,THROW,THROW_END,MEELE,JUMP,AIM,AIM_WALK };
+	enum STATE { IDLE, RUN_START, RUN, RUN_END,THROW,THROW_END,MEELE,JUMP,AIM,AIM_WALK,HIT };
 	enum DIR {
 		UP, RIGHT_UP_45, RIGHT, RIGHT_DOWN_45, DOWN,
 		LEFT_UP_45, LEFT, LEFT_DOWN_45
@@ -41,6 +41,7 @@ public:
 	void AnimState();
 	void DirState();
 	void AtkState();
+	void GetHit(D3DXVECTOR3 dirVec, float power, float dmg);
 
 
 	//원거리 공격
@@ -72,6 +73,9 @@ private:
 	DIR			m_CurMoveDir;
 	DIR			m_PreMoveDir;
 
+	D3DXVECTOR3 m_DirVec;
+	D3DXVECTOR3 m_PreVec;
+
 	STATE		m_PreState;
 	STATE		m_CurState;
 
@@ -87,7 +91,7 @@ private:
 	bool		m_bIsThrow;
 
 	bool		m_bIsJump;
-	
+	bool	    m_bIsMove = false;
 	bool		m_bIsDebug=false;			//디버그모드
 	bool		m_bIsLayerDebug = false;
 	bool		m_bIsCollide = false;
@@ -153,6 +157,9 @@ private:
 
 	int			m_HeightLevel = 0;			//플레이어 높이.
 
+
+	//플레이어 기타 정보
+	float		m_fHp;
 
 	list<CGameObject*>		m_NearTiles;
 	vector<CGameObject*>		m_CollideTiles;

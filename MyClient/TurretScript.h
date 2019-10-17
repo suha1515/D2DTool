@@ -5,6 +5,7 @@ class CTurretScript :
 {
 	enum STATE { IDLE, AIM,SHOOT,CHARGE,CHARGE_SHOOT };
 	enum DIR16 { RIGHT, RIGHT_22, RIGHT_45, RIGHT_67, UP, LEFT_112, LEFT_135,LEFT_157,LEFT, LEFT_202, LEFT_225,LEFT_247,DOWN, RIGHT_292,RIGHT_315,RIGHT_337};
+	enum FIRE_MODE{SINGLE,BRUST,CHARGED,RAPIDLY};
 public:
 	CTurretScript();
 	~CTurretScript();
@@ -25,8 +26,11 @@ public:
 	virtual void GetHit(D3DXVECTOR3 dirVec, float power, float dmg) override;
 
 private:
+	void				AttackState();
+private:
 	void				GetDirPlayer();
 	void				TrackPlayer();
+	void				Shoot(FIRE_MODE type);
 private:
 	D3DXVECTOR3			m_DirVec;			//πÊ«‚∫§≈Õ
 
@@ -35,10 +39,19 @@ private:
 
 	STATE				m_CurState;
 	STATE				m_PreState;
+
 private:
 	D3DXVECTOR3*		m_Pos;
 	CGameObject*		m_pPlayer;
 	float				m_fAngle;
 
+	D3DXVECTOR3			m_BarrelPos;
+
+	float				m_fCoolTime;
+	float				m_fChargeCool;
+	CGameObject*		m_ChargeEffect;
+
+	
+	
 };
 

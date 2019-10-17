@@ -26,12 +26,12 @@ void CNormalBotScript::OnInit()
 	{
 		m_pAnimator->LoadClips(L"Normal_Bot");
 		//초기 클립세트 설정
-		m_pAnimator->Play(L"Normal_Bot_Idle_Down", ANIMATION_TYPE::ANIMATION_LOOP);
+		m_pAnimator->Play(L"Normal_Bot_Idle_Up", ANIMATION_TYPE::ANIMATION_LOOP);
 	}
 
 	m_pPlayer = CObjectMgr::GetInstance()->m_pPlayer;
 
-	m_CurDir = DOWN;
+	m_CurDir = UP;
 	m_PreDir = m_CurDir;
 	m_DirVec = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
 
@@ -77,6 +77,7 @@ int CNormalBotScript::OnUpdate()
 	AnimState();
 	Move();
 
+	m_NearTiles.clear();
 	return 0;
 }
 
@@ -99,41 +100,48 @@ void CNormalBotScript::OnDestroy()
 void CNormalBotScript::DirState()
 {
 
-	if (m_CurDir != m_PreDir&&m_CurState != HIT)
+	if (m_CurDir != m_PreDir)
 	{
 		switch (m_CurDir)
 		{
 		case UP:
+			cout << "위" << endl;
 			break;
 		case DOWN:
+			cout << "아래" << endl;
 			break;
 		case LEFT_UP_45:
+			cout << "왼쪽" << endl;
 			m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 			//m_JumpControlPos = D3DXVECTOR3(playerPos->x - 10.f, playerPos->y + 40.f, 0.0f);
 			break;
 		case RIGHT_UP_45:
+			cout << "오른쪽" << endl;
+			m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 			//m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 40.f, 0.0f);
 			break;
 		case LEFT:
+			cout << "왼쪽" << endl;
 			m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
-
 			//m_JumpControlPos = D3DXVECTOR3((playerPos->x - 10.f), playerPos->y + 20.f, 0.0f);
 			break;
 		case RIGHT:
+			cout << "오른쪽" << endl;
 			m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 			//m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 20.f, 0.0f);
 			break;
 		case LEFT_DOWN_45:
+			cout << "왼쪽" << endl;
 			m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 
 			//m_JumpControlPos = D3DXVECTOR3((playerPos->x - 10.f), playerPos->y + 10.f, 0.0f);
 			break;
 		case RIGHT_DOWN_45:
+			cout << "오른쪽" << endl;
 			m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 			//m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 10.f, 0.0f);
 			break;
 		}
-		m_PreDir = m_CurDir;
 	}
 }
 
@@ -141,7 +149,6 @@ void CNormalBotScript::AnimState()
 {
 	if (m_CurState == HIT && !m_pAnimator->IsPlaying())
 	{
-		cout << "맞는 애니메이션 끝" << endl;
 		m_CurState = IDLE;
 	}
 
@@ -156,14 +163,17 @@ void CNormalBotScript::AnimState()
 			{
 			case UP:
 				m_pAnimator->Play(L"Normal_Bot_Idle_Up", ANIMATION_TYPE::ANIMATION_LOOP);
-				break;
+			break;
 			case DOWN:
 				m_pAnimator->Play(L"Normal_Bot_Idle_Down", ANIMATION_TYPE::ANIMATION_LOOP);
-				break;
+			break;
+			case LEFT_UP_45:
+			case LEFT_DOWN_45:
+			case RIGHT_UP_45:
+			case RIGHT_DOWN_45:
 			case LEFT:
 			case RIGHT:
 				m_pAnimator->Play(L"Normal_Bot_Idle_Right", ANIMATION_TYPE::ANIMATION_LOOP);
-				break;
 				break;
 			}
 			break;
@@ -177,6 +187,10 @@ void CNormalBotScript::AnimState()
 			case DOWN:
 				m_pAnimator->Play(L"Normal_Bot_Hit_Down", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
+			case LEFT_UP_45:
+			case LEFT_DOWN_45:
+			case RIGHT_UP_45:
+			case RIGHT_DOWN_45:
 			case LEFT:
 			case RIGHT:
 				m_pAnimator->Play(L"Normal_Bot_Hit_Right", ANIMATION_TYPE::ANIMATION_ONCE);
@@ -193,6 +207,10 @@ void CNormalBotScript::AnimState()
 			case DOWN:
 				m_pAnimator->Play(L"Normal_Bot_Attack_Ready_Down", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
+			case LEFT_UP_45:
+			case LEFT_DOWN_45:
+			case RIGHT_UP_45:
+			case RIGHT_DOWN_45:
 			case LEFT:
 			case RIGHT:
 				m_pAnimator->Play(L"Normal_Bot_Attack_Ready_Right", ANIMATION_TYPE::ANIMATION_ONCE);
@@ -209,6 +227,10 @@ void CNormalBotScript::AnimState()
 			case DOWN:
 				m_pAnimator->Play(L"Normal_Bot_Attack_Down", ANIMATION_TYPE::ANIMATION_LOOP);
 				break;
+			case LEFT_UP_45:
+			case LEFT_DOWN_45:
+			case RIGHT_UP_45:
+			case RIGHT_DOWN_45:
 			case LEFT:
 			case RIGHT:
 				m_pAnimator->Play(L"Normal_Bot_Attack_Right", ANIMATION_TYPE::ANIMATION_LOOP);
@@ -225,6 +247,10 @@ void CNormalBotScript::AnimState()
 			case DOWN:
 				m_pAnimator->Play(L"Normal_Bot_Idle_Down", ANIMATION_TYPE::ANIMATION_LOOP);
 				break;
+			case LEFT_UP_45:
+			case LEFT_DOWN_45:
+			case RIGHT_UP_45:
+			case RIGHT_DOWN_45:
 			case LEFT:
 			case RIGHT:
 				m_pAnimator->Play(L"Normal_Bot_Idle_Right", ANIMATION_TYPE::ANIMATION_LOOP);
@@ -233,6 +259,7 @@ void CNormalBotScript::AnimState()
 				break;
 		}
 		m_PreState = m_CurState;
+		m_PreDir = m_CurDir;
 	}
 }
 
@@ -269,12 +296,8 @@ void CNormalBotScript::Move()
 			m_fVelocity -= (3.0f*powf(m_fAcc, 2.0f));
 			m_fAcc -= CTimeMgr::GetInstance()->GetDeltaTime();
 
-			m_fAcc = __max(1.0f, m_fAcc);
+			m_fAcc = __max(1.f, m_fAcc);
 			m_fVelocity = __max(0.f, m_fVelocity);
-			if (m_CurState == ATTACK)
-			{
-				cout << "awdawd" << endl;
-			}
 	}
 }
 
@@ -323,12 +346,9 @@ void CNormalBotScript::TrackPlayer()
 
 void CNormalBotScript::GetDirPlayer()
 {
-	if (m_CurState != ATTACK&&m_CurState != ATTACK_READY)
-	{
 		//360도로 변환하기 위한것
 		if (m_fAngle < 0.0f)
 			m_fAngle = m_fAngle + 360.f;
-
 		//우측 
 		if (m_fAngle > 0.0f&&m_fAngle < 22.5f)
 			m_CurDir = RIGHT;
@@ -356,7 +376,6 @@ void CNormalBotScript::GetDirPlayer()
 		//우측하단
 		else if (m_fAngle > 292.5f&&m_fAngle < 337.5f)
 			m_CurDir = RIGHT_DOWN_45;
-	}
 }
 
 void CNormalBotScript::AttackState()

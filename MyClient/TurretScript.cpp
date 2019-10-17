@@ -5,9 +5,14 @@
 #include "Animator.h"
 #include "Transform.h"
 #include "BoxCollider.h"
+#include "BulletScript.h"
+
+#include "Effect.h"
 
 CTurretScript::CTurretScript()
 {
+	m_ChargeEffect = nullptr;
+
 }
 
 
@@ -40,6 +45,8 @@ void CTurretScript::OnInit()
 	m_Pos = &m_pTransform->GetLocalPosition();
 
 	m_Hp = 100.f;
+	m_fChargeCool = 0.0f;
+	m_fCoolTime = 0.0f;
 }
 
 void CTurretScript::OnEnable()
@@ -103,92 +110,111 @@ void CTurretScript::DirState()
 	{
 		m_CurDir = RIGHT;
 		m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x + 10.f, m_Pos->y,0.0f);
 	}
 	//우측 나머지
 	else if (m_fAngle > 348.75f&&m_fAngle < 360.f)
 	{
 		m_CurDir = RIGHT;
 		m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x + 10.f, m_Pos->y, 0.0f);
 	}	
 	//우측 상단
 	else if (m_fAngle > 11.25f&&m_fAngle < 33.75f)
 	{
 		m_CurDir = RIGHT_22;
 		m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x + 7.5f, m_Pos->y+2.5f, 0.0f);
 	}
 	//우측 상단2 
 	else if (m_fAngle > 33.75f&&m_fAngle < 56.25f)
 	{
 		m_CurDir = RIGHT_45;
 		m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x + 5.f, m_Pos->y+5.f, 0.0f);
 	}
 	//상단
 	else if (m_fAngle > 56.25f&&m_fAngle < 78.75f)
 	{
 		m_CurDir = RIGHT_67;
 		m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x + 2.5f, m_Pos->y+7.5f, 0.0f);
 	}
 	//좌측 상단
 	else if (m_fAngle > 78.75f&&m_fAngle < 101.25f)
+	{
 		m_CurDir = UP;
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x, m_Pos->y + 10.f, 0.0f);
+	}
 	//좌측
 	else if (m_fAngle > 101.25f&&m_fAngle < 123.75f)
 	{
 		m_CurDir = LEFT_112;
 		m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x-2.5f, m_Pos->y + 7.5f, 0.0f);
 	}
 	//좌측 하단
 	else if (m_fAngle > 123.75f&&m_fAngle < 146.25f)
 	{
 		m_CurDir = LEFT_135;
 		m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x - 5.0f, m_Pos->y + 5.0f, 0.0f);
 	}
 	//하단
 	else if (m_fAngle > 146.25f&&m_fAngle < 168.75f)
 	{
 		m_CurDir = LEFT_157;
 		m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x - 7.5f, m_Pos->y + 2.5f, 0.0f);
 	}
 	//우측하단
 	else if (m_fAngle > 168.75f&&m_fAngle < 191.25f)
 	{
 		m_CurDir = LEFT;
 		m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x - 10.f, m_Pos->y, 0.0f);
 	}
 	else if (m_fAngle > 191.25f&&m_fAngle < 213.75f)
 	{
 		m_CurDir = LEFT_202;
 		m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x - 7.5f, m_Pos->y-2.5f, 0.0f);
 	}
 	else if (m_fAngle > 213.75f&&m_fAngle < 236.25f)
 	{
 		m_CurDir = LEFT_225;
 		m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x - 5.0f, m_Pos->y - 5.0f, 0.0f);
 	}
 	else if (m_fAngle > 236.25f&&m_fAngle < 258.75f)
 	{
 		m_CurDir = LEFT_247;
 		m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x - 2.5f, m_Pos->y - 7.5f, 0.0f);
 	}
 	else if (m_fAngle > 258.75f&&m_fAngle < 281.25f)
 	{
 		m_CurDir = DOWN;
 		m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x, m_Pos->y - 10.f, 0.0f);
 	}
 	else if (m_fAngle > 281.25f&&m_fAngle < 303.75f)
 	{
 		m_CurDir = RIGHT_292;
 		m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x + 2.5f, m_Pos->y - 7.5f, 0.0f);
 	}
 	else if (m_fAngle > 303.75f&&m_fAngle < 326.25f)
 	{
 		m_CurDir = RIGHT_315;
 		m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x + 5.0f, m_Pos->y - 5.0f, 0.0f);
 	}
 	else if (m_fAngle > 326.25f&&m_fAngle < 348.75f)
 	{
 		m_CurDir = RIGHT_337;
 		m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+		m_BarrelPos = D3DXVECTOR3(m_Pos->x + 7.5f, m_Pos->y - 2.5f, 0.0f);
 	}
 }
 
@@ -373,6 +399,50 @@ void CTurretScript::GetHit(D3DXVECTOR3 dirVec, float power, float dmg)
 {
 }
 
+void CTurretScript::AttackState()
+{
+	if (m_CurState != m_PreState)
+	{
+		switch (m_CurState)
+		{
+		case AIM:
+
+			break;
+		case SHOOT:
+			if (m_fCoolTime >= 2.0f)
+			{
+				Shoot(SINGLE);
+				m_fCoolTime -= m_fCoolTime;
+				m_CurState = AIM;
+			}
+			m_fCoolTime += CTimeMgr::GetInstance()->GetDeltaTime();
+			break;
+		case CHARGE:
+			if (m_ChargeEffect == nullptr)
+			{
+				m_ChargeEffect = CEffect::Create(m_BarrelPos, XMFLOAT3(0.0f,0.0f,0.0f), D3DXVECTOR3(1.0f,1.0f,1.0f), L"Turret_Effect", L"Turrect_Charge", ANIMATION_LOOP,3.0f);
+			}
+			else
+			{
+				m_ChargeEffect->GetComponent<CTransform>()->SetPosition(m_BarrelPos);
+			}
+			if (m_fChargeCool > 3.0f)
+			{
+				m_CurState == CHARGE_SHOOT;
+				m_fChargeCool -= m_fChargeCool;
+				m_ChargeEffect = nullptr;
+			}
+			m_fChargeCool += CTimeMgr::GetInstance()->GetDeltaTime();
+			break;
+		case CHARGE_SHOOT:
+			Shoot(CHARGED);
+			m_CurState = AIM;
+			break;
+		}
+	}
+	
+}
+
 void CTurretScript::GetDirPlayer()
 {
 }
@@ -389,16 +459,37 @@ void CTurretScript::TrackPlayer()
 		D3DXVECTOR3 dir = playerPos - botPos;
 		D3DXVec3Normalize(&m_DirVec, &dir);
 
-		cout << m_fAngle << endl;
 			if (dist < 200.f&&dist>50.f)
 			{		
+				m_CurState = SHOOT;
 			}
 			else if (dist<50.f)
 			{
 			}
 			else if (dist > 200.f)
 			{
-				m_CurState = IDLE;
+				m_CurState = CHARGE;
 			}
 	}
+}
+
+void CTurretScript::Shoot(FIRE_MODE type)
+{
+	CGameObject* pBullet = nullptr;
+	if (type == SINGLE)
+	{
+		pBullet = CObjectMgr::GetInstance()->AddCopy(L"Turret_Small_Bullet", L"Turret_Bullet");
+		pBullet->AddScripts(CBulletScript::Create(m_fAngle, 20.f, 200.f, pBullet, CBulletScript::BULLET_TYPE::TURRET));
+	}
+	else if (type == CHARGED)
+	{
+		pBullet = CObjectMgr::GetInstance()->AddCopy(L"Turret_Small_Bullet", L"Turret_Bullet");
+		pBullet->AddScripts(CBulletScript::Create(m_fAngle, 20.f, 200.f, pBullet, CBulletScript::BULLET_TYPE::TURRET_CHARGE));
+	}
+	if (pBullet != nullptr)
+	{
+		pBullet->GetComponent<CTransform>()->SetPosition(m_BarrelPos);
+		pBullet->SetObjectLayer(m_pGameObject->GetObjectLayer());
+	}
+	
 }
