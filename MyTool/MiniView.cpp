@@ -402,6 +402,19 @@ void CMiniView::OnLButtonDown(UINT nFlags, CPoint point)
 					pMyForm->GetMapTool()->Renew(tex);
 					
 				}
+				if (pMyForm->GetMapTool()->m_XInvert.GetCheck() == 1)
+				{
+					XMFLOAT2 temp[2];
+					temp[0] = tex[0];
+					temp[1] = tex[2];
+
+					tex[0] = tex[1];
+					tex[2] = tex[3];
+					tex[1] = temp[0];
+					tex[3] = temp[1];
+					pMyForm->GetMapTool()->Renew(tex);
+				}
+
 				cout << "¸ÊÅø¿¡ Àü´ÞµÊ" << endl;
 			}
 			if (pMyForm->GetAnimTool()->m_AnimMaker.IsWindowVisible())

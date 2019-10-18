@@ -72,6 +72,7 @@ void CMapTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT3, m_Tag);
 	DDX_Control(pDX, IDC_EDIT3, m_TagEdit);
 	DDX_Radio(pDX, IDC_RADIO1, (int&)m_RadioMode);
+	DDX_Control(pDX, IDC_CHECK2, m_XInvert);
 }
 
 void CMapTool::Renew(XMFLOAT2 * tex)

@@ -98,4 +98,5 @@ public:
 	UINT m_RadioMode;
 
 	COLLIDE_TYPE type;
+	CButton m_XInvert;
 };
