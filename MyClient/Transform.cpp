@@ -45,14 +45,15 @@ void CTransform::Action()
 
 void CTransform::Update(CGameObject *pObject)
 {
-	//초기 위치 계산
-	Translate(m_Pos);
-	Rotate(m_Rotaion);
-	Scale(m_Scale);
 
-	//월드 행렬 구성
-	SetWorld();
+		//초기 위치 계산
+		Translate(m_Pos);
+		Rotate(m_Rotaion);
+		Scale(m_Scale);
 
+		//월드 행렬 구성
+		SetWorld();
+	
 }
 
 void CTransform::SetPosition(const D3DXVECTOR3 & pos)

@@ -27,7 +27,9 @@ public:
 public:
 	bool GetOn();
 	bool GetEventEnd();
-
+	void SetObjectDead();
+	void CutCamera();
+	void SetCameraOn();
 private:
 	bool	m_bIsEventOn;
 	bool	m_bIsEventEnd;

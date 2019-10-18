@@ -66,6 +66,7 @@ int CCameraEvent::OnUpdate()
 			{
 				m_bIsEventOn = false;
 				m_bIsEventEnd = true;
+				m_pCameraMgr->GetMainCamera()->Follow(CObjectMgr::GetInstance()->m_pPlayer);
 			}
 		}
 	}
@@ -110,6 +111,23 @@ bool CCameraEvent::GetOn()
 bool CCameraEvent::GetEventEnd()
 {
 	return m_bIsEventEnd;
+}
+
+void CCameraEvent::SetObjectDead()
+{
+	m_pGameObject->SetObjectDestroy(true);
+}
+
+void CCameraEvent::CutCamera()
+{
+	m_bIsEventOn = false;
+	m_bIsEventEnd = true;
+	m_pCameraMgr->GetMainCamera()->Follow(CObjectMgr::GetInstance()->m_pPlayer);
+}
+
+void CCameraEvent::SetCameraOn()
+{
+	m_bIsEventOn = true;
 }
 
 CCameraEvent * CCameraEvent::Create(vector<pair<CGameObject*, float>> camRoute)

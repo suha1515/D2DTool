@@ -45,5 +45,11 @@ private:
 
 	//퍼즐4에관한 변수들..
 	bool									m_Puzzle4Clear = false;
+	
+
+	//카메라 이벤트	
+
+	bool									m_CamEvent1 = false;
+	bool									m_CamEvent2 = false;
 };
 

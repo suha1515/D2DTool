@@ -50,8 +50,8 @@ void CAnimator::Action()
 		wstring Alert = m_GameObject->GetObjectName() + L" 오브젝트는 트랜스폼이 없습니다";
 		::MessageBox(0, Alert.c_str(), L"System Error", MB_OK);
 	}
+		Loop();
 
-	Loop();
 }
 
 void CAnimator::Play(const wstring & clipName, ANIMATION_TYPE type)

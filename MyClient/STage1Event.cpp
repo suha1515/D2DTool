@@ -219,13 +219,27 @@ void CSTage1Event::Initialize()
 	temp.push_back(pair<CGameObject*, float>(child2[2], 3.0f));
 	CCameraEvent* Event = CCameraEvent::Create(temp);
 	camera_Event1->AddScripts(Event);
+	Event->SetGameObject(camera_Event1);
 
 	m_CameraEvents.insert({ "카메라_이벤트1",Event });
+
+	temp.clear();
+	child2.clear();
+	CGameObject* camera_Event2 = CObjectMgr::GetInstance()->FindObjectWithName(L"카메라_이벤트2").front();
+
+	child2 = camera_Event2->GetChildernVector();
+	temp.push_back(pair<CGameObject*, float>(child2[0], 10.0f));
+	CCameraEvent* Event2 = CCameraEvent::Create(temp);
+	camera_Event2->AddScripts(Event2);
+	Event2->SetGameObject(camera_Event2);
+
+	m_CameraEvents.insert({ "카메라_이벤트2",Event2 });
 
 }
 
 void CSTage1Event::Update()
 {
+	CameraEventUpdate();
 	if (!m_Puzzle1)
 	{
 		int puzzle1Active = 0;
@@ -268,7 +282,7 @@ void CSTage1Event::Update()
 	{
 		if (m_mapPuzzle["퍼즐2"]["퍼즐포인트_2"]->GetPuzzleOn())
 		{
-			
+			m_CameraEvents["카메라_이벤트2"]->SetCameraOn();	
 			if (!m_Puzzle2WallFade)
 			{
 				CGameObject* wall = m_PuzzlesObject["퍼즐2"]["퍼즐2_방해물"];
@@ -355,9 +369,33 @@ void CSTage1Event::Update()
 
 void CSTage1Event::CameraEventUpdate()
 {
-	if (m_CameraEvents["카메라_이벤트1"]->GetOn())
+	if (!m_CamEvent1)
 	{
+		if (m_CameraEvents["카메라_이벤트1"]->GetOn())
+		{
+			CObjectMgr::GetInstance()->SetGameStop(true);
+			if (m_CameraEvents["카메라_이벤트1"]->GetEventEnd())
+			{
+				CObjectMgr::GetInstance()->SetGameStop(false);
+				m_CameraEvents["카메라_이벤트1"]->SetObjectDead();
+				m_CamEvent1 = true;
+			}
 
+		}
+	}
+	
+	if (!m_CamEvent2)
+	{
+		{
+			CObjectMgr::GetInstance()->SetGameStop(true);
+			if (m_CameraEvents["카메라_이벤트2"]->GetEventEnd())
+			{
+				CObjectMgr::GetInstance()->SetGameStop(false);
+				m_CameraEvents["카메라_이벤트2"]->SetObjectDead();
+				m_CamEvent2 = true;
+			}
+
+		}
 	}
 }
 
