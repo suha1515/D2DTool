@@ -49,6 +49,8 @@ public:
 	void Clear();
 	void ClearCopy();
 
+	bool GetGameStop();
+	void SetGameStop(bool stop);
 public:
 	const list<CGameObject*>&			GetBarricades();
 	
@@ -91,6 +93,7 @@ private:
 
 	bool							m_bIsDebug;
 	bool							m_bIsLayerDebug;
+	bool							m_bIsStop;
 public:
 	int								m_MapSizeX;
 	int								m_MapSizeY;

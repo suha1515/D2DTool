@@ -320,7 +320,7 @@ void CNormalBotScript::GetHit(D3DXVECTOR3 dirVec, float power, float dmg)
 		m_Hp -= dmg;
 
 		m_fWhiteValue = 0.0f;
-
+		m_pTexture->SetFadeColor(XMFLOAT3(1.0f, 0.0f, 0.0f));
 	}
 }
 

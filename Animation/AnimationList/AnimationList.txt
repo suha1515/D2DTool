@@ -1,6 +1,7 @@
 ../Animation/Bullet_Effect.anim
 ../Animation/Clear_Way.anim
 ../Animation/CrossHair.anim
+../Animation/Door.anim
 ../Animation/Explosion_Effect.anim
 ../Animation/GuideLine.anim
 ../Animation/Mouse_Bot.anim

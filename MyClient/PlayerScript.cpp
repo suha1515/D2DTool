@@ -397,8 +397,8 @@ void CPlayerScript::MouseInput()
 		{
 			m_ChargeCancle = 0.0f;
 			m_bIsCharging = true;
-			CheckRangeCollide(*playerPos,m_GuideLineLeftEndPoint, &m_LeftGuideRange);
-			CheckRangeCollide(*playerPos,m_GuideLineRightEndPoint, &m_RightGuideRange);
+			//CheckRangeCollide(*playerPos,m_GuideLineLeftEndPoint, &m_LeftGuideRange);
+			//CheckRangeCollide(*playerPos,m_GuideLineRightEndPoint, &m_RightGuideRange);
 
 			if (m_ChargeTime > 1.3f)
 			{

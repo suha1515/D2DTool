@@ -39,8 +39,8 @@ void CCamera::Update()
 	{
 		CTransform* pTransform = m_Following->GetComponent<CTransform>();
 		NULL_CHECK_MSG_RETURN(pTransform, L"GameObject Transform is null");
-		float time = CTimeMgr::GetInstance()->GetDeltaTime()*0.5f;
-		m_CamPos = Lerp(*pTransform->GetWorldPos(),m_CamPos, CTimeMgr::GetInstance()->GetDeltaTime());
+		float time = CTimeMgr::GetInstance()->GetDeltaTime();
+		m_CamPos = Lerp(m_CamPos, *pTransform->GetWorldPos(), CTimeMgr::GetInstance()->GetDeltaTime()*2.f);
 
 	}
 	m_ViewMat = D3DXMATRIX(

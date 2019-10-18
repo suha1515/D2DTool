@@ -18,6 +18,7 @@ public:
 	void SetTexPos(const XMFLOAT2* tex);
 	void SetTexSize(const XMFLOAT2& size);
 	void SetAlpha(const float& alhpa);
+	void SetFadeColor(const XMFLOAT3& color);
 public:
 	//텍스처 위치 가져오기
 	const XMFLOAT2&		GetTexPos(const int& index);
@@ -67,5 +68,7 @@ private:
 	float						m_Alpha;
 	
 	int							m_iPassNumber;
+
+	XMFLOAT3					m_FadeColor;
 };
 

@@ -49,6 +49,7 @@ void CTextureRenderer::Render(const D3DXMATRIX& world)
 		D3DXMATRIX   projMat;
 		D3DXVECTOR4  animTex;  //텍스처 애니메이션을 위한 변수
 		D3DXVECTOR2  texSize;	//텍스쳐 사이즈
+		D3DXVECTOR3  colorFade;
 		Layer objLayer = m_GameObject->GetObjectLayer();
 		float		 zValue;
 			zValue = (float)(LAYER_END-objLayer) / LAYER_END ;	//레이어에따른 z값
@@ -62,6 +63,10 @@ void CTextureRenderer::Render(const D3DXMATRIX& world)
 		
 		texSize.x = m_Size.x;
 		texSize.y = m_Size.y;
+
+		colorFade.x = m_FadeColor.x;
+		colorFade.y = m_FadeColor.y;
+		colorFade.z = m_FadeColor.z;
 		
 		//글로벌 변수 전해줘야함.
 		pEffect->SetMatrix("worldMat", &world);
@@ -71,6 +76,7 @@ void CTextureRenderer::Render(const D3DXMATRIX& world)
 		pEffect->SetFloatArray("texSize", texSize, 2);
 		pEffect->SetFloat("zValue", zValue);
 		pEffect->SetFloat("gFloat", m_Alpha);
+		pEffect->SetFloatArray("ColortoFade", colorFade, 3);
 
 		pEffect->SetTexture("tex0", m_texInfo->pTexture);
 		//이 밑에 두함수 조사.
@@ -151,6 +157,11 @@ void CTextureRenderer::SetTexSize(const XMFLOAT2 & size)
 void CTextureRenderer::SetAlpha(const float & alhpa)
 {
 	m_Alpha = alhpa;
+}
+
+void CTextureRenderer::SetFadeColor(const XMFLOAT3 & color)
+{
+	m_FadeColor = color;
 }
 
 const XMFLOAT2 & CTextureRenderer::GetTexPos(const int & index)

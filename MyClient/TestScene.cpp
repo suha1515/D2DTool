@@ -41,7 +41,7 @@ void CTestScene::Render()
 HRESULT CTestScene::Initialize()
 {
 	m_pObjectMgr->SetTileSize(2048, 2048);
-	m_pObjectMgr->LoadObject(L"../Map/MapList/good2.map");
+	m_pObjectMgr->LoadObject(L"../Map/MapList/good.map");
 	
 	m_Cam = new CCamera;
 

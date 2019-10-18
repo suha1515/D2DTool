@@ -13,6 +13,7 @@
 #include "Scripts.h"
 #include "EnemyScripts.h"
 #include "DestructiveObject.h"
+#include "CameraEvent.h"
 
 CSTage1Event::CSTage1Event()
 {
@@ -181,10 +182,46 @@ void CSTage1Event::Initialize()
 		i->AddScripts(pScript);
 		pScript->SetGameObject(i);
 	}
-		
-
-
 	//=================================================================================
+
+	//ÆÛÁñ4 ½ºÀ§Ä¡ ÀÛ¾÷.
+
+	CGameObject* puzzle_4 = CObjectMgr::GetInstance()->FindObjectWithName(L"ÆÛÁñ4_Æ÷ÀÎÆ®").front();
+	m_Puzzles = CPuzzleScripts::Create(puzzle_4, CPuzzleScripts::PUZZLE_TYPE::POINT);
+	m_Puzzles->SetPuzzleActive(true);
+	puzzle_4->AddScripts(m_Puzzles);
+	for (auto&i : puzzle_4->GetChildernVector())
+	{
+		CAnimator *pScripts = CAnimator::Create(i, L"Clear_Idle", L"Clear_Way");
+		i->AddComponent(pScripts);
+		m_Puzzles->SetClearWay(i);
+	}
+	m_mapPuzzle["ÆÛÁñ4"].insert({ "ÆÛÁñ4_Æ÷ÀÎÆ®",m_Puzzles });
+	//=================================================================================
+
+	//ÆÛÁñ4 ¿ÀºêÁ§Æ® ÀÛ¾÷=================================================================
+
+	CGameObject* Door = CObjectMgr::GetInstance()->FindObjectWithName(L"ÆÛÁñ4_¹®").front();
+	m_PuzzlesObject["ÆÛÁñ4"].insert({ "ÆÛÁñ4_¹®",Door });
+	Door->GetComponent<CAnimator>()->Play(L"Close", ANIMATION_ONCE);
+	CGameObject* pTurret4 = CObjectMgr::GetInstance()->FindObjectWithName(L"ÆÛÁñ4_ÅÍ·¿").front();
+	pTurret4->SetObjectTag(L"Enemy");
+	pTurret4->AddScripts(CEnemyScripts::Create(pTurret4, ENEMY_TYPE::TURRET));
+
+	m_PuzzlesObject["ÆÛÁñ4"].insert({ "ÆÛÁñ4_ÅÍ·¿",pTurret4 });
+	//Ä«¸Þ¶ó ÀÌº¥Æ® ÀÛ¾÷
+
+	CGameObject* camera_Event1 = CObjectMgr::GetInstance()->FindObjectWithName(L"Ä«¸Þ¶ó_ÀÌº¥Æ®1").front();
+	vector<pair<CGameObject*, float>> temp;
+	vector<CGameObject*> child2 = camera_Event1->GetChildernVector();
+	temp.push_back(pair<CGameObject*, float>(child2[0], 4.0f));
+	temp.push_back(pair<CGameObject*, float>(child2[1], 3.0f));
+	temp.push_back(pair<CGameObject*, float>(child2[2], 3.0f));
+	CCameraEvent* Event = CCameraEvent::Create(temp);
+	camera_Event1->AddScripts(Event);
+
+	m_CameraEvents.insert({ "Ä«¸Þ¶ó_ÀÌº¥Æ®1",Event });
+
 }
 
 void CSTage1Event::Update()
@@ -298,12 +335,30 @@ void CSTage1Event::Update()
 					m_Puzzle3WallFde = true;
 					m_fAlphaValue3 = 1.0f;
 				}
-			}
+			}	
+		}
+		if (m_mapPuzzle["ÆÛÁñ3"]["ÆÛÁñ3_Æ÷ÀÎÆ®"]->GetPuzzleOn()&& m_mapPuzzle["ÆÛÁñ3"]["ÆÛÁñ3_Æ÷ÀÎÆ®2"]->GetPuzzleOn())
+		{
+			m_Puzzle3Clear = true;
 		}
 	}
-	
-
 	//=========================================================================================================
+	if(!m_Puzzle4Clear)
+	{
+		if (m_mapPuzzle["ÆÛÁñ4"]["ÆÛÁñ4_Æ÷ÀÎÆ®"]->GetPuzzleOn())
+		{
+			m_PuzzlesObject["ÆÛÁñ4"]["ÆÛÁñ4_¹®"]->GetComponent<CAnimator>()->Play(L"Open", ANIMATION_ONCE);
+			m_Puzzle4Clear = true;
+		}
+	}
+}
+
+void CSTage1Event::CameraEventUpdate()
+{
+	if (m_CameraEvents["Ä«¸Þ¶ó_ÀÌº¥Æ®1"]->GetOn())
+	{
+
+	}
 }
 
 void CSTage1Event::EventState()

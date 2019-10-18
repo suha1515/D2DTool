@@ -4,6 +4,7 @@ float4x4 viewMat;
 float4x4 projMat;
 
 texture tex0;
+
 sampler s_2D = sampler_state
 {
 	Texture = (tex0);

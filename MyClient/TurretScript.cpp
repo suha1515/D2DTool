@@ -413,7 +413,7 @@ void CTurretScript::GetHit(D3DXVECTOR3 dirVec, float power, float dmg)
 	m_Hp -= dmg;
 
 	m_fWhiteValue = 0.0f;
-
+	m_pTexture->SetFadeColor(XMFLOAT3(1.0f, 0.0f, 0.0f));
 }
 
 void CTurretScript::Hit()
@@ -458,7 +458,7 @@ void CTurretScript::AttackState()
 			}
 			else
 			{
-				if (m_ChargeEffect == nullptr)
+			/*	if (m_ChargeEffect == nullptr)
 				{
 					m_ChargeEffect = CEffect::Create(m_BarrelPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Turret_Effect", L"Turrect_Charge", ANIMATION_LOOP, 3.0f);
 				}
@@ -466,6 +466,7 @@ void CTurretScript::AttackState()
 				{
 					m_ChargeEffect->GetComponent<CTransform>()->SetPosition(m_BarrelPos);
 				}
+				m_fChargeCool += CTimeMgr::GetInstance()->GetDeltaTime();*/
 				m_fChargeCool += CTimeMgr::GetInstance()->GetDeltaTime();
 			}
 			break;
@@ -500,16 +501,14 @@ void CTurretScript::TrackPlayer()
 
 		if (m_CurState != CHARGE&&m_CurState!=CHARGE_SHOOT&&m_CurState!=SHOOT&&m_CurState != HIT)
 		{
-			if (m_pPlayer->GetObjectLayer() == m_pGameObject->GetObjectLayer())
-			{
-				if (dist < 150.f&&dist>50.f)
+				if (dist < 100.f&&dist>50.f)
 				{
 					m_CurState = AIM;
 				}
 				else if (dist < 50.f)
 				{
 				}
-				else if (dist > 150.f&&dist < 200.f)
+				else if (dist > 100.f&&dist < 200.f)
 				{
 					if (m_fChargeCool > 2.0f)
 					{
@@ -520,9 +519,8 @@ void CTurretScript::TrackPlayer()
 				}
 				else
 					m_CurState = IDLE;
-
-			}
 		}
+
 	}
 }
 

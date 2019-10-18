@@ -58,6 +58,19 @@ void CPuzzlePoint::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move )
 				CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Hit", ANIMATION_ONCE);
 			}
 		}
+		else if (pGameObject->GetObjectTag() == L"EnemyBullet")
+		{
+			if (pGameObject->GetObjectLayer() == m_pGameObject->GetObjectLayer())
+			{
+				pGameObject->SetObjectDestroy(true);
+				m_CurState = HIT;
+
+				D3DXVECTOR3* pos = m_pTransform->GetWorldPos();
+				XMFLOAT3& rot = XMFLOAT3(0, 0, 0.0f);
+				D3DXVECTOR3 scale = D3DXVECTOR3(2.0f, 2.0f, 1.0f);
+				CEffect::Create(*pos, rot, scale, L"Turret_Effect", L"Turrect_Big_Bullet_Hit", ANIMATION_ONCE);
+			}
+		}
 	}
 }
 

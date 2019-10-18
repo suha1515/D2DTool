@@ -7,6 +7,7 @@ float4	animTex;			//애니메이션을 위한 전역변수.
 float2  texSize;			//텍스쳐 크기.
 float	zValue;				//z값
 texture tex0;
+float3 ColortoFade;			//컬러값.
 
 float	gFloat;				//페이드아웃인전용
 sampler s_2D = sampler_state
@@ -114,9 +115,9 @@ PS_OUT PS_MAIN2(VS_OUT In)
 	p_out.v_color = p_out.v_color*gFloat;
 
 	float3 preColor = float3(p_out.v_color.r, p_out.v_color.g, p_out.v_color.b);
-	float3 white = (float3)1;
-	float3 lerpColor = lerp(white, preColor, gFloat);
-	p_out.v_color.rgb = preColor;
+	
+	float3 lerpColor = lerp(ColortoFade, preColor, gFloat);
+	p_out.v_color.rgb = lerpColor;
 	//p_out.v_color = float4(1.0f, lerpColor);
 
 	return p_out;

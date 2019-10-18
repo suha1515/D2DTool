@@ -157,6 +157,9 @@
     <Filter Include="95.Component\04.Scripts\06.DestructiveScripts">
       <UniqueIdentifier>{735d4a8e-627b-4f36-abab-259b26eb40cd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="95.Component\04.Scripts\07.CameraEventScript">
+      <UniqueIdentifier>{c7d75e26-3782-48da-acff-38d92bcfb0ca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -309,6 +312,9 @@
     <ClInclude Include="DestructiveObject.h">
       <Filter>95.Component\04.Scripts\06.DestructiveScripts</Filter>
     </ClInclude>
+    <ClInclude Include="CameraEvent.h">
+      <Filter>95.Component\04.Scripts\07.CameraEventScript</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -448,6 +454,9 @@
     </ClCompile>
     <ClCompile Include="DestructiveObject.cpp">
       <Filter>95.Component\04.Scripts\06.DestructiveScripts</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraEvent.cpp">
+      <Filter>95.Component\04.Scripts\07.CameraEventScript</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
