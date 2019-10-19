@@ -2,6 +2,7 @@
 #include "EnemyScripts.h"
 #include "MouseBotScript.h"
 #include "NormalBotScript.h"
+#include "BossScript.h"
 #include "TurretScript.h"
 #include "Transform.h"
 #include "BoxCollider.h"
@@ -112,7 +113,11 @@ CEnemyScripts * CEnemyScripts::Create(CGameObject * pGameObject,ENEMY_TYPE type)
 		enemyScripts->SetGameObject(pGameObject);
 		enemyScripts->m_Type = type;
 		break;
+	case BOSS:
+		enemyScripts = new CBossScript;
+		enemyScripts->SetGameObject(pGameObject);
+		enemyScripts->m_Type = type;
+		break;
 	}
-	
 	return enemyScripts;
 }

@@ -72,7 +72,7 @@ HRESULT CMainGame::Initialize()
 
 	m_pAnimationMgr->LoadAnimationFromList(L"../Animation/AnimationList/AnimationList.txt");
 
-	hr = m_pSceneMgr->SceneChange(CSceneMgr::TEST_SCENE);
+	hr = m_pSceneMgr->SceneChange(CSceneMgr::BOSS_STAGE);
 	FAILED_CHECK_MSG_RETURN(hr, L"SceneChange ½ÇÆÐ", E_FAIL);
 
 	

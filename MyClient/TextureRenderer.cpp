@@ -11,6 +11,7 @@ CTextureRenderer::CTextureRenderer()
 	m_texInfo(nullptr),m_pVB(nullptr),m_pIB(nullptr),m_pShader(nullptr)
 {
 	m_Alpha =1.f;
+	m_Lerp = 1.f;
 	m_iPassNumber = 0;
 }
 CTextureRenderer::~CTextureRenderer()
@@ -77,6 +78,7 @@ void CTextureRenderer::Render(const D3DXMATRIX& world)
 		pEffect->SetFloat("zValue", zValue);
 		pEffect->SetFloat("gFloat", m_Alpha);
 		pEffect->SetFloatArray("ColortoFade", colorFade, 3);
+		pEffect->SetFloat("gFloat2", m_Lerp);
 
 		pEffect->SetTexture("tex0", m_texInfo->pTexture);
 		//이 밑에 두함수 조사.
@@ -158,7 +160,10 @@ void CTextureRenderer::SetAlpha(const float & alhpa)
 {
 	m_Alpha = alhpa;
 }
-
+void CTextureRenderer::SetValue(const float & lerp)
+{
+	m_Lerp = lerp;
+}
 void CTextureRenderer::SetFadeColor(const XMFLOAT3 & color)
 {
 	m_FadeColor = color;

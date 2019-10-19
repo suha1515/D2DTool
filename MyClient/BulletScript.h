@@ -10,7 +10,7 @@ class CBulletScript :
 public:
 	CBulletScript();
 	~CBulletScript();
-	static enum BULLET_TYPE { SMALL, CHARGED,TURRET,TURRET_CHARGE };
+	 enum BULLET_TYPE { SMALL, CHARGED,TURRET,TURRET_CHARGE };
 	// CScripts을(를) 통해 상속됨
 	virtual void OnInit() override;
 	virtual void OnEnable() override;

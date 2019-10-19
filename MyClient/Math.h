@@ -58,3 +58,22 @@ inline D3DXVECTOR3 BezierCurve(const D3DXVECTOR3& begin,const D3DXVECTOR3& end,c
 	D3DXVECTOR3 pos = Lerp(mid1, mid2, _ratio);
 	return pos;
 }
+
+inline D3DXVECTOR3 BezierCuve4Dim(const D3DXVECTOR3& begin, const D3DXVECTOR3& end, const D3DXVECTOR3& control1, const D3DXVECTOR3& control2, const D3DXVECTOR3& control3, const float& _ratio)
+{
+	D3DXVECTOR3 Dim1mid1 = Lerp(begin, control1, _ratio);
+	D3DXVECTOR3 Dim1mid2 = Lerp(control1,control2, _ratio);
+	D3DXVECTOR3 Dim1mid3 = Lerp(control2, control3, _ratio);
+	D3DXVECTOR3 Dim1mid4 = Lerp(control3, end, _ratio);
+
+	D3DXVECTOR3 Dim2mid1 = Lerp(Dim1mid1, Dim1mid2, _ratio);
+	D3DXVECTOR3 Dim2mid2 = Lerp(Dim1mid2, Dim1mid3, _ratio);
+	D3DXVECTOR3 Dim2mid3 = Lerp(Dim1mid3, Dim1mid4, _ratio);
+
+	D3DXVECTOR3 Dim3mid1 = Lerp(Dim2mid1, Dim2mid2, _ratio);
+	D3DXVECTOR3 Dim3mid2 = Lerp(Dim2mid2, Dim2mid3, _ratio);
+	
+	D3DXVECTOR3 pos = Lerp(Dim3mid1, Dim3mid2, _ratio);
+	
+	return pos;
+}

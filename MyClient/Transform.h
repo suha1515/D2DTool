@@ -1,4 +1,6 @@
 #pragma once
+#ifndef CTRANSFORM_H
+#define CTRANSFORM_H
 #include "Component.h"
 class CTransform :
 	public CComponent
@@ -71,3 +73,4 @@ private:
 	D3DXCOLOR				m_ColorBox;
 };
 
+#endif

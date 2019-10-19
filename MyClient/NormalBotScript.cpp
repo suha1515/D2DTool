@@ -319,21 +319,21 @@ void CNormalBotScript::GetHit(D3DXVECTOR3 dirVec, float power, float dmg)
 
 		m_Hp -= dmg;
 
-		m_fWhiteValue = 0.0f;
+		m_fWhiteValue = 0.5f;
 		m_pTexture->SetFadeColor(XMFLOAT3(1.0f, 0.0f, 0.0f));
 	}
 }
 
 void CNormalBotScript::Hit()
 {
-	if (m_fWhiteValue < 0.5f)
+	if (m_fWhiteValue > 0.0f)
 	{
 		m_pTexture->SetAlpha(m_fWhiteValue*2.f);
-		m_fWhiteValue += CTimeMgr::GetInstance()->GetDeltaTime();
+		m_fWhiteValue -= CTimeMgr::GetInstance()->GetDeltaTime();
 	}
 	else
 	{
-		m_fWhiteValue -= m_fWhiteValue;
+		m_fWhiteValue = 0.0f;
 		m_CurState = IDLE;
 	}
 }
@@ -365,8 +365,6 @@ void CNormalBotScript::TrackPlayer()
 			}
 		}
 		//if(m_CurState==ATTACK_READY&&dist>)
-
-		
 	}
 }
 

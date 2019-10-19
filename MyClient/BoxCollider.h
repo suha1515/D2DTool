@@ -1,4 +1,6 @@
 #pragma once
+#ifndef CBOXCOLLIDER_H
+#define CBOXCOLLIDER_H
 #include "Component.h"
 class CTransform;
 class CBoxCollider:
@@ -72,3 +74,4 @@ private:
 };
 
 
+#endif

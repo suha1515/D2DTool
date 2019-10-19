@@ -145,10 +145,6 @@ void CDestructiveObject::Destruct()
 		CGameObject* particle = CEffect::Create(pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f,1.0f,1.0f), L"Particle_Block", L"Rolling", ANIMATION_LOOP,1.0f);
 		m_fragment.push_back(tuple<CGameObject*, D3DXVECTOR3,D3DXVECTOR3>( particle,randompos, jumpControl));
 	}
-	
-
-	
-
 }
 
 void CDestructiveObject::Throw()

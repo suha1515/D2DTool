@@ -1,4 +1,6 @@
 #pragma once
+#ifndef CTEXTURERENDERER_H
+#define  CTEXTURERENDERER_H
 #include "Component.h"
 
 class CShader;
@@ -18,6 +20,7 @@ public:
 	void SetTexPos(const XMFLOAT2* tex);
 	void SetTexSize(const XMFLOAT2& size);
 	void SetAlpha(const float& alhpa);
+	void SetValue(const float& lerp);
 	void SetFadeColor(const XMFLOAT3& color);
 public:
 	//텍스처 위치 가져오기
@@ -66,9 +69,11 @@ private:
 	wstring						m_TexName;
 
 	float						m_Alpha;
+	float						m_Lerp;
 	
 	int							m_iPassNumber;
 
 	XMFLOAT3					m_FadeColor;
 };
 
+#endif

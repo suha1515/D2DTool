@@ -17,6 +17,7 @@ CAnimator::CAnimator() :m_pAnimation(nullptr)
 	m_Time = 0.0f;
 	m_StartIndex = 0;
 	m_EndIndex = 0;
+	m_fSpeed = 1.0f;
 	m_bIsPlaying = false;
 }
 
@@ -99,7 +100,7 @@ void CAnimator::Loop()
 				m_Time -= m_Time;
 				m_StartIndex++;
 			}
-			m_Time += CTimeMgr::GetInstance()->GetDeltaTime();
+			m_Time += CTimeMgr::GetInstance()->GetDeltaTime()*m_fSpeed;
 		}
 		else
 		{
@@ -139,12 +140,12 @@ void CAnimator::ReSet()
 
 bool CAnimator::IsPlaying(const wstring& _clipName)
 {
-	if (m_ClipName == _clipName)
 		return m_bIsPlaying;
-	if (_clipName == L"")
-		return m_bIsPlaying;
+}
 
-		return FALSE;
+void CAnimator::SetSpeed(const float & _Speed)
+{
+	m_fSpeed = _Speed;
 }
 
 HRESULT CAnimator::SetClips(const wstring & _clipName)

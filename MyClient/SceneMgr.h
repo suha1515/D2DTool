@@ -6,7 +6,7 @@ class CSceneMgr
 	DECLARE_SINGLETON(CSceneMgr)
 
 public:
-	enum SCENE_TYPE { TEST_SCENE, STAGE, END };
+	enum SCENE_TYPE { TEST_SCENE, STAGE,BOSS_STAGE, END };
 
 private:
 	CSceneMgr();

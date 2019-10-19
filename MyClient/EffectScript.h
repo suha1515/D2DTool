@@ -2,9 +2,13 @@
 #include "Scripts.h"
 class CTransform;
 class CAnimator;
+class CBoxCollider;
+class CTextureRenderer;
 class CEffectScript :
 	public CScripts
 {
+public:
+	 enum  EFFECT_TYPE {MOVABLE,NORMAL};
 public:
 	CEffectScript();
 	~CEffectScript();
@@ -20,13 +24,25 @@ public:
 	virtual void OnDisable() override;
 	virtual void OnDestroy() override;
 public:
-	void SetEffect(const wstring& clips,const ANIMATION_TYPE& type, const float& deadTime);
-private:
+	virtual void SetEffect(const wstring& clips,const ANIMATION_TYPE& type, const float& deadTime);
+	void SetType(EFFECT_TYPE type);
+	void SetDir(D3DXVECTOR3 dir);
+	void SetSpeed(float speed);
+protected:
 	CAnimator*		  m_pAnimator;
 	CTransform*		  m_pTransform;
+	CBoxCollider*	  m_pBoxCollider;
+	CTextureRenderer* m_pTexture;
 	ANIMATION_TYPE    m_AnimType;
 
 	float			  m_fDeadTime;
 	float			  m_fTime;
+
+	D3DXVECTOR3		  m_DirVec;
+	float			  m_fSpeed;
+
+private:
+	EFFECT_TYPE m_EffectType;
+	D3DXVECTOR3* m_Pos;
 };
 

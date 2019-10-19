@@ -6,7 +6,7 @@ class CPuzzleScripts :
 	public CScripts
 {
 public:
-	static enum PUZZLE_TYPE{POINT,STACK,SPAWN};
+	 enum PUZZLE_TYPE{POINT,STACK,SPAWN};
 	CPuzzleScripts();
 	~CPuzzleScripts();
 

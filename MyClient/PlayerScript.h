@@ -5,7 +5,7 @@ class CAnimator;
 class CPlayerScript :
 	public CScripts
 {
-	enum STATE { IDLE, RUN_START, RUN, RUN_END,THROW,THROW_END,MEELE,JUMP,AIM,AIM_WALK,HIT };
+	enum STATE { IDLE, RUN_START, RUN, RUN_END,THROW,THROW_END,MEELE,MEELE_CIRCLE,JUMP,AIM,AIM_WALK,HIT };
 	enum DIR {
 		UP, RIGHT_UP_45, RIGHT, RIGHT_DOWN_45, DOWN,
 		LEFT_UP_45, LEFT, LEFT_DOWN_45
@@ -73,6 +73,9 @@ private:
 	DIR			m_CurMoveDir;
 	DIR			m_PreMoveDir;
 
+	D3DXVECTOR3   m_AttackPos;
+	float		  m_AttackAngle;
+
 	D3DXVECTOR3 m_DirVec;
 	D3DXVECTOR3 m_PreVec;
 
@@ -92,26 +95,29 @@ private:
 
 	bool		m_bIsJump;
 	bool	    m_bIsMove = false;
-	bool		m_bIsDebug=false;			//디버그모드
+	bool		m_bIsDebug=false;				//디버그모드
 	bool		m_bIsLayerDebug = false;
 
 	bool		m_bIsCollide=false;				//타일의외 충돌검사를위한 불변수
 
-	D3DXVECTOR3	 m_PreScale;				//이전 값.
-	D3DXVECTOR3*  playerPos;				//플레이어 위치값
-	D3DXVECTOR3  m_PrePos;					//이전 위치
+	D3DXVECTOR3	 m_PreScale;					//이전 값.
+	D3DXVECTOR3*  playerPos;					//플레이어 위치값
+	D3DXVECTOR3  m_PrePos;						//이전 위치
 
-	D3DXVECTOR3  m_JumpControlPos;			//컨트롤 위치
-	D3DXVECTOR3  m_JumpStartPos;			//점프시작 위치
-	D3DXVECTOR3  m_JumpEndPos;				//점프끝 위치
-	CBoxCollider* m_playerFoot;				//플레이어 발쪽위치
-	float		m_posFootGap;				//플레이어 위치와 발사이의 거리.
+	D3DXVECTOR3     m_JumpControlPos;			//컨트롤 위치
+	D3DXVECTOR3     m_JumpStartPos;				//점프시작 위치
+	D3DXVECTOR3		m_JumpEndPos;				//점프끝 위치
+	CBoxCollider*   m_playerFoot;				//플레이어 발쪽위치
+	float		    m_posFootGap;				//플레이어 위치와 발사이의 거리.
 
-	Layer		m_CurLayer;					//최근 층
-	Layer		m_PreLayer;					//이전 층
+	Layer		m_CurLayer;						//최근 층
+	Layer		m_PreLayer;						//이전 층
 	Layer		m_ChangeLayer;
 	CBoxCollider*	playerUpBox;
 	CBoxCollider*	playerDownBox;
+
+	//==근거리 공격을 위한 변수들 ==
+	int			m_ComboCount;				//연속기를 위한 카운트.
 
 	//==원거리 공격을 위한 변수들 ==
 	float		m_MouseAngle;				//마우스 각도
@@ -162,7 +168,7 @@ private:
 	//플레이어 기타 정보
 	float		m_fHp;
 
-	list<CGameObject*>		m_NearTiles;
+	list<CGameObject*>			m_NearTiles;
 	vector<CGameObject*>		m_CollideTiles;
 	vector<COL_DEPTH>			m_Depths;
 };

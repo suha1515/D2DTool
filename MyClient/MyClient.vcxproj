@@ -162,6 +162,10 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="AnimationMgr.h" />
     <ClInclude Include="Animator.h" />
+    <ClInclude Include="BossFireBreath.h" />
+    <ClInclude Include="BossIceEffect.h" />
+    <ClInclude Include="BossScript.h" />
+    <ClInclude Include="BossStage.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="BulletScript.h" />
     <ClInclude Include="Camera.h" />
@@ -214,6 +218,10 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="AnimationMgr.cpp" />
     <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="BossFireBreath.cpp" />
+    <ClCompile Include="BossIceEffect.cpp" />
+    <ClCompile Include="BossScript.cpp" />
+    <ClCompile Include="BossStage.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="BulletScript.cpp" />
     <ClCompile Include="Camera.cpp" />

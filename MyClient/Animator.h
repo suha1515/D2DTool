@@ -1,4 +1,6 @@
 
+#ifndef CANIMATOR_H
+#define CANIMATOR_H
 #include "Component.h"
 class CTextureRenderer;
 class CTransform;
@@ -20,6 +22,8 @@ public:
 	void		Stop();													//애니메이션 중지
 	void		ReSet();												//애니메이션 리셋.
 	bool		IsPlaying(const wstring& _clipName=L"");					//애니메이션 플레이 체크.
+
+	void	    SetSpeed(const float& _Speed);
 public:
 	HRESULT		SetClips(const wstring& _clipName);
 	void		LoadClips(const wstring& _animation);
@@ -36,6 +40,7 @@ private:
 	CAnimation*							m_pAnimation;			//애니메이션 객체.
 
 	float								m_Time;					//지나간 시간
+	float								m_fSpeed;
 	int									m_StartIndex;			//첫인덱스
 	int									m_EndIndex;				//마지막 인덱스
 
@@ -46,3 +51,4 @@ public:
 	static CAnimator*	Create(CGameObject*pGameObject, const wstring& _clipName, const wstring& _animName);
 };
 
+#endif

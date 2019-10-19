@@ -160,6 +160,18 @@
     <Filter Include="95.Component\04.Scripts\07.CameraEventScript">
       <UniqueIdentifier>{c7d75e26-3782-48da-acff-38d92bcfb0ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="99.Managers\10.SceneMgr\00.Scene\01.bossStage">
+      <UniqueIdentifier>{d35a6d13-dd65-49d7-bdd9-8e575c145429}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95.Component\04.Scripts\04.EnemyScripts\03.BossScript">
+      <UniqueIdentifier>{4f4075a5-c1ef-4582-b131-6e3fcf2e3a03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95.Component\04.Scripts\04.EnemyScripts\03.BossScript\BossIceEffect">
+      <UniqueIdentifier>{84d1b5c4-eb3e-49f2-802b-d278c30f10fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95.Component\04.Scripts\03.EffectScript\00.IceEffect">
+      <UniqueIdentifier>{2838c5ff-ae35-4d7b-a019-e562ef05ac60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -315,6 +327,18 @@
     <ClInclude Include="CameraEvent.h">
       <Filter>95.Component\04.Scripts\07.CameraEventScript</Filter>
     </ClInclude>
+    <ClInclude Include="BossStage.h">
+      <Filter>99.Managers\10.SceneMgr\00.Scene\01.bossStage</Filter>
+    </ClInclude>
+    <ClInclude Include="BossScript.h">
+      <Filter>95.Component\04.Scripts\04.EnemyScripts\03.BossScript</Filter>
+    </ClInclude>
+    <ClInclude Include="BossIceEffect.h">
+      <Filter>95.Component\04.Scripts\04.EnemyScripts\03.BossScript\BossIceEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="BossFireBreath.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -457,6 +481,18 @@
     </ClCompile>
     <ClCompile Include="CameraEvent.cpp">
       <Filter>95.Component\04.Scripts\07.CameraEventScript</Filter>
+    </ClCompile>
+    <ClCompile Include="BossStage.cpp">
+      <Filter>99.Managers\10.SceneMgr\00.Scene\01.bossStage</Filter>
+    </ClCompile>
+    <ClCompile Include="BossScript.cpp">
+      <Filter>95.Component\04.Scripts\04.EnemyScripts\03.BossScript</Filter>
+    </ClCompile>
+    <ClCompile Include="BossIceEffect.cpp">
+      <Filter>95.Component\04.Scripts\04.EnemyScripts\03.BossScript\BossIceEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="BossFireBreath.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

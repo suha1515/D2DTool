@@ -4,9 +4,11 @@
 #include "GameObject.h"
 #include "Animator.h"
 #include "Transform.h"
+#include "BoxCollider.h"
 
 CEffectScript::CEffectScript()
 {
+	m_EffectType = NORMAL;
 }
 
 
@@ -16,7 +18,6 @@ CEffectScript::~CEffectScript()
 
 void CEffectScript::OnInit()
 {
-
 	m_fTime = 0.0f;
 }
 
@@ -40,6 +41,12 @@ int CEffectScript::OnUpdate()
 		m_bIsInit = true;
 	}
 		
+	if (m_EffectType == MOVABLE)
+	{
+		m_Pos->x += m_DirVec.x*m_fSpeed*CTimeMgr::GetInstance()->GetDeltaTime();
+		m_Pos->y += m_DirVec.y*m_fSpeed*CTimeMgr::GetInstance()->GetDeltaTime();
+		cout << m_Pos->x << " , " << m_Pos->y << endl;
+	}
 
 	if (m_AnimType == ANIMATION_ONCE)
 	{
@@ -77,7 +84,7 @@ void CEffectScript::SetEffect(const wstring & clips, const ANIMATION_TYPE& type,
 {
 	m_pAnimator = m_pGameObject->GetComponent<CAnimator>();
 	m_pTransform = m_pGameObject->GetComponent<CTransform>();
-
+	m_pBoxCollider = m_pGameObject->GetComponent<CBoxCollider>();
 	if (m_pAnimator != nullptr)
 	{
 		m_pAnimator->SetClips(clips);
@@ -85,4 +92,20 @@ void CEffectScript::SetEffect(const wstring & clips, const ANIMATION_TYPE& type,
 		m_AnimType = type;
 		m_fDeadTime = deadTime;
 	}
+	m_Pos = &m_pTransform->GetLocalPosition();
+}
+
+void CEffectScript::SetType(EFFECT_TYPE type)
+{
+	m_EffectType = type;
+}
+
+void CEffectScript::SetDir(D3DXVECTOR3 dir)
+{
+	m_DirVec = dir;
+}
+
+void CEffectScript::SetSpeed(float speed)
+{
+	m_fSpeed = speed;
 }

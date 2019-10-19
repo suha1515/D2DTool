@@ -46,6 +46,18 @@ HRESULT CTexture::LoadTexture(const wstring & wstrFilePath, const wstring & wstr
 	hr = D3DXCreateTextureFromFile(pDevice, wstrFilePath.c_str(), &pTexture);
 	FAILED_CHECK_RETURN(hr, E_FAIL);
 
+	//hr = D3DXCreateTextureFromFileEx(pDevice, wstrFilePath.c_str(), 
+	//	D3DX_DEFAULT_NONPOW2, D3DX_DEFAULT_NONPOW2, 
+	//	1, NULL, 
+	//	D3DFMT_UNKNOWN, D3DPOOL_MANAGED, 
+	//	D3DX_FILTER_NONE, D3DX_FILTER_NONE, 
+	//	NULL, &tImgInfo,
+	//	NULL, &pTexture);
+	//FAILED_CHECK_RETURN(hr, E_FAIL);
+
+	//D3DSURFACE_DESC desc;
+	//pTexture->GetLevelDesc(0, &desc);
+
 	TEX_INFO* m_pInfo = new TEX_INFO;
 	m_pInfo->pTexture = pTexture;
 	m_pInfo->tImgInfo = tImgInfo;

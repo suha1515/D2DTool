@@ -1,9 +1,12 @@
+../Animation/Boss.anim
 ../Animation/Bullet_Effect.anim
 ../Animation/Clear_Way.anim
 ../Animation/CrossHair.anim
 ../Animation/Door.anim
 ../Animation/Explosion_Effect.anim
+../Animation/Fire_Effect.anim
 ../Animation/GuideLine.anim
+../Animation/Ice_Effect.anim
 ../Animation/Mouse_Bot.anim
 ../Animation/Normal_Bot.anim
 ../Animation/Particle_Block.anim

@@ -5,6 +5,7 @@
 
 //¾ÀÁ¾·ù
 #include "TestScene.h"
+#include "BossStage.h"
 
 
 IMPLEMENT_SINGLETON(CSceneMgr)
@@ -36,6 +37,10 @@ HRESULT CSceneMgr::SceneChange(SCENE_TYPE eType)
 		case STAGE:
 			//m_pCurrentScene = CStage::Create();
 			//NULL_CHECK_MSG_RETURN(m_pCurrentScene, L"Stage Create Failed", E_FAIL);
+			break;
+		case BOSS_STAGE:
+			m_pCurrentScene = CBossStage::Create();
+			NULL_CHECK_MSG_RETURN(m_pCurrentScene, L"Stage Create Failed", E_FAIL);
 			break;
 		}
 

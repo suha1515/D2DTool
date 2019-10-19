@@ -8,6 +8,10 @@
 #include "BulletScript.h"
 #include "Mouse.h"
 
+#include "Effect.h"
+#include "BossIceEffect.h"
+#include "BossFireBreath.h"
+
 CPlayerScript::CPlayerScript()
 {
 	m_ScriptName = "CPlayerScript";
@@ -309,7 +313,7 @@ void CPlayerScript::MoveInput()
 			m_CurMoveDir = LEFT_DOWN_45;
 	}
 	else if(m_CurState== MEELE)
-		m_fVelocity = 0.0f;
+		m_fVelocity = 0.4f;
 
 	//디버그모드
 	if (pKeyMgr->KeyDown(KEY_P))
@@ -445,13 +449,71 @@ void CPlayerScript::MeeleAttack()
 {
 	if (pKeyMgr->GetInstance()->KeyDown(KEY_V))
 	{
-		m_CurState = MEELE;
+		if (m_CurState != MEELE)
+		{
+			pAnimator->SetSpeed(2.0f);
+			switch (m_CurDir)
+			{
+			case UP:
+				m_AttackPos = D3DXVECTOR3(playerPos->x, playerPos->y + 20.f, 0.0f);
+				m_AttackAngle = 0.0f;
+				break;
+			case DOWN:
+				m_AttackPos = D3DXVECTOR3(playerPos->x, playerPos->y - 20.f, 0.0f);
+				m_AttackAngle = 180.0f;
+				break;
+			case LEFT_UP_45:
+				m_AttackPos = D3DXVECTOR3(playerPos->x - 10.f, playerPos->y + 20.f, 0.0f);
+				m_AttackAngle = 45.f;
+				break;
+			case RIGHT_UP_45:
+				m_AttackPos = D3DXVECTOR3(playerPos->x + 10.f, playerPos->y + 20.f, 0.0f);
+				m_AttackAngle = 315.f;
+				break;
+			case LEFT:
+				m_AttackPos = D3DXVECTOR3(playerPos->x - 20.f, playerPos->y, 0.0f);
+				m_AttackAngle = 90.f;
+				break;
+			case RIGHT:
+				m_AttackPos = D3DXVECTOR3(playerPos->x + 20.f, playerPos->y, 0.0f);
+				m_AttackAngle = 270.f;
+				break;
+			case LEFT_DOWN_45:
+				m_AttackPos = D3DXVECTOR3(playerPos->x - 10.f, playerPos->y - 20.f, 0.0f);
+				m_AttackAngle = 135.f;
+				break;
+			case RIGHT_DOWN_45:
+				m_AttackPos = D3DXVECTOR3(playerPos->x + 10.f, playerPos->y - 20.f, 0.0f);
+				m_AttackAngle = 225.f;
+				break;
+			}
+
+				m_CurState = MEELE;
+			if (m_AtkDir == LEFT_ATK)
+			{
+				if (m_CurDir == RIGHT || m_CurDir == RIGHT_UP_45 || m_CurDir == RIGHT_DOWN_45 || m_CurDir == UP || m_CurDir == DOWN)
+				CGameObject* particle = CEffect::Create(m_AttackPos, XMFLOAT3(0.0f, 0.0f, m_AttackAngle), D3DXVECTOR3(-1.0f, 1.0f, 1.0f), L"Player_Attack_Effect", L"Player_Sweep", ANIMATION_ONCE, 1.0f,20,10,0,10,L"Player_Sweep");
+				else
+					CGameObject* particle = CEffect::Create(m_AttackPos, XMFLOAT3(0.0f, 0.0f, m_AttackAngle), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player_Attack_Effect", L"Player_Sweep", ANIMATION_ONCE, 1.0f, 20, 10, 0, 10, L"Player_Sweep");
+				CGameObject* particle2 = CEffect::Create(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player_Attack_Effect", L"Player_Sweep_After", ANIMATION_ONCE, 1.0f);
+			}
+			else
+			{
+				if (m_CurDir == RIGHT || m_CurDir == RIGHT_UP_45 || m_CurDir == RIGHT_DOWN_45 || m_CurDir == UP || m_CurDir == DOWN)
+				CGameObject* particle = CEffect::Create(m_AttackPos, XMFLOAT3(0.0f, 0.0f, m_AttackAngle), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player_Attack_Effect", L"Player_Sweep", ANIMATION_ONCE, 1.0f, 20, 10, 0, 10, L"Player_Sweep");
+				else
+				CGameObject* particle = CEffect::Create(m_AttackPos, XMFLOAT3(0.0f, 0.0f, m_AttackAngle), D3DXVECTOR3(-1.0f, 1.0f, 1.0f), L"Player_Attack_Effect", L"Player_Sweep", ANIMATION_ONCE, 1.0f, 20, 10, 0, 10, L"Player_Sweep");
+				CGameObject* particle2 = CEffect::Create(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player_Attack_Effect", L"Player_Sweep_After", ANIMATION_ONCE, 1.0f);
+			}	
+			//CEffect::CreateEffect<CBossFireBreath>(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f),L"Effect",LAYER_5);
+			CEffect::CreateMovable(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Fire_Effect", L"Fire_Breath", ANIMATION_ONCE,m_DirVec,300.f,0,0,0,0,0,L"Effect",LAYER_5);
+		}	
 	}
 }
 
 void CPlayerScript::Moving()
 {
-	float m_fSpeed = 0.5f;
+	float m_fSpeed = 0.8f;
 	float m_moveX = 0.0f;
 	float m_moveY = 0.0f;
 	
@@ -499,7 +561,7 @@ void CPlayerScript::Moving()
 			m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
 		}*/
 		m_PrePos = *playerPos;
-		playerPos->x += m_DirVec.x*m_fVelocity;
+		playerPos->x += m_DirVec.x*m_fVelocity*m_fSpeed;
 		m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
 		if (StepStair())
 			return;
@@ -509,7 +571,7 @@ void CPlayerScript::Moving()
 			m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
 		}
 		m_PrePos = *playerPos;
-		playerPos->y += m_DirVec.y*m_fVelocity;
+		playerPos->y += m_DirVec.y*m_fVelocity*m_fSpeed;
 		m_pGameObject->GetComponent<CBoxCollider>()->SetBoxCollider();
 		//계단 확인
 		if (StepStair())
@@ -902,33 +964,49 @@ void CPlayerScript::DirState()
 			{
 			case UP:
 				m_JumpControlPos = D3DXVECTOR3(playerPos->x, playerPos->y, 0.0f);
+				m_AttackPos = D3DXVECTOR3(playerPos->x, playerPos->y + 20.f, 0.0f);
+				m_AttackAngle = 0.0f;
 				break;
 			case DOWN:
 				m_JumpControlPos = D3DXVECTOR3(playerPos->x, playerPos->y, 0.0f);
+				m_AttackPos = D3DXVECTOR3(playerPos->x, playerPos->y - 20.f, 0.0f);
+				m_AttackAngle = 180.0f;
 				break;
 			case LEFT_UP_45:
 				pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3(playerPos->x - 10.f, playerPos->y + 40.f, 0.0f);
+				m_AttackPos = D3DXVECTOR3(playerPos->x-10.f, playerPos->y + 20.f, 0.0f);
+				m_AttackAngle = 45.f;
 				break;
 			case RIGHT_UP_45:
 				pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 40.f, 0.0f);
+				m_AttackPos = D3DXVECTOR3(playerPos->x+10.f, playerPos->y + 20.f, 0.0f);
+				m_AttackAngle = 315.f;
 				break;
 			case LEFT:
 				pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x - 10.f), playerPos->y + 20.f, 0.0f);
+				m_AttackPos = D3DXVECTOR3(playerPos->x-20.f, playerPos->y, 0.0f);
+				m_AttackAngle = 90.f;
 				break;
 			case RIGHT:
 				pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 20.f, 0.0f);
+				m_AttackPos = D3DXVECTOR3(playerPos->x+20.f, playerPos->y, 0.0f);
+				m_AttackAngle = 270.f;
 				break;
 			case LEFT_DOWN_45:
 				pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x - 10.f), playerPos->y + 10.f, 0.0f);
+				m_AttackPos = D3DXVECTOR3(playerPos->x-10.f, playerPos->y-20.f, 0.0f);
+				m_AttackAngle = 135.f;
 				break;
 			case RIGHT_DOWN_45:
 				pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 				m_JumpControlPos = D3DXVECTOR3((playerPos->x + 10.f), playerPos->y + 10.f, 0.0f);
+				m_AttackPos = D3DXVECTOR3(playerPos->x + 10.f, playerPos->y - 20.f, 0.0f);
+				m_AttackAngle = 225.f;
 				break;
 			}
 		}
@@ -957,6 +1035,7 @@ void CPlayerScript::AtkState()
 		//근접 공격이 끝난경우.
 		if (m_CurState == MEELE)
 		{
+			pAnimator->SetSpeed(1.0f);
 			m_CurState = IDLE;
 		}
 	}

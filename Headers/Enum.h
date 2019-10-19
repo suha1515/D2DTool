@@ -14,6 +14,6 @@ enum DIR {
 	LEFT_UP_45, LEFT, LEFT_DOWN_45
 };
 
-enum ENEMY_TYPE { MOUSE, BOT, TURRET };
+enum ENEMY_TYPE { MOUSE, BOT, TURRET ,BOSS};
 #define __ENUM_H__
 #endif

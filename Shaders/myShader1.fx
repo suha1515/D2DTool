@@ -9,7 +9,8 @@ float	zValue;				//z값
 texture tex0;
 float3 ColortoFade;			//컬러값.
 
-float	gFloat;				//페이드아웃인전용
+float	gFloat;				//페이드아웃인전용 흐리기전용
+float   gFloat2;
 sampler s_2D = sampler_state
 {
 	Texture = (tex0);
@@ -112,11 +113,13 @@ PS_OUT PS_MAIN2(VS_OUT In)
 
 	//tex2D 함수 - 텍스처에서 uv값에 맞춰 픽셀을 가져오는 함수.
 	p_out.v_color = tex2D(s_2D, In.uv);
-	p_out.v_color = p_out.v_color*gFloat;
+	//p_out.v_color = p_out.v_color*gFloat;
 
-	float3 preColor = float3(p_out.v_color.r, p_out.v_color.g, p_out.v_color.b);
 	
-	float3 lerpColor = lerp(ColortoFade, preColor, gFloat);
+	//float3 preColor = p_out.v_color.rgb;
+	float3 colorDiff = ColortoFade - p_out.v_color.rgb;
+	float preColor = p_out.v_color.rgb;
+	float3 lerpColor = p_out.v_color + colorDiff*gFloat2;
 	p_out.v_color.rgb = lerpColor;
 	//p_out.v_color = float4(1.0f, lerpColor);
 
