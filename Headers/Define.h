@@ -2,11 +2,9 @@
 
 #ifndef __DEFINE_H__
 
-#define WINCX 1280	
+#define WINCX 1680
 #define WINCY 720
 
-#define TILEX 120;
-#define TILEY 200;
 
 #define MIN_STR 64
 #define MID_STR 128

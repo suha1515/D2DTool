@@ -125,6 +125,15 @@ PS_OUT PS_MAIN2(VS_OUT In)
 
 	return p_out;
 }
+PS_OUT PS_MAIN3(VS_OUT In)
+{
+	PS_OUT p_out = (PS_OUT)0;
+	p_out.v_color = tex2D(s_2D, In.uv);
+	p_out.v_color.r = p_out.v_color.a;
+	return p_out;
+}
+
+
 // 장치성능에 따른 셰이더 선택을 위해 존재.
 technique Default_Device
 {
@@ -149,6 +158,17 @@ technique Default_Device
 
 		VertexShader = compile vs_3_0 VS_MAIN2();
 		PixelShader = compile ps_3_0 PS_MAIN2();
+	}
+	pass LightEffect
+	{
+		CullMode = NONE;
+		AlphaBlendEnable = true;
+		SrcBlend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+		ZwriteEnable = false;
+		ZEnable = false;
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_MAIN3();
 	}
 }
 

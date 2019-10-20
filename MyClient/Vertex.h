@@ -28,6 +28,24 @@ struct Vertex01
 	D3DXMATRIX worldMat;
 	D3DXVECTOR2 tex0,tex1;
 };
-#define FVF_VERTEX (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX1)
 
+struct BlendVertex
+{
+	BlendVertex() {}
+	BlendVertex(
+		float x, float y, float z, float w,
+		float u, float v)
+	{
+		pos.x = x;  pos.y = y;  pos.z = z; pos.w = w;
+		tex.x = u;  tex.y = v;
+	}
+	D3DXVECTOR4 pos;
+	D3DXVECTOR2 tex;
+	//float _x, _y, _z;
+	//float _nx, _ny, _nz;
+	//float _u, _v; // texture coordinates
+};
+
+#define FVF_BLEND_VERTEX (D3DFVF_XYZRHW	| D3DFVF_TEX1)
+#define FVF_VERTEX		 (D3DFVF_XYZ |D3DFVF_NORMAL| D3DFVF_TEX1)
 #endif // __vertexH__

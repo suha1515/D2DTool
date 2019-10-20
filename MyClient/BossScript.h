@@ -3,9 +3,9 @@
 class CBossScript :
 	public CEnemyScripts
 {
-	enum STATE {IDLE,DASH,STOMP,GRIND_READY,GRIND,THROWER,HIT};
-	enum DIR {RIGHT,UP,DOWN,LEFT, RIGHT_UP_45,LEFT_UP_45,RIGHT_DOWN_45,LEFT_DOWN_45};
-	enum TYPE {ICE,FIRE};
+	enum STATE {IDLE,DASH_READY,DASH,DASH_STOP,STOMP,GRIND_READY,GRIND,THROWER,HIT};
+	enum DIR   {RIGHT,UP,DOWN,LEFT, RIGHT_UP_45,LEFT_UP_45,RIGHT_DOWN_45,LEFT_DOWN_45};
+	enum TYPE  {ICE,FIRE};
 public:
 	CBossScript();
 	~CBossScript();
@@ -32,6 +32,8 @@ public:
 
 	void StompSkill();
 	void GrindSkill();
+	void ThrowerSkill();
+	void DashSkill();
 private:
 	void				TrackPlayer();
 	void				GetDirPlayer();
@@ -67,8 +69,18 @@ private:
 	bool				m_bGrindSkill = false;
 
 	//대쉬 스킬
+	float			   m_fShadowSpawnTime;
+	float			   m_fDashTime;
+	bool			   m_bDashSkill = false;
+	D3DXVECTOR3			m_tempPos;
 
 	//돌내려찍기 스킬
+	float			   m_fRockSpawnTime;
+	float			   m_fRadius;
+	int				   m_iRockCount;
+	bool			   m_bRockSkill = false;
+	bool			   m_bDustOnce = false;
+
 
 private:
 	D3DXVECTOR3*		m_Pos;

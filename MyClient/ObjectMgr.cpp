@@ -47,6 +47,10 @@ void CObjectMgr::AddObject(CGameObject * object)
 	{
 		m_pPlayer = object;
 	}
+	if (object->GetObjectTag() == L"LightObject")
+	{
+		object->GetComponent<CTextureRenderer>()->SetPass(2);
+	}
 	//타일일경우 (인스턴싱객체) , 타일충돌체 인스턴싱은.. 안해도될듯.. 
 	if (object->GetObjectTag() == L"Instance")
 	{
@@ -104,7 +108,9 @@ void CObjectMgr::Initialize()
 	CTarget* target = new CTarget;
 	target->Initialize(WINCX, WINCY, D3DFMT_A8R8G8B8, D3DCOLOR_ARGB(255, 0, 0, 0));
 	m_Targets.insert({ DIFFUSE,target });
-
+	target = new CTarget;
+	target->Initialize(WINCX, WINCY, D3DFMT_A8R8G8B8, D3DCOLOR_ARGB(255, 0, 0, 0));
+	m_Targets.insert({ LIGHT_MAP,target });
 	m_pScreenBuffer = new CScreenBuffer;
 	m_pScreenBuffer->Initialize(WINCX, WINCY);
 
@@ -175,6 +181,8 @@ void CObjectMgr::Update()
 							{
 								CInstanceMgr::GetInstance()->AddObject((*iter_begin));
 							}
+							else if ((*iter_begin)->GetObjectTag() == L"LightObject")
+								m_LightObject.push_back((*iter_begin));
 							else
 								m_RenderObjects[(*iter_begin)->GetObjectLayer()].push_back((*iter_begin));
 						}
@@ -224,6 +232,12 @@ void CObjectMgr::Render()
 	{
 		i.second->ClearColor();
 	}
+	//라이트 그리기.
+	m_Targets[LIGHT_MAP]->ChangeNewDevice(0);
+	for (auto&i : m_LightObject)
+		i->Render();
+	m_Targets[LIGHT_MAP]->ChangeToPreDevice(0);
+
 	m_Targets[DIFFUSE]->ChangeNewDevice(0);
 	//인스턴스 오브젝트는 가장 먼저그린다.(가장 밑바닥의 경우만가능할것같은데..
 	CInstanceMgr::GetInstance()->InstanceRender();
@@ -278,16 +292,23 @@ void CObjectMgr::Render()
 	m_CollideObj.clear();
 	m_CollideTile.clear();
 	m_Barricade.clear();
+	m_LightObject.clear();
 	m_Targets[DIFFUSE]->ChangeToPreDevice(0);
 
 	m_pBlendShader->GetEffect()->SetTexture("tex0", m_Targets[DIFFUSE]->GetTexture());
+	m_pBlendShader->GetEffect()->SetTexture("tex1", m_Targets[LIGHT_MAP]->GetTexture());
 	m_pBlendShader->GetEffect()->Begin(nullptr,0);
 	m_pBlendShader->GetEffect()->BeginPass(0);
 
 	m_pScreenBuffer->Render();
-
+	/*if (GetKeyState(VK_RETURN) < 0)
+	{
+		D3DXSaveTextureToFile(L"../Texture/nORMAL.jpg", D3DXIFF_JPG, m_Targets[LIGHT_MAP]->GetTexture(), nullptr);
+	}*/
 	m_pBlendShader->GetEffect()->EndPass();
 	m_pBlendShader->GetEffect()->End();
+
+
 }
 
 void CObjectMgr::DebugRender()

@@ -86,6 +86,7 @@ private:
 	map<int, vector<CGameObject*>>	m_Objects;		//모든오브젝트들
 	map<wstring, OBJ_COPY>			m_CopyObjects;	//복사본
 	list<CGameObject*>				m_RenderObjects[LAYER_END];		//렌더할녀석들
+	list<CGameObject*>				m_LightObject;
 
 	vector<CGameObject*>			m_Tiles;		//타일들
 	vector<CGameObject*>			m_RenderTiles;	//렌더할 타일들

@@ -75,6 +75,7 @@ int CBossFireBreath::OnUpdate()
 			m_fSpawnTimeEnd = nSpawnTime(rnd);
 			D3DXVECTOR3 randompos = dir*m_fRadius + *m_pTransform->GetWorldPos();
 			CEffect::Create(randompos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Fire_Effect", L"Fire_Explosion", ANIMATION_ONCE, 1.5f, 0, 0, 0, 0, L"Effect", LAYER_5);
+
 			m_FireCount++;		
 		}
 	}

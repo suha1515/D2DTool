@@ -15,14 +15,14 @@ void CScreenBuffer::Initialize(int width, int height)
 {
 	m_pDevice = CDeviceMgr::GetInstance()->GetDevice();
 
-	m_pDevice->CreateVertexBuffer(4 * sizeof(Vertex),D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW|D3DFVF_TEX1, D3DPOOL_MANAGED, &m_pVB, 0);
+	m_pDevice->CreateVertexBuffer(4 * sizeof(BlendVertex),D3DUSAGE_WRITEONLY, D3DFVF_XYZRHW| D3DFVF_TEX1, D3DPOOL_MANAGED, &m_pVB, 0);
 	m_pDevice->CreateIndexBuffer(6 * sizeof(WORD), D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_MANAGED, &m_pIB, 0);
 	
-	m_Vertex[0] = Vertex(	-0.5f,		 -0.5f		   ,0.0f, 0.0f, 0.0f, 0.0f,	0.0f, 0.0f);
-	m_Vertex[1] = Vertex(   -0.5f,		height-0.5f    ,0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-	m_Vertex[2] = Vertex( width -0.5f,	-0.5f		   ,0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-	m_Vertex[3] = Vertex(  width-0.5f, height -0.5f    ,0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f);
-	Vertex* v;
+	m_Vertex[0] = BlendVertex(	-0.5f,		  -0.5f		   ,0.0f,  0.0f, 0.0f, 0.0f);
+	m_Vertex[1] = BlendVertex(  -0.5f,		 height-0.5f   ,0.0f,  0.0f, 0.0f, 1.0f);
+	m_Vertex[2] = BlendVertex(	width -0.5f, -0.5f		   ,0.0f,  0.0f, 1.0f, 0.0f);
+	m_Vertex[3] = BlendVertex(  width -0.5f, height -0.5f  ,0.0f,  0.0f, 1.0f, 1.0f);
+	BlendVertex* v;
 	m_pVB->Lock(0, 0, (void**)&v, 0);
 
 	v[0] = m_Vertex[0];
@@ -42,9 +42,9 @@ void CScreenBuffer::Initialize(int width, int height)
 
 void CScreenBuffer::Render()
 {
-	m_pDevice->SetStreamSource(0, m_pVB, 0, sizeof(Vertex));
+	m_pDevice->SetStreamSource(0, m_pVB, 0, sizeof(BlendVertex));
 	m_pDevice->SetIndices(m_pIB);
-	m_pDevice->SetFVF(D3DFVF_XYZRHW|D3DFVF_TEX0);
+	m_pDevice->SetFVF(FVF_BLEND_VERTEX);
 	m_pDevice->DrawIndexedPrimitive(
 		D3DPT_TRIANGLELIST,
 		0,

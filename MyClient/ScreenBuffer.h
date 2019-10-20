@@ -16,6 +16,6 @@ private:
 
 	LPDIRECT3DDEVICE9		m_pDevice;
 
-	Vertex					m_Vertex[4];
+	BlendVertex					m_Vertex[4];
 };
 

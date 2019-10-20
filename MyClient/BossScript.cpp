@@ -11,6 +11,7 @@
 #include "Effect.h"
 #include "BossIceEffect.h"
 #include "BossFireBreath.h"
+#include "BossRockSkill.h"
 
 CBossScript::CBossScript()
 {
@@ -53,6 +54,11 @@ void CBossScript::OnInit()
 
 	m_bIsHit = false;
 	m_fHitCoolTime = 0.0f;
+
+	m_bRockSkill = false;
+	m_fRockSpawnTime = 0.0f;
+	m_iRockCount = 0;
+	m_fRadius = 30.f;
 
 	m_Type = ICE;
 }
@@ -166,13 +172,10 @@ void CBossScript::DirState()
 
 void CBossScript::AnimState()
 {
-	if (m_CurState == HIT)
+	if (m_CurState == HIT|| m_bIsHit)
 	{
 		Hit();
 	}
-
-	//if (m_CurDir == LEFT_UP_45 || m_CurDir == LEFT_DOWN_45 || m_CurDir == RIGHT_DOWN_45 || m_CurDir == RIGHT_UP_45)
-		//return;
 
 	if (m_CurState != m_PreState)
 	{
@@ -199,18 +202,41 @@ void CBossScript::AnimState()
 			}
 			break;
 		case DASH:
+			m_PrePlayerPos = *playerPos;
 			switch (m_CurDir)
 			{
 			case LEFT_UP_45:
 			case RIGHT_UP_45:
 			case UP:
+				m_pAnimator->Play(L"Boss_Dash_Up", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
 			case LEFT_DOWN_45:
 			case RIGHT_DOWN_45:
 			case DOWN:
+				m_pAnimator->Play(L"Boss_Dash_Down", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;		
 			case LEFT:
 			case RIGHT:
+				m_pAnimator->Play(L"Boss_Dash_Right", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			}
+			break;
+		case DASH_STOP:
+			switch (m_CurDir)
+			{
+			case LEFT_UP_45:
+			case RIGHT_UP_45:
+			case UP:
+				m_pAnimator->Play(L"Boss_Dash_Stop_Up", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			case LEFT_DOWN_45:
+			case RIGHT_DOWN_45:
+			case DOWN:
+				m_pAnimator->Play(L"Boss_Dash_Stop_Down", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			case LEFT:
+			case RIGHT:
+				m_pAnimator->Play(L"Boss_Dash_Stop_Right", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
 			}
 			break;
@@ -278,13 +304,17 @@ void CBossScript::AnimState()
 			case LEFT_UP_45:
 			case RIGHT_UP_45:
 			case UP:
+				m_pAnimator->Play(L"Boss_Stomp_Up", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
 			case LEFT_DOWN_45:
 			case RIGHT_DOWN_45:
 			case DOWN:
+				m_pAnimator->Play(L"Boss_Stomp_Down", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
+
 			case LEFT:
 			case RIGHT:
+				m_pAnimator->Play(L"Boss_Stomp_Right", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
 			}
 			break;
@@ -320,6 +350,7 @@ void CBossScript::Move()
 
 void CBossScript::GetHit(D3DXVECTOR3 dirVec, float power, float dmg)
 {
+	if(m_CurState!=THROWER&&m_CurState!=GRIND&&m_CurState!=STOMP&&m_CurState!=DASH)
 	m_CurState = HIT;
 	//m_DirVec = dirVec;
 	//m_fVelocity = power;
@@ -328,6 +359,7 @@ void CBossScript::GetHit(D3DXVECTOR3 dirVec, float power, float dmg)
 
 	m_fWhiteValue = 0.2f;
 	m_pTexture->SetFadeColor(XMFLOAT3(1.0f, 0.0f, 0.0f));
+	m_bIsHit = true;
 }
 
 void CBossScript::MakeIceSkillRoute()
@@ -460,18 +492,25 @@ void CBossScript::MakeIceSkillRoute()
 
 void CBossScript::AttackState()
 {
-	//if (m_CurState != STOMP&&m_CurState!=GRIND)
-	//{
-	//	if (CKeyMgr::GetInstance()->KeyPressing(KEY_V))
-	//	{
-	//		m_CurState = STOMP;
-	//	}
-	//	else if (CKeyMgr::GetInstance()->KeyPressing(KEY_P))
-	//		m_CurState = GRIND_READY;
-	//}
-
+	if (m_CurState != STOMP&&m_CurState!=GRIND)
+	{
+		if (CKeyMgr::GetInstance()->KeyPressing(KEY_V))
+		{
+			m_CurState = STOMP;
+		}
+		else if (CKeyMgr::GetInstance()->KeyPressing(KEY_P))
+			m_CurState = GRIND_READY;
+		else if (CKeyMgr::GetInstance()->KeyPressing(KEY_O))
+			m_CurState = DASH;
+	}
+	if (m_CurState == DASH_STOP && !m_pAnimator->IsPlaying())
+	{
+		m_CurState = IDLE;
+	}
 		StompSkill();
 		GrindSkill();
+		ThrowerSkill();
+		DashSkill();
 }
 
 void CBossScript::Hit()
@@ -484,7 +523,9 @@ void CBossScript::Hit()
 	else
 	{
 		m_fWhiteValue = 0.2f;
-		m_CurState = IDLE;
+		if(m_CurState==HIT)
+			m_CurState = IDLE;
+		m_bIsHit = false;
 	}
 }
 
@@ -558,6 +599,69 @@ void CBossScript::GrindSkill()
 			m_fFireGrindSkillTime -= m_fFireGrindSkillTime;
 			m_fFireGrindSkillSpawnCool -= m_fFireGrindSkillSpawnCool;
 			m_bGrindSkill = false;
+		}
+	}
+}
+
+void CBossScript::ThrowerSkill()
+{
+	if (m_CurState == THROWER&&!m_pAnimator->IsPlaying())
+	{
+		if (!m_bDustOnce)
+		{
+			if (m_CurDir == RIGHT || m_CurDir == RIGHT_UP_45 || m_CurDir == RIGHT_DOWN_45)
+				CEffect::Create(m_SkillPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 2.0f, 0.0f), L"Dust_Effect", L"Dust_Big", ANIMATION_ONCE, 0, 0, 0, 0, 0, L"Effect", LAYER_2);
+			else
+				CEffect::Create(m_SkillPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(-2.0f, 2.0f, 0.0f), L"Dust_Effect", L"Dust_Big", ANIMATION_ONCE, 0, 0, 0, 0, 0, L"Effect", LAYER_2);
+			m_bDustOnce = true;
+		}
+
+		if (m_iRockCount < 10)
+		{
+			if (m_fRockSpawnTime > 0.5f)
+			{
+				random_device	rn;
+				mt19937_64 rnd(rn());
+				uniform_real_distribution<float> nDir(-1.0f, 1.0f);
+
+				D3DXVECTOR3 dir(nDir(rnd), nDir(rnd), 0.f);
+
+				D3DXVec3Normalize(&dir, &dir);
+
+				D3DXVECTOR3 pos = dir*m_fRadius + (*playerPos);
+				CEffect::CreateEffect<CBossRockSkill>(pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Effect", LAYER_1);
+				m_iRockCount++;
+				m_fRockSpawnTime -= m_fRockSpawnTime;
+			}
+			else
+			{
+				m_fRockSpawnTime += CTimeMgr::GetInstance()->GetDeltaTime();
+			}
+		}
+		else
+		{
+			m_fRockSpawnTime = 0.0f;
+			m_iRockCount = 0;
+			m_CurState = IDLE;
+			m_bDustOnce = false;
+		}
+	}
+}
+
+void CBossScript::DashSkill()
+{
+	if (m_CurState == DASH)
+	{
+		if (m_fDashTime > 2.0f)
+		{
+			m_fDashTime -= m_fDashTime;
+			m_CurState = DASH_STOP;
+		}
+		else
+		{
+			m_fDashTime += CTimeMgr::GetInstance()->GetDeltaTime();
+			D3DXVECTOR3 pos = Lerp(*m_Pos, m_PrePlayerPos, m_fDashTime/2.0f);
+			*m_Pos = pos;
 		}
 	}
 }
