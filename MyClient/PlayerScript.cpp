@@ -11,6 +11,7 @@
 #include "Effect.h"
 #include "BossIceEffect.h"
 #include "BossFireBreath.h"
+#include "BossRockSkill.h"
 
 CPlayerScript::CPlayerScript()
 {
@@ -505,8 +506,8 @@ void CPlayerScript::MeeleAttack()
 				CGameObject* particle = CEffect::Create(m_AttackPos, XMFLOAT3(0.0f, 0.0f, m_AttackAngle), D3DXVECTOR3(-1.0f, 1.0f, 1.0f), L"Player_Attack_Effect", L"Player_Sweep", ANIMATION_ONCE, 1.0f, 20, 10, 0, 10, L"Player_Sweep");
 				CGameObject* particle2 = CEffect::Create(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player_Attack_Effect", L"Player_Sweep_After", ANIMATION_ONCE, 1.0f);
 			}	
-			//CEffect::CreateEffect<CBossFireBreath>(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f),L"Effect",LAYER_5);
-			CEffect::CreateMovable(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Fire_Effect", L"Fire_Breath", ANIMATION_ONCE,m_DirVec,300.f,0,0,0,0,0,L"Effect",LAYER_5);
+			CEffect::CreateEffect<CBossRockSkill>(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f),L"Effect",LAYER_5);
+			//CEffect::CreateMovable(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Fire_Effect", L"Fire_Breath", ANIMATION_ONCE,m_DirVec,400.f,0.5f,0,10,10,0,0,L"Effect",LAYER_5);
 		}	
 	}
 }

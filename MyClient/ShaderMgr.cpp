@@ -24,6 +24,9 @@ void CShaderMgr::Initialize()
 	m_Efftects.insert({ L"InstanceShader",make_shared<CShader>() });
 	m_Efftects[L"InstanceShader"]->SetEffect(L"../Shaders/InstanceShader.fx");
 
+	m_Efftects.insert({ L"BlendShader",make_shared<CShader>() });
+	m_Efftects[L"BlendShader"]->SetEffect(L"../Shaders/Blending.fx");
+
 }
 
 shared_ptr<CShader> CShaderMgr::GetEffect(const wstring& effectKey)

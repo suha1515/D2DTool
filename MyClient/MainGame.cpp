@@ -66,6 +66,7 @@ HRESULT CMainGame::Initialize()
 	m_pShaderMgr->Initialize();
 
 	m_pObjectMgr->LoadCopyObjectFromFile(L"../ObjectList/copy2.dat");
+	m_pObjectMgr->Initialize();
 
 	m_pTextureMgr->LoadTextureFromList(L"../Texture/map/22.dat");
 	CInstanceMgr::GetInstance()->Initialize();

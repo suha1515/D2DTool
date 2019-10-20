@@ -8,6 +8,11 @@
 #include "Transform.h"
 #include "Animator.h"
 #include "Camera.h"
+#include "Shader.h"
+
+#include "Target.h"
+#include "ScreenBuffer.h"
+
 IMPLEMENT_SINGLETON(CObjectMgr);
 CObjectMgr::CObjectMgr()
 {
@@ -27,6 +32,12 @@ CObjectMgr::~CObjectMgr()
 		i.second.clear();
 	}
 	m_Objects.clear();
+
+	for (auto& i : m_Targets)
+		i.second->Release();
+	m_Targets.clear();
+
+	m_pScreenBuffer->Release();
 }
 
 
@@ -90,6 +101,14 @@ void CObjectMgr::AddScriptObject(CScripts * script)
 
 void CObjectMgr::Initialize()
 {
+	CTarget* target = new CTarget;
+	target->Initialize(WINCX, WINCY, D3DFMT_A8R8G8B8, D3DCOLOR_ARGB(255, 0, 0, 0));
+	m_Targets.insert({ DIFFUSE,target });
+
+	m_pScreenBuffer = new CScreenBuffer;
+	m_pScreenBuffer->Initialize(WINCX, WINCY);
+
+	m_pBlendShader = CShaderMgr::GetInstance()->GetEffect(L"BlendShader");
 	for (size_t i = 0; i < m_Objects.size(); ++i)
 	{
 		for (auto& j : m_Objects[i])
@@ -118,7 +137,6 @@ void CObjectMgr::Update()
 		vector<CGameObject*>::iterator iter_end = m_Objects[i].end();
 		for (;iter_begin!=iter_end;)
 		{
-	
 					if ((*iter_begin)->Update() == DEAD_OBJ)
 					{
 						//부모 오브젝트가 있을 경우.
@@ -201,6 +219,12 @@ void CObjectMgr::Update()
 //레이어에 따라 렌더를 진행한다. 
 void CObjectMgr::Render()
 {
+	//렌더타겟 초기화.
+	for (auto&i : m_Targets)
+	{
+		i.second->ClearColor();
+	}
+	m_Targets[DIFFUSE]->ChangeNewDevice(0);
 	//인스턴스 오브젝트는 가장 먼저그린다.(가장 밑바닥의 경우만가능할것같은데..
 	CInstanceMgr::GetInstance()->InstanceRender();
 	for (int i = 0; i < LAYER_END; ++i)
@@ -254,6 +278,16 @@ void CObjectMgr::Render()
 	m_CollideObj.clear();
 	m_CollideTile.clear();
 	m_Barricade.clear();
+	m_Targets[DIFFUSE]->ChangeToPreDevice(0);
+
+	m_pBlendShader->GetEffect()->SetTexture("tex0", m_Targets[DIFFUSE]->GetTexture());
+	m_pBlendShader->GetEffect()->Begin(nullptr,0);
+	m_pBlendShader->GetEffect()->BeginPass(0);
+
+	m_pScreenBuffer->Render();
+
+	m_pBlendShader->GetEffect()->EndPass();
+	m_pBlendShader->GetEffect()->End();
 }
 
 void CObjectMgr::DebugRender()
@@ -270,8 +304,8 @@ void CObjectMgr::DebugRender()
 	{
 		for (auto&i : m_CollideObj)
 		{
-			i->GetComponent<CBoxCollider>()->SetCollideColor(D3DCOLOR_XRGB(255, 0, 0));
-			i->DebugRender(true, false);
+				i->GetComponent<CBoxCollider>()->SetCollideColor(D3DCOLOR_XRGB(255, 0, 0));
+				i->DebugRender(true, false);
 		}
 	}
 	//for (auto&i : m_CollideObj)

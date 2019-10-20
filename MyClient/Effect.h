@@ -28,7 +28,7 @@ public:
 	void SetDeadTime(const float& time);
 	static CGameObject* CreateMovable(D3DXVECTOR3  pos, XMFLOAT3 & rot, D3DXVECTOR3 & scale, const wstring & _ClipName, 
 	const wstring& _AnimName, ANIMATION_TYPE type,
-		D3DXVECTOR3 dirVec, const float& speed,
+		D3DXVECTOR3 dirVec, const float& speed, const float& animSpeed=1.0f,
 		const float & time = 0, const int& colSizeX = 0, const int& colSizeY = 0,
 		const int& coloffsetX = 0, const int& coloffsetY = 0,
 		const wstring& tagName = L"Effect", Layer layer = LAYER_5);

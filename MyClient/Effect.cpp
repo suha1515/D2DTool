@@ -45,7 +45,7 @@ void CEffect::SetDeadTime(const float & time)
 {
 }
 
-CGameObject * CEffect::CreateMovable(D3DXVECTOR3  pos, XMFLOAT3 & rot, D3DXVECTOR3 & scale, const wstring & _ClipName, const wstring & _AnimName, ANIMATION_TYPE type, D3DXVECTOR3 dirVec, const float& speed, const float & time, const int & colSizeX, const int & colSizeY, const int & coloffsetX, const int & coloffsetY, const wstring & tagName, Layer layer)
+CGameObject * CEffect::CreateMovable(D3DXVECTOR3  pos, XMFLOAT3 & rot, D3DXVECTOR3 & scale, const wstring & _ClipName, const wstring & _AnimName, ANIMATION_TYPE type, D3DXVECTOR3 dirVec, const float& speed,const float& animSpeed, const float & time, const int & colSizeX, const int & colSizeY, const int & coloffsetX, const int & coloffsetY, const wstring & tagName, Layer layer)
 {
 	CGameObject* pEffectObj = new CGameObject;
 	pEffectObj->SetObjectLayer(layer);
@@ -73,6 +73,7 @@ CGameObject * CEffect::CreateMovable(D3DXVECTOR3  pos, XMFLOAT3 & rot, D3DXVECTO
 	CAnimator* m_pAnimator = new CAnimator;
 	m_pAnimator->Initialize(pEffectObj);
 	m_pAnimator->LoadClips(_ClipName);
+	m_pAnimator->SetSpeed(animSpeed);
 	pEffectObj->AddComponent(m_pAnimator);
 
 	CEffectScript* pEffectScript = new CEffectScript;

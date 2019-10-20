@@ -164,6 +164,7 @@
     <ClInclude Include="Animator.h" />
     <ClInclude Include="BossFireBreath.h" />
     <ClInclude Include="BossIceEffect.h" />
+    <ClInclude Include="BossRockSkill.h" />
     <ClInclude Include="BossScript.h" />
     <ClInclude Include="BossStage.h" />
     <ClInclude Include="BoxCollider.h" />
@@ -199,12 +200,14 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneMgr.h" />
+    <ClInclude Include="ScreenBuffer.h" />
     <ClInclude Include="ScriptMgr.h" />
     <ClInclude Include="Scripts.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderMgr.h" />
     <ClInclude Include="STage1Event.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Target.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="Texture.h" />
@@ -220,6 +223,7 @@
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="BossFireBreath.cpp" />
     <ClCompile Include="BossIceEffect.cpp" />
+    <ClCompile Include="BossRockSkill.cpp" />
     <ClCompile Include="BossScript.cpp" />
     <ClCompile Include="BossStage.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
@@ -253,6 +257,7 @@
     <ClCompile Include="PuzzleStack.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneMgr.cpp" />
+    <ClCompile Include="ScreenBuffer.cpp" />
     <ClCompile Include="ScriptMgr.cpp" />
     <ClCompile Include="Scripts.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -264,6 +269,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Target.cpp" />
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureMgr.cpp" />
@@ -280,6 +286,7 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Shaders\Blending.fx" />
     <FxCompile Include="..\Shaders\InstanceShader.fx" />
     <FxCompile Include="..\Shaders\myShader1.fx" />
   </ItemGroup>

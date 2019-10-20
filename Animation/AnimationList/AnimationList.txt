@@ -3,6 +3,7 @@
 ../Animation/Clear_Way.anim
 ../Animation/CrossHair.anim
 ../Animation/Door.anim
+../Animation/Dust_Effect.anim
 ../Animation/Explosion_Effect.anim
 ../Animation/Fire_Effect.anim
 ../Animation/GuideLine.anim

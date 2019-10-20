@@ -45,7 +45,6 @@ int CEffectScript::OnUpdate()
 	{
 		m_Pos->x += m_DirVec.x*m_fSpeed*CTimeMgr::GetInstance()->GetDeltaTime();
 		m_Pos->y += m_DirVec.y*m_fSpeed*CTimeMgr::GetInstance()->GetDeltaTime();
-		cout << m_Pos->x << " , " << m_Pos->y << endl;
 	}
 
 	if (m_AnimType == ANIMATION_ONCE)

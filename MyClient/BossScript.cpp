@@ -28,6 +28,7 @@ void CBossScript::OnInit()
 	m_pBoxCollider = m_pGameObject->GetComponent<CBoxCollider>();
 	m_pTexture = m_pGameObject->GetComponent<CTextureRenderer>();
 	m_pGameObject->SetObjectTag(L"Enemy");
+	
 	if (m_pAnimator != nullptr)
 	{
 		m_pAnimator->LoadClips(L"Boss");
@@ -35,7 +36,9 @@ void CBossScript::OnInit()
 		m_pAnimator->Play(L"Boss_Idle_Down", ANIMATION_TYPE::ANIMATION_LOOP);
 	}
 
+	//플레이어 정보 얻기
 	m_pPlayer = CObjectMgr::GetInstance()->m_pPlayer;
+	playerPos = m_pPlayer->GetComponent<CTransform>()->GetWorldPos();
 
 	m_CurDir = DOWN;
 	m_PreDir = m_CurDir;
@@ -48,6 +51,10 @@ void CBossScript::OnInit()
 	m_PlayerPos = m_pPlayer->GetComponent<CTransform>();
 	m_Hp = 3000.f;
 
+	m_bIsHit = false;
+	m_fHitCoolTime = 0.0f;
+
+	m_Type = ICE;
 }
 
 void CBossScript::OnEnable()
@@ -56,7 +63,15 @@ void CBossScript::OnEnable()
 
 void CBossScript::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move )
 {
-
+	if (pGameObject->GetObjectTag() == L"Player_Sweep")
+	{
+		if (!m_bIsHit)
+		{
+			GetHit(D3DXVECTOR3(0,0,0),10.f,20.f);
+			m_bIsHit = true;
+		}
+			
+	}
 }
 
 void CBossScript::OnInput()
@@ -74,53 +89,19 @@ int CBossScript::OnUpdate()
 	GetDirPlayer();
 	AnimState();
 	DirState();
-	//if (m_CurState != STOMP)
-	//{
-	//	if (CKeyMgr::GetInstance()->KeyPressing(KEY_V))
-	//	{
-	//		m_CurState = STOMP;
-	//	}
-	//}
-	//
-	if (m_CurState == STOMP && !m_pAnimator->IsPlaying())
-	{
-		m_CurState = IDLE;
-		m_PrePos = *m_pTransform->GetWorldPos();
-		MakeIceSkillRoute();
-		m_PrePlayerPos = *m_PlayerPos->GetWorldPos();
-		m_bIceSkill = true;
 
-		//m_BezierControl[0] = D3DXVECTOR3(m_PrePos.x+70.0f, m_PrePos.y -60.0f,0.0f);
-		//m_BezierControl[1] = D3DXVECTOR3(m_PrePos.x+120.0f, m_PrePos.y -80.0f,0.0f);
-		//m_BezierControl[2] = D3DXVECTOR3(m_PrePos.x-150.0f, m_PrePos.y -150.0f, 0.0f);
-		//CEffect::CreateEffect<CBossIceEffect>(*m_pTransform->GetWorldPos(), XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Effect", LAYER_4);
-	}
-
-	if (m_bIceSkill)
+	if (m_bIsHit)
 	{
-		if (m_fIceSkillTime > 1.f)
+		if (m_fHitCoolTime > 0.5f)
 		{
-			m_fIceSkillTime -= m_fIceSkillTime;
-			m_bIceSkill = false;
+			m_bIsHit = false;
+			m_fHitCoolTime -= m_fHitCoolTime;
 		}
 		else
-		{
-			if (m_fIceSkillSpawnCool > 0.1f)
-			{
-				
-				D3DXVECTOR3 pos = BezierCuve4Dim(m_PrePos, m_PrePlayerPos, m_BezierControl[0], m_BezierControl[1], m_BezierControl[2], m_fIceSkillTime);
-				// D3DXVECTOR3 pos =BezierCurve(m_PrePos, m_PrePlayerPos, m_BezierControl[1], m_fIceSkillTime);
-				 if (pos != m_PrePlayerPos)
-				 {
-					 CEffect::CreateEffect<CBossFireBreath>(pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Effect", LAYER_1);
-				 }
-				m_fIceSkillSpawnCool -= m_fIceSkillSpawnCool;
-			}
-			m_fIceSkillSpawnCool += CTimeMgr::GetInstance()->GetDeltaTime();
-			m_fIceSkillTime += CTimeMgr::GetInstance()->GetDeltaTime();
-		}
+			m_fHitCoolTime += CTimeMgr::GetInstance()->GetDeltaTime();
 	}
-
+	
+	AttackState();
 	
 	return 0;
 }
@@ -149,33 +130,33 @@ void CBossScript::DirState()
 		switch (m_CurDir)
 		{
 		case UP:
-			cout << "위" << endl;
+			m_SkillPos = D3DXVECTOR3(m_Pos->x, m_Pos->y + 50.f, 0.0f);
 			break;
 		case DOWN:
-			cout << "아래" << endl;
+			m_SkillPos = D3DXVECTOR3(m_Pos->x, m_Pos->y + 50.f, 0.0f);
 			break;
 		case LEFT_UP_45:
-			cout << "좌상단" << endl;
+			m_SkillPos = D3DXVECTOR3(m_Pos->x-25.f, m_Pos->y+25.f, 0.0f);
 			m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 			break;
 		case RIGHT_UP_45:
-			cout << "우상단" << endl;
+			m_SkillPos = D3DXVECTOR3(m_Pos->x+25.f, m_Pos->y + 25.f, 0.0f);
 			m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 			break;
 		case LEFT:
-			cout << "좌측" << endl;
+			m_SkillPos = D3DXVECTOR3(m_Pos->x-50.f, m_Pos->y, 0.0f);
 			m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 			break;
 		case RIGHT:
-			cout << "우측" << endl;
+			m_SkillPos = D3DXVECTOR3(m_Pos->x+50.f, m_Pos->y, 0.0f);
 			m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 			break;
 		case LEFT_DOWN_45:
-			cout << "좌하단" << endl;
+			m_SkillPos = D3DXVECTOR3(m_Pos->x-25.f, m_Pos->y -25.f, 0.0f);
 			m_pTransform->SetScaling(D3DXVECTOR3(-1.0f, 1.0f, 1.0f));
 			break;
 		case RIGHT_DOWN_45:
-			cout << "우하단" << endl;
+			m_SkillPos = D3DXVECTOR3(m_Pos->x+25.f, m_Pos->y-25.f, 0.0f);
 			m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 			break;
 		}
@@ -189,6 +170,7 @@ void CBossScript::AnimState()
 	{
 		Hit();
 	}
+
 	//if (m_CurDir == LEFT_UP_45 || m_CurDir == LEFT_DOWN_45 || m_CurDir == RIGHT_DOWN_45 || m_CurDir == RIGHT_UP_45)
 		//return;
 
@@ -252,19 +234,41 @@ void CBossScript::AnimState()
 				break;
 			}
 			break;
+		case GRIND_READY:
+			switch (m_CurDir)
+			{
+			case LEFT_UP_45:
+			case RIGHT_UP_45:
+			case UP:
+				m_pAnimator->Play(L"Boss_Ready_Grind_Up", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			case LEFT_DOWN_45:
+			case RIGHT_DOWN_45:
+			case DOWN:
+				m_pAnimator->Play(L"Boss_Ready_Grind_Down", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			case LEFT:
+			case RIGHT:
+				m_pAnimator->Play(L"Boss_Ready_Grind_Right", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			}
+			break;
 		case GRIND:
 			switch (m_CurDir)
 			{
 			case LEFT_UP_45:
 			case RIGHT_UP_45:
 			case UP:
+				m_pAnimator->Play(L"Boss_Attack_Grind_Right", ANIMATION_TYPE::ANIMATION_LOOP);
 				break;
 			case LEFT_DOWN_45:
 			case RIGHT_DOWN_45:
 			case DOWN:
+				m_pAnimator->Play(L"Boss_Attack_Grind_Right", ANIMATION_TYPE::ANIMATION_LOOP);
 				break;
 			case LEFT:
 			case RIGHT:
+				m_pAnimator->Play(L"Boss_Attack_Grind_Right", ANIMATION_TYPE::ANIMATION_LOOP);
 				break;
 			}
 			break;
@@ -330,8 +334,6 @@ void CBossScript::MakeIceSkillRoute()
 {
 	random_device		rn;
 	mt19937_64 rnd(rn());
-
-	
 
 	if (m_CurDir == UP)
 	{
@@ -456,6 +458,22 @@ void CBossScript::MakeIceSkillRoute()
 
 }
 
+void CBossScript::AttackState()
+{
+	//if (m_CurState != STOMP&&m_CurState!=GRIND)
+	//{
+	//	if (CKeyMgr::GetInstance()->KeyPressing(KEY_V))
+	//	{
+	//		m_CurState = STOMP;
+	//	}
+	//	else if (CKeyMgr::GetInstance()->KeyPressing(KEY_P))
+	//		m_CurState = GRIND_READY;
+	//}
+
+		StompSkill();
+		GrindSkill();
+}
+
 void CBossScript::Hit()
 {
 	if (m_fWhiteValue > 0.0f)
@@ -470,14 +488,88 @@ void CBossScript::Hit()
 	}
 }
 
+
+
+void CBossScript::StompSkill()
+{
+	if (m_CurState == STOMP && !m_pAnimator->IsPlaying())
+	{
+		m_CurState = IDLE;
+		m_PrePos = m_SkillPos;
+		MakeIceSkillRoute();
+		m_bStompSkill = true;
+		if(m_CurDir==RIGHT||m_CurDir==RIGHT_UP_45||m_CurDir==RIGHT_DOWN_45)
+		CEffect::Create(m_SkillPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 2.0f, 0.0f), L"Dust_Effect", L"Dust_Big",ANIMATION_ONCE, 0,0,0,0,0,L"Effect",LAYER_2);
+		else
+		CEffect::Create(m_SkillPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(-2.0f, 2.0f, 0.0f), L"Dust_Effect", L"Dust_Big", ANIMATION_ONCE, 0, 0, 0, 0, 0, L"Effect", LAYER_2);
+	}
+
+	if (m_bStompSkill)
+	{
+		if (m_fIceSkillTime > 1.5f)
+		{
+			m_fIceSkillTime -= m_fIceSkillTime;
+			m_bStompSkill = false;
+
+		}
+		else
+		{
+			if (m_fIceSkillSpawnCool > 0.1f)
+			{
+				D3DXVECTOR3 pos = BezierCuve4Dim(m_PrePos, *playerPos, m_BezierControl[0], m_BezierControl[1], m_BezierControl[2], m_fIceSkillTime/1.5f);
+				if (pos != m_PrePlayerPos)
+				{
+					if (m_Type == ICE)
+						CEffect::CreateEffect<CBossIceEffect>(pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Effect", LAYER_1);
+					else
+						CEffect::CreateEffect<CBossFireBreath>(pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Effect", LAYER_1);
+				}
+				m_fIceSkillSpawnCool -= m_fIceSkillSpawnCool;
+			}
+			m_fIceSkillSpawnCool += CTimeMgr::GetInstance()->GetDeltaTime();
+			m_fIceSkillTime += CTimeMgr::GetInstance()->GetDeltaTime();
+		}
+	}
+}
+
+void CBossScript::GrindSkill()
+{
+	if (m_CurState == GRIND_READY && !m_pAnimator->IsPlaying())
+	{
+		m_CurState = GRIND;
+		m_bGrindSkill = true;
+	}		
+	if (m_bGrindSkill)
+	{
+		if (m_fFireGrindSkillTime < 1.5f)
+		{
+			if (m_fFireGrindSkillSpawnCool > 0.1f)
+			{
+				D3DXVECTOR3 dir = D3DXVECTOR3(cosf(D3DXToRadian(m_fAngle)), sinf(D3DXToRadian(m_fAngle)), 0.0f);
+				CEffect::CreateMovable(m_SkillPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.5f, 1.5f, 1.0f), L"Fire_Effect", L"Fire_Explosion", ANIMATION_ONCE, dir, 400.f, 0.5f, 0, 30, 30, 0, 0, L"Boss_FireThrower", LAYER_5);
+				m_fFireGrindSkillSpawnCool -= m_fFireGrindSkillSpawnCool;
+			}
+			m_fFireGrindSkillSpawnCool += CTimeMgr::GetInstance()->GetDeltaTime();
+			m_fFireGrindSkillTime += CTimeMgr::GetInstance()->GetDeltaTime();
+		}
+		else
+		{
+			m_CurState = IDLE;
+			m_fFireGrindSkillTime -= m_fFireGrindSkillTime;
+			m_fFireGrindSkillSpawnCool -= m_fFireGrindSkillSpawnCool;
+			m_bGrindSkill = false;
+		}
+	}
+}
+
 void CBossScript::TrackPlayer()
 {
 	if (m_pPlayer != nullptr)
 	{
 		D3DXVECTOR3 botPos = *m_pTransform->GetWorldPos();
-		D3DXVECTOR3 playerPos = *m_pPlayer->GetComponent<CTransform>()->GetWorldPos();
-		float dist = sqrtf((playerPos.x - botPos.x)*(playerPos.x - botPos.x) + (playerPos.y - botPos.y)*(playerPos.y - botPos.y));
-		m_fAngle = GetAngle(botPos, playerPos);
+		
+		float dist = sqrtf((playerPos->x - botPos.x)*(playerPos->x - botPos.x) + (playerPos->y - botPos.y)*(playerPos->y - botPos.y));
+		m_fAngle = GetAngle(botPos, *playerPos);
 	}
 }
 

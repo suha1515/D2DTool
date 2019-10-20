@@ -3,8 +3,9 @@
 class CBossScript :
 	public CEnemyScripts
 {
-	enum STATE {IDLE,DASH,STOMP,GRIND,THROWER,HIT};
+	enum STATE {IDLE,DASH,STOMP,GRIND_READY,GRIND,THROWER,HIT};
 	enum DIR {RIGHT,UP,DOWN,LEFT, RIGHT_UP_45,LEFT_UP_45,RIGHT_DOWN_45,LEFT_DOWN_45};
+	enum TYPE {ICE,FIRE};
 public:
 	CBossScript();
 	~CBossScript();
@@ -26,8 +27,11 @@ public:
 
 	void	MakeIceSkillRoute();
 
-
+	void AttackState();
 	void Hit();
+
+	void StompSkill();
+	void GrindSkill();
 private:
 	void				TrackPlayer();
 	void				GetDirPlayer();
@@ -45,15 +49,38 @@ private:
 	STATE				m_CurState;
 	STATE				m_PreState;
 private:
+	//베지어 제어점
 	D3DXVECTOR3			m_BezierControl[3];
 private:
+	D3DXVECTOR3			m_SkillPos;
+	//스킬관련 함수들
+	// 얼음 / 불 추적스킬
 	float				m_fIceSkillSpawnCool;
 	float				m_fIceSkillTime;
 	int					m_iceSkillCount;
-	bool				m_bIceSkill = false;
+	bool				m_bStompSkill = false;
+
+	//불,얼음 던지기
+	float				m_fFireGrindSkillSpawnCool;
+	float				m_fFireGrindSkillTime;
+	int					m_fFireGrindCount;
+	bool				m_bGrindSkill = false;
+
+	//대쉬 스킬
+
+	//돌내려찍기 스킬
+
 private:
 	D3DXVECTOR3*		m_Pos;
 	CGameObject*		m_pPlayer;
+	D3DXVECTOR3*		playerPos;
 	float				m_fAngle;
+
+
+private:
+	float				m_fHitCoolTime;
+	bool				m_bIsHit;
+
+	TYPE				m_Type;
 };
 

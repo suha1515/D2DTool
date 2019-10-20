@@ -1,8 +1,12 @@
 #pragma once
 //class CGameObject;
+class CShader;
+class CScreenBuffer;
+class CTarget;
 class CGameObject;
 class CObjectMgr
 {
+	enum TARGET {DIFFUSE,LIGHT_MAP};
 	DECLARE_SINGLETON(CObjectMgr)
 public:
 	CObjectMgr();
@@ -61,6 +65,7 @@ public:
 	const vector<CGameObject*>&			  GetTiles();			//타일들 접근
 
 	const map<Layer, vector<CGameObject*>>& GetStairs();			//계단들 접근
+
 public:
 	HRESULT  LoadObject(const wstring& filePath);
 	OBJ_COPY ReadCopyObject(HANDLE* hFile, DWORD* dwBytes);
@@ -90,6 +95,12 @@ private:
 	vector<pair<int, int>>			m_index;		//인덱스확인용;
 
 	list<CGameObject*>				m_Barricade;	//타일이아닌 충돌체 검사용.
+
+
+	map<TARGET, CTarget*>			m_Targets;		//렌더타겟용;
+	CScreenBuffer*					m_pScreenBuffer; //RHW
+	shared_ptr<CShader>				m_pBlendShader;	//블렌딩
+
 
 	bool							m_bIsDebug;
 	bool							m_bIsLayerDebug;

@@ -172,6 +172,12 @@
     <Filter Include="95.Component\04.Scripts\03.EffectScript\00.IceEffect">
       <UniqueIdentifier>{2838c5ff-ae35-4d7b-a019-e562ef05ac60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="96.Shaders\00.Target">
+      <UniqueIdentifier>{fa53766b-a54f-4127-bff2-41b9b2768676}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.Shaders\01.ScreenBuffer">
+      <UniqueIdentifier>{68aa568c-0646-4f5c-a07f-44bfb84ae9ab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -337,7 +343,16 @@
       <Filter>95.Component\04.Scripts\04.EnemyScripts\03.BossScript\BossIceEffect</Filter>
     </ClInclude>
     <ClInclude Include="BossFireBreath.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>95.Component\04.Scripts\04.EnemyScripts\03.BossScript\BossIceEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="BossRockSkill.h">
+      <Filter>95.Component\04.Scripts\04.EnemyScripts\03.BossScript\BossIceEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="Target.h">
+      <Filter>96.Shaders\00.Target</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenBuffer.h">
+      <Filter>96.Shaders\01.ScreenBuffer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -492,7 +507,16 @@
       <Filter>95.Component\04.Scripts\04.EnemyScripts\03.BossScript\BossIceEffect</Filter>
     </ClCompile>
     <ClCompile Include="BossFireBreath.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>95.Component\04.Scripts\04.EnemyScripts\03.BossScript\BossIceEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="BossRockSkill.cpp">
+      <Filter>95.Component\04.Scripts\04.EnemyScripts\03.BossScript\BossIceEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="Target.cpp">
+      <Filter>96.Shaders\00.Target</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenBuffer.cpp">
+      <Filter>96.Shaders\01.ScreenBuffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -513,6 +537,9 @@
       <Filter>96.Shaders\fxfile</Filter>
     </FxCompile>
     <FxCompile Include="..\Shaders\myShader1.fx">
+      <Filter>96.Shaders\fxfile</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Shaders\Blending.fx">
       <Filter>96.Shaders\fxfile</Filter>
     </FxCompile>
   </ItemGroup>
