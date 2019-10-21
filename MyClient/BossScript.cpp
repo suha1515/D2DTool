@@ -63,6 +63,11 @@ void CBossScript::OnInit()
 	m_fRadius = 30.f;
 
 	m_Type = ICE;
+
+	m_CurPhase = PHASE1;
+	m_PrePhase = m_CurPhase;
+
+	m_iPhase1Count = 0;
 }
 
 void CBossScript::OnEnable()
@@ -73,11 +78,7 @@ void CBossScript::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move )
 {
 	if (pGameObject->GetObjectTag() == L"Player_Sweep")
 	{
-		if (!m_bIsHit)
-		{
 			GetHit(D3DXVECTOR3(0,0,0),10.f,20.f);
-			m_bIsHit = true;
-		}		
 	}
 	if (pGameObject == m_pPlayer)
 	{
@@ -113,23 +114,24 @@ int CBossScript::OnUpdate()
 		OnInit();
 		m_bIsInit = true;
 	}
-	TrackPlayer();
-	GetDirPlayer();
-	AnimState();
-	DirState();
-
-	if (m_bIsHit)
+	if (!m_bIsDeadEffect)
 	{
-		if (m_fHitCoolTime > 0.5f)
-		{
-			m_bIsHit = false;
-			m_fHitCoolTime -= m_fHitCoolTime;
-		}
-		else
-			m_fHitCoolTime += CTimeMgr::GetInstance()->GetDeltaTime();
+		TrackPlayer();
+		GetDirPlayer();
+		DirState();
+		
+		PhaseState();	
+	}
+
+	AttackState();
+	AnimState();
+	if (m_Hp < 0)
+	{
+		m_CurState = DEAD;
+		m_bIsDeadEffect = true;
 	}
 	
-	AttackState();
+	
 	
 	return 0;
 }
@@ -194,8 +196,9 @@ void CBossScript::DirState()
 
 void CBossScript::AnimState()
 {
-	if (m_CurState == HIT|| m_bIsHit)
+	if (m_CurState == HIT&&m_bIsHit)
 	{
+		m_pTexture->SetPass(1);
 		Hit();
 	}
 
@@ -220,6 +223,27 @@ void CBossScript::AnimState()
 			case LEFT:
 			case RIGHT:
 				m_pAnimator->Play(L"Boss_Idle_Right", ANIMATION_TYPE::ANIMATION_LOOP);
+				break;
+			}
+			break;
+		case MOVE:
+			m_tempPos = *m_Pos;
+			cout << "이동" << endl;
+			switch (m_CurDir)
+			{
+			case LEFT_UP_45:
+			case RIGHT_UP_45:
+			case UP:
+				m_pAnimator->Play(L"Boss_Run_UP", ANIMATION_TYPE::ANIMATION_LOOP);
+				break;
+			case LEFT_DOWN_45:
+			case RIGHT_DOWN_45:
+			case DOWN:
+				m_pAnimator->Play(L"Boss_Run_Down", ANIMATION_TYPE::ANIMATION_LOOP);
+				break;
+			case LEFT:
+			case RIGHT:
+				m_pAnimator->Play(L"Boss_Run_Right", ANIMATION_TYPE::ANIMATION_LOOP);
 				break;
 			}
 			break;
@@ -362,7 +386,6 @@ void CBossScript::AnimState()
 			}
 			break;
 		case HIT:
-			m_pTexture->SetPass(1);
 			switch (m_CurDir)
 			{
 			case LEFT_UP_45:
@@ -413,20 +436,51 @@ void CBossScript::AnimState()
 
 void CBossScript::Move()
 {
+	
+	if (m_CurState == MOVE)
+	{
+		if (!m_MoveInit)
+		{
+			random_device	rn;
+			mt19937_64 rnd(rn());
+			uniform_real_distribution<float> nDir(-1.0f, 1.0f);
+
+			D3DXVECTOR3 dir(nDir(rnd), nDir(rnd), 0.f);
+
+			D3DXVec3Normalize(&dir, &dir);
+
+			m_MovePos = dir*20.f + (*playerPos);
+			m_MoveInit = true;
+			m_tempPos = *m_Pos;
+		}
+		if (m_fMoveTIme < 2.0f)
+		{
+			*m_Pos = Lerp(m_tempPos, m_MovePos, m_fMoveTIme/2.0f);
+			m_fMoveTIme += CTimeMgr::GetInstance()->GetDeltaTime();
+		}
+		else
+		{
+			m_fMoveTIme -= m_fMoveTIme;
+			m_CurState = IDLE;
+			m_MoveInit = false;
+		}
+	}
 }
 
 void CBossScript::GetHit(D3DXVECTOR3 dirVec, float power, float dmg)
 {
-	if(m_CurState!=THROWER&&m_CurState!=GRIND&&m_CurState!=STOMP&&m_CurState!=DASH)
+	if(m_CurState!=THROWER&&m_CurState!=GRIND&&m_CurState!=STOMP&&m_CurState!=DASH&&m_CurState!=DASH_READY&&!m_bIsHit)
 	m_CurState = HIT;
 	//m_DirVec = dirVec;
 	//m_fVelocity = power;
-
-	//m_Hp -= dmg;
-
-	m_fWhiteValue = 0.2f;
-	m_pTexture->SetFadeColor(XMFLOAT3(1.0f, 0.0f, 0.0f));
-	m_bIsHit = true;
+	if (!m_bIsHit)
+	{
+		m_Hp -= dmg;
+		cout << "맞음" << endl;
+		m_fWhiteValue = 0.2f;
+		m_pTexture->SetFadeColor(XMFLOAT3(1.0f, 0.0f, 0.0f));
+		m_bIsHit = true;
+	}
 }
 
 void CBossScript::MakeIceSkillRoute()
@@ -559,13 +613,14 @@ void CBossScript::MakeIceSkillRoute()
 
 void CBossScript::AttackState()
 {
-
+	
 	StompSkill();
 	GrindSkill();
 	ThrowerSkill();
 	DashSkill();
 	DashReady();
 	DeadEffect();
+	Move();
 	if (m_bIsDead)
 	{
 		if (m_fDeadRestTime > 2.0f)
@@ -575,7 +630,7 @@ void CBossScript::AttackState()
 		}
 		m_fDeadRestTime += CTimeMgr::GetInstance()->GetDeltaTime();
 	}
-	if (m_CurState != STOMP&&m_CurState!=GRIND)
+	/*if (m_CurState != STOMP&&m_CurState!=GRIND)
 	{
 		if (CKeyMgr::GetInstance()->KeyPressing(KEY_V))
 		{
@@ -589,9 +644,9 @@ void CBossScript::AttackState()
 			m_CurState = DEAD;
 		else if (CKeyMgr::GetInstance()->KeyPressing(KEY_U))
 		{
-			m_CurState = THROWER;
+			m_CurState = MOVE;
 		}
-	}
+	}*/
 	if (m_CurState == DASH_STOP && !m_pAnimator->IsPlaying())
 	{
 		m_CurState = IDLE;
@@ -610,8 +665,14 @@ void CBossScript::Hit()
 		m_fWhiteValue = 0.2f;
 		if(m_CurState==HIT)
 			m_CurState = IDLE;
-		m_bIsHit = false;
 	}
+	if (m_fHitCoolTime > 1.7f)
+	{
+		m_bIsHit = false;
+		m_fHitCoolTime -= m_fHitCoolTime;
+		m_pTexture->SetPass(0);
+	}
+	m_fHitCoolTime += CTimeMgr::GetInstance()->GetDeltaTime();
 }
 
 
@@ -648,7 +709,7 @@ void CBossScript::StompSkill()
 				if (pos != m_PrePlayerPos)
 				{
 					if (m_Type == ICE)
-						CEffect::CreateEffect<CBossFireBreath>(pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Effect", LAYER_1);
+						CEffect::CreateEffect<CBossIceEffect>(pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Effect", LAYER_1);
 					else
 						CEffect::CreateEffect<CBossFireBreath>(pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Effect", LAYER_1);
 				}
@@ -783,6 +844,7 @@ void CBossScript::DashReady()
 {
 	if (m_CurState == DASH_READY)
 	{
+		m_pTexture->SetFadeColor(XMFLOAT3(1.0f, 1.0f, 1.0f));
 		if (m_iFlickerCount < 6)
 		{
 			if (m_fFlickerTime > 0.5f)
@@ -858,6 +920,207 @@ void CBossScript::DeadEffect()
 			m_fExploSpawTime += CTimeMgr::GetInstance()->GetDeltaTime();	
 		}
 	}
+}
+
+void CBossScript::PhaseState()
+{
+	switch (m_CurPhase)
+	{
+	case PHASE1:
+	{
+		cout << m_iPhase1Count << endl;
+		if (m_PreiPhase1Count != m_iPhase1Count)
+		{
+			switch (m_iPhase1Count)
+			{
+			case 0:
+				m_Type = ICE;
+				m_CurState = STOMP;
+				break;
+			case 1:
+				m_Type = ICE;
+				m_CurState = STOMP;
+				break;
+			case 2:
+				m_Type = ICE;
+				m_CurState = STOMP;
+				break;
+			case 3:
+				m_CurState = MOVE;
+				break;
+			case 4:
+				m_CurState = GRIND_READY;
+				break;
+			case 5:
+				m_CurState = MOVE;
+				break;
+			case 6:
+				m_CurState = DASH_READY;
+				break;
+			case 7:
+				m_CurState = DASH_READY;
+				break;
+			case 8:
+				m_Type =FIRE;
+				m_CurState = STOMP;
+				break;
+			case 9:
+				m_CurState = MOVE;
+				break;
+			case 10:
+				m_CurState = THROWER;
+				break;
+			}
+			m_PreiPhase1Count = m_iPhase1Count;
+		}
+
+		switch (m_iPhase1Count)
+		{
+		case 0:
+			if (m_CurState == IDLE)
+			{
+				if (m_fPhase1GapTime > 0.8f)
+				{
+					m_iPhase1Count++;
+					m_fPhase1GapTime -= m_fPhase1GapTime;
+				}
+				else
+					m_fPhase1GapTime += CTimeMgr::GetInstance()->GetDeltaTime();
+			}
+			break;
+		case 1:
+			if (m_CurState == IDLE)
+			{
+				if (m_fPhase1GapTime > 0.8f)
+				{
+					m_iPhase1Count++;
+					m_fPhase1GapTime -= m_fPhase1GapTime;
+				}
+				else
+					m_fPhase1GapTime += CTimeMgr::GetInstance()->GetDeltaTime();
+			}
+			break;
+		case 2:
+			if (m_CurState == IDLE)
+			{
+				if (m_fPhase1GapTime > 0.8f)
+				{
+					m_iPhase1Count++;
+					m_fPhase1GapTime -= m_fPhase1GapTime;
+				}
+				else
+					m_fPhase1GapTime += CTimeMgr::GetInstance()->GetDeltaTime();
+			}
+			break;
+		case 3:
+			if (m_CurState == IDLE)
+			{
+				if (m_fPhase1GapTime > 3.0f)
+				{
+					m_iPhase1Count++;
+					m_fPhase1GapTime -= m_fPhase1GapTime;
+				}
+				else
+					m_fPhase1GapTime += CTimeMgr::GetInstance()->GetDeltaTime();
+			}
+			break;
+		case 4:
+			if (m_CurState == IDLE)
+			{
+				if (m_fPhase1GapTime > 3.0f)
+				{
+					m_iPhase1Count++;
+					m_fPhase1GapTime -= m_fPhase1GapTime;
+				}
+				else
+					m_fPhase1GapTime += CTimeMgr::GetInstance()->GetDeltaTime();
+			}
+			break;
+		case 5:
+			if (m_CurState == IDLE)
+			{
+				if (m_fPhase1GapTime > 1.0f)
+				{
+					m_iPhase1Count++;
+					m_fPhase1GapTime -= m_fPhase1GapTime;
+				}
+				else
+					m_fPhase1GapTime += CTimeMgr::GetInstance()->GetDeltaTime();
+			}
+			break;
+		case 6:
+			if (m_CurState == IDLE)
+			{
+				if (m_fPhase1GapTime > 1.0f)
+				{
+					m_iPhase1Count++;
+					m_fPhase1GapTime -= m_fPhase1GapTime;
+				}
+				m_fPhase1GapTime += CTimeMgr::GetInstance()->GetDeltaTime();
+			}
+			break;
+		case 7:
+			if (m_CurState == IDLE)
+			{
+				if (m_fPhase1GapTime > 1.0f)
+				{
+					m_iPhase1Count++;
+					m_fPhase1GapTime -= m_fPhase1GapTime;
+				}
+				m_fPhase1GapTime += CTimeMgr::GetInstance()->GetDeltaTime();
+			}
+			break;
+		case 8:
+			if (m_CurState == IDLE)
+			{
+				if (m_fPhase1GapTime > 2.0f)
+				{
+					m_iPhase1Count++;
+					m_fPhase1GapTime -= m_fPhase1GapTime;
+				}
+				m_fPhase1GapTime += CTimeMgr::GetInstance()->GetDeltaTime();
+			}
+			else
+				m_CurState = STOMP;
+			break;
+		case 9:
+			if (m_CurState == IDLE)
+			{
+				if (m_fPhase1GapTime > 3.0f)
+				{
+					m_iPhase1Count++;
+					m_fPhase1GapTime -= m_fPhase1GapTime;
+				}
+				else
+					m_fPhase1GapTime += CTimeMgr::GetInstance()->GetDeltaTime();
+			}
+			break;
+
+		case 10:
+			if (m_CurState == IDLE)
+			{
+				if (m_fPhase1GapTime > 3.0f)
+				{
+					m_iPhase1Count=0;
+					m_fPhase1GapTime -= m_fPhase1GapTime;
+				}
+				else
+					m_fPhase1GapTime += CTimeMgr::GetInstance()->GetDeltaTime();
+			}
+			break;
+		}
+		
+	}
+		break;
+	case PHASE2:
+		break;
+
+	}
+
+}
+
+void CBossScript::PhaseStae2()
+{
 }
 
 void CBossScript::TrackPlayer()

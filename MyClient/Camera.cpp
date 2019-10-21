@@ -34,18 +34,8 @@ void CCamera::Initialize(int width, int height, float angle, D3DXVECTOR3 scaleFa
 
 void CCamera::Update()
 {
-	m_ViewMat = D3DXMATRIX(
-		m_ScaleFactors.x * cosf(m_fAngle), m_ScaleFactors.x * sinf(m_fAngle), 0, 0,
-		-m_ScaleFactors.y * sinf(m_fAngle), m_ScaleFactors.y * cosf(m_fAngle), 0, 0,
-		0, 0, m_ScaleFactors.z, 0,
-		-m_CamPos.x*m_ScaleFactors.x*cosf(m_fAngle) + m_CamPos.y * m_ScaleFactors.y * sinf(m_fAngle), -m_CamPos.x * m_ScaleFactors.y * sinf(m_fAngle) - m_CamPos.y * m_ScaleFactors.y * cosf(m_fAngle), 0, 1);
 	
 	//m_CamPos.x = this->width / 2.0f, m_CamPos.y = this->height / 2.0f;
-	if (m_Following != nullptr)
-	{
-		float time = CTimeMgr::GetInstance()->GetDeltaTime();
-		m_CamPos = Lerp(m_CamPos, *m_FollowPos, CTimeMgr::GetInstance()->GetDeltaTime()*2.f);
-	}
 	
 }
 
@@ -73,7 +63,7 @@ void CCamera::LateUpdate()
 			}
 		}
 	}
-
+	
 	if (m_bIsShaking)
 	{
 		if (m_fShakeTime > 0)
@@ -87,10 +77,9 @@ void CCamera::LateUpdate()
 			D3DXVec3Normalize(&dir, &dir);
 			D3DXVECTOR3 pos;
 			if (m_Following != nullptr)
-				pos = dir*m_fAmountShake + m_PreCamPos;
+				pos = dir*m_fAmountShake +m_CamPos;
 			else
 				pos = dir*m_fAmountShake + m_InitialPos;
-
 			m_CamPos = pos;
 			m_fShakeTime -= CTimeMgr::GetInstance()->GetDeltaTime();
 		}
@@ -99,10 +88,19 @@ void CCamera::LateUpdate()
 			m_fShakeTime = 0.0f;
 			m_bIsShaking = false;
 		}
+	}	
+	if (m_Following != nullptr)
+	{
+		m_CamPos = Lerp(m_CamPos, *m_FollowPos, CTimeMgr::GetInstance()->GetDeltaTime()*2.f);
+		//m_CamPos = *m_FollowPos;
 	}
-	
-}
 
+	m_ViewMat = D3DXMATRIX(
+		m_ScaleFactors.x * cosf(m_fAngle), m_ScaleFactors.x * sinf(m_fAngle), 0, 0,
+		-m_ScaleFactors.y * sinf(m_fAngle), m_ScaleFactors.y * cosf(m_fAngle), 0, 0,
+		0, 0, m_ScaleFactors.z, 0,
+		-m_CamPos.x*m_ScaleFactors.x*cosf(m_fAngle) + m_CamPos.y * m_ScaleFactors.y * sinf(m_fAngle), -m_CamPos.x * m_ScaleFactors.y * sinf(m_fAngle) - m_CamPos.y * m_ScaleFactors.y * cosf(m_fAngle), 0, 1);
+}
 void CCamera::Follow(CGameObject * object)
 {
 	m_Following = object;

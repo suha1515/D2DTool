@@ -104,7 +104,7 @@ void CDestructiveObject::Hit()
 {
 	if (m_fWhiteValue < 0.5f)
 	{
-		m_pTexture->SetAlpha(m_fWhiteValue*2.f);
+		m_pTexture->SetValue(1.0f-m_fWhiteValue*2.f);
 		m_fWhiteValue += CTimeMgr::GetInstance()->GetDeltaTime();
 	}
 	else

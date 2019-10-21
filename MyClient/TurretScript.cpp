@@ -420,7 +420,7 @@ void CTurretScript::Hit()
 {
 	if (m_fWhiteValue < 0.5f)
 	{
-		m_pTexture->SetAlpha(m_fWhiteValue*2.f);
+		m_pTexture->SetValue(1.0-m_fWhiteValue*2.f);
 		m_fWhiteValue += CTimeMgr::GetInstance()->GetDeltaTime();
 	}
 	else

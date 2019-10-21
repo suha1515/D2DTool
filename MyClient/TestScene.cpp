@@ -23,9 +23,8 @@ void CTestScene::Update()
 	m_Cam->Update();
 	m_Cam->SetTransform();
 	m_Mouse->Update();
-	m_EventChecker->Update();
 	m_pObjectMgr->Update();
-
+	m_EventChecker->Update();
 }
 
 void CTestScene::LateUpdate()
@@ -85,6 +84,7 @@ HRESULT CTestScene::Initialize()
 
 void CTestScene::Release()
 {
+	m_pObjectMgr->Clear();
 	delete m_Mouse;
 	delete m_Cam;
 	delete m_EventChecker;

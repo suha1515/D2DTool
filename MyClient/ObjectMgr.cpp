@@ -37,7 +37,7 @@ CObjectMgr::~CObjectMgr()
 		i.second->Release();
 	m_Targets.clear();
 
-	m_pScreenBuffer->Release();
+//	m_pScreenBuffer->Release();
 }
 
 
@@ -105,7 +105,7 @@ void CObjectMgr::AddScriptObject(CScripts * script)
 
 void CObjectMgr::Initialize()
 {
-	CTarget* target = new CTarget;
+	/*CTarget* target = new CTarget;
 	target->Initialize(WINCX, WINCY, D3DFMT_A8R8G8B8, D3DCOLOR_ARGB(255, 0, 0, 0));
 	m_Targets.insert({ DIFFUSE,target });
 	target = new CTarget;
@@ -114,7 +114,7 @@ void CObjectMgr::Initialize()
 	m_pScreenBuffer = new CScreenBuffer;
 	m_pScreenBuffer->Initialize(WINCX, WINCY);
 
-	m_pBlendShader = CShaderMgr::GetInstance()->GetEffect(L"BlendShader");
+	m_pBlendShader = CShaderMgr::GetInstance()->GetEffect(L"BlendShader");*/
 	for (size_t i = 0; i < m_Objects.size(); ++i)
 	{
 		for (auto& j : m_Objects[i])
@@ -293,22 +293,23 @@ void CObjectMgr::Render()
 	m_CollideTile.clear();
 	m_Barricade.clear();
 	m_LightObject.clear();
+
 	//m_Targets[DIFFUSE]->ChangeToPreDevice(0);
 
 	//m_pBlendShader->GetEffect()->SetTexture("tex0", m_Targets[DIFFUSE]->GetTexture());
-	//m_pBlendShader->GetEffect()->SetTexture("tex1", m_Targets[LIGHT_MAP]->GetTexture());
+	//D3DXVECTOR3 color = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	//m_pBlendShader->GetEffect()->SetFloatArray("color",color,3);
+	////m_pBlendShader->GetEffect()->SetTexture("tex1", m_Targets[LIGHT_MAP]->GetTexture());
 	//m_pBlendShader->GetEffect()->Begin(nullptr,0);
 	//m_pBlendShader->GetEffect()->BeginPass(0);
 
 	//m_pScreenBuffer->Render();
-	/*if (GetKeyState(VK_RETURN) < 0)
-	{
-		D3DXSaveTextureToFile(L"../Texture/nORMAL.jpg", D3DXIFF_JPG, m_Targets[LIGHT_MAP]->GetTexture(), nullptr);
-	}*/
+	//if (GetKeyState(VK_RETURN) < 0)
+	//{
+	//	D3DXSaveTextureToFile(L"../Texture/nORMAL.jpg", D3DXIFF_JPG, m_Targets[LIGHT_MAP]->GetTexture(), nullptr);
+	//}
 	//m_pBlendShader->GetEffect()->EndPass();
 	//m_pBlendShader->GetEffect()->End();
-
-
 }
 
 void CObjectMgr::DebugRender()
@@ -502,6 +503,12 @@ void CObjectMgr::Clear()
 	}
 	m_CollideObj.clear();
 	m_SciptObject.clear();
+	m_Scripts.clear();
+	m_LightObject.clear();
+	m_Tiles.clear();
+	m_RenderTiles.clear();
+	m_CollideTile.clear();
+	m_Barricade.clear();
 }
 void CObjectMgr::ClearCopy()
 {

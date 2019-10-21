@@ -51,5 +51,8 @@ private:
 
 	bool									m_CamEvent1 = false;
 	bool									m_CamEvent2 = false;
+	bool									m_CamEvent3 = false;
+
+	bool									m_bIsChangeScene = false;
 };
 

@@ -3,7 +3,8 @@
 class CBossScript :
 	public CEnemyScripts
 {
-	enum STATE {IDLE,DASH_READY,DASH,DASH_STOP,STOMP,GRIND_READY,GRIND,THROWER,HIT,DEAD};
+	enum STATE {IDLE,DASH_READY,MOVE,DASH,DASH_STOP,STOMP,GRIND_READY,GRIND,THROWER,HIT,DEAD};
+	enum PHASE {PHASE_IN,PHASE1,PHASE2,PHASE3};
 	enum DIR   {RIGHT,UP,DOWN,LEFT, RIGHT_UP_45,LEFT_UP_45,RIGHT_DOWN_45,LEFT_DOWN_45};
 	enum TYPE  {ICE,FIRE};
 public:
@@ -36,6 +37,9 @@ public:
 	void DashSkill();
 	void DashReady();
 	void DeadEffect();
+
+	void PhaseState();
+	void PhaseStae2();
 private:
 	void				TrackPlayer();
 	void				GetDirPlayer();
@@ -50,13 +54,27 @@ private:
 	DIR					m_CurDir;
 	DIR					m_PreDir;
 
+	PHASE				m_CurPhase;
+	PHASE				m_PrePhase;
+
 	STATE				m_CurState;
 	STATE				m_PreState;
 private:
 	//베지어 제어점
 	D3DXVECTOR3			m_BezierControl[3];
 private:
+	int					m_iPhase1Count = 0;
+	int					m_PreiPhase1Count = 0;
+	float				m_fPhase1GapTime = 0.0f;
+	int					m_iPhase2Count = 0;
+	float				m_fPhase2GapTime = 0.0f;
+
 	D3DXVECTOR3			m_SkillPos;
+
+	bool				m_MoveInit = false;
+	D3DXVECTOR3			m_MovePos;
+	float				m_fMoveTIme=0.0f;
+	float				m_fMoveTotal = 0.0f;
 	//스킬관련 함수들
 	// 얼음 / 불 추적스킬
 	float				m_fIceSkillSpawnCool;
@@ -92,7 +110,8 @@ private:
 	float			   m_fDeadEffTime=0.0f;
 	float			   m_fExploSpawTime=0.0f;
 	bool			   m_bIsDead = false;
-	bool			   m_bExplosive = false;;
+	bool			   m_bIsDeadEffect = false;
+	bool			   m_bExplosive = false;
 	float			   m_fDeadAlpha;
 	float			   m_fDeadRestTime;
 	D3DXVECTOR3		   m_DeadColor;

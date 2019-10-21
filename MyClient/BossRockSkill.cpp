@@ -142,7 +142,7 @@ void CBossRockSkill::AttackState()
 			m_RockPos = &m_pRock->GetComponent<CTransform>()->GetLocalPosition();
 			break;
 		case CRUSHING:
-			CCameraMgr::GetInstance()->ShakeCamera(0.7f, 0.3f);
+			CCameraMgr::GetInstance()->ShakeCamera(1.5f, 0.3f);
 			break;
 		case PARTICLE:
 			break;

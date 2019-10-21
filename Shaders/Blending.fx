@@ -1,6 +1,6 @@
 texture tex0;
 texture tex1;
-
+float4 color;
 sampler s_2D = sampler_state
 {
 	Texture = (tex0);
@@ -40,7 +40,8 @@ PS_OUT PS_MAIN(VS_OUT In)
 	light_color.xyz += ambient;
 	light_color = saturate(light_color);
 
-	p_out.v_color *= light_color;
+	//p_out.v_color *= light_color;
+	//p_out.v_color.rgb = color;
 	return p_out;	
 }
 technique Default_Device

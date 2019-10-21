@@ -69,6 +69,8 @@ int CCameraEvent::OnUpdate()
 				m_pCameraMgr->GetMainCamera()->Follow(CObjectMgr::GetInstance()->m_pPlayer);
 			}
 		}
+		else
+			m_bIsEventEnd = true;
 	}
 	return 0;
 }

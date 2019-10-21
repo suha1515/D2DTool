@@ -18,7 +18,6 @@ HRESULT CTarget::Initialize(const int& width, const int& height, const D3DFORMAT
 	HRESULT hr = 0;
 	hr = D3DXCreateTexture(m_pDevice, WINCX, WINCY, 1, D3DUSAGE_RENDERTARGET, format, D3DPOOL_DEFAULT, &m_pTexture);
 	FAILED_CHECK_MSG_RETURN(hr, L"타겟 텍스쳐 생성 실패", E_FAIL);
-
 	//서페이스 정보 받기
 	hr = m_pTexture->GetSurfaceLevel(0, &m_pCurSurface);
 	FAILED_CHECK_MSG_RETURN(hr, L" 서페이스 받기 실패", E_FAIL);
@@ -69,10 +68,10 @@ HRESULT CTarget::Release()
 	HRESULT hr = 0;
 	NULL_CHECK_MSG_RETURN(m_pCurSurface, L"최근 서페이스 널",E_FAIL);
 	hr = m_pCurSurface->Release();
-	FAILED_CHECK_MSG_RETURN(hr, L"서페이스 해제 실패", E_FAIL);
+	FAILED_CHECK_MSG_RETURN(hr, L"최근 서페이스 해제 실패", E_FAIL);
 	NULL_CHECK_MSG_RETURN(m_pPreSurface, L"이전 서페이스 널",E_FAIL);
 	hr = m_pPreSurface->Release();
-	FAILED_CHECK_MSG_RETURN(hr, L"서페이스 해제 실패", E_FAIL);
+	FAILED_CHECK_MSG_RETURN(hr, L"최근 서페이스 해제 실패", E_FAIL);
 
 	return S_OK;
 }
