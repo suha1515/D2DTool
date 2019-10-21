@@ -5,6 +5,7 @@
 ../Animation/Door.anim
 ../Animation/Dust_Effect.anim
 ../Animation/Explosion_Effect.anim
+../Animation/Explosion_Round.anim
 ../Animation/Fire_Effect.anim
 ../Animation/GuideLine.anim
 ../Animation/Ice_Effect.anim

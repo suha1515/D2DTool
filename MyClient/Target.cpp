@@ -67,10 +67,10 @@ HRESULT CTarget::ClearColor()
 HRESULT CTarget::Release()
 {
 	HRESULT hr = 0;
-	NULL_CHECK_MSG(m_pCurSurface, L"최근 서페이스 널");
+	NULL_CHECK_MSG_RETURN(m_pCurSurface, L"최근 서페이스 널",E_FAIL);
 	hr = m_pCurSurface->Release();
 	FAILED_CHECK_MSG_RETURN(hr, L"서페이스 해제 실패", E_FAIL);
-	NULL_CHECK_MSG(m_pPreSurface, L"이전 서페이스 널");
+	NULL_CHECK_MSG_RETURN(m_pPreSurface, L"이전 서페이스 널",E_FAIL);
 	hr = m_pPreSurface->Release();
 	FAILED_CHECK_MSG_RETURN(hr, L"서페이스 해제 실패", E_FAIL);
 

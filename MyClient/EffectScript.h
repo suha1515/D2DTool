@@ -8,7 +8,7 @@ class CEffectScript :
 	public CScripts
 {
 public:
-	 enum  EFFECT_TYPE {MOVABLE,NORMAL};
+	 enum  EFFECT_TYPE {MOVABLE,NORMAL,DASH};
 public:
 	CEffectScript();
 	~CEffectScript();
@@ -28,6 +28,9 @@ public:
 	void SetType(EFFECT_TYPE type);
 	void SetDir(D3DXVECTOR3 dir);
 	void SetSpeed(float speed);
+	
+	//Dash
+	void SetColor(D3DXVECTOR3 color);
 protected:
 	CAnimator*		  m_pAnimator;
 	CTransform*		  m_pTransform;
@@ -38,9 +41,15 @@ protected:
 	float			  m_fDeadTime;
 	float			  m_fTime;
 
+
+	//Move
 	D3DXVECTOR3		  m_DirVec;
 	float			  m_fSpeed;
 
+	//Dash
+	D3DXVECTOR3		  m_DashColor;
+	float			  m_fDsahTime;
+	float			  m_fDashAlpha;
 private:
 	EFFECT_TYPE m_EffectType;
 	D3DXVECTOR3* m_Pos;

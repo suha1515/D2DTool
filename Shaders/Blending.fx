@@ -41,7 +41,7 @@ PS_OUT PS_MAIN(VS_OUT In)
 	light_color = saturate(light_color);
 
 	p_out.v_color *= light_color;
-	return p_out;
+	return p_out;	
 }
 technique Default_Device
 {

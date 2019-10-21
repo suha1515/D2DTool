@@ -22,6 +22,7 @@ public:
 	void SetAlpha(const float& alhpa);
 	void SetValue(const float& lerp);
 	void SetFadeColor(const XMFLOAT3& color);
+	void SetColorToAdd(const D3DXVECTOR3& color);
 public:
 	//텍스처 위치 가져오기
 	const XMFLOAT2&		GetTexPos(const int& index);
@@ -74,6 +75,7 @@ private:
 	int							m_iPassNumber;
 
 	XMFLOAT3					m_FadeColor;
+	D3DXVECTOR3					m_ColorToAdd;
 };
 
 #endif

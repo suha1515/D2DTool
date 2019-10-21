@@ -5,6 +5,7 @@
 #include "Animator.h"
 #include "Transform.h"
 #include "BoxCollider.h"
+#include "TextureRenderer.h"
 
 CEffectScript::CEffectScript()
 {
@@ -46,6 +47,12 @@ int CEffectScript::OnUpdate()
 		m_Pos->x += m_DirVec.x*m_fSpeed*CTimeMgr::GetInstance()->GetDeltaTime();
 		m_Pos->y += m_DirVec.y*m_fSpeed*CTimeMgr::GetInstance()->GetDeltaTime();
 	}
+	else if (m_EffectType == DASH)
+	{
+		m_pTexture->SetColorToAdd(m_DashColor);
+		m_pTexture->SetAlpha(1.0f - (m_fTime / m_fDeadTime));
+	}
+
 
 	if (m_AnimType == ANIMATION_ONCE)
 	{
@@ -84,6 +91,7 @@ void CEffectScript::SetEffect(const wstring & clips, const ANIMATION_TYPE& type,
 	m_pAnimator = m_pGameObject->GetComponent<CAnimator>();
 	m_pTransform = m_pGameObject->GetComponent<CTransform>();
 	m_pBoxCollider = m_pGameObject->GetComponent<CBoxCollider>();
+	m_pTexture = m_pGameObject->GetComponent<CTextureRenderer>();
 	if (m_pAnimator != nullptr)
 	{
 		m_pAnimator->SetClips(clips);
@@ -107,4 +115,9 @@ void CEffectScript::SetDir(D3DXVECTOR3 dir)
 void CEffectScript::SetSpeed(float speed)
 {
 	m_fSpeed = speed;
+}
+
+void CEffectScript::SetColor(D3DXVECTOR3 color)
+{
+	m_DashColor = color;
 }

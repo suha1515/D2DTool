@@ -19,6 +19,8 @@ const DWORD KEY_D = 0x00000800;
 const DWORD KEY_P = 0x00001000;
 const DWORD KEY_V = 0x00002000;
 const DWORD KEY_O = 0x00004000;
+const DWORD KEY_I = 0x00008000;
+const DWORD KEY_U = 0x00010000;
 
 class CMouse;
 class CKeyMgr

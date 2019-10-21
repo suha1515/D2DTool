@@ -49,6 +49,11 @@ void CKeyMgr::Update()
 		m_dwKey |= KEY_V;
 	if (GetAsyncKeyState('O') & 0x8000)
 		m_dwKey |= KEY_O;
+	if (GetAsyncKeyState('I') & 0x8000)
+		m_dwKey |= KEY_I;
+	if (GetAsyncKeyState('U') & 0x8000)
+		m_dwKey |= KEY_U;
+
 
 }
 

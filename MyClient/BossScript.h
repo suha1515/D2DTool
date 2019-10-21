@@ -3,7 +3,7 @@
 class CBossScript :
 	public CEnemyScripts
 {
-	enum STATE {IDLE,DASH_READY,DASH,DASH_STOP,STOMP,GRIND_READY,GRIND,THROWER,HIT};
+	enum STATE {IDLE,DASH_READY,DASH,DASH_STOP,STOMP,GRIND_READY,GRIND,THROWER,HIT,DEAD};
 	enum DIR   {RIGHT,UP,DOWN,LEFT, RIGHT_UP_45,LEFT_UP_45,RIGHT_DOWN_45,LEFT_DOWN_45};
 	enum TYPE  {ICE,FIRE};
 public:
@@ -34,6 +34,8 @@ public:
 	void GrindSkill();
 	void ThrowerSkill();
 	void DashSkill();
+	void DashReady();
+	void DeadEffect();
 private:
 	void				TrackPlayer();
 	void				GetDirPlayer();
@@ -68,10 +70,15 @@ private:
 	int					m_fFireGrindCount;
 	bool				m_bGrindSkill = false;
 
+	//대쉬 준비
+	float			   m_fDashReadyTime=0.0f;
+	float			   m_fFlickerTime=0.0f;
+	int				   m_iFlickerCount=0;
+
 	//대쉬 스킬
-	float			   m_fShadowSpawnTime;
-	float			   m_fDashTime;
-	bool			   m_bDashSkill = false;
+	float			    m_fShadowSpawnTime;
+	float			    m_fDashTime;
+	bool			    m_bDashSkill = false;
 	D3DXVECTOR3			m_tempPos;
 
 	//돌내려찍기 스킬
@@ -80,6 +87,11 @@ private:
 	int				   m_iRockCount;
 	bool			   m_bRockSkill = false;
 	bool			   m_bDustOnce = false;
+
+	//죽는이펙트
+	float			   m_fDeadEffTime=0.0f;
+	float			   m_fExploSpawTime=0.0f;
+	bool			   m_bIsDead = false;
 
 
 private:

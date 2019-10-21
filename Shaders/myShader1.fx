@@ -8,6 +8,7 @@ float2  texSize;			//텍스쳐 크기.
 float	zValue;				//z값
 texture tex0;
 float3 ColortoFade;			//컬러값.
+float3 ColortoAdd;			//더해줄 컬러값.
 
 float	gFloat;				//페이드아웃인전용 흐리기전용
 float   gFloat2;
@@ -132,6 +133,19 @@ PS_OUT PS_MAIN3(VS_OUT In)
 	p_out.v_color.r = p_out.v_color.a;
 	return p_out;
 }
+PS_OUT PS_MAIN4(VS_OUT In)
+{
+	PS_OUT p_out = (PS_OUT)0;
+
+	p_out.v_color = tex2D(s_2D, In.uv);
+
+	//p_out.v_color.rgb += float3(0.1f,0.1f,0.1f);
+	float3 coloradd = float3(1.3f, 2.0f, 2.5f);
+	float4 color = float4(coloradd, 1.0f);
+	p_out.v_color = (p_out.v_color*color)*gFloat;
+
+	return p_out;
+}
 
 
 // 장치성능에 따른 셰이더 선택을 위해 존재.
@@ -169,6 +183,16 @@ technique Default_Device
 		ZEnable = false;
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MAIN3();
+	}
+	pass DashEffect
+	{
+		CullMode = NONE;
+		AlphaBlendEnable = true;
+		SrcBlend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_MAIN4();
 	}
 }
 

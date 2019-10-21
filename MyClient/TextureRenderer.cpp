@@ -79,6 +79,7 @@ void CTextureRenderer::Render(const D3DXMATRIX& world)
 		pEffect->SetFloat("gFloat", m_Alpha);
 		pEffect->SetFloatArray("ColortoFade", colorFade, 3);
 		pEffect->SetFloat("gFloat2", m_Lerp);
+		pEffect->SetFloatArray("ColortoAdd", m_ColorToAdd, 3);
 
 		pEffect->SetTexture("tex0", m_texInfo->pTexture);
 		//이 밑에 두함수 조사.
@@ -167,6 +168,11 @@ void CTextureRenderer::SetValue(const float & lerp)
 void CTextureRenderer::SetFadeColor(const XMFLOAT3 & color)
 {
 	m_FadeColor = color;
+}
+
+void CTextureRenderer::SetColorToAdd(const D3DXVECTOR3 & color)
+{
+	m_ColorToAdd = color;
 }
 
 const XMFLOAT2 & CTextureRenderer::GetTexPos(const int & index)
