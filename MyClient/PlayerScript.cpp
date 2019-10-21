@@ -110,29 +110,21 @@ void CPlayerScript::OnCollision(CGameObject * pGameObject, XMFLOAT2* move)
 		{
 			if (pGameObject->GetObjectTag() == L"Barricade")
 			{
-			//	D3DXVECTOR3 destPos = *pGameObject->GetComponent<CTransform>()->GetWorldPos();
-			//	if (move->x > move->y)
-			//	{
-			//		//y축밀기
-			//		if (playerPos->y > destPos.y)
-			//			playerPos->y = playerPos->y + move->y;
-			//		else
-			//			playerPos->y = playerPos->y - move->y;
-			//	}
-			//	else
-			//	{
-			//		//x축밀기
-			//		if (playerPos->x > destPos.x)
-			//			playerPos->x = playerPos->x + move->x;
-			//		else
-			//			playerPos->x = playerPos->x - move->x;
-			//	}
-			//	
-		//	m_bIsCollide = true;
 				*playerPos = m_PrePos;
 			}
-			
-		}
+			if (!m_bIsHit&&pGameObject->GetObjectTag() == L"Boss_FireThrower")
+			{
+				cout << "맞음!" << endl;
+				D3DXVECTOR3 effectPos = *pGameObject->GetComponent<CTransform>()->GetWorldPos();
+				float m_fAngle = GetAngle(effectPos, *playerPos);
+				//360도로 변환하기 위한것
+				if (m_fAngle < 0.0f)
+					m_fAngle = m_fAngle + 360.f;
+				D3DXVECTOR3 dir = D3DXVECTOR3(cosf(D3DXToRadian(m_fAngle)), sinf(D3DXToRadian(m_fAngle)), 0.0f);
+				D3DXVec3Normalize(&dir, &dir);
+				GetHit(dir, 2.0f, 10.f);
+			}
+		}	
 	}
 	
 }
@@ -596,6 +588,7 @@ void CPlayerScript::AnimState()
 	if (m_CurState == HIT && !pAnimator->IsPlaying())
 	{
 		m_CurState = IDLE;
+		m_bIsHit = false;
 		m_DirVec = m_PreVec;
 	}
 
@@ -1052,14 +1045,18 @@ void CPlayerScript::AtkState()
 
 void CPlayerScript::GetHit(D3DXVECTOR3 dirVec, float power, float dmg)
 {
-	m_CurState = HIT;
-	m_PreVec = m_DirVec;
-	m_DirVec = dirVec;
-	m_fVelocity = power;
+	if (!m_bIsHit)
+	{
+		m_CurState = HIT;
+		m_PreVec = m_DirVec;
+		m_DirVec = dirVec;
+		m_fVelocity = power;
 
-	m_fHp -= dmg;
-
-	cout << "맞음" << endl;
+		m_fHp -= dmg;
+		m_bIsHit = true;
+		CCameraMgr::GetInstance()->ShakeCamera(dmg/5.0f, 0.1f);
+	}
+	
 }
 
 void CPlayerScript::AttackBullet()

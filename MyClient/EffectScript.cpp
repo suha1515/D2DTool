@@ -28,6 +28,9 @@ void CEffectScript::OnEnable()
 
 void CEffectScript::OnCollision(CGameObject * pGameObject , XMFLOAT2 * move)
 {
+	//L"Boss_FireThrower"
+
+	
 }
 
 void CEffectScript::OnInput()

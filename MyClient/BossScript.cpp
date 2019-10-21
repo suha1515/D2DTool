@@ -13,6 +13,8 @@
 #include "BossFireBreath.h"
 #include "BossRockSkill.h"
 
+#include "PlayerScript.h"
+
 CBossScript::CBossScript()
 {
 }
@@ -75,9 +77,29 @@ void CBossScript::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move )
 		{
 			GetHit(D3DXVECTOR3(0,0,0),10.f,20.f);
 			m_bIsHit = true;
-		}
-			
+		}		
 	}
+	if (pGameObject == m_pPlayer)
+	{
+		if (m_CurState == DASH)
+		{
+			CPlayerScript* script = dynamic_cast<CPlayerScript*>(pGameObject->GetScript("CPlayerScript"));
+			if (!script->m_bIsHit)
+			{
+				D3DXVECTOR3 effectPos = *m_pTransform->GetWorldPos();
+				D3DXVECTOR3 playerPos = *m_pPlayer->GetComponent<CTransform>()->GetWorldPos();
+				float m_fAngle = GetAngle(effectPos, playerPos);
+				//360도로 변환하기 위한것
+				if (m_fAngle < 0.0f)
+					m_fAngle = m_fAngle + 360.f;
+				D3DXVECTOR3 dir = D3DXVECTOR3(cosf(D3DXToRadian(m_fAngle)), sinf(D3DXToRadian(m_fAngle)), 0.0f);
+				D3DXVec3Normalize(&dir, &dir);
+				script->GetHit(dir, 20.f, 30.f);
+			}
+		}
+		
+	}
+
 }
 
 void CBossScript::OnInput()
@@ -357,13 +379,14 @@ void CBossScript::AnimState()
 			case RIGHT:
 				m_pAnimator->Play(L"Boss_Hit_Right", ANIMATION_TYPE::ANIMATION_ONCE);
 				break;
-			case DEAD:
-
-				break;
 			}
 			break;
 
 		case DEAD:
+			CCameraMgr::GetInstance()->Follow(m_pGameObject);
+			CCameraMgr::GetInstance()->CameraZoomIn(D3DXVECTOR3(4.0f, 4.0f, 0.0f), 3.0f, 5.0f);
+			m_pTexture->SetPass(1);
+			m_pTexture->SetFadeColor(XMFLOAT3(0.8f, 0.0f, 0.0f));
 			switch (m_CurDir)
 			{
 			case LEFT_UP_45:
@@ -379,9 +402,6 @@ void CBossScript::AnimState()
 			case LEFT:
 			case RIGHT:
 				m_pAnimator->Play(L"Boss_Die_Right", ANIMATION_TYPE::ANIMATION_ONCE);
-				break;
-			case DEAD:
-
 				break;
 			}
 			break;
@@ -546,6 +566,15 @@ void CBossScript::AttackState()
 	DashSkill();
 	DashReady();
 	DeadEffect();
+	if (m_bIsDead)
+	{
+		if (m_fDeadRestTime > 2.0f)
+		{
+			m_pGameObject->SetObjectDestroy(true);
+			CCameraMgr::GetInstance()->Follow(m_pPlayer);
+		}
+		m_fDeadRestTime += CTimeMgr::GetInstance()->GetDeltaTime();
+	}
 	if (m_CurState != STOMP&&m_CurState!=GRIND)
 	{
 		if (CKeyMgr::GetInstance()->KeyPressing(KEY_V))
@@ -558,6 +587,10 @@ void CBossScript::AttackState()
 			m_CurState = DASH_READY;
 		else if (CKeyMgr::GetInstance()->KeyPressing(KEY_I))
 			m_CurState = DEAD;
+		else if (CKeyMgr::GetInstance()->KeyPressing(KEY_U))
+		{
+			m_CurState = THROWER;
+		}
 	}
 	if (m_CurState == DASH_STOP && !m_pAnimator->IsPlaying())
 	{
@@ -591,10 +624,12 @@ void CBossScript::StompSkill()
 		m_PrePos = m_SkillPos;
 		MakeIceSkillRoute();
 		m_bStompSkill = true;
-		if(m_CurDir==RIGHT||m_CurDir==RIGHT_UP_45||m_CurDir==RIGHT_DOWN_45)
-		CEffect::Create(m_SkillPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 2.0f, 0.0f), L"Dust_Effect", L"Dust_Big",ANIMATION_ONCE, 0,0,0,0,0,L"Effect",LAYER_2);
+			
+		CCameraMgr::GetInstance()->ShakeCamera(2.0f, 0.2f);
+		//if(m_CurDir==RIGHT||m_CurDir==RIGHT_UP_45||m_CurDir==RIGHT_DOWN_45)
+		/*CEffect::Create(m_SkillPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 2.0f, 0.0f), L"Dust_Effect", L"Dust_Big",ANIMATION_ONCE, 0,0,0,0,0,L"Effect",LAYER_1);
 		else
-		CEffect::Create(m_SkillPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(-2.0f, 2.0f, 0.0f), L"Dust_Effect", L"Dust_Big", ANIMATION_ONCE, 0, 0, 0, 0, 0, L"Effect", LAYER_2);
+		CEffect::Create(m_SkillPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(-2.0f, 2.0f, 0.0f), L"Dust_Effect", L"Dust_Big", ANIMATION_ONCE, 0, 0, 0, 0, 0, L"Effect", LAYER_1);*/
 	}
 
 	if (m_bStompSkill)
@@ -613,7 +648,7 @@ void CBossScript::StompSkill()
 				if (pos != m_PrePlayerPos)
 				{
 					if (m_Type == ICE)
-						CEffect::CreateEffect<CBossIceEffect>(pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Effect", LAYER_1);
+						CEffect::CreateEffect<CBossFireBreath>(pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Effect", LAYER_1);
 					else
 						CEffect::CreateEffect<CBossFireBreath>(pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Effect", LAYER_1);
 				}
@@ -666,6 +701,7 @@ void CBossScript::ThrowerSkill()
 			else
 				CEffect::Create(m_SkillPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(-2.0f, 2.0f, 0.0f), L"Dust_Effect", L"Dust_Big", ANIMATION_ONCE, 0, 0, 0, 0, 0, L"Effect", LAYER_2);
 			m_bDustOnce = true;
+			CCameraMgr::GetInstance()->ShakeCamera(2.0f, 0.2f);
 		}
 
 		if (m_iRockCount < 10)
@@ -714,14 +750,25 @@ void CBossScript::DashSkill()
 		{
 			if (m_fShadowSpawnTime > 0.05f)
 			{
+				D3DXVECTOR3 dustPos = D3DXVECTOR3(m_Pos->x, m_Pos->y - 40.f, 0.0f);
 				if (m_CurDir == RIGHT || m_CurDir == RIGHT_UP_45 || m_CurDir == RIGHT_DOWN_45)
+				{
+					CEffect::Create(dustPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Dust_Effect", L"Dust_Small", ANIMATION_ONCE, 1.0f, 1.0f,0,0,0, L"Effect", LAYER_1);
 					CEffect::CreateDashEffect(*m_Pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Boss", L"Boss_Dash_Right", ANIMATION_LOOP, 1.0f, 1.0f, L"Boss_Dash", LAYER_1);
-				else if(m_CurDir == LEFT || m_CurDir == LEFT_UP_45 || m_CurDir == LEFT_DOWN_45)
+				}	
+				else if (m_CurDir == LEFT || m_CurDir == LEFT_UP_45 || m_CurDir == LEFT_DOWN_45)
+				{
+					CEffect::Create(dustPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(-1.0f, 1.0f, 1.0f), L"Dust_Effect", L"Dust_Small", ANIMATION_ONCE, 1.0f, 1.0f, 0, 0, 0, L"Effect", LAYER_1);
 					CEffect::CreateDashEffect(*m_Pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(-1.0f, 1.0f, 1.0f), L"Boss", L"Boss_Dash_Right", ANIMATION_LOOP, 1.0f, 1.0f, L"Boss_Dash", LAYER_1);
-				else if(m_CurDir==UP)
+				}
+				else if (m_CurDir == UP)
+				{
 					CEffect::CreateDashEffect(*m_Pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Boss", L"Boss_Dash_Up", ANIMATION_LOOP, 1.0f, 1.0f, L"Boss_Dash", LAYER_1);
-				else if(m_CurDir==DOWN)
+				}
+				else if (m_CurDir == DOWN)
+				{
 					CEffect::CreateDashEffect(*m_Pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Boss", L"Boss_Dash_Down", ANIMATION_LOOP, 1.0f, 1.0f, L"Boss_Dash", LAYER_1);
+				}
 				m_fShadowSpawnTime -= m_fShadowSpawnTime;
 			}
 			m_fShadowSpawnTime += CTimeMgr::GetInstance()->GetDeltaTime();
@@ -765,20 +812,24 @@ void CBossScript::DeadEffect()
 	{
 		if (m_fDeadEffTime > 5.0f)
 		{
-			for (int i = 0; i < 10; ++i)
+			if (!m_bIsDead)
 			{
-				random_device	rn;
-				mt19937_64 rnd(rn());
-				uniform_real_distribution<float> nDir(-1.0f, 1.0f);
+				for (int i = 0; i < 10; ++i)
+				{
+					random_device	rn;
+					mt19937_64 rnd(rn());
+					uniform_real_distribution<float> nDir(-1.0f, 1.0f);
 
-				D3DXVECTOR3 dir(nDir(rnd), nDir(rnd), 0.f);
+					D3DXVECTOR3 dir(nDir(rnd), nDir(rnd), 0.f);
 
-				D3DXVec3Normalize(&dir, &dir);
+					D3DXVec3Normalize(&dir, &dir);
 
-				D3DXVECTOR3 pos = dir*20.f + (*m_Pos);
-				CEffect::Create(pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Ice_Effect", L"Ice_Explosive", ANIMATION_ONCE, 1.0f, 0, 0, 0, 0, L"Boss_DIE", LAYER_1);
-			}	
-			m_pGameObject->SetObjectDestroy(true);
+					D3DXVECTOR3 pos = dir*50.f + (*m_Pos);
+					CEffect::Create(pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Ice_Effect", L"Ice_Explosive", ANIMATION_ONCE, 1.0f, 0, 0, 0, 0, L"Boss_DIE", LAYER_1);
+				}
+				m_bIsDead = true;
+				m_pTexture->SetOn(false);
+			}
 		}
 		else
 		{
@@ -796,6 +847,13 @@ void CBossScript::DeadEffect()
 				CEffect::Create(pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Explosion_Round", L"Explosion_Big", ANIMATION_ONCE, 1.0f, 0, 0, 0, 0, L"Boss_DIE", LAYER_1);
 				m_fExploSpawTime -= m_fExploSpawTime;
 			}
+			if (m_fDeadAlpha < 5.0f)
+			{
+				m_pTexture->SetValue(m_fDeadAlpha / 5.0f);
+				m_fDeadAlpha += CTimeMgr::GetInstance()->GetDeltaTime();
+			}
+			
+			CCameraMgr::GetInstance()->ShakeCamera(1.0f, 5.0f);
 			m_fDeadEffTime += CTimeMgr::GetInstance()->GetDeltaTime();
 			m_fExploSpawTime += CTimeMgr::GetInstance()->GetDeltaTime();	
 		}

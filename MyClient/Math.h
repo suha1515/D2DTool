@@ -33,6 +33,7 @@ inline D3DXVECTOR3 Lerp(const D3DXVECTOR3& begin, const D3DXVECTOR3& end,const f
 	temp = begin + (end - begin)*ratio;
 	return temp;
 }
+
 inline float Lerp(const float& begin, const float& end, const float& _ratio)
 {
 	float ratio = __min(1.f, __max(0.f, _ratio));

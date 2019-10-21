@@ -253,7 +253,7 @@ void CObjectMgr::Render()
 			if (m_Cam != nullptr)
 			{
 				float winX, winY;
-				XMFLOAT3 scaleFactor = m_Cam->GetScaleFactor();
+				D3DXVECTOR3 scaleFactor = m_Cam->GetScaleFactor();
 				if (m_Cam->GetLocalPosition().x>0.f)
 					winX = (WINCX / scaleFactor.x) / 2.0f + m_Cam->GetLocalPosition().x;
 				else

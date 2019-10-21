@@ -21,6 +21,6 @@ private:
 	CGameObject* m_pMouse;
 	POINT		 m_Point;
 
-	XMFLOAT3 scaleFactor;
+	D3DXVECTOR3 scaleFactor;
 };
 

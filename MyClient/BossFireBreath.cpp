@@ -9,6 +9,8 @@
 #include "BoxCollider.h"
 #include "Effect.h"
 
+#include "PlayerScript.h"
+
 CBossFireBreath::CBossFireBreath()
 {
 	m_FireCount = 0;
@@ -35,11 +37,11 @@ void CBossFireBreath::OnInit()
 		m_fDeadTime = 3.0f;
 	}
 	m_pTransform->SetScaling(D3DXVECTOR3(1.0f, 1.0f, 1.0f));
-	m_pBoxCollider->SetBoxSize(20, 20);
+	m_pBoxCollider->SetBoxSize(30, 30);
 	m_pBoxCollider->SetBoxCollider();
 
 	m_bIsInit = true;
-
+	m_pPlayer = CObjectMgr::GetInstance()->m_pPlayer;
 }
 
 void CBossFireBreath::OnEnable()
@@ -48,6 +50,22 @@ void CBossFireBreath::OnEnable()
 
 void CBossFireBreath::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move)
 {
+	if (pGameObject == m_pPlayer)
+	{
+		CPlayerScript* script = dynamic_cast<CPlayerScript*>(pGameObject->GetScript("CPlayerScript"));
+		if (!script->m_bIsHit)
+		{
+			D3DXVECTOR3 effectPos = *m_pTransform->GetWorldPos();
+			D3DXVECTOR3 playerPos = *m_pPlayer->GetComponent<CTransform>()->GetWorldPos();
+			float m_fAngle = GetAngle(effectPos, playerPos);
+			//360도로 변환하기 위한것
+			if (m_fAngle < 0.0f)
+				m_fAngle = m_fAngle + 360.f;
+			D3DXVECTOR3 dir = D3DXVECTOR3(cosf(D3DXToRadian(m_fAngle)), sinf(D3DXToRadian(m_fAngle)), 0.0f);
+			D3DXVec3Normalize(&dir, &dir);
+			script->GetHit(dir, 3.f, 10.f);
+		}
+	}
 }
 
 void CBossFireBreath::OnInput()
@@ -74,7 +92,7 @@ int CBossFireBreath::OnUpdate()
 			D3DXVECTOR3 dir(nDir(rnd), nDir(rnd), 0.f);
 			m_fSpawnTimeEnd = nSpawnTime(rnd);
 			D3DXVECTOR3 randompos = dir*m_fRadius + *m_pTransform->GetWorldPos();
-			CEffect::Create(randompos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Fire_Effect", L"Fire_Explosion", ANIMATION_ONCE, 1.5f, 0, 0, 0, 0, L"Effect", LAYER_5);
+			CEffect::Create(randompos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Fire_Effect", L"Fire_Explosion", ANIMATION_ONCE, 1.5f,30, 30, 0, 0, L"Boss_FireBreath", LAYER_5);
 
 			m_FireCount++;		
 		}

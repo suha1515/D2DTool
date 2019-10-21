@@ -30,5 +30,7 @@ private:
 	bool				m_bParticle;
 	bool				m_bDead;
 	bool				m_ParticleDone;
+
+	CGameObject*		m_pPlayer;
 };
 

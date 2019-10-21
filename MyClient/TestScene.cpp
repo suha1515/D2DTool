@@ -30,6 +30,7 @@ void CTestScene::Update()
 
 void CTestScene::LateUpdate()
 {
+	m_Cam->LateUpdate();
 }
 
 void CTestScene::Render()
@@ -52,7 +53,7 @@ HRESULT CTestScene::Initialize()
 	float winX = rect.right - rect.left;
 	float winY = rect.bottom - rect.top;
 
-	m_Cam->Initialize(winX,winY, 0, XMFLOAT3(2.0f, 2.0f, 1.0f));
+	m_Cam->Initialize(winX,winY, 0, D3DXVECTOR3(2.0f, 2.0f, 1.0f));
 
 	m_Mouse = new CMouse;
 	m_Mouse->Initialize();

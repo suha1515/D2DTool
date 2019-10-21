@@ -33,6 +33,8 @@ private:
 	bool				m_bDead;
 	bool				m_ParticleDone;
 
+	CGameObject*		m_pPlayer;
+
 	vector<tuple<CGameObject*, D3DXVECTOR3, D3DXVECTOR3>> m_fragment;
 };
 

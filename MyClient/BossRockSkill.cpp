@@ -8,6 +8,7 @@
 #include "TextureRenderer.h"
 #include "BoxCollider.h"
 #include "Effect.h"
+#include "PlayerScript.h"
 
 CBossRockSkill::CBossRockSkill()
 {
@@ -62,7 +63,19 @@ void CBossRockSkill::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move )
 {
 	if (pGameObject == m_pPlayer)
 	{
-		cout << "플레ㅣ어 맞음" << endl;
+		CPlayerScript* script = dynamic_cast<CPlayerScript*>(pGameObject->GetScript("CPlayerScript"));
+		if (!script->m_bIsHit)
+		{
+			D3DXVECTOR3 effectPos = *m_pTransform->GetWorldPos();
+			D3DXVECTOR3 playerPos = *m_pPlayer->GetComponent<CTransform>()->GetWorldPos();
+			float m_fAngle = GetAngle(effectPos, playerPos);
+			//360도로 변환하기 위한것
+			if (m_fAngle < 0.0f)
+				m_fAngle = m_fAngle + 360.f;
+			D3DXVECTOR3 dir = D3DXVECTOR3(cosf(D3DXToRadian(m_fAngle)), sinf(D3DXToRadian(m_fAngle)), 0.0f);
+			D3DXVec3Normalize(&dir, &dir);
+			script->GetHit(dir, 6.f, 35.f);
+		}
 	}
 }
 
@@ -129,6 +142,7 @@ void CBossRockSkill::AttackState()
 			m_RockPos = &m_pRock->GetComponent<CTransform>()->GetLocalPosition();
 			break;
 		case CRUSHING:
+			CCameraMgr::GetInstance()->ShakeCamera(0.7f, 0.3f);
 			break;
 		case PARTICLE:
 			break;

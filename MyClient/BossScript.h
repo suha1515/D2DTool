@@ -92,6 +92,10 @@ private:
 	float			   m_fDeadEffTime=0.0f;
 	float			   m_fExploSpawTime=0.0f;
 	bool			   m_bIsDead = false;
+	bool			   m_bExplosive = false;;
+	float			   m_fDeadAlpha;
+	float			   m_fDeadRestTime;
+	D3DXVECTOR3		   m_DeadColor;
 
 
 private:

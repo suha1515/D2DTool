@@ -7,6 +7,7 @@
 #include "TextureRenderer.h"
 #include "BoxCollider.h"
 #include "Effect.h"
+#include "PlayerScript.h"
 
 
 CBossIceEffect::CBossIceEffect()
@@ -43,6 +44,8 @@ void CBossIceEffect::OnInit()
 	m_bIsInit = true;
 	m_WhiteValue = 0.5f;
 
+	
+	m_pPlayer = CObjectMgr::GetInstance()->m_pPlayer;
 	CEffect::Create(*m_pTransform->GetWorldPos(), XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Ice_Effect", L"Ice_Explosive", ANIMATION_ONCE);
 }
 
@@ -52,6 +55,22 @@ void CBossIceEffect::OnEnable()
 
 void CBossIceEffect::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move )
 {
+	if (pGameObject == m_pPlayer)
+	{
+		CPlayerScript* script = dynamic_cast<CPlayerScript*>(pGameObject->GetScript("CPlayerScript"));
+		if (!script->m_bIsHit)
+		{
+			D3DXVECTOR3 effectPos = *m_pTransform->GetWorldPos();
+			D3DXVECTOR3 playerPos = *m_pPlayer->GetComponent<CTransform>()->GetWorldPos();
+			float m_fAngle = GetAngle(effectPos, playerPos);
+			//360도로 변환하기 위한것
+			if (m_fAngle < 0.0f)
+				m_fAngle = m_fAngle + 360.f;
+			D3DXVECTOR3 dir = D3DXVECTOR3(cosf(D3DXToRadian(m_fAngle)), sinf(D3DXToRadian(m_fAngle)), 0.0f);
+			D3DXVec3Normalize(&dir, &dir);
+			script->GetHit(dir, 10.f, 20.f);
+		}
+	}
 }
 
 void CBossIceEffect::OnInput()

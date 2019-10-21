@@ -27,6 +27,7 @@ void CBossStage::Update()
 
 void CBossStage::LateUpdate()
 {
+	m_Cam->LateUpdate();
 }
 
 void CBossStage::Render()
@@ -48,7 +49,7 @@ HRESULT CBossStage::Initialize()
 	float winX = rect.right - rect.left;
 	float winY = rect.bottom - rect.top;
 
-	m_Cam->Initialize(winX, winY, 0, XMFLOAT3(2.5f, 2.5f, 1.0f));
+	m_Cam->Initialize(winX, winY, 0, D3DXVECTOR3(2.5f, 2.5f, 1.0f));
 
 	m_Mouse = new CMouse;
 	m_Mouse->Initialize();

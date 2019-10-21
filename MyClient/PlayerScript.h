@@ -65,7 +65,8 @@ public:
 	//유도선 디버그
 	void DrawGuideLine();
 	bool		bIsInit = false;
-
+public:
+	bool		m_bIsHit = false;						//플레이어 피격시
 private:
 	DIR			m_CurDir;
 	DIR			m_PreDir;
@@ -99,6 +100,9 @@ private:
 	bool		m_bIsLayerDebug = false;
 
 	bool		m_bIsCollide=false;				//타일의외 충돌검사를위한 불변수
+
+	
+	float		m_fHitCool;						//피격쿨타임
 
 	D3DXVECTOR3	 m_PreScale;					//이전 값.
 	D3DXVECTOR3*  playerPos;					//플레이어 위치값
