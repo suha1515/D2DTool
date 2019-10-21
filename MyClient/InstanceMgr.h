@@ -10,6 +10,8 @@ public:
 public:
 	void		Initialize();
 public:
+	void		Clear();
+public:
 	void		InstanceRender();
 public:
 	void		AddObject(CGameObject* pObject);

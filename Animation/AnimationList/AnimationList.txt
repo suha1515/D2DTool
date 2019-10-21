@@ -8,6 +8,7 @@
 ../Animation/Explosion_Round.anim
 ../Animation/Fire_Effect.anim
 ../Animation/GuideLine.anim
+../Animation/Hit_Effect.anim
 ../Animation/Ice_Effect.anim
 ../Animation/Light.anim
 ../Animation/Mouse_Bot.anim

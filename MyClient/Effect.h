@@ -27,10 +27,18 @@ public:
 	void SetEffectClip(const wstring& _ClipName, ANIMATION_TYPE type);
 	void SetDeadTime(const float& time);
 
+	static CGameObject* CreatePlayerSkillEffect(D3DXVECTOR3 pos, XMFLOAT3 & rot, D3DXVECTOR3 & scale,
+		const wstring & _ClipName, const wstring & _AnimName, ANIMATION_TYPE type,
+		const float & animSpeed, const float & time, D3DXVECTOR3 dirVec, const float& speed,
+		const wstring & tagName, Layer layer, D3DXVECTOR3 color);
+
+
 	static CGameObject*  CreateDashEffect(D3DXVECTOR3 pos, XMFLOAT3 & rot, D3DXVECTOR3 & scale,
 		const wstring & _ClipName, const wstring & _AnimName, ANIMATION_TYPE type,
 		const float & animSpeed, const float & time, 
 		const wstring & tagName, Layer layer);
+
+
 	static CGameObject* CreateMovable(D3DXVECTOR3  pos, XMFLOAT3 & rot, D3DXVECTOR3 & scale, const wstring & _ClipName, 
 	const wstring& _AnimName, ANIMATION_TYPE type,
 		D3DXVECTOR3 dirVec, const float& speed, const float& animSpeed=1.0f,

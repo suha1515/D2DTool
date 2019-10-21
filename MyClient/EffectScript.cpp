@@ -52,8 +52,23 @@ int CEffectScript::OnUpdate()
 	}
 	else if (m_EffectType == DASH)
 	{
+		//m_pTexture->SetColorToAdd(m_DashColor);
+		m_pTexture->SetAlpha(1.0f - (m_fTime / m_fDeadTime));
+	}
+	else if (m_EffectType == ECHO)
+	{
 		m_pTexture->SetColorToAdd(m_DashColor);
 		m_pTexture->SetAlpha(1.0f - (m_fTime / m_fDeadTime));
+
+		m_Pos->x += m_DirVec.x*m_fSpeed*CTimeMgr::GetInstance()->GetDeltaTime();
+		m_Pos->y += m_DirVec.y*m_fSpeed*CTimeMgr::GetInstance()->GetDeltaTime();
+
+		if (m_pScale.x < 1.3f&&m_pScale.y < 1.3f)
+		{
+			m_pScale.x += (m_fTime / m_fDeadTime)*1.0f;
+			m_pScale.y += (m_fTime / m_fDeadTime)*1.0f;
+		}
+		m_pTransform->SetScaling(m_pScale);
 	}
 
 
@@ -95,6 +110,8 @@ void CEffectScript::SetEffect(const wstring & clips, const ANIMATION_TYPE& type,
 	m_pTransform = m_pGameObject->GetComponent<CTransform>();
 	m_pBoxCollider = m_pGameObject->GetComponent<CBoxCollider>();
 	m_pTexture = m_pGameObject->GetComponent<CTextureRenderer>();
+	m_pScale = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
 	if (m_pAnimator != nullptr)
 	{
 		m_pAnimator->SetClips(clips);

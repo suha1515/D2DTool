@@ -199,11 +199,14 @@ void CCamera::CameraShaking(const float& amount, const float& time)
 
 void CCamera::CameraCloseUp(const D3DXVECTOR3& scale,const float& closeUpTime, const float& time)
 {
-	m_CloseUpScale = scale;
-	m_fCloseUpTime = closeUpTime;
-	m_fRemainTime = time;
-	m_InitialScale = m_ScaleFactors;
-	m_bIsCloseUp = true;
+	if (!m_bIsCloseUp)
+	{
+		m_CloseUpScale = scale;
+		m_fCloseUpTime = closeUpTime;
+		m_fRemainTime = time;
+		m_InitialScale = m_ScaleFactors;
+		m_bIsCloseUp = true;
+	}
 }
 
 bool CCamera::CameraZoomOut()

@@ -78,3 +78,9 @@ inline D3DXVECTOR3 BezierCuve4Dim(const D3DXVECTOR3& begin, const D3DXVECTOR3& e
 	
 	return pos;
 }
+
+inline float LerpAngle(const float& begin, const float& end, const float& _ratio)
+{
+	float shortest_Angle = fmod((fmod((end - begin), 360.f) + 540.f), 360.f) - 180.f;
+	return begin + fmod((shortest_Angle * _ratio), 360.f);
+}

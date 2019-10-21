@@ -17,6 +17,7 @@
 
 CBossScript::CBossScript()
 {
+	m_ScriptName = "CBossScript";
 }
 
 
@@ -52,7 +53,7 @@ void CBossScript::OnInit()
 
 	m_Pos = &m_pTransform->GetLocalPosition();
 	m_PlayerPos = m_pPlayer->GetComponent<CTransform>();
-	m_Hp = 3000.f;
+	m_Hp = 1000.f;
 
 	m_bIsHit = false;
 	m_fHitCoolTime = 0.0f;
@@ -64,7 +65,7 @@ void CBossScript::OnInit()
 
 	m_Type = ICE;
 
-	m_CurPhase = PHASE1;
+	m_CurPhase = NONE;
 	m_PrePhase = m_CurPhase;
 
 	m_iPhase1Count = 0;
@@ -80,6 +81,21 @@ void CBossScript::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move )
 	{
 			GetHit(D3DXVECTOR3(0,0,0),10.f,20.f);
 	}
+	if (pGameObject->GetObjectTag() == L"Player_FireThrower")
+	{
+		
+		CEffect::Create(*pGameObject->GetComponent<CTransform>()->GetWorldPos(), XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Fire_Effect", L"Fire_Hit", ANIMATION_ONCE, 1.5f, 0, 0, 0, 0, L"Effect", LAYER_5);
+		GetHit(D3DXVECTOR3(0, 0, 0), 10.f, 20.f);
+	}
+	if (pGameObject->GetObjectTag() == L"Player_Ice")
+	{
+
+		CEffect::Create(*pGameObject->GetComponent<CTransform>()->GetWorldPos(), XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Hit_Effect", L"Hit_Ice", ANIMATION_ONCE, 1.5f, 0, 0, 0, 0, L"Effect", LAYER_5);
+		GetHit(D3DXVECTOR3(0, 0, 0), 10.f, 30.f);
+		pGameObject->GetComponent<CTextureRenderer>()->SetOn(false);
+	}
+	//L"Player_Ice"
+	//L"Player_FireThrower"
 	if (pGameObject == m_pPlayer)
 	{
 		if (m_CurState == DASH)
@@ -120,6 +136,7 @@ int CBossScript::OnUpdate()
 		GetDirPlayer();
 		DirState();
 		
+		PhaseIn();
 		PhaseState();	
 	}
 
@@ -196,7 +213,7 @@ void CBossScript::DirState()
 
 void CBossScript::AnimState()
 {
-	if (m_CurState == HIT&&m_bIsHit)
+	if (m_CurState == HIT||m_bIsHit)
 	{
 		m_pTexture->SetPass(1);
 		Hit();
@@ -630,7 +647,7 @@ void CBossScript::AttackState()
 		}
 		m_fDeadRestTime += CTimeMgr::GetInstance()->GetDeltaTime();
 	}
-	/*if (m_CurState != STOMP&&m_CurState!=GRIND)
+	if (m_CurState != STOMP&&m_CurState!=GRIND)
 	{
 		if (CKeyMgr::GetInstance()->KeyPressing(KEY_V))
 		{
@@ -644,9 +661,9 @@ void CBossScript::AttackState()
 			m_CurState = DEAD;
 		else if (CKeyMgr::GetInstance()->KeyPressing(KEY_U))
 		{
-			m_CurState = MOVE;
+			m_bIsPhaseIn = true;
 		}
-	}*/
+	}
 	if (m_CurState == DASH_STOP && !m_pAnimator->IsPlaying())
 	{
 		m_CurState = IDLE;
@@ -663,23 +680,63 @@ void CBossScript::Hit()
 	else
 	{
 		m_fWhiteValue = 0.2f;
-		if(m_CurState==HIT)
+		if (m_CurState == HIT)
+		{
 			m_CurState = IDLE;
-	}
-	if (m_fHitCoolTime > 1.7f)
-	{
+		}
 		m_bIsHit = false;
-		m_fHitCoolTime -= m_fHitCoolTime;
-		m_pTexture->SetPass(0);
 	}
-	m_fHitCoolTime += CTimeMgr::GetInstance()->GetDeltaTime();
+	//if (m_fHitCoolTime > 1.7f)
+	//{
+	//	m_bIsHit = false;
+	//	m_fHitCoolTime -= m_fHitCoolTime;
+	//	m_pTexture->SetPass(0);
+	//}
+	//m_fHitCoolTime += CTimeMgr::GetInstance()->GetDeltaTime();
+}
+
+void CBossScript::SetPhaseIn()
+{
+	m_bIsPhaseIn = true;
+}
+
+void CBossScript::PhaseIn()
+{
+	if(m_bIsPhaseIn)
+	{
+		if (m_EventCount < 3)
+		{
+			m_Type = NO;
+			m_CurState = STOMP;
+			if (m_CurState == STOMP && !m_pAnimator->IsPlaying())
+			{
+				CCameraMgr::GetInstance()->ShakeCamera(2.5f, 0.3f);
+				if (m_fWaitTime > 0.9f)
+				{
+					m_CurState = IDLE;
+					m_fWaitTime -= m_fWaitTime;
+					m_EventCount++;
+				}
+				else
+					m_fWaitTime += CTimeMgr::GetInstance()->GetDeltaTime();
+
+			}
+		}
+		else
+		{
+			CCameraMgr::GetInstance()->Follow(m_pPlayer);
+			m_CurPhase = PHASE1;
+			m_bIsPhaseIn = false;
+		}
+	}
+	
 }
 
 
 
 void CBossScript::StompSkill()
 {
-	if (m_CurState == STOMP && !m_pAnimator->IsPlaying())
+	if (m_CurState == STOMP && !m_pAnimator->IsPlaying()&&m_Type!= NO)
 	{
 		m_CurState = IDLE;
 		m_PrePos = m_SkillPos;
@@ -926,9 +983,12 @@ void CBossScript::PhaseState()
 {
 	switch (m_CurPhase)
 	{
+	case NONE:
+		break;
+	case PHASE_IN:
+		break;
 	case PHASE1:
 	{
-		cout << m_iPhase1Count << endl;
 		if (m_PreiPhase1Count != m_iPhase1Count)
 		{
 			switch (m_iPhase1Count)

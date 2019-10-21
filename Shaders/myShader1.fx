@@ -140,7 +140,7 @@ PS_OUT PS_MAIN4(VS_OUT In)
 	p_out.v_color = tex2D(s_2D, In.uv);
 
 	//p_out.v_color.rgb += float3(0.1f,0.1f,0.1f);
-	float3 coloradd = float3(1.3f, 2.0f, 2.5f);
+	float3 coloradd = ColortoAdd;
 	float4 color = float4(coloradd, 1.0f);
 	p_out.v_color = (p_out.v_color*color)*gFloat;
 

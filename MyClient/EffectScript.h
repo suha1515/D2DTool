@@ -8,7 +8,7 @@ class CEffectScript :
 	public CScripts
 {
 public:
-	 enum  EFFECT_TYPE {MOVABLE,NORMAL,DASH};
+	 enum  EFFECT_TYPE {MOVABLE,NORMAL,DASH,ECHO};
 public:
 	CEffectScript();
 	~CEffectScript();
@@ -37,6 +37,8 @@ protected:
 	CBoxCollider*	  m_pBoxCollider;
 	CTextureRenderer* m_pTexture;
 	ANIMATION_TYPE    m_AnimType;
+
+	D3DXVECTOR3		  m_pScale;
 
 	float			  m_fDeadTime;
 	float			  m_fTime;

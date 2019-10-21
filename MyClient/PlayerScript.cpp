@@ -9,9 +9,7 @@
 #include "Mouse.h"
 
 #include "Effect.h"
-#include "BossIceEffect.h"
-#include "BossFireBreath.h"
-#include "BossRockSkill.h"
+#include "PlayerIceSkill.h"
 
 CPlayerScript::CPlayerScript()
 {
@@ -95,6 +93,7 @@ void CPlayerScript::OnInit()
 
 	m_DirVec = D3DXVECTOR3(0.0f, -1.0f, 0.0f);
 
+	m_SkillType = NONE;
 }
 
 
@@ -500,8 +499,27 @@ void CPlayerScript::MeeleAttack()
 			}	
 			//CEffect::CreateEffect<CBossRockSkill>(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f),L"Effect",LAYER_5);
 			//CEffect::CreateMovable(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Fire_Effect", L"Fire_Breath", ANIMATION_ONCE,m_DirVec,400.f,0.5f,0,10,10,0,0,L"Effect",LAYER_5);
-			CEffect::CreateDashEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Boss", L"Boss_Dash_Right", ANIMATION_LOOP,1.0f,1.0f, L"Effect", LAYER_1);
+			//CEffect::CreateDashEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Boss", L"Boss_Dash_Right", ANIMATION_LOOP,1.0f,1.0f, L"Effect", LAYER_1);
+			//CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Down", ANIMATION_LOOP, 1.0f, 1.5f, D3DXVECTOR3(-1.0f, 0.0f, 0.0f), 10.f, L"Player_Shadow", LAYER_1, D3DXVECTOR3(3.4f, 1.2f, 1.2f));
+			//FireBreathSkill();
+			//m_CurState = SKILL_CHARGE;
+			//CEffect::CreateEffect<CPlayerIceSkill>(*playerPos, XMFLOAT3(0.0f, 0.0f, -90.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Effect", LAYER_5);
+			//float angle= atan2f(m_DirVec.y,m_DirVec.y);
+			//angle = 180.f*angle / _Pi;
+			//float degree = roundf(angle);
+			//degree = 360.f +fmod(degree,360.f);
+			//CEffect::Create(*playerPos, XMFLOAT3(0.0f, 0.0f, degree), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Ice_Effect", L"Ice_Fragment3", ANIMATION_LOOP, 1.0f);
 		}	
+	}
+	if (pKeyMgr->GetInstance()->KeyDown(KEY_Z))
+	{
+		m_CurState = SKILL_CHARGE;
+		m_SkillType = ICE;
+	}
+	else if (pKeyMgr->GetInstance()->KeyDown(KEY_X))
+	{
+		m_CurState = SKILL_CHARGE;
+		m_SkillType = FIRE;
 	}
 }
 
@@ -940,6 +958,53 @@ void CPlayerScript::AnimState()
 				break;
 			}
 			break;
+
+		case SKILL_CHARGE:
+			switch (m_CurDir)
+			{
+			case UP:
+				pAnimator->Play(L"Player_Skill_Charge_Up", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			case DOWN:
+				pAnimator->Play(L"Player_Skill_Charge_Down", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			case LEFT_UP_45:
+			case RIGHT_UP_45:
+				pAnimator->Play(L"Player_Skill_Charge_Right_Up", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			case LEFT:
+			case RIGHT:
+				pAnimator->Play(L"Player_Skill_Charge_Right", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			case LEFT_DOWN_45:
+			case RIGHT_DOWN_45:
+				pAnimator->Play(L"Player_Skill_Charge_Right_Down", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			}
+			break;
+		case SKILL_USE:
+			switch (m_CurDir)
+			{
+			case UP:
+				pAnimator->Play(L"Player_Skill_Use_Up", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			case DOWN:
+				pAnimator->Play(L"Player_Skill_Use_Down", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			case LEFT_UP_45:
+			case RIGHT_UP_45:
+				pAnimator->Play(L"Player_Skill_Use_Right_Up", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			case LEFT:
+			case RIGHT:
+				pAnimator->Play(L"Player_Skill_Use_Right", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			case LEFT_DOWN_45:
+			case RIGHT_DOWN_45:
+				pAnimator->Play(L"Player_Skill_Use_Right_Down", ANIMATION_TYPE::ANIMATION_ONCE);
+				break;
+			}
+			break;
 		}
 		
 		m_PreState = m_CurState;
@@ -1010,6 +1075,10 @@ void CPlayerScript::DirState()
 
 void CPlayerScript::AtkState()
 {
+	if(m_SkillType == ICE)
+	IceBulletSkill();
+	else if(m_SkillType ==FIRE)
+	FireBreathSkill();
 	//공격이 끝난경우.
 	if ((m_CurState == THROW && !pAnimator->IsPlaying()) || (m_CurState == MEELE && !pAnimator->IsPlaying()))
 	{
@@ -1058,6 +1127,182 @@ void CPlayerScript::GetHit(D3DXVECTOR3 dirVec, float power, float dmg)
 	}
 	
 }
+
+void CPlayerScript::FireBreathSkill()
+{
+	if (m_CurState == SKILL_CHARGE)
+	{
+		CCameraMgr::GetInstance()->CameraZoomIn(D3DXVECTOR3(3.f, 3.f, 1.0f), 0.5f, 1.3f);
+		if (m_fSkillCool < 1.f)
+		{
+			if (m_iShadowCount < 15)
+			{
+				if (m_fShadowCool > 0.1f)
+				{
+					if (m_CurDir == LEFT)
+						CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Right", ANIMATION_LOOP, 1.0f, 1.0f, m_DirVec*-1.0f, 20.f, L"Player_Shadow", LAYER_1, D3DXVECTOR3(3.4f, 2.2f, 2.2f));
+					else if (m_CurDir == RIGHT)
+						CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Right", ANIMATION_LOOP, 1.0f, 1.0f, m_DirVec*-1.0f, 20.f, L"Player_Shadow", LAYER_1, D3DXVECTOR3(3.4f, 2.2f, 2.2f));
+					else if (m_CurDir == UP)
+						CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Up", ANIMATION_LOOP, 1.0f, 1.0f, m_DirVec*-1.0f, 20.f, L"Player_Shadow", LAYER_1, D3DXVECTOR3(3.4f, 2.2f, 2.2f));
+					else if (m_CurDir == DOWN)
+						CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Down", ANIMATION_LOOP, 1.0f, 1.0f, m_DirVec*-1.0f, 20.f, L"Player_Shadow", LAYER_1, D3DXVECTOR3(3.4f, 2.2f, 2.2f));
+					else if (m_CurDir == RIGHT_UP_45)
+						CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Right_Up", ANIMATION_LOOP, 1.0f, 1.0f, m_DirVec*-1.0f, 20.f, L"Player_Shadow", LAYER_1, D3DXVECTOR3(3.4f, 2.2f, 2.2f));
+					else if (m_CurDir == RIGHT_DOWN_45)
+						CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Right_Down", ANIMATION_LOOP, 1.0f, 1.0f, m_DirVec*-1.0f, 20.f, L"Player_Shadow", LAYER_2, D3DXVECTOR3(3.4f, 2.2f, 2.2f));
+					else if (m_CurDir == LEFT_UP_45)
+						CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Right_Up", ANIMATION_LOOP, 1.0f, 1.0f, m_DirVec*-1.0f, 20.f, L"Player_Shadow", LAYER_1, D3DXVECTOR3(3.4f, 2.2f, 2.2f));
+					else if (m_CurDir == LEFT_DOWN_45)
+						CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Right_Down", ANIMATION_LOOP, 1.0f, 1.0f, m_DirVec*-1.0f, 20.f, L"Player_Shadow", LAYER_2, D3DXVECTOR3(3.4f, 2.2f, 2.2f));
+
+					m_fShadowCool -= m_fShadowCool;
+					m_iShadowCount++;
+				}
+				else
+				{
+					m_fShadowCool += CTimeMgr::GetInstance()->GetDeltaTime();
+				}
+			}
+			m_fSkillCool += CTimeMgr::GetInstance()->GetDeltaTime();
+		}
+		else
+		{
+			m_fShadowCool -= m_fShadowCool;
+			m_iShadowCount = 0;
+			m_fSkillCool -= m_fSkillCool;
+			m_CurState = SKILL_USE;
+		}
+	}
+
+	if (m_CurState == SKILL_USE && !pAnimator->IsPlaying())
+	{
+		CCameraMgr::GetInstance()->ShakeCamera(0.8f, 0.3f);
+		if (m_iFireCount < 30)
+		{
+			if (m_fSkillCool > 0.01f)
+			{
+				float angle;
+				random_device		rn;
+				mt19937_64 rnd(rn());
+
+				if (m_CurDir == LEFT)
+				{
+					uniform_real_distribution<float> nAngle(160.f, 200.f);
+					angle = nAngle(rnd);
+				}
+				else if (m_CurDir == LEFT_UP_45)
+				{
+					uniform_real_distribution<float> nAngle(115.f, 155.f);
+					angle = nAngle(rnd);
+				}
+				else if (m_CurDir == UP)
+				{
+					uniform_real_distribution<float> nAngle(70.f, 110.f);
+					angle = nAngle(rnd);
+				}
+				else if (m_CurDir == RIGHT_UP_45)
+				{
+					uniform_real_distribution<float> nAngle(25.f, 65.f);
+					angle = nAngle(rnd);
+				}
+				else if (m_CurDir == RIGHT)
+				{
+					uniform_real_distribution<float> nAngle(0.0f, 20.f);
+					uniform_real_distribution<float> nAngle2(340.f, 360.f);
+					if (m_iFireCount % 2 == 0)
+						angle = nAngle(rnd);
+					else
+						angle = nAngle2(rnd);
+				}
+				else if (m_CurDir == RIGHT_DOWN_45)
+				{
+					uniform_real_distribution<float> nAngle(295.f, 335.f);
+					angle = nAngle(rnd);
+				}
+				else if (m_CurDir == DOWN)
+				{
+					uniform_real_distribution<float> nAngle(250.f, 290.f);
+					angle = nAngle(rnd);
+				}
+				else if (m_CurDir == LEFT_DOWN_45)
+				{
+					uniform_real_distribution<float> nAngle(205.f, 245.f);
+					angle = nAngle(rnd);
+				}
+				D3DXVECTOR3 dir = D3DXVECTOR3(cosf(D3DXToRadian(angle)), sinf(D3DXToRadian(angle)), 0.0f);
+				CEffect::CreateMovable(m_AttackPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.f, 1.f, 1.f), L"Fire_Effect", L"Fire_Explosion", ANIMATION_ONCE, dir, 400.f, 0.5f, 0, 10, 10, 0, 0, L"Player_FireThrower", LAYER_5);
+				m_fSkillCool -= m_fSkillCool;
+				m_iFireCount++;
+			}
+			else
+				m_fSkillCool += CTimeMgr::GetInstance()->GetDeltaTime();
+		}
+		else
+		{
+			m_iFireCount = 0;
+			m_CurState = IDLE;
+			m_SkillType = NONE;
+		}
+	}
+}
+
+void CPlayerScript::IceBulletSkill()
+{
+	if (m_CurState == SKILL_USE && !pAnimator->IsPlaying())
+	{
+		m_CurState = IDLE;
+		m_SkillType = NONE;
+	}
+	if (m_CurState == SKILL_CHARGE)
+	{
+		CCameraMgr::GetInstance()->CameraZoomIn(D3DXVECTOR3(3.f, 3.f, 1.0f), 0.5f, 1.3f);
+		if (m_fSkillCool < 1.f)
+		{
+			if (m_iShadowCount < 5)
+			{
+				if (m_fShadowCool > 0.2f)
+				{
+					if (m_CurDir == LEFT)
+						CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Right", ANIMATION_LOOP, 1.0f, 1.0f, m_DirVec*-1.0f, 10.f, L"Player_Shadow", LAYER_1, D3DXVECTOR3(0.8f, 0.8f, 2.8f));
+					else if (m_CurDir == RIGHT)
+						CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Right", ANIMATION_LOOP, 1.0f, 1.0f, m_DirVec*-1.0f, 10.f, L"Player_Shadow", LAYER_1, D3DXVECTOR3(0.8f, 0.8f, 2.8f));
+					else if (m_CurDir == UP)
+						CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Up", ANIMATION_LOOP, 1.0f, 1.0f, m_DirVec*-1.0f, 10.f, L"Player_Shadow", LAYER_1, D3DXVECTOR3(0.8f, 0.8f, 2.8f));
+					else if (m_CurDir == DOWN)
+						CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Down", ANIMATION_LOOP, 1.0f, 1.0f, m_DirVec*-1.0f, 10.f, L"Player_Shadow", LAYER_1, D3DXVECTOR3(0.8f, 0.8f, 2.8f));
+					else if (m_CurDir == RIGHT_UP_45)
+						CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Right_Up", ANIMATION_LOOP, 1.0f, 1.0f, m_DirVec*-1.0f, 10.f, L"Player_Shadow", LAYER_1, D3DXVECTOR3(0.8f, 0.8f, 2.8f));
+					else if (m_CurDir == RIGHT_DOWN_45)
+						CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Right_Down", ANIMATION_LOOP, 1.0f, 1.0f, m_DirVec*-1.0f, 10.f, L"Player_Shadow", LAYER_1, D3DXVECTOR3(0.8f, 0.8f, 2.8f));
+					else if (m_CurDir == LEFT_UP_45)
+						CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Right_Up", ANIMATION_LOOP, 1.0f, 1.0f, m_DirVec*-1.0f, 10.f, L"Player_Shadow", LAYER_1, D3DXVECTOR3(0.8f, 0.8f, 2.8f));
+					else if (m_CurDir == LEFT_DOWN_45)
+						CEffect::CreatePlayerSkillEffect(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player", L"Player_Charge_Shadow_Right_Down", ANIMATION_LOOP, 1.0f, 1.0f, m_DirVec*-1.0f, 10.f, L"Player_Shadow", LAYER_1, D3DXVECTOR3(0.8f, 0.8f, 2.8f));
+
+					m_fShadowCool -= m_fShadowCool;
+					m_iShadowCount++;
+				}
+				else
+				{
+					m_fShadowCool += CTimeMgr::GetInstance()->GetDeltaTime();
+				}
+			}
+			m_fSkillCool += CTimeMgr::GetInstance()->GetDeltaTime();
+		}
+		else
+		{
+			m_fShadowCool -= m_fShadowCool;
+			m_iShadowCount = 0;
+			m_fSkillCool -= m_fSkillCool;
+			m_CurState = SKILL_USE;
+			CEffect::CreateEffect<CPlayerIceSkill>(*playerPos, XMFLOAT3(0.0f, 0.0f, -90.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Effect", LAYER_5);
+		}
+	
+	}
+}
+
+
 
 void CPlayerScript::AttackBullet()
 {

@@ -354,6 +354,15 @@
     <ClInclude Include="ScreenBuffer.h">
       <Filter>96.Shaders\01.ScreenBuffer</Filter>
     </ClInclude>
+    <ClInclude Include="Stage1.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerIceSkill.h">
+      <Filter>95.Component\04.Scripts\00.PlayerScript</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage2Event.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -517,6 +526,15 @@
     </ClCompile>
     <ClCompile Include="ScreenBuffer.cpp">
       <Filter>96.Shaders\01.ScreenBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage1.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerIceSkill.cpp">
+      <Filter>95.Component\04.Scripts\00.PlayerScript</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage2Event.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

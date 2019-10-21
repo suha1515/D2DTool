@@ -4,9 +4,9 @@ class CBossScript :
 	public CEnemyScripts
 {
 	enum STATE {IDLE,DASH_READY,MOVE,DASH,DASH_STOP,STOMP,GRIND_READY,GRIND,THROWER,HIT,DEAD};
-	enum PHASE {PHASE_IN,PHASE1,PHASE2,PHASE3};
+	enum PHASE {NONE,PHASE_IN,PHASE1,PHASE2,PHASE3};
 	enum DIR   {RIGHT,UP,DOWN,LEFT, RIGHT_UP_45,LEFT_UP_45,RIGHT_DOWN_45,LEFT_DOWN_45};
-	enum TYPE  {ICE,FIRE};
+	enum TYPE  {NO,ICE,FIRE};
 public:
 	CBossScript();
 	~CBossScript();
@@ -30,6 +30,9 @@ public:
 
 	void AttackState();
 	void Hit();
+
+	void SetPhaseIn();
+	void PhaseIn();
 
 	void StompSkill();
 	void GrindSkill();
@@ -63,6 +66,10 @@ private:
 	//베지어 제어점
 	D3DXVECTOR3			m_BezierControl[3];
 private:
+	float				m_fWaitTime = 0.0f;
+	int					m_EventCount = 0;
+	bool				m_bIsPhaseIn = false;
+
 	int					m_iPhase1Count = 0;
 	int					m_PreiPhase1Count = 0;
 	float				m_fPhase1GapTime = 0.0f;

@@ -509,6 +509,7 @@ void CObjectMgr::Clear()
 	m_RenderTiles.clear();
 	m_CollideTile.clear();
 	m_Barricade.clear();
+	m_Stairs.clear();
 }
 void CObjectMgr::ClearCopy()
 {

@@ -81,6 +81,14 @@ void CInstanceMgr::Initialize()
 
 	m_pShader = CShaderMgr::GetInstance()->GetEffect(L"InstanceShader");
 }
+void CInstanceMgr::Clear()
+{
+	for (auto&i : m_mapInstance)
+	{
+		i.second.clear();
+	}
+	m_mapInstance.clear();
+}
 void CInstanceMgr::InstanceRender()
 {
 	for (auto &i : m_mapInstance)

@@ -97,6 +97,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <StackReserveSize>8388608</StackReserveSize>
     </Link>
     <FxCompile>
       <ShaderModel>2.0</ShaderModel>
@@ -192,6 +193,7 @@
     <ClInclude Include="MyClient.h" />
     <ClInclude Include="NormalBotScript.h" />
     <ClInclude Include="ObjectMgr.h" />
+    <ClInclude Include="PlayerIceSkill.h" />
     <ClInclude Include="PlayerScript.h" />
     <ClInclude Include="PuzzlePoint.h" />
     <ClInclude Include="PuzzleScripts.h" />
@@ -205,7 +207,9 @@
     <ClInclude Include="Scripts.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderMgr.h" />
+    <ClInclude Include="Stage1.h" />
     <ClInclude Include="STage1Event.h" />
+    <ClInclude Include="Stage2Event.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Target.h" />
     <ClInclude Include="targetver.h" />
@@ -250,6 +254,7 @@
     <ClCompile Include="MyClient.cpp" />
     <ClCompile Include="NormalBotScript.cpp" />
     <ClCompile Include="ObjectMgr.cpp" />
+    <ClCompile Include="PlayerIceSkill.cpp" />
     <ClCompile Include="PlayerScript.cpp" />
     <ClCompile Include="PuzzlePoint.cpp" />
     <ClCompile Include="PuzzleScripts.cpp" />
@@ -262,7 +267,9 @@
     <ClCompile Include="Scripts.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderMgr.cpp" />
+    <ClCompile Include="Stage1.cpp" />
     <ClCompile Include="STage1Event.cpp" />
+    <ClCompile Include="Stage2Event.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

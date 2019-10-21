@@ -66,8 +66,12 @@ void CBulletScript::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move)
 					power = 20.f;
 				}
 
+				CScripts* pscripts;
 					CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Hit", ANIMATION_ONCE);
-					CScripts* pscripts = pGameObject->GetScript("CEnemyScripts");
+					if (pGameObject->GetObjectName() == L"Boss_Bot")
+						pscripts = pGameObject->GetScript("CBossScript");
+					else
+					 pscripts = pGameObject->GetScript("CEnemyScripts");
 					if (pscripts != nullptr)
 						dynamic_cast<CEnemyScripts*>(pscripts)->GetHit(m_DirVec, power, m_Damage);
 

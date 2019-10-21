@@ -53,7 +53,12 @@ void CKeyMgr::Update()
 		m_dwKey |= KEY_I;
 	if (GetAsyncKeyState('U') & 0x8000)
 		m_dwKey |= KEY_U;
-
+	if (GetAsyncKeyState('Z') & 0x8000)
+		m_dwKey |= KEY_Z;
+	if (GetAsyncKeyState('X') & 0x8000)
+		m_dwKey |= KEY_X;
+	//if (GetAsyncKeyState('C') & 0x8000)
+	//	m_dwKey |= KEY_C;
 
 }
 

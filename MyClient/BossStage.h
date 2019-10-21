@@ -2,6 +2,7 @@
 #include "Scene.h"
 class CCamera;
 class CMouse;
+class CStage2Event;
 class CBossStage :
 	public CScene
 {
@@ -23,7 +24,8 @@ public:
 private:
 	CCamera*		m_Cam;
 	CMouse*			m_Mouse;
-
+	CStage2Event*   m_Event;
+;
 	
 };
 

@@ -85,6 +85,7 @@ HRESULT CTestScene::Initialize()
 void CTestScene::Release()
 {
 	m_pObjectMgr->Clear();
+	CInstanceMgr::GetInstance()->Clear();
 	delete m_Mouse;
 	delete m_Cam;
 	delete m_EventChecker;

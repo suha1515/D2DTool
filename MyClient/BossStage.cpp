@@ -6,6 +6,7 @@
 #include "GameObject.h"
 
 #include "EnemyScripts.h"
+#include "Stage2Event.h"
 
 CBossStage::CBossStage()
 {
@@ -14,6 +15,7 @@ CBossStage::CBossStage()
 
 CBossStage::~CBossStage()
 {
+	delete m_Event;
 }
 
 void CBossStage::Update()
@@ -23,6 +25,7 @@ void CBossStage::Update()
 	m_Mouse->Update();
 
 	m_pObjectMgr->Update();
+	m_Event->Update();
 }
 
 void CBossStage::LateUpdate()
@@ -59,6 +62,8 @@ HRESULT CBossStage::Initialize()
 	CGameObject* Boss=CObjectMgr::GetInstance()->FindObjectWithName(L"Boss_Bot").front();
 	Boss->AddScripts(CEnemyScripts::Create(Boss, ENEMY_TYPE::BOSS));
 
+	m_Event = new CStage2Event;
+	m_Event->Initialize();
 	return S_OK;
 }
 

@@ -5,12 +5,14 @@ class CAnimator;
 class CPlayerScript :
 	public CScripts
 {
-	enum STATE { IDLE, RUN_START, RUN, RUN_END,THROW,THROW_END,MEELE,MEELE_CIRCLE,JUMP,AIM,AIM_WALK,HIT };
+	enum STATE { IDLE, RUN_START, RUN, RUN_END,THROW,THROW_END,MEELE,MEELE_CIRCLE,JUMP,AIM,AIM_WALK,HIT,
+				  SKILL_CHARGE,SKILL_USE};
 	enum DIR {
 		UP, RIGHT_UP_45, RIGHT, RIGHT_DOWN_45, DOWN,
 		LEFT_UP_45, LEFT, LEFT_DOWN_45
 	};
 	enum AttackDir{RIGHT_ATK,LEFT_ATK};
+	enum SKILL{NONE,FIRE,ICE};
 public:
 	CPlayerScript();
 	~CPlayerScript();
@@ -43,6 +45,10 @@ public:
 	void AtkState();
 	void GetHit(D3DXVECTOR3 dirVec, float power, float dmg);
 
+	void FireBreathSkill();
+	void IceBulletSkill();
+
+	SKILL	m_SkillType;
 
 	//원거리 공격
 	void AttackBullet();
@@ -93,6 +99,14 @@ private:
 	bool		m_Down;
 	bool		m_Up;
 	bool		m_bIsThrow;
+
+	//플레이어 스킬
+	float		m_fSkillCool = 0.0f;
+	float		m_fShadowCool = 0.0f;
+	int			m_iShadowCount = 0;
+	int			m_iFireCount = 0;
+
+	D3DXVECTOR3 m_SkillPos;
 
 	bool		m_bIsJump;
 	bool	    m_bIsMove = false;
