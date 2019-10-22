@@ -59,11 +59,6 @@ HRESULT CTestScene::Initialize()
 
 	m_pKeyMgr->SetMouse(m_Mouse);
 
-	CGameObject* pBullet= m_pObjectMgr->AddCopy(L"CrossHair", L"my_Bullet");
-	//pBullet->AddScripts(CMouseBotScript::Create(pBullet)
-	if (pBullet == nullptr)
-		MessageBox(0, L"총알 널포인트입니다", L"ERROR", 0);
-
 	vector<CGameObject*> MouseBotobjects = CObjectMgr::GetInstance()->FindObjectWithName(L"쥐로봇");
 	for (auto&i : MouseBotobjects)
 	{
@@ -78,6 +73,9 @@ HRESULT CTestScene::Initialize()
 
 	m_EventChecker = new CSTage1Event;
 	m_EventChecker->Initialize();
+	CSoundMgr::GetInstance()->SetVolume(CSoundMgr::BGM, 0.4f);
+	CSoundMgr::GetInstance()->PlayBGM(L"1스테이지음악.ogg");
+	
 	
 	return S_OK;
 }

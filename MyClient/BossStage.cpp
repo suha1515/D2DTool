@@ -40,6 +40,8 @@ void CBossStage::Render()
 
 HRESULT CBossStage::Initialize()
 {
+	CSoundMgr::GetInstance()->StopAll();
+	
 	m_pObjectMgr->SetTileSize(2048, 2048);
 	m_pObjectMgr->LoadObject(L"../Map/MapList/boss.map");
 
@@ -64,6 +66,8 @@ HRESULT CBossStage::Initialize()
 
 	m_Event = new CStage2Event;
 	m_Event->Initialize();
+
+	
 	return S_OK;
 }
 

@@ -41,6 +41,7 @@ void CDestructiveObject::OnCollision(CGameObject * pGameObject , XMFLOAT2 * move
 		m_bIsHit = true;
 		m_fWhiteValue = 0.0f;
 		m_iHitCount--;
+		CSoundMgr::GetInstance()->PlaySound(L"hit-heavy-2.ogg", CSoundMgr::EFFECT);
 	}
 }
 
@@ -72,6 +73,7 @@ int CDestructiveObject::OnUpdate()
 				m_iHitCount = 5;
 				m_pTexture->SetOn(false);
 				Destruct();
+				CSoundMgr::GetInstance()->PlaySound(L"rock-burst3.ogg", CSoundMgr::EFFECT);
 			}
 		}
 		else

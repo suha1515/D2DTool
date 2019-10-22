@@ -160,9 +160,6 @@
     <Filter Include="95.Component\04.Scripts\07.CameraEventScript">
       <UniqueIdentifier>{c7d75e26-3782-48da-acff-38d92bcfb0ca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99.Managers\10.SceneMgr\00.Scene\01.bossStage">
-      <UniqueIdentifier>{d35a6d13-dd65-49d7-bdd9-8e575c145429}</UniqueIdentifier>
-    </Filter>
     <Filter Include="95.Component\04.Scripts\04.EnemyScripts\03.BossScript">
       <UniqueIdentifier>{4f4075a5-c1ef-4582-b131-6e3fcf2e3a03}</UniqueIdentifier>
     </Filter>
@@ -177,6 +174,12 @@
     </Filter>
     <Filter Include="96.Shaders\01.ScreenBuffer">
       <UniqueIdentifier>{68aa568c-0646-4f5c-a07f-44bfb84ae9ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Managers\14.SoundMgr">
+      <UniqueIdentifier>{80685edd-1a80-42e9-a77b-ae93b03d9517}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Managers\10.SceneMgr\00.Scene\00.TestScene\01.bossStage">
+      <UniqueIdentifier>{d35a6d13-dd65-49d7-bdd9-8e575c145429}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -334,7 +337,7 @@
       <Filter>95.Component\04.Scripts\07.CameraEventScript</Filter>
     </ClInclude>
     <ClInclude Include="BossStage.h">
-      <Filter>99.Managers\10.SceneMgr\00.Scene\01.bossStage</Filter>
+      <Filter>99.Managers\10.SceneMgr\00.Scene\00.TestScene\01.bossStage</Filter>
     </ClInclude>
     <ClInclude Include="BossScript.h">
       <Filter>95.Component\04.Scripts\04.EnemyScripts\03.BossScript</Filter>
@@ -362,6 +365,9 @@
     </ClInclude>
     <ClInclude Include="Stage2Event.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundMgr.h">
+      <Filter>99.Managers\14.SoundMgr</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -507,7 +513,7 @@
       <Filter>95.Component\04.Scripts\07.CameraEventScript</Filter>
     </ClCompile>
     <ClCompile Include="BossStage.cpp">
-      <Filter>99.Managers\10.SceneMgr\00.Scene\01.bossStage</Filter>
+      <Filter>99.Managers\10.SceneMgr\00.Scene\00.TestScene\01.bossStage</Filter>
     </ClCompile>
     <ClCompile Include="BossScript.cpp">
       <Filter>95.Component\04.Scripts\04.EnemyScripts\03.BossScript</Filter>
@@ -535,6 +541,9 @@
     </ClCompile>
     <ClCompile Include="Stage2Event.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundMgr.cpp">
+      <Filter>99.Managers\14.SoundMgr</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

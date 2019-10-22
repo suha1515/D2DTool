@@ -56,6 +56,7 @@ void CPuzzlePoint::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move )
 				XMFLOAT3& rot = XMFLOAT3(0, 0, 0.0f);
 				D3DXVECTOR3 scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 				CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Hit", ANIMATION_ONCE);
+				CSoundMgr::GetInstance()->PlaySound(L"스위치온.ogg", CSoundMgr::EFFECT);
 			}
 		}
 		else if (pGameObject->GetObjectTag() == L"EnemyBullet")
@@ -69,6 +70,7 @@ void CPuzzlePoint::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move )
 				XMFLOAT3& rot = XMFLOAT3(0, 0, 0.0f);
 				D3DXVECTOR3 scale = D3DXVECTOR3(2.0f, 2.0f, 1.0f);
 				CEffect::Create(*pos, rot, scale, L"Turret_Effect", L"Turrect_Big_Bullet_Hit", ANIMATION_ONCE);
+				CSoundMgr::GetInstance()->PlaySound(L"스위치온.ogg", CSoundMgr::EFFECT);
 			}
 		}
 	}

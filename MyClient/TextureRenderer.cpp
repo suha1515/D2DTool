@@ -38,6 +38,7 @@ void CTextureRenderer::Initialize(CGameObject * pObject)
 
 	m_pShader = CShaderMgr::GetInstance()->GetEffect(L"firstShader");
 
+
 	m_GameObject = pObject;
 }
 

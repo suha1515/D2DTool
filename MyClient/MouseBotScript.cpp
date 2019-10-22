@@ -74,6 +74,7 @@ int CMouseBotScript::OnUpdate()
 	{
 		m_pGameObject->SetObjectDestroy(true);
 		CEffect::Create(*m_Pos, XMFLOAT3(0.0f,0.0f,0.0f), D3DXVECTOR3(1.5f,1.5f,1.0f), L"Explosion_Effect", L"Small_Explosion", ANIMATION_ONCE);
+		CSoundMgr::GetInstance()->PlaySound(L"Æø¹ß.ogg", CSoundMgr::EFFECT);
 		return 0;
 	}
 	CheckTiles();
@@ -340,5 +341,7 @@ void CMouseBotScript::RandomMove()
 	float radius = fDist(rnd);*/
 
 	m_CurState = MOVE;
+
+	CSoundMgr::GetInstance()->PlaySound(L"·Îº¿¸¶¿ì½º.ogg", CSoundMgr::EFFECT);
 }
 

@@ -24,10 +24,10 @@ struct VS_OUT
 };
 struct PS_OUT
 {
-	float4 v_color	:COLOR;
+	float4 v_color	:COLOR0;
 };
 
-PS_OUT PS_MAIN(VS_OUT In)
+PS_OUT PS_MAIN(VS_OUT In) :COLOR0
 {
 	PS_OUT p_out = (PS_OUT)0;
 
@@ -40,9 +40,10 @@ PS_OUT PS_MAIN(VS_OUT In)
 	light_color.xyz += ambient;
 	light_color = saturate(light_color);
 
-	//p_out.v_color *= light_color;
-	//p_out.v_color.rgb = color;
-	return p_out;	
+	p_out.v_color *= light_color;
+	p_out.v_color.rgb = color;
+	p_out.v_color.rgb = p_out.v_color.rrr;
+	return p_out;
 }
 technique Default_Device
 {

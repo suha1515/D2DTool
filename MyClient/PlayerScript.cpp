@@ -359,7 +359,6 @@ void CPlayerScript::MouseInput()
 			MouseDir();
 
 			m_CurState = AIM;
-
 			////남은거리만큼 다시 라인을 체크한다 다만 반사벡터를 고려한다.
 			//D3DXVECTOR3 originPos = *playerPos;
 			//D3DXVECTOR3 otherPoints = m_GuideLineEndPoint;				//충돌면에 찍힌 점.
@@ -418,6 +417,7 @@ void CPlayerScript::MouseInput()
 		{
 			m_CurState = THROW;
 			m_bIsThrow = true;
+			
 		}
 			
 		if (m_bIsCharging)
@@ -488,6 +488,8 @@ void CPlayerScript::MeeleAttack()
 				else
 					CGameObject* particle = CEffect::Create(m_AttackPos, XMFLOAT3(0.0f, 0.0f, m_AttackAngle), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player_Attack_Effect", L"Player_Sweep", ANIMATION_ONCE, 1.0f, 20, 10, 0, 10, L"Player_Sweep");
 				CGameObject* particle2 = CEffect::Create(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player_Attack_Effect", L"Player_Sweep_After", ANIMATION_ONCE, 1.0f);
+
+				CSoundMgr::GetInstance()->PlaySound(L"칼소리1.ogg", CSoundMgr::EFFECT);
 			}
 			else
 			{
@@ -496,6 +498,7 @@ void CPlayerScript::MeeleAttack()
 				else
 				CGameObject* particle = CEffect::Create(m_AttackPos, XMFLOAT3(0.0f, 0.0f, m_AttackAngle), D3DXVECTOR3(-1.0f, 1.0f, 1.0f), L"Player_Attack_Effect", L"Player_Sweep", ANIMATION_ONCE, 1.0f, 20, 10, 0, 10, L"Player_Sweep");
 				CGameObject* particle2 = CEffect::Create(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Player_Attack_Effect", L"Player_Sweep_After", ANIMATION_ONCE, 1.0f);
+				CSoundMgr::GetInstance()->PlaySound(L"칼소리2.ogg", CSoundMgr::EFFECT);
 			}	
 			//CEffect::CreateEffect<CBossRockSkill>(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f),L"Effect",LAYER_5);
 			//CEffect::CreateMovable(*playerPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Fire_Effect", L"Fire_Breath", ANIMATION_ONCE,m_DirVec,400.f,0.5f,0,10,10,0,0,L"Effect",LAYER_5);
@@ -866,6 +869,7 @@ void CPlayerScript::AnimState()
 			}
 			break;
 		case JUMP:
+			CSoundMgr::GetInstance()->PlaySound(L"점프소리.ogg", CSoundMgr::EFFECT);
 			switch (m_CurDir)
 			{
 			case UP:
@@ -960,6 +964,7 @@ void CPlayerScript::AnimState()
 			break;
 
 		case SKILL_CHARGE:
+			CSoundMgr::GetInstance()->PlaySound(L"플레이어스킬.ogg", CSoundMgr::EFFECT);
 			switch (m_CurDir)
 			{
 			case UP:
@@ -1311,11 +1316,13 @@ void CPlayerScript::AttackBullet()
 	{
 		pBullet = CObjectMgr::GetInstance()->AddCopy(L"Small_Ball", L"Player_Bullet");
 		pBullet->AddScripts(CBulletScript::Create(m_BulletAngle,20.f, 400.f, pBullet, CBulletScript::BULLET_TYPE::SMALL));
+		CSoundMgr::GetInstance()->PlaySound(L"작은볼던지기.ogg", CSoundMgr::PLAYER);
 	}
 	else
 	{
 		pBullet = CObjectMgr::GetInstance()->AddCopy(L"Basic_Ball", L"Player_Bullet");
 		pBullet->AddScripts(CBulletScript::Create(m_BulletAngle, 40.f, 400.f ,pBullet, CBulletScript::BULLET_TYPE::CHARGED));
+		CSoundMgr::GetInstance()->PlaySound(L"큰볼던지기.ogg", CSoundMgr::PLAYER);
 	}
 	pBullet->GetComponent<CTransform>()->SetPosition(*pTransform->GetWorldPos());
 	pBullet->SetObjectLayer(m_pGameObject->GetObjectLayer());

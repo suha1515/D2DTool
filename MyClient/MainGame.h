@@ -32,5 +32,6 @@ private:
 	CSceneMgr*			m_pSceneMgr;
 	CShaderMgr*			m_pShaderMgr;
 	CKeyMgr*			m_pKeyMgr;
+	CSoundMgr*			m_pSoundMgr;
 };
 

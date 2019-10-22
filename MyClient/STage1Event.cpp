@@ -268,12 +268,18 @@ void CSTage1Event::Update()
 				m_PuzzlesObject["∆€¡Ò1"]["∆€¡Ò∆–µÂ_1"]->GetComponent<CAnimator>()->Play(L"Pad_On", ANIMATION_ONCE);
 				m_Puzzle1ObjFade = true;
 				m_Puzzle1 = true;
+				CSoundMgr::GetInstance()->PlaySound(L"highlight-switch-2.ogg", CSoundMgr::EFFECT);
 			}
 		}
 		if (m_Puzzle1ObjFade)
 		{
 			if (m_fAlphaValue >= 0.0f)
 			{
+				if (!m_PlaySoundOnce)
+				{
+					CSoundMgr::GetInstance()->PlaySound(L"πË∏ÆæÓ¥ŸøÓ.ogg", CSoundMgr::EFFECT);
+					m_PlaySoundOnce = true;
+				}
 				m_PuzzlesObject["∆€¡Ò1"]["πÊæÓ∫Æ_1"]->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlphaValue);
 				for (auto&i : m_PuzzlesObject["∆€¡Ò1"]["πÊæÓ∫Æ_1"]->GetChildernVector())
 				{
@@ -285,6 +291,7 @@ void CSTage1Event::Update()
 			{
 				m_PuzzlesObject["∆€¡Ò1"]["πÊæÓ∫Æ_1"]->SetObjectDestroy(true);
 				m_Puzzle1ObjFade = false;
+				m_PlaySoundOnce = false;
 				m_fAlphaValue = 1.f;
 			}
 		}
@@ -297,6 +304,11 @@ void CSTage1Event::Update()
 				m_CameraEvents["ƒ´∏ﬁ∂Û_¿Ã∫•∆Æ2"]->SetCameraOn();
 				if (!m_Puzzle2WallFade)
 				{
+					if (!m_PlaySoundOnce)
+					{
+						CSoundMgr::GetInstance()->PlaySound(L"barrier-up.ogg", CSoundMgr::EFFECT);
+						m_PlaySoundOnce = true;
+					}
 					CGameObject* wall = m_PuzzlesObject["∆€¡Ò2"]["∆€¡Ò2_πÊ«ÿπ∞"];
 					if (m_fAlpahValue2 <= 1.0f)
 					{
@@ -311,6 +323,7 @@ void CSTage1Event::Update()
 					{
 						m_Puzzle2WallFade = true;
 						m_fAlpahValue2 = 1.0f;
+						m_PlaySoundOnce = false;
 					}
 				}
 				else
@@ -322,6 +335,11 @@ void CSTage1Event::Update()
 				CGameObject* wall = m_PuzzlesObject["∆€¡Ò2"]["∆€¡Ò2_πÊ«ÿπ∞"];
 				if (m_fAlpahValue2 >= 0.0f)
 				{
+					if (!m_PlaySoundOnce)
+					{
+						CSoundMgr::GetInstance()->PlaySound(L"πË∏ÆæÓ¥ŸøÓ.ogg", CSoundMgr::EFFECT);
+						m_PlaySoundOnce = true;
+					}
 					wall->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlpahValue2);
 					for (auto&i : wall->GetChildernVector())
 					{
@@ -331,6 +349,7 @@ void CSTage1Event::Update()
 				}
 				else
 				{
+					m_PlaySoundOnce = false;
 					wall->SetObjectDestroy(true);
 					m_Puzzle2Clear = true;
 					m_fAlpahValue2 = 0.0f;
@@ -346,6 +365,11 @@ void CSTage1Event::Update()
 			{
 				if (!m_Puzzle3WallFde)
 				{
+					if (!m_PlaySoundOnce)
+					{
+						CSoundMgr::GetInstance()->PlaySound(L"πË∏ÆæÓ¥ŸøÓ.ogg", CSoundMgr::EFFECT);
+						m_PlaySoundOnce = true;
+					}
 					if (m_fAlphaValue3 >= 0.0f)
 					{
 						m_PuzzlesObject["∆€¡Ò3"]["∆€¡Ò3_πÊ«ÿπ∞"]->GetComponent<CTextureRenderer>()->SetAlpha(m_fAlphaValue3);
@@ -360,6 +384,7 @@ void CSTage1Event::Update()
 						m_PuzzlesObject["∆€¡Ò3"]["∆€¡Ò3_πÊ«ÿπ∞"]->SetObjectDestroy(true);
 						m_Puzzle3WallFde = true;
 						m_fAlphaValue3 = 1.0f;
+						m_PlaySoundOnce = false;
 					}
 				}
 			}
@@ -371,15 +396,26 @@ void CSTage1Event::Update()
 		//=========================================================================================================
 		if (!m_Puzzle4Clear)
 		{
+			
 			if (m_mapPuzzle["∆€¡Ò4"]["∆€¡Ò4_∆˜¿Œ∆Æ"]->GetPuzzleOn())
 			{
+				if (!m_PlaySoundOnce)
+				{
+					CSoundMgr::GetInstance()->PlaySound(L"πÆø≠∏≤.ogg", CSoundMgr::EFFECT);
+					m_PlaySoundOnce = true;
+				}
 				m_PuzzlesObject["∆€¡Ò4"]["∆€¡Ò4_πÆ"]->GetComponent<CAnimator>()->Play(L"Open", ANIMATION_ONCE);
 				m_Puzzle4Clear = true;
+				
 			}
 		}
 	}
 	else
+	{
+		m_PlaySoundOnce = false;
 		CSceneMgr::GetInstance()->SceneChange(CSceneMgr::BOSS_STAGE);
+	}
+		
 }
 
 void CSTage1Event::CameraEventUpdate()

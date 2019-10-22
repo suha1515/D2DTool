@@ -16,6 +16,7 @@ CMainGame::CMainGame()
 	, m_pSceneMgr(CSceneMgr::GetInstance())
 	, m_pShaderMgr(CShaderMgr::GetInstance())
 	, m_pKeyMgr(CKeyMgr::GetInstance())
+	, m_pSoundMgr(CSoundMgr::GetInstance())
 {
 
 }
@@ -64,6 +65,8 @@ HRESULT CMainGame::Initialize()
 	FAILED_CHECK_MSG_RETURN(hr, L"장치초기화 실패", E_FAIL);
 
 	m_pShaderMgr->Initialize();
+
+	m_pSoundMgr->Initialize();
 
 	m_pObjectMgr->LoadCopyObjectFromFile(L"../ObjectList/copy2.dat");
 	m_pObjectMgr->Initialize();

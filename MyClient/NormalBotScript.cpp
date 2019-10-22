@@ -76,6 +76,7 @@ int CNormalBotScript::OnUpdate()
 		{
 			m_pGameObject->SetObjectDestroy(true);
 			CEffect::Create(*m_Pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.5f, 1.5f, 1.0f), L"Explosion_Effect", L"Small_Explosion", ANIMATION_ONCE);
+			CSoundMgr::GetInstance()->PlaySound(L"폭발.ogg", CSoundMgr::EFFECT);
 			return 0;
 		}
 		
@@ -409,6 +410,7 @@ void CNormalBotScript::AttackState()
 		m_CurState = ATTACK;
 		cout << "대쉬공격!" << endl;
 		Dash();
+		CSoundMgr::GetInstance()->PlaySound(L"드릴몬스터.ogg", CSoundMgr::EFFECT);
 	}
 	else if (m_CurState == ATTACK)
 	{

@@ -19,6 +19,7 @@ private:
 	map<string, CCameraEvent*>					m_CameraEvents;
 	map<string, map<string, CPuzzleScripts*>>	m_mapPuzzle;
 	map<string, map<string,CGameObject*>>	m_PuzzlesObject;
+	bool									m_PlaySoundOnce = false;
 
 	//퍼즐 1에관한변수들
 	bool									m_Puzzle1=false;

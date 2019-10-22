@@ -48,6 +48,8 @@ private:
 	void				GetDirPlayer();
 
 private:
+	float				m_HitCool = 0.0f;
+
 	CKeyMgr*			m_pKeyMgr;
 	D3DXVECTOR3			m_DirVec;			//πÊ«‚∫§≈Õ
 	D3DXVECTOR3			m_PrePos;

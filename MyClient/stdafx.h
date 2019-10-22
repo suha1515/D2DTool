@@ -31,9 +31,13 @@
 #include <fstream>
 #include <random>
 #include <cmath>
+#include <io.h>
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 using namespace std;
+// FMOD
+#include "fmod.h"
+#pragma comment(lib, "fmodex_vc.lib")
 
 // DirectX
 #include <d3d9.h>
@@ -70,6 +74,7 @@ using namespace DirectX;
 #include "CollisionMgr.h"		//콜라이더 매니저
 #include "SceneMgr.h"			//씬 매니저
 #include "KeyMgr.h"				//키 매니저
+#include "SoundMgr.h"
 	
 
 

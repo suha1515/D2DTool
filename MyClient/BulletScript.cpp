@@ -59,11 +59,13 @@ void CBulletScript::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move)
 				{
 					scale = D3DXVECTOR3(2.0f, 2.0f, 1.0f);
 					power = 40.f;
+					CSoundMgr::GetInstance()->PlaySound(L"큰볼맞는소리.ogg", CSoundMgr::EFFECT);
 				}
 				else
 				{
 					scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 					power = 20.f;
+					CSoundMgr::GetInstance()->PlaySound(L"작은볼맞는소리.ogg", CSoundMgr::EFFECT);
 				}
 
 				CScripts* pscripts;
@@ -91,12 +93,14 @@ void CBulletScript::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move)
 					scale = D3DXVECTOR3(2.0f, 2.0f, 1.0f);
 					power = 5.f;
 					CEffect::Create(*pos, rot, scale, L"Turret_Effect", L"Turrect_Big_Bullet_Hit", ANIMATION_ONCE);
+					CSoundMgr::GetInstance()->PlaySound(L"큰볼맞는소리.ogg", CSoundMgr::EFFECT);
 				}
 				else
 				{
 					scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 					power = 3.f;
 					CEffect::Create(*pos, rot, scale, L"Turret_Effect", L"Turrect_Bullet_Hit", ANIMATION_ONCE);
+					CSoundMgr::GetInstance()->PlaySound(L"hit-7.ogg", CSoundMgr::EFFECT);
 				}
 
 				CScripts* pscripts = pGameObject->GetScript("CPlayerScript");
@@ -386,6 +390,8 @@ bool CBulletScript::CollideTiles()
 								CEffect::Create(*pos, rot, scale, L"Turret_Effect", L"Turrect_Big_Bullet_Bounce", ANIMATION_ONCE);
 							else
 							CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Bounce", ANIMATION_ONCE);
+
+							CSoundMgr::GetInstance()->PlaySound(L"큰공튕기기.ogg", CSoundMgr::EFFECT);
 						}
 						else
 						{
@@ -407,8 +413,9 @@ bool CBulletScript::CollideTiles()
 								CEffect::Create(*pos, rot, scale, L"Turret_Effect", L"Turrect_Bullet_Hit", ANIMATION_ONCE);
 							else
 							CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Fragile", ANIMATION_ONCE);
+							CSoundMgr::GetInstance()->PlaySound(L"작은볼벽맞는소리.ogg", CSoundMgr::EFFECT);
 						}
-							
+						
 						return true;
 					}
 				}
@@ -431,6 +438,7 @@ bool CBulletScript::CollideTiles()
 								CEffect::Create(*pos, rot, scale, L"Turret_Effect", L"Turrect_Big_Bullet_Bounce", ANIMATION_ONCE);		
 							else
 							CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Bounce", ANIMATION_ONCE);
+							CSoundMgr::GetInstance()->PlaySound(L"큰공튕기기.ogg", CSoundMgr::EFFECT);
 						}
 						else
 						{
@@ -445,6 +453,7 @@ bool CBulletScript::CollideTiles()
 							CEffect::Create(*pos, rot, scale, L"Turret_Effect", L"Turrect_Bullet_Hit", ANIMATION_ONCE);
 							else
 							CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Fragile", ANIMATION_ONCE);
+							CSoundMgr::GetInstance()->PlaySound(L"작은볼벽맞는소리.ogg", CSoundMgr::EFFECT);
 						}
 							
 

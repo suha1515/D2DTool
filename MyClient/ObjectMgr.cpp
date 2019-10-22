@@ -37,7 +37,7 @@ CObjectMgr::~CObjectMgr()
 		i.second->Release();
 	m_Targets.clear();
 
-//	m_pScreenBuffer->Release();
+	m_pScreenBuffer->Release();
 }
 
 
@@ -105,7 +105,7 @@ void CObjectMgr::AddScriptObject(CScripts * script)
 
 void CObjectMgr::Initialize()
 {
-	/*CTarget* target = new CTarget;
+	CTarget* target = new CTarget;
 	target->Initialize(WINCX, WINCY, D3DFMT_A8R8G8B8, D3DCOLOR_ARGB(255, 0, 0, 0));
 	m_Targets.insert({ DIFFUSE,target });
 	target = new CTarget;
@@ -114,7 +114,7 @@ void CObjectMgr::Initialize()
 	m_pScreenBuffer = new CScreenBuffer;
 	m_pScreenBuffer->Initialize(WINCX, WINCY);
 
-	m_pBlendShader = CShaderMgr::GetInstance()->GetEffect(L"BlendShader");*/
+	m_pBlendShader = CShaderMgr::GetInstance()->GetEffect(L"BlendShader");
 	for (size_t i = 0; i < m_Objects.size(); ++i)
 	{
 		for (auto& j : m_Objects[i])
@@ -232,13 +232,13 @@ void CObjectMgr::Render()
 	{
 		i.second->ClearColor();
 	}
-	//라이트 그리기.
-	//m_Targets[LIGHT_MAP]->ChangeNewDevice(0);
-	//for (auto&i : m_LightObject)
-	//	i->Render();
-	//m_Targets[LIGHT_MAP]->ChangeToPreDevice(0);
+	////라이트 그리기.
+	m_Targets[LIGHT_MAP]->ChangeNewDevice(0);
+	for (auto&i : m_LightObject)
+		i->Render();
+	m_Targets[LIGHT_MAP]->ChangeToPreDevice(0);
 
-	//m_Targets[DIFFUSE]->ChangeNewDevice(0);
+	m_Targets[DIFFUSE]->ChangeNewDevice(0);
 	//인스턴스 오브젝트는 가장 먼저그린다.(가장 밑바닥의 경우만가능할것같은데..
 	CInstanceMgr::GetInstance()->InstanceRender();
 	for (int i = 0; i < LAYER_END; ++i)
@@ -294,22 +294,22 @@ void CObjectMgr::Render()
 	m_Barricade.clear();
 	m_LightObject.clear();
 
-	//m_Targets[DIFFUSE]->ChangeToPreDevice(0);
+	m_Targets[DIFFUSE]->ChangeToPreDevice(0);
 
-	//m_pBlendShader->GetEffect()->SetTexture("tex0", m_Targets[DIFFUSE]->GetTexture());
-	//D3DXVECTOR3 color = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-	//m_pBlendShader->GetEffect()->SetFloatArray("color",color,3);
-	////m_pBlendShader->GetEffect()->SetTexture("tex1", m_Targets[LIGHT_MAP]->GetTexture());
-	//m_pBlendShader->GetEffect()->Begin(nullptr,0);
-	//m_pBlendShader->GetEffect()->BeginPass(0);
+	m_pBlendShader->GetEffect()->SetTexture("tex0", m_Targets[DIFFUSE]->GetTexture());
+	D3DXVECTOR3 color = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	m_pBlendShader->GetEffect()->SetFloatArray("color",color,3);
+	m_pBlendShader->GetEffect()->SetTexture("tex1", m_Targets[LIGHT_MAP]->GetTexture());
+	m_pBlendShader->GetEffect()->Begin(nullptr,0);
+	m_pBlendShader->GetEffect()->BeginPass(0);
 
-	//m_pScreenBuffer->Render();
-	//if (GetKeyState(VK_RETURN) < 0)
-	//{
-	//	D3DXSaveTextureToFile(L"../Texture/nORMAL.jpg", D3DXIFF_JPG, m_Targets[LIGHT_MAP]->GetTexture(), nullptr);
-	//}
-	//m_pBlendShader->GetEffect()->EndPass();
-	//m_pBlendShader->GetEffect()->End();
+	m_pScreenBuffer->Render();
+	if (GetKeyState(VK_RETURN) < 0)
+	{
+		D3DXSaveTextureToFile(L"../Texture/nORMAL.jpg", D3DXIFF_JPG, m_Targets[DIFFUSE]->GetTexture(), nullptr);
+	}
+	m_pBlendShader->GetEffect()->EndPass();
+	m_pBlendShader->GetEffect()->End();
 }
 
 void CObjectMgr::DebugRender()

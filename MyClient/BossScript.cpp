@@ -79,16 +79,38 @@ void CBossScript::OnCollision(CGameObject * pGameObject, XMFLOAT2 * move )
 {
 	if (pGameObject->GetObjectTag() == L"Player_Sweep")
 	{
+		if (m_HitCool > 0.2f)
+		{
+			CSoundMgr::GetInstance()->PlaySound(L"hit-heavy-2.ogg", CSoundMgr::EFFECT);
+			m_HitCool -= m_HitCool;
+		}
+		else
+		m_HitCool += CTimeMgr::GetInstance()->GetDeltaTime();
 			GetHit(D3DXVECTOR3(0,0,0),10.f,20.f);
 	}
 	if (pGameObject->GetObjectTag() == L"Player_FireThrower")
 	{
+		if (m_HitCool > 0.05f)
+		{
+			CSoundMgr::GetInstance()->PlaySound(L"hit-7.ogg", CSoundMgr::EFFECT);
+			m_HitCool -= m_HitCool;
+		}
+		else
+		m_HitCool += CTimeMgr::GetInstance()->GetDeltaTime();
 		
 		CEffect::Create(*pGameObject->GetComponent<CTransform>()->GetWorldPos(), XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Fire_Effect", L"Fire_Hit", ANIMATION_ONCE, 1.5f, 0, 0, 0, 0, L"Effect", LAYER_5);
 		GetHit(D3DXVECTOR3(0, 0, 0), 10.f, 20.f);
 	}
 	if (pGameObject->GetObjectTag() == L"Player_Ice")
 	{
+		if (m_HitCool > 0.05f)
+		{
+			CSoundMgr::GetInstance()->PlaySound(L"주인공아이스스킬.ogg", CSoundMgr::EFFECT);
+			m_HitCool -= m_HitCool;
+		}
+		else
+			m_HitCool += CTimeMgr::GetInstance()->GetDeltaTime();
+
 
 		CEffect::Create(*pGameObject->GetComponent<CTransform>()->GetWorldPos(), XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Hit_Effect", L"Hit_Ice", ANIMATION_ONCE, 1.5f, 0, 0, 0, 0, L"Effect", LAYER_5);
 		GetHit(D3DXVECTOR3(0, 0, 0), 10.f, 30.f);
@@ -146,6 +168,7 @@ int CBossScript::OnUpdate()
 	{
 		m_CurState = DEAD;
 		m_bIsDeadEffect = true;
+		CSoundMgr::GetInstance()->StopSound(CSoundMgr::BGM);
 	}
 	
 	
@@ -265,6 +288,7 @@ void CBossScript::AnimState()
 			}
 			break;
 		case DASH_READY:
+			CSoundMgr::GetInstance()->PlaySound(L"보스대시차지.ogg", CSoundMgr::EFFECT);
 			m_pTexture->SetFadeColor(XMFLOAT3(1.0f, 1.0f, 1.0f));
 			switch (m_CurDir)
 			{
@@ -287,6 +311,7 @@ void CBossScript::AnimState()
 		case DASH:
 			m_tempPos = *m_Pos;
 			m_PrePlayerPos = *playerPos;
+			CSoundMgr::GetInstance()->PlaySound(L"보스대시.ogg", CSoundMgr::EFFECT);
 			switch (m_CurDir)
 			{
 			case LEFT_UP_45:
@@ -325,6 +350,7 @@ void CBossScript::AnimState()
 			}
 			break;
 		case STOMP:
+			CSoundMgr::GetInstance()->PlaySound(L"보스팔차지.ogg", CSoundMgr::EFFECT);
 			switch (m_CurDir)
 			{
 			case LEFT_UP_45:
@@ -364,6 +390,7 @@ void CBossScript::AnimState()
 			}
 			break;
 		case GRIND:
+
 			switch (m_CurDir)
 			{
 			case LEFT_UP_45:
@@ -423,8 +450,9 @@ void CBossScript::AnimState()
 			break;
 
 		case DEAD:
+			CSoundMgr::GetInstance()->PlaySound(L"charge.ogg", CSoundMgr::EFFECT);
 			CCameraMgr::GetInstance()->Follow(m_pGameObject);
-			CCameraMgr::GetInstance()->CameraZoomIn(D3DXVECTOR3(4.0f, 4.0f, 0.0f), 3.0f, 5.0f);
+			CCameraMgr::GetInstance()->CameraZoomIn(D3DXVECTOR3(4.0f, 4.0f, 0.0f), 3.0f, 6.0f);
 			m_pTexture->SetPass(1);
 			m_pTexture->SetFadeColor(XMFLOAT3(0.8f, 0.0f, 0.0f));
 			switch (m_CurDir)
@@ -497,6 +525,7 @@ void CBossScript::GetHit(D3DXVECTOR3 dirVec, float power, float dmg)
 		m_fWhiteValue = 0.2f;
 		m_pTexture->SetFadeColor(XMFLOAT3(1.0f, 0.0f, 0.0f));
 		m_bIsHit = true;
+
 	}
 }
 
@@ -651,7 +680,7 @@ void CBossScript::AttackState()
 	{
 		if (CKeyMgr::GetInstance()->KeyPressing(KEY_V))
 		{
-			m_CurState = STOMP;
+			//m_CurState = STOMP;
 		}
 		else if (CKeyMgr::GetInstance()->KeyPressing(KEY_P))
 			m_CurState = GRIND_READY;
@@ -685,6 +714,7 @@ void CBossScript::Hit()
 			m_CurState = IDLE;
 		}
 		m_bIsHit = false;
+		m_HitCool = 0.0f;
 	}
 	//if (m_fHitCoolTime > 1.7f)
 	//{
@@ -702,8 +732,9 @@ void CBossScript::SetPhaseIn()
 
 void CBossScript::PhaseIn()
 {
+	
 	if(m_bIsPhaseIn)
-	{
+		{
 		if (m_EventCount < 3)
 		{
 			m_Type = NO;
@@ -716,6 +747,7 @@ void CBossScript::PhaseIn()
 					m_CurState = IDLE;
 					m_fWaitTime -= m_fWaitTime;
 					m_EventCount++;
+					CSoundMgr::GetInstance()->PlaySound(L"보스팔내려찍기.ogg", CSoundMgr::EFFECT);
 				}
 				else
 					m_fWaitTime += CTimeMgr::GetInstance()->GetDeltaTime();
@@ -724,6 +756,8 @@ void CBossScript::PhaseIn()
 		}
 		else
 		{
+			CSoundMgr::GetInstance()->SetVolume(CSoundMgr::BGM, 0.3f);
+			CSoundMgr::GetInstance()->PlayBGM(L"muChallenge2.ogg");
 			CCameraMgr::GetInstance()->Follow(m_pPlayer);
 			m_CurPhase = PHASE1;
 			m_bIsPhaseIn = false;
@@ -742,7 +776,7 @@ void CBossScript::StompSkill()
 		m_PrePos = m_SkillPos;
 		MakeIceSkillRoute();
 		m_bStompSkill = true;
-			
+		CSoundMgr::GetInstance()->PlaySound(L"보스팔내려찍기.ogg", CSoundMgr::EFFECT);
 		CCameraMgr::GetInstance()->ShakeCamera(2.0f, 0.2f);
 		//if(m_CurDir==RIGHT||m_CurDir==RIGHT_UP_45||m_CurDir==RIGHT_DOWN_45)
 		/*CEffect::Create(m_SkillPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 2.0f, 0.0f), L"Dust_Effect", L"Dust_Big",ANIMATION_ONCE, 0,0,0,0,0,L"Effect",LAYER_1);
@@ -766,9 +800,16 @@ void CBossScript::StompSkill()
 				if (pos != m_PrePlayerPos)
 				{
 					if (m_Type == ICE)
+					{
 						CEffect::CreateEffect<CBossIceEffect>(pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Effect", LAYER_1);
+						CSoundMgr::GetInstance()->PlaySound(L"아이스생성.ogg", CSoundMgr::EFFECT);
+					}
 					else
+					{
 						CEffect::CreateEffect<CBossFireBreath>(pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Effect", LAYER_1);
+						CSoundMgr::GetInstance()->PlaySound(L"fire-hit-hard2.ogg", CSoundMgr::EFFECT);
+					}
+						
 				}
 				m_fIceSkillSpawnCool -= m_fIceSkillSpawnCool;
 			}
@@ -793,6 +834,7 @@ void CBossScript::GrindSkill()
 			{
 				D3DXVECTOR3 dir = D3DXVECTOR3(cosf(D3DXToRadian(m_fAngle)), sinf(D3DXToRadian(m_fAngle)), 0.0f);
 				CEffect::CreateMovable(m_SkillPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.5f, 1.5f, 1.0f), L"Fire_Effect", L"Fire_Explosion", ANIMATION_ONCE, dir, 400.f, 0.5f, 0, 30, 30, 0, 0, L"Boss_FireThrower", LAYER_5);
+				CSoundMgr::GetInstance()->PlaySound(L"보스화염공격.ogg", CSoundMgr::EFFECT);
 				m_fFireGrindSkillSpawnCool -= m_fFireGrindSkillSpawnCool;
 			}
 			m_fFireGrindSkillSpawnCool += CTimeMgr::GetInstance()->GetDeltaTime();
@@ -814,6 +856,7 @@ void CBossScript::ThrowerSkill()
 	{
 		if (!m_bDustOnce)
 		{
+			CSoundMgr::GetInstance()->PlaySound(L"보스팔내려찍기.ogg", CSoundMgr::EFFECT);
 			if (m_CurDir == RIGHT || m_CurDir == RIGHT_UP_45 || m_CurDir == RIGHT_DOWN_45)
 				CEffect::Create(m_SkillPos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 2.0f, 0.0f), L"Dust_Effect", L"Dust_Big", ANIMATION_ONCE, 0, 0, 0, 0, 0, L"Effect", LAYER_2);
 			else
@@ -929,10 +972,11 @@ void CBossScript::DeadEffect()
 {
 	if (m_CurState == DEAD)
 	{
-		if (m_fDeadEffTime > 5.0f)
+		if (m_fDeadEffTime > 6.0f)
 		{
 			if (!m_bIsDead)
 			{
+				CSoundMgr::GetInstance()->PlaySound(L"explosion-long-1.ogg", CSoundMgr::EFFECT);
 				for (int i = 0; i < 10; ++i)
 				{
 					random_device	rn;
@@ -954,6 +998,7 @@ void CBossScript::DeadEffect()
 		{
 			if (m_fExploSpawTime > 0.2f)
 			{
+				CSoundMgr::GetInstance()->PlaySound(L"explosion-4.ogg", CSoundMgr::EFFECT);
 				random_device	rn;
 				mt19937_64 rnd(rn());
 				uniform_real_distribution<float> nDir(-1.0f, 1.0f);
@@ -972,7 +1017,7 @@ void CBossScript::DeadEffect()
 				m_fDeadAlpha += CTimeMgr::GetInstance()->GetDeltaTime();
 			}
 			
-			CCameraMgr::GetInstance()->ShakeCamera(1.0f, 5.0f);
+			CCameraMgr::GetInstance()->ShakeCamera(1.0f, 6.0f);
 			m_fDeadEffTime += CTimeMgr::GetInstance()->GetDeltaTime();
 			m_fExploSpawTime += CTimeMgr::GetInstance()->GetDeltaTime();	
 		}

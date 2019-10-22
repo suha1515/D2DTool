@@ -52,6 +52,7 @@ void CPuzzleStack::OnCollision(CGameObject * pGameObject , XMFLOAT2 * move )
 			XMFLOAT3& rot = XMFLOAT3(0, 0, 0.0f);
 			D3DXVECTOR3 scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 			CEffect::Create(*pos, rot, scale, L"Bullet_Effect", L"Bullet_Hit", ANIMATION_ONCE);
+			CSoundMgr::GetInstance()->PlaySound(L"스위치카운터.ogg", CSoundMgr::EFFECT);
 		}
 	}
 }
@@ -150,6 +151,7 @@ void CPuzzleStack::AnimState()
 			break;
 		case FULL_STACK:
 			m_pAnimator->Play(L"Puzzle_Clear", ANIMATION_ONCE);
+			CSoundMgr::GetInstance()->PlaySound(L"스위치온.ogg", CSoundMgr::EFFECT);
 			break;
 		case CLEAR:
 			m_PuzzleOn = true;

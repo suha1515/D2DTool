@@ -207,6 +207,7 @@
     <ClInclude Include="Scripts.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderMgr.h" />
+    <ClInclude Include="SoundMgr.h" />
     <ClInclude Include="Stage1.h" />
     <ClInclude Include="STage1Event.h" />
     <ClInclude Include="Stage2Event.h" />
@@ -267,6 +268,7 @@
     <ClCompile Include="Scripts.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderMgr.cpp" />
+    <ClCompile Include="SoundMgr.cpp" />
     <ClCompile Include="Stage1.cpp" />
     <ClCompile Include="STage1Event.cpp" />
     <ClCompile Include="Stage2Event.cpp" />

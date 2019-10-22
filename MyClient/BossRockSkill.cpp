@@ -163,6 +163,7 @@ void CBossRockSkill::AttackState()
 		CEffect::Create(D3DXVECTOR3(m_Pos->x - 10.f, m_Pos->y - 10.f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.f), L"Dust_Effect", L"Dust_Very_Small", ANIMATION_ONCE, 1.0f, 0, 0, 0, 0, L"Effect", LAYER_1);
 		CEffect::Create(D3DXVECTOR3(m_Pos->x + 20.f, m_Pos->y - 20.f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.f), L"Dust_Effect", L"Dust_Very_Small", ANIMATION_ONCE, 1.0f, 0, 0, 0, 0, L"Effect", LAYER_1);
 		CEffect::Create(D3DXVECTOR3(m_Pos->x + 20.f, m_Pos->y + 10.f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.f), L"Dust_Effect", L"Dust_Very_Small", ANIMATION_ONCE, 1.0f, 0, 0, 0, 0, L"Effect", LAYER_1);
+		CSoundMgr::GetInstance()->PlaySound(L"rock-burst1.ogg", CSoundMgr::EFFECT);
 		m_pBoxCollider->SetOn(true);
 		m_CurState = PARTICLE;	
 	}

@@ -44,9 +44,10 @@ void CBossIceEffect::OnInit()
 	m_bIsInit = true;
 	m_WhiteValue = 0.5f;
 
+
 	
 	m_pPlayer = CObjectMgr::GetInstance()->m_pPlayer;
-	CEffect::Create(*m_pTransform->GetWorldPos(), XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Ice_Effect", L"Ice_Explosive", ANIMATION_ONCE);
+	CEffect::Create(*m_pTransform->GetWorldPos(), XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), L"Ice_Effect", L"Ice_Explosive", ANIMATION_ONCE );
 }
 
 void CBossIceEffect::OnEnable()

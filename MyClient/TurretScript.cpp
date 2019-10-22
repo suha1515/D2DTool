@@ -76,6 +76,7 @@ int CTurretScript::OnUpdate()
 	{
 		m_pGameObject->SetObjectDestroy(true);
 		CEffect::Create(*m_Pos, XMFLOAT3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.5f, 1.5f, 1.0f), L"Explosion_Effect", L"Small_Explosion", ANIMATION_ONCE);
+		CSoundMgr::GetInstance()->PlaySound(L"Æø¹ß.ogg", CSoundMgr::EFFECT);
 		return 0;
 	}
 
@@ -531,11 +532,13 @@ void CTurretScript::Shoot(FIRE_MODE type)
 	{
 		pBullet = CObjectMgr::GetInstance()->AddCopy(L"Turret_Small_Bullet", L"Turret_Bullet");
 		pBullet->AddScripts(CBulletScript::Create(m_fAngle, 20.f, 200.f, pBullet, CBulletScript::BULLET_TYPE::TURRET));
+		CSoundMgr::GetInstance()->PlaySound(L"laser.ogg", CSoundMgr::EFFECT);
 	}
 	else if (type == CHARGED)
 	{
 		pBullet = CObjectMgr::GetInstance()->AddCopy(L"Turret_Small_Bullet", L"Turret_Bullet");
 		pBullet->AddScripts(CBulletScript::Create(m_fAngle, 20.f, 200.f, pBullet, CBulletScript::BULLET_TYPE::TURRET_CHARGE));
+		CSoundMgr::GetInstance()->PlaySound(L"charge-05-short.ogg", CSoundMgr::EFFECT);
 	}
 	if (pBullet != nullptr)
 	{
